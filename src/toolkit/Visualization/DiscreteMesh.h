@@ -49,8 +49,8 @@ namespace GraySkeletonCPP {
             bool FollowCurve(int & x, int & y, int & z);
             int GetCurveNeighbors(int x, int y, int z, vector<Vector3Int> & neighbors);
             int GetCurveNeighborsCount(int x, int y, int z);
-            int GetSurfaceNeighbors(int x, int y, int z, int * & neighbors);
-            int GetSurfaceNeighbors(int x1, int y1, int z1, int x2, int y2, int z2, int * & neighbors);
+            int GetSurfaceNeighbors(int x, int y, int z, vector<int> & neighbors);
+            int GetSurfaceNeighbors(int x1, int y1, int z1, int x2, int y2, int z2, vector<int> & neighbors);
             int GetSurfaceNeighborCount(int x1, int y1, int z1, int x2, int y2, int z2);
             void GetSurfacePoints(int x, int y, int z, unsigned char direction, Vector3Int * & points);
 
@@ -237,9 +237,9 @@ namespace GraySkeletonCPP {
         return count;
     }
 
-    int DiscreteMesh::GetSurfaceNeighbors(int x, int y, int z, int * & neighbors) {
+    int DiscreteMesh::GetSurfaceNeighbors(int x, int y, int z, vector<int> & neighbors) {
         int count = 0;
-        neighbors = new int[12*4];
+        neighbors.resize(12*4);
 
         for(int i = 0; i < 12; i++) {
             if(IsSurfacePresent(x+VOLUME_NEIGHBOR_SURFACES_12[i][0], y+VOLUME_NEIGHBOR_SURFACES_12[i][1], z+VOLUME_NEIGHBOR_SURFACES_12[i][2], VOLUME_NEIGHBOR_SURFACES_12[i][3])) {
@@ -253,14 +253,14 @@ namespace GraySkeletonCPP {
         return count;
     }
 
-    int DiscreteMesh::GetSurfaceNeighbors(int x1, int y1, int z1, int x2, int y2, int z2, int * & neighbors) {
-        int * p1Neighbors, * p2Neighbors;
+    int DiscreteMesh::GetSurfaceNeighbors(int x1, int y1, int z1, int x2, int y2, int z2, vector<int> & neighbors) {
+        vector<int> p1Neighbors, p2Neighbors;
         int p1Count, p2Count;
         p1Count = GetSurfaceNeighbors(x1, y1, z1, p1Neighbors);
         p2Count = GetSurfaceNeighbors(x2, y2, z2, p2Neighbors);
 
         int nCount = 0;
-        neighbors = new int[4*4];
+        neighbors.resize(4*4);
         bool allFound;
 
         for(int i = 0; i < p1Count; i++) {
@@ -278,15 +278,13 @@ namespace GraySkeletonCPP {
             }
         }
 
-        delete [] p1Neighbors;
-        delete [] p2Neighbors;
         return nCount;
     }
 
     int DiscreteMesh::GetSurfaceNeighborCount(int x1, int y1, int z1,
                                               int x2, int y2, int z2)
     {
-        int * p1Neighbors, *p2Neighbors;
+        vector<int> p1Neighbors, p2Neighbors;
         int p1Count, p2Count;
         p1Count = GetSurfaceNeighbors(x1, y1, z1, p1Neighbors);
         p2Count = GetSurfaceNeighbors(x2, y2, z2, p2Neighbors);
@@ -306,8 +304,6 @@ namespace GraySkeletonCPP {
             }
         }
 
-        delete [] p1Neighbors;
-        delete [] p2Neighbors;
         return nCount;
     }
 
