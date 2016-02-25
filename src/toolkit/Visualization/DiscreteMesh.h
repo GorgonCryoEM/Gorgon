@@ -56,28 +56,28 @@ namespace GraySkeletonCPP {
 
             static int getC6 (Vector3Int * neighbors, int neighborCount, Vector3Int currPoint);
             static int getC26(Vector3Int * neighbors, int neighborCount, Vector3Int currPoint);
-            static int getN6  (vector<Vector3Int> &   n6, const Volume & sourceVol, int x, int y, int z);
-            static int getN6_2(vector<Vector3Int> & n6_2, const Volume & sourceVol, int x, int y, int z);
-            static int getN18  (vector<Vector3Int> & n18, const Volume & sourceVol, int x, int y, int z);
-            static int getN26        (Vector3Int * & n26, const Volume & sourceVol, int x, int y, int z);
-            static int getN6Count  (const Volume & sourceVol, int x, int y, int z);
-            static int getN6_2Count(const Volume & sourceVol, int x, int y, int z);
-            static int getN18Count (const Volume & sourceVol, int x, int y, int z);
-            static int getN26Count (const Volume & sourceVol, int x, int y, int z);
-            static int getMCount   (const Volume & sourceVol, int x1, int y1, int z1,
+            static int getN6  (vector<Vector3Int> &   n6, const Volume & src, int x, int y, int z);
+            static int getN6_2(vector<Vector3Int> & n6_2, const Volume & src, int x, int y, int z);
+            static int getN18  (vector<Vector3Int> & n18, const Volume & src, int x, int y, int z);
+            static int getN26        (Vector3Int * & n26, const Volume & src, int x, int y, int z);
+            static int getN6Count  (const Volume & src, int x, int y, int z);
+            static int getN6_2Count(const Volume & src, int x, int y, int z);
+            static int getN18Count (const Volume & src, int x, int y, int z);
+            static int getN26Count (const Volume & src, int x, int y, int z);
+            static int getMCount   (const Volume & src, int x1, int y1, int z1,
                                  int x2, int y2, int z2);
-            static int getImmersionN6Count      (Volume & skeleton, Vector3Int point);
-            static int getImmersionSkeletalValue(Volume & skeleton, Vector3Int point);
-            static bool isImmersionBoundary(const Volume & skeleton, Vector3Int point);
-            static bool isPoint         (const Volume & sourceVol, int x, int y, int z);
-            static bool isCurveEnd      (const Volume & sourceVol, int x, int y, int z);
-            static bool isCurveBody     (const Volume & sourceVol, int x, int y, int z);
-            static bool isSurfaceBorder (const Volume & sourceVol, int x, int y, int z);
-            static bool isSurfaceBody   (const Volume & sourceVol, int x, int y, int z, bool doDependantChecks);
-            static bool isVolumeBorder  (const Volume & sourceVol, int x, int y, int z, bool doDependantChecks);
-            static bool isVolumeBody    (const Volume & sourceVol, int x, int y, int z);
-            static bool isSimple        (Volume & sourceVol, int x, int y, int z);
-            static bool isValidSurface(const Volume & sourceVol, Vector3Double p0,
+            static int getImmersionN6Count      (Volume & skel, Vector3Int point);
+            static int getImmersionSkeletalValue(Volume & skel, Vector3Int point);
+            static bool isImmersionBoundary(const Volume & skel, Vector3Int point);
+            static bool isPoint         (const Volume & src, int x, int y, int z);
+            static bool isCurveEnd      (const Volume & src, int x, int y, int z);
+            static bool isCurveBody     (const Volume & src, int x, int y, int z);
+            static bool isSurfaceBorder (const Volume & src, int x, int y, int z);
+            static bool isSurfaceBody   (const Volume & src, int x, int y, int z, bool doDependantChecks);
+            static bool isVolumeBorder  (const Volume & src, int x, int y, int z, bool doDependantChecks);
+            static bool isVolumeBody    (const Volume & src, int x, int y, int z);
+            static bool isSimple        (Volume & src, int x, int y, int z);
+            static bool isValidSurface(const Volume & src, Vector3Double p0,
                                        Vector3Double p1, Vector3Double p2, Vector3Double p3);
 
             static void findCurveBase  (Vector3Double &p1, Vector3Double &p2);
@@ -587,21 +587,21 @@ namespace GraySkeletonCPP {
     }
 
 
-    int DiscreteMesh::getN6(vector<Vector3Int> & n6, const Volume & sourceVol, int x, int y, int z){
+    int DiscreteMesh::getN6(vector<Vector3Int> & n6, const Volume & src, int x, int y, int z){
         int n6Count = 0;
         n6.resize(6);
         for(int i = 0; i < 6; i++) {
             n6[n6Count][0] = x + VOLUME_NEIGHBORS_6[i][0];
             n6[n6Count][1] = y + VOLUME_NEIGHBORS_6[i][1];
             n6[n6Count][2] = z + VOLUME_NEIGHBORS_6[i][2];
-            if(sourceVol.getDataAt(n6[n6Count][0], n6[n6Count][1], n6[n6Count][2]) > 0) {
+            if(src.getDataAt(n6[n6Count][0], n6[n6Count][1], n6[n6Count][2]) > 0) {
                 n6Count++;
             }
         }
         return n6Count;
     }
 
-    int DiscreteMesh::getN6_2(vector<Vector3Int> & n6_2, const Volume & sourceVol, int x,
+    int DiscreteMesh::getN6_2(vector<Vector3Int> & n6_2, const Volume & src, int x,
                               int y, int z)
     {
         n6_2.resize(18);
@@ -610,12 +610,12 @@ namespace GraySkeletonCPP {
         vector<Vector3Int> n62List(36);
         int n62Count = 0;
 
-        int n18Count = getN18(n18, sourceVol, x, y, z);
-        int n6CountX = getN6(n6X, sourceVol, x, y, z);
+        int n18Count = getN18(n18, src, x, y, z);
+        int n6CountX = getN6(n6X, src, x, y, z);
         int n6CountY;
 
         for(int i = 0; i < n6CountX; i++) {
-            n6CountY = getN6(n6Y, sourceVol, n6X[i][0], n6X[i][1], n6X[i][2]);
+            n6CountY = getN6(n6Y, src, n6X[i][0], n6X[i][1], n6X[i][2]);
             for(int j = 0; j < n6CountY; j++) {
                 n62List[n62Count] = n6Y[j];
                 n62Count++;
@@ -637,7 +637,7 @@ namespace GraySkeletonCPP {
         return retVal;
     }
 
-    int DiscreteMesh::getN18(vector<Vector3Int> & n18, const Volume & sourceVol, int x,
+    int DiscreteMesh::getN18(vector<Vector3Int> & n18, const Volume & src, int x,
                              int y, int z)
     {
         n18.resize(18);
@@ -646,14 +646,14 @@ namespace GraySkeletonCPP {
             n18[n18Count][0] = x + VOLUME_NEIGHBORS_18[i][0];
             n18[n18Count][1] = y + VOLUME_NEIGHBORS_18[i][1];
             n18[n18Count][2] = z + VOLUME_NEIGHBORS_18[i][2];
-            if(sourceVol.getDataAt(n18[n18Count][0], n18[n18Count][1], n18[n18Count][2]) > 0) {
+            if(src.getDataAt(n18[n18Count][0], n18[n18Count][1], n18[n18Count][2]) > 0) {
                 n18Count++;
             }
         }
         return n18Count;
     }
 
-    int DiscreteMesh::getN26(Vector3Int * & n26, const Volume & sourceVol, int x,
+    int DiscreteMesh::getN26(Vector3Int * & n26, const Volume & src, int x,
                              int y, int z)
     {
         int n26Count = 0;
@@ -662,34 +662,34 @@ namespace GraySkeletonCPP {
             n26[n26Count][0] = x + VOLUME_NEIGHBORS_26[i][0];
             n26[n26Count][1] = y + VOLUME_NEIGHBORS_26[i][1];
             n26[n26Count][2] = z + VOLUME_NEIGHBORS_26[i][2];
-            if(sourceVol.getDataAt(n26[n26Count][0], n26[n26Count][1], n26[n26Count][2]) > 0) {
+            if(src.getDataAt(n26[n26Count][0], n26[n26Count][1], n26[n26Count][2]) > 0) {
                 n26Count++;
             }
         }
         return n26Count;
     }
 
-    int DiscreteMesh::getN6Count(const Volume & sourceVol, int x, int y, int z) {
+    int DiscreteMesh::getN6Count(const Volume & src, int x, int y, int z) {
         int n6Count = 0;
         for(int i = 0; i < 6; i++) {
-            if(sourceVol.getDataAt(x + VOLUME_NEIGHBORS_6[i][0], y + VOLUME_NEIGHBORS_6[i][1], z + VOLUME_NEIGHBORS_6[i][2]) > 0)  {
+            if(src.getDataAt(x + VOLUME_NEIGHBORS_6[i][0], y + VOLUME_NEIGHBORS_6[i][1], z + VOLUME_NEIGHBORS_6[i][2]) > 0)  {
                 n6Count++;
             }
         }
         return n6Count;
     }
 
-    int DiscreteMesh::getN6_2Count(const Volume & sourceVol, int x, int y, int z) {
+    int DiscreteMesh::getN6_2Count(const Volume & src, int x, int y, int z) {
         vector<Vector3Int> n6_2;
-        int count = getN6_2(n6_2, sourceVol, x, y, z);
+        int count = getN6_2(n6_2, src, x, y, z);
 
         return count;
     }
 
-    int DiscreteMesh::getN18Count(const Volume & sourceVol, int x, int y, int z) {
+    int DiscreteMesh::getN18Count(const Volume & src, int x, int y, int z) {
         int n18Count = 0;
         for(int i = 0; i < 18; i++) {
-            if(sourceVol.getDataAt(x + VOLUME_NEIGHBORS_18[i][0],
+            if(src.getDataAt(x + VOLUME_NEIGHBORS_18[i][0],
                        y + VOLUME_NEIGHBORS_18[i][1],
                        z + VOLUME_NEIGHBORS_18[i][2])
                > 0) {
@@ -699,10 +699,10 @@ namespace GraySkeletonCPP {
         return n18Count;
     }
 
-    int DiscreteMesh::getN26Count(const Volume & sourceVol, int x, int y, int z) {
+    int DiscreteMesh::getN26Count(const Volume & src, int x, int y, int z) {
         int n26Count = 0;
         for(int i = 0; i < 26; i++) {
-            if(sourceVol.getDataAt(x + VOLUME_NEIGHBORS_26[i][0],
+            if(src.getDataAt(x + VOLUME_NEIGHBORS_26[i][0],
                        y + VOLUME_NEIGHBORS_26[i][1],
                        z + VOLUME_NEIGHBORS_26[i][2])
                > 0) {
@@ -712,13 +712,13 @@ namespace GraySkeletonCPP {
         return n26Count;
     }
 
-    int DiscreteMesh::getMCount(const Volume & sourceVol, int x1, int y1, int z1,
+    int DiscreteMesh::getMCount(const Volume & src, int x1, int y1, int z1,
                                 int x2, int y2, int z2)
     {
         vector<Vector3Int> n18X;
-        int n18XCount = getN18(n18X, sourceVol, x1, y1, z1);
+        int n18XCount = getN18(n18X, src, x1, y1, z1);
         vector<Vector3Int> n6Y;
-        int n6YCount = getN6(n6Y, sourceVol, x2, y2, z2);
+        int n6YCount = getN6(n6Y, src, x2, y2, z2);
         int mCount = 0;
         for(int i = 0; i < n18XCount; i++) {
             for(int j = 0; j < n6YCount; j++) {
@@ -732,16 +732,16 @@ namespace GraySkeletonCPP {
         return mCount;
     }
 
-    int DiscreteMesh::getImmersionN6Count(Volume & skeleton, Vector3Int point) {
-        Volume range = skeleton.getDataRange(point[0], point[1], point[2], 1);
+    int DiscreteMesh::getImmersionN6Count(Volume & skel, Vector3Int point) {
+        Volume range = skel.getDataRange(point[0], point[1], point[2], 1);
         range.threshold(range.getDataAt(1,1,1), 0, 1, 0, false);
         int n6Count = getN6Count(range,1,1,1);
 
         return n6Count;
     }
 
-    int DiscreteMesh::getImmersionSkeletalValue(Volume & skeleton, Vector3Int point) {
-        Volume range = skeleton.getDataRange(point[0], point[1], point[2], 2);
+    int DiscreteMesh::getImmersionSkeletalValue(Volume & skel, Vector3Int point) {
+        Volume range = skel.getDataRange(point[0], point[1], point[2], 2);
         Volume thresholdedRange(range);
         double value = 0;
         thresholdedRange.threshold(range.getDataAt(2, 2, 2), -1, 1, -1, false);
@@ -774,22 +774,22 @@ namespace GraySkeletonCPP {
         return (int)round(value);
     }
 
-    bool DiscreteMesh::isPoint(const Volume & sourceVol, int x, int y, int z) {
-        return (getN6Count(sourceVol, x, y, z) == 0);
+    bool DiscreteMesh::isPoint(const Volume & src, int x, int y, int z) {
+        return (getN6Count(src, x, y, z) == 0);
     }
 
-    bool DiscreteMesh::isCurveEnd(const Volume & sourceVol, int x, int y, int z) {
-        return (getN6Count(sourceVol, x, y, z) == 1);
+    bool DiscreteMesh::isCurveEnd(const Volume & src, int x, int y, int z) {
+        return (getN6Count(src, x, y, z) == 1);
     }
 
-    bool DiscreteMesh::isCurveBody(const Volume & sourceVol, int x, int y, int z) {
+    bool DiscreteMesh::isCurveBody(const Volume & src, int x, int y, int z) {
         bool foundFace = false;
         bool allPoints;
         for(int n = 0; n < 12; n++) {
             allPoints = true;
             for(int p = 0; p < 3; p++) {
                 allPoints = allPoints
-                        && (sourceVol.getDataAt(
+                        && (src.getDataAt(
                                     x + VOLUME_NEIGHBOR_FACES[n][p][0],
                                     y + VOLUME_NEIGHBOR_FACES[n][p][1],
                                     z + VOLUME_NEIGHBOR_FACES[n][p][2])
@@ -798,32 +798,32 @@ namespace GraySkeletonCPP {
             foundFace = foundFace || allPoints;
         }
 
-        return (!foundFace && getN6Count(sourceVol, x, y, z) >= 2);
+        return (!foundFace && getN6Count(src, x, y, z) >= 2);
 
     }
 
-    bool DiscreteMesh::isSurfaceBorder(const Volume & sourceVol, int x, int y, int z) {
+    bool DiscreteMesh::isSurfaceBorder(const Volume & src, int x, int y, int z) {
         vector<Vector3Int> n6_2, n6;
         Vector3Int currPoint = Vector3Int(x, y, z);
-        int n6_2Count = getN6_2(n6_2, sourceVol, x, y, z);
-        int n6Count = getN6(n6, sourceVol, x, y, z);
+        int n6_2Count = getN6_2(n6_2, src, x, y, z);
+        int n6Count = getN6(n6, src, x, y, z);
         int mZigma = 0;
         for(int i = 0; i < n6Count; i++) {
-            mZigma += getMCount(sourceVol, x, y, z, n6[i][0], n6[i][1], n6[i][2]);
+            mZigma += getMCount(src, x, y, z, n6[i][0], n6[i][1], n6[i][2]);
         }
 
         return (mZigma - n6_2Count - n6Count) == 0;
     }
 
-    bool DiscreteMesh::isSurfaceBody(const Volume & sourceVol, int x, int y, int z, bool doDependantChecks) {
-        if(sourceVol.getDataAt(x, y, z) <= 0)
+    bool DiscreteMesh::isSurfaceBody(const Volume & src, int x, int y, int z, bool doDependantChecks) {
+        if(src.getDataAt(x, y, z) <= 0)
             return false;
 
         double points[3][3][3];
         for(int xx = 0; xx < 3; xx++){
             for(int yy = 0; yy < 3; yy++){
                 for(int zz = 0; zz < 3; zz++) {
-                    points[xx][yy][zz] = sourceVol.getDataAt(x + xx - 1, y + yy - 1, z + zz - 1);
+                    points[xx][yy][zz] = src.getDataAt(x + xx - 1, y + yy - 1, z + zz - 1);
                 }
             }
         }
@@ -854,13 +854,13 @@ namespace GraySkeletonCPP {
             }
         }
 
-        return surfaceFound && ((doDependantChecks && !isSurfaceBorder(sourceVol, x, y, z)) || (!doDependantChecks));
+        return surfaceFound && ((doDependantChecks && !isSurfaceBorder(src, x, y, z)) || (!doDependantChecks));
     }
 
-    bool DiscreteMesh::isVolumeBorder(const Volume & sourceVol, int x, int y,
+    bool DiscreteMesh::isVolumeBorder(const Volume & src, int x, int y,
                                       int z, bool doDependantChecks)
     {
-        if(doDependantChecks && isVolumeBody(sourceVol, x, y, z))
+        if(doDependantChecks && isVolumeBody(src, x, y, z))
             return false;
 
         bool isBorder = false;
@@ -869,7 +869,7 @@ namespace GraySkeletonCPP {
             allInCube = true;
             for(int p = 0; p < 7; p++) {
                 allInCube = allInCube
-                        && (sourceVol.getDataAt(
+                        && (src.getDataAt(
                                     x + VOLUME_NEIGHBOR_CUBES[cube][p][0],
                                     y + VOLUME_NEIGHBOR_CUBES[cube][p][1],
                                     z + VOLUME_NEIGHBOR_CUBES[cube][p][2])
@@ -880,15 +880,15 @@ namespace GraySkeletonCPP {
         return isBorder;
     }
 
-    bool DiscreteMesh::isVolumeBody(const Volume & sourceVol, int x, int y, int z) {
-        return (getN26Count(sourceVol, x, y, z) == 26);
+    bool DiscreteMesh::isVolumeBody(const Volume & src, int x, int y, int z) {
+        return (getN26Count(src, x, y, z) == 26);
     }
 
-    bool DiscreteMesh::isSimple(Volume & sourceVol, int x, int y, int z) {
-        return sourceVol.isSimple(x, y, z) != 0;
+    bool DiscreteMesh::isSimple(Volume & src, int x, int y, int z) {
+        return src.isSimple(x, y, z) != 0;
     }
 
-    bool DiscreteMesh::isValidSurface(const Volume & sourceVol, Vector3Double p0,
+    bool DiscreteMesh::isValidSurface(const Volume & src, Vector3Double p0,
                                       Vector3Double p1, Vector3Double p2,
                                       Vector3Double p3)
     {
@@ -911,10 +911,10 @@ namespace GraySkeletonCPP {
         for(int i = 0; i < 4; i++) {
             currentPos = surface[i] + upperVector;
             allFound = allFound
-                    && (sourceVol.getDataAt(currentPos.XInt(), currentPos.YInt(), currentPos.ZInt()) > 0);
+                    && (src.getDataAt(currentPos.XInt(), currentPos.YInt(), currentPos.ZInt()) > 0);
             currentPos = surface[i] + lowerVector;
             allFound = allFound
-                    && (sourceVol.getDataAt(currentPos.XInt(), currentPos.YInt(), currentPos.ZInt()) > 0);
+                    && (src.getDataAt(currentPos.XInt(), currentPos.YInt(), currentPos.ZInt()) > 0);
         }
         return !allFound;
     }
