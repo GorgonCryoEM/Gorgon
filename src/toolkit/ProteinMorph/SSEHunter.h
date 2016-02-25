@@ -10,7 +10,7 @@
 //#include <MathTools/MathLib.h>
 #include <MathTools/CrossCorrelation.h>
 #include <GraphMatch/PDBAtom.h>
-#include <SkeletonMaker/VolumeSkeletonizer.h>
+#include <SkeletonMaker/Skeletonizer.h>
 //#include <Gorgon/MeshRenderer.h>
 //#include <cmath>
 #include <iostream>
