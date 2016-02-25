@@ -76,7 +76,7 @@ namespace GraySkeletonCPP {
 
             double GetVoxelCost(EigenResults3D imageEigen, Vec3F skelDir, int type);
             void FindOrthogonalAxes(Vec3F axis, Vec3F & res1, Vec3F & res2);
-            void GetSTBasedDistribution(ProbDistr3D & distributionInfo, EigenResults3D eigen);
+            void GetSTBasedDistribution(ProbDistr3D & distr, EigenResults3D eigen);
             Vec3F XYZtoUVW(Vec3F vec, Vec3F u, Vec3F v, Vec3F w);
 
             Volume FillCurveHoles  (Volume & dest, const Volume & src, int maxHoleSize);
@@ -512,29 +512,29 @@ namespace GraySkeletonCPP {
     }
 
 
-    void Skeletonizer::GetSTBasedDistribution(ProbDistr3D & distributionInfo, EigenResults3D eigen) {
+    void Skeletonizer::GetSTBasedDistribution(ProbDistr3D & distr, EigenResults3D eigen) {
         Vec3F skelDir;
         double total = 0;
         double cell;
-        for(int x = -distributionInfo.R; x <= distributionInfo.R; x++) {
-            for(int y = -distributionInfo.R; y <= distributionInfo.R; y++) {
-                for(int z = -distributionInfo.R; z <= distributionInfo.R; z++) {
+        for(int x = -distr.R; x <= distr.R; x++) {
+            for(int y = -distr.R; y <= distr.R; y++) {
+                for(int z = -distr.R; z <= distr.R; z++) {
                     if((x!=0) && (y!=0) && (z!=0)) {
                         skelDir = Vec3F(0,0,0) - Vec3F(x, y, z);
                         skelDir.normalize();
                         cell = GetVoxelCost(eigen, skelDir, PRUNING_CLASS_PRUNE_CURVES);
-                        distributionInfo.vals[x+distributionInfo.R][y+distributionInfo.R][z+distributionInfo.R] = cell;
+                        distr.vals[x+distr.R][y+distr.R][z+distr.R] = cell;
                         total += cell;
                     }
                 }
             }
         }
 
-        for(int x = -distributionInfo.R; x <= distributionInfo.R; x++) {
-            for(int y = -distributionInfo.R; y <= distributionInfo.R; y++) {
-                for(int z = -distributionInfo.R; z <= distributionInfo.R; z++) {
-                    distributionInfo.vals[x+distributionInfo.R][y+distributionInfo.R][z+distributionInfo.R] =
-                        distributionInfo.vals[x+distributionInfo.R][y+distributionInfo.R][z+distributionInfo.R] / total;
+        for(int x = -distr.R; x <= distr.R; x++) {
+            for(int y = -distr.R; y <= distr.R; y++) {
+                for(int z = -distr.R; z <= distr.R; z++) {
+                    distr.vals[x+distr.R][y+distr.R][z+distr.R] =
+                        distr.vals[x+distr.R][y+distr.R][z+distr.R] / total;
                 }
             }
         }
