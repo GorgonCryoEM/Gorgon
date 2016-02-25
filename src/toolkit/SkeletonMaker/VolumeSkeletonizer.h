@@ -117,8 +117,8 @@ namespace GraySkeletonCPP {
                                       int maxHoleSize);
             Volume * GetJuThinning(Volume & sourceVolume, const Volume & preserve,
                                    double threshold, char thinningClass);
-            Volume * GetImmersionThinning(Volume * sourceVolume,
-                                          Volume * preserve,
+            Volume * GetImmersionThinning(const Volume & sourceVolume,
+                                          const Volume & preserve,
                                           double lowGrayscale,
                                           double highGrayscale, double stepSize,
                                           char thinningClass);
@@ -741,8 +741,8 @@ namespace GraySkeletonCPP {
         return filledSkeleton;
     }
 
-    Volume * VolumeSkeletonizer::GetImmersionThinning(Volume * sourceVolume, Volume * preserve, double lowGrayscale, double highGrayscale, double stepSize, char thinningClass) {
-        Volume * thinnedVolume = new Volume(*sourceVolume);
+    Volume * VolumeSkeletonizer::GetImmersionThinning(const Volume & sourceVolume, const Volume & preserve, double lowGrayscale, double highGrayscale, double stepSize, char thinningClass) {
+        Volume * thinnedVolume = new Volume(sourceVolume);
         thinnedVolume->threshold2(lowGrayscale, 0, 1) ;
         double t;
         switch(thinningClass) {
@@ -753,12 +753,12 @@ namespace GraySkeletonCPP {
                 break;
             case THINNING_CLASS_CURVE_PRESERVATION :
                 for (t = lowGrayscale ; t <= highGrayscale; t+= stepSize) {
-                    thinnedVolume->curveSkeleton(*sourceVolume, t, t + stepSize, *preserve);
+                    thinnedVolume->curveSkeleton(sourceVolume, t, t + stepSize, preserve);
                 }
                 break;
             case THINNING_CLASS_CURVE_PRESERVATION_2D :
                 for (t = lowGrayscale ; t <= highGrayscale; t+= stepSize) {
-                    thinnedVolume->curveSkeleton(*sourceVolume, t, t + stepSize, *preserve);
+                    thinnedVolume->curveSkeleton(sourceVolume, t, t + stepSize, preserve);
                 }
                 break;
             case THINNING_CLASS_POINT_PRESERVATION :
@@ -829,7 +829,7 @@ namespace GraySkeletonCPP {
 
         Volume nullVol(sourceVol.getSizeX(), sourceVol.getSizeY(), sourceVol.getSizeZ());
         appTimeManager.PushCurrentTime();
-        Volume * surfaceVol = GetImmersionThinning(&sourceVol, preserveVol, startGray, endGray, stepSize, THINNING_CLASS_SURFACE_PRESERVATION);
+        Volume * surfaceVol = GetImmersionThinning(sourceVol, *preserveVol, startGray, endGray, stepSize, THINNING_CLASS_SURFACE_PRESERVATION);
         appTimeManager.PopAndDisplayTime("Surface Thinning : %f seconds!\n");
 
         #ifdef SAVE_INTERMEDIATE_RESULTS
@@ -886,7 +886,7 @@ namespace GraySkeletonCPP {
 
         appTimeManager.PushCurrentTime();
 
-        Volume curveVol = *GetImmersionThinning(&sourceVol, surfaceVol, startGray, endGray, stepSize, THINNING_CLASS_CURVE_PRESERVATION);
+        Volume curveVol = *GetImmersionThinning(sourceVol, *surfaceVol, startGray, endGray, stepSize, THINNING_CLASS_CURVE_PRESERVATION);
         appTimeManager.PopAndDisplayTime("Curve Thinning   : %f seconds!\n");
 
         #ifdef SAVE_INTERMEDIATE_RESULTS

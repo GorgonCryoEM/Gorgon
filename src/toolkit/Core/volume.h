@@ -143,11 +143,13 @@ namespace SkeletonMaker {
         void curveSkeleton( const Volume & grayvol, float lowthr, float highthr, const Volume & svol );
         void curveSkeleton( float thr, const Volume & svol );
         void curveSkeleton2D( float thr, const Volume & svol );
-        void pointSkeleton( Volume* grayvol, float lowthr, float highthr, Volume* svol, Volume* hvol );
+            void pointSkeleton(const Volume & grayvol, float lowthr,
+                               float highthr, const Volume & svol,
+                               const Volume & hvol);
         void skeleton( float thr, const Volume & svol, const Volume & hvol );
         void erodeHelix( int disthr );
         int erodeSheet( int disthr );
-        void surfaceSkeleton( Volume* grayvol, float lowthr, float highthr );
+        void surfaceSkeleton( const Volume & grayvol, float lowthr, float highthr );
         void surfaceSkeletonPres( float thr, const Volume & preserve );
         void threshold( double thr );
         void threshold( double thr, int out, int in );

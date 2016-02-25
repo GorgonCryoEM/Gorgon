@@ -1337,8 +1337,8 @@ void Volume::curveSkeleton2D(float thr, const Volume & svol) {
 /* Thin the current volume while preserving voxels with values > highthr or <= lowthr in grayvol
  *  Assuming the current volume has already been thresholded to 0/1
  */
-void Volume::pointSkeleton(Volume* grayvol, float lowthr, float highthr,
-                           Volume* svol, Volume* hvol)
+void Volume::pointSkeleton(const Volume & grayvol, float lowthr, float highthr,
+                           const Volume & svol, const Volume & hvol)
 {
     int i, j, k;
     // First, threshold the volume
@@ -1363,10 +1363,10 @@ void Volume::pointSkeleton(Volume* grayvol, float lowthr, float highthr,
         for(j = 0; j < getSizeY(); j++)
             for(k = 0; k < getSizeZ(); k++) {
                 if(getDataAt(i, j, k) >= 0) {
-                    float v = (float)grayvol->getDataAt(i, j, k);
+                    float v = (float)grayvol.getDataAt(i, j, k);
                     if(v <= lowthr || v > highthr
-                       || svol->getDataAt(i, j, k) > 0
-                       || hvol->getDataAt(i, j, k) > 0) {
+                       || svol.getDataAt(i, j, k) > 0
+                       || hvol.getDataAt(i, j, k) > 0) {
                         setDataAt(i, j, k, MAX_ERODE);
                     }
                     else {
@@ -2222,7 +2222,7 @@ int Volume::erodeSheet(int disthr) {
 /* Thin the current volume while preserving voxels with values > highthr or <= lowthr in grayvol
  *  Assuming the current volume has already been thresholded to 0/1
  */
-void Volume::surfaceSkeleton(Volume* grayvol, float lowthr, float highthr) {
+void Volume::surfaceSkeleton(const Volume & grayvol, float lowthr, float highthr) {
     int i, j, k;
     threshold(0.5f, -MAX_ERODE, 0);
 
@@ -2238,7 +2238,7 @@ void Volume::surfaceSkeleton(Volume* grayvol, float lowthr, float highthr) {
         for(j = 0; j < getSizeY(); j++)
             for(k = 0; k < getSizeZ(); k++) {
                 if(getDataAt(i, j, k) >= 0) {
-                    float v = (float)grayvol->getDataAt(i, j, k);
+                    float v = (float)grayvol.getDataAt(i, j, k);
                     if(v > highthr || v <= lowthr) {
                         setDataAt(i, j, k, MAX_ERODE);
                     }
