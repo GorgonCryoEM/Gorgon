@@ -38,7 +38,7 @@ namespace GraySkeletonCPP {
     class DiscreteMesh : public Volume {
         public:
             DiscreteMesh(int sizeX, int sizeY, int sizeZ);
-            DiscreteMesh(Volume * volume);
+            DiscreteMesh(const Volume & volume);
 
             void AddVoxel(int x, int y, int z);
             int GetIndex(int x, int y, int z);
@@ -113,8 +113,8 @@ namespace GraySkeletonCPP {
               surfaces (sizeX * sizeY * sizeZ, 0)
     {}
 
-    DiscreteMesh::DiscreteMesh(Volume * volume)
-        :  Volume(*volume),
+    DiscreteMesh::DiscreteMesh(const Volume & volume)
+        :  Volume(volume),
            points   (size.X() * size.Y() * size.Z(), false),
            curves   (size.X() * size.Y() * size.Z(), 0),
            surfaces (size.X() * size.Y() * size.Z(), 0)
