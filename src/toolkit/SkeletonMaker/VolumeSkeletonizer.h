@@ -27,25 +27,6 @@ using namespace SkeletonMaker;
 
 namespace GraySkeletonCPP {
 
-    struct ImmersionBeachElement {
-        Vector3Int p;
-        int binIndex;
-    };
-
-    bool operator<(const pair<ImmersionBeachElement,int> &l, const pair<ImmersionBeachElement,int> &r){
-        return l.second < r.second;
-    }
-
-
-    ostream & operator<<(ostream & out, const ImmersionBeachElement & obj){
-        return out
-                <<"{"
-                <<obj.p<<", "
-                <<obj.binIndex
-                <<"}";
-    }
-
-
     class VolumeSkeletonizer {
         public:
             VolumeSkeletonizer(int pointR, int curveR,
