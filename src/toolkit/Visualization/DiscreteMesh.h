@@ -431,9 +431,7 @@ namespace GraySkeletonCPP {
         }
     }
 
-    void DiscreteMesh::findSurfaceBase(Vec3D &p1, Vec3D &p2,
-                                       Vec3D &p3, Vec3D &p4)
-    {
+    void DiscreteMesh::findSurfaceBase(Vec3D &p1, Vec3D &p2, Vec3D &p3, Vec3D &p4) {
         Vec3D points[4] = {p1, p2, p3, p4};
         Vec3D temp;
         int jVal, minVal, minIndex;
@@ -460,9 +458,7 @@ namespace GraySkeletonCPP {
         p4 = points[2];
     }
 
-    void DiscreteMesh::findSurfaceBase(Vec3I &p1, Vec3I &p2,
-                                       Vec3I &p3, Vec3I &p4)
-    {
+    void DiscreteMesh::findSurfaceBase(Vec3I &p1, Vec3I &p2, Vec3I &p3, Vec3I &p4) {
         Vec3I points[4] = {p1, p2, p3, p4};
         Vec3I temp;
         int jVal, minVal, minIndex;
@@ -489,9 +485,7 @@ namespace GraySkeletonCPP {
         p4 = points[2];
     }
 
-    int DiscreteMesh::getC6(vector<Vec3I> &neighbors, int neighborCount,
-                            Vec3I currPoint)
-    {
+    int DiscreteMesh::getC6(vector<Vec3I> &neighbors, int neighborCount, Vec3I currPoint) {
         Volume vol(5, 5, 5);
         for(int i = 0; i < neighborCount; i++) {
             vol.setDataAt(neighbors[i][0] - currPoint[0] + 2,
@@ -531,9 +525,7 @@ namespace GraySkeletonCPP {
         return c6Count;
     }
 
-    int DiscreteMesh::getC26(vector<Vec3I> &neighbors, int neighborCount,
-                             Vec3I currPoint)
-    {
+    int DiscreteMesh::getC26(vector<Vec3I> &neighbors, int neighborCount, Vec3I currPoint) {
         Volume vol(5, 5, 5);
         for(int i = 0; i < neighborCount; i++) {
             vol.setDataAt(neighbors[i][0] - currPoint[0] + 2,
@@ -574,7 +566,7 @@ namespace GraySkeletonCPP {
     }
 
 
-    int DiscreteMesh::getN6(vector<Vec3I> & n6, const Volume & src, int x, int y, int z){
+    int DiscreteMesh::getN6(vector<Vec3I> & n6, const Volume & src, int x, int y, int z) {
         int n6Count = 0;
         n6.resize(6);
         for(int i = 0; i < 6; i++) {
@@ -588,9 +580,7 @@ namespace GraySkeletonCPP {
         return n6Count;
     }
 
-    int DiscreteMesh::getN6_2(vector<Vec3I> & n6_2, const Volume & src, int x,
-                              int y, int z)
-    {
+    int DiscreteMesh::getN6_2(vector<Vec3I> & n6_2, const Volume & src, int x, int y, int z) {
         n6_2.resize(18);
         vector<Vec3I> n18;
         vector<Vec3I> n6X, n6Y;
@@ -624,9 +614,7 @@ namespace GraySkeletonCPP {
         return retVal;
     }
 
-    int DiscreteMesh::getN18(vector<Vec3I> & n18, const Volume & src,
-                             int x, int y, int z)
-    {
+    int DiscreteMesh::getN18(vector<Vec3I> & n18, const Volume & src, int x, int y, int z) {
         n18.resize(18);
         int n18Count = 0;
         for(int i = 0; i < 18; i++) {
@@ -640,9 +628,7 @@ namespace GraySkeletonCPP {
         return n18Count;
     }
 
-    int DiscreteMesh::getN26(vector<Vec3I> & n26, const Volume & src,
-                             int x, int y, int z)
-    {
+    int DiscreteMesh::getN26(vector<Vec3I> & n26, const Volume & src, int x, int y, int z) {
         int n26Count = 0;
         n26.resize(26);
         for(int i = 0; i < 26; i++) {
@@ -699,9 +685,7 @@ namespace GraySkeletonCPP {
         return n26Count;
     }
 
-    int DiscreteMesh::getMCount(const Volume & src, int x1, int y1, int z1,
-                                int x2, int y2, int z2)
-    {
+    int DiscreteMesh::getMCount(const Volume & src, int x1, int y1, int z1, int x2, int y2, int z2) {
         vector<Vec3I> n18X;
         int n18XCount = getN18(n18X, src, x1, y1, z1);
         vector<Vec3I> n6Y;
@@ -844,9 +828,7 @@ namespace GraySkeletonCPP {
         return surfaceFound && ((doDependantChecks && !isSurfaceBorder(src, x, y, z)) || (!doDependantChecks));
     }
 
-    bool DiscreteMesh::isVolumeBorder(const Volume & src, int x, int y,
-                                      int z, bool doDependantChecks)
-    {
+    bool DiscreteMesh::isVolumeBorder(const Volume & src, int x, int y, int z, bool doDependantChecks) {
         if(doDependantChecks && isVolumeBody(src, x, y, z))
             return false;
 
@@ -875,10 +857,7 @@ namespace GraySkeletonCPP {
         return src.isSimple(x, y, z) != 0;
     }
 
-    bool DiscreteMesh::isValidSurface(const Volume & src, Vec3D p0,
-                                      Vec3D p1, Vec3D p2,
-                                      Vec3D p3)
-    {
+    bool DiscreteMesh::isValidSurface(const Volume & src, Vec3D p0, Vec3D p1, Vec3D p2, Vec3D p3) {
         Vec3D surface[4] = {p0, p1, p2, p3};
         Vec3D pDelta = p2 - p0;
         Vec3D upperVector, lowerVector;
