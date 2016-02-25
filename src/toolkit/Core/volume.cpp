@@ -2929,7 +2929,7 @@ Volume * Volume::PerformGrayscaleSkeletonizationAbeysinghe2008(
         VolumeSkeletonizer * skeletonizer = new VolumeSkeletonizer(0,
                 curveRadius, surfaceRadius, skeletonRadius);
         Volume * outputVol =
-                skeletonizer->PerformImmersionSkeletonizationAndPruning(this,
+                skeletonizer->PerformImmersionSkeletonizationAndPruning(*this,
                         NULL, startDensity, getMax(), stepSize, 0, 0,
                         minCurveSize, minSurfaceSize, 0, 0, "", true, 1.0,
                         DEFAULT_PRUNE_THRESHOLD, DEFAULT_PRUNE_THRESHOLD);

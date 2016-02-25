@@ -51,7 +51,7 @@ namespace GraySkeletonCPP {
             VolumeSkeletonizer(int pointRadius, int curveRadius,
                                int surfaceRadius, int skeletonDirectionRadius);
             Volume * PerformImmersionSkeletonizationAndPruning(
-                    Volume * sourceVol, Volume * preserveVol, double startGray,
+                    Volume & sourceVol, Volume * preserveVol, double startGray,
                     double endGray, double stepSize, int smoothingIterations,
                     int smoothingRadius, int minCurveSize, int minSurfaceSize,
                     int maxCurveHole, int maxSurfaceHole, string outputPath,
@@ -72,12 +72,12 @@ namespace GraySkeletonCPP {
             Volume * GetJuTopologySkeleton(Volume * sourceVolume,
                                            Volume * preserve, double threshold);
             void PruneCurves(Volume * sourceVolume, int pruneLength);
-            void PruneSurfaces(Volume * sourceVolume, int pruneLength);
-            void PruneUsingStructureTensor( Volume * skeleton, Volume * sourceVolume,
-                                            Volume * preserveVol, Vector3Float * volumeGradient,
+            void PruneSurfaces(Volume & sourceVolume, int pruneLength);
+            void PruneUsingStructureTensor( Volume & skeleton, const Volume & sourceVolume,
+                                            Volume * preserveVol, vector<Vector3Float> & volumeGradient,
                                             vector<EigenResults3D> & volumeEigens, ProbDistr3D & filter,
                                             double threshold, char pruningClass, string outputPath);
-            void SmoothenVolume(Volume * &sourceVolume, double minGrayscale,
+            void SmoothenVolume(Volume & sourceVolume, double minGrayscale,
                                 double maxGrayscale, int stRadius);
             void VoxelBinarySubtract(Volume * sourceAndDestVolume1,
                                      Volume * sourceVolume2);
@@ -87,17 +87,17 @@ namespace GraySkeletonCPP {
             Vector3Float GetCurveDirection(const Volume &  skeleton, int x, int y, int z, int radius);
             Vector3Float GetSurfaceNormal(const Volume  & skeleton, int x, int y, int z);
             Vector3Float GetSurfaceNormal(const Volume  & skeleton, int x, int y, int z, int radius,
-                                          Vector3Float * localDirections);
-            Vector3Float * GetVolumeGradient(Volume * sourceVolume);
-            Vector3Float * GetSkeletonDirection(const Volume & skeleton, int type);
+                                          vector<Vector3Float> & localDirections);
+            vector<Vector3Float> GetVolumeGradient(const Volume & sourceVolume);
+            vector<Vector3Float> GetSkeletonDirection(const Volume & skeleton, int type);
 
             void GetEigenResult(EigenResults3D & returnVal,
-                                Vector3Float * imageGradient,
+                                vector<Vector3Float> & imageGradient,
                                 ProbDistr3D & gaussianFilter, int x, int y, int z,
                                 int sizeX, int sizeY, int sizeZ,
                                 int gaussianFilterRadius, bool clear);
-            vector<EigenResults3D> GetEigenResults(Volume * maskVol,
-                                                   Vector3Float * imageGradient,
+            vector<EigenResults3D> GetEigenResults(const Volume & maskVol,
+                                                   vector<Vector3Float> & imageGradient,
                                                    ProbDistr3D & gaussianFilter,
                                                    int gaussianFilterRadius,
                                                    bool useMask);
@@ -110,7 +110,7 @@ namespace GraySkeletonCPP {
             Vector3Float XYZtoUVW(Vector3Float vec, Vector3Float u, Vector3Float v, Vector3Float w);
             Volume * FillCurveHoles(Volume * thresholdedSkeleton,
                                     Volume * originalSkeleton, int maxHoleSize);
-            Volume * FillSurfaceHoles(Volume * thresholdedSkeleton,
+            Volume FillSurfaceHoles(Volume * thresholdedSkeleton,
                                       Volume * originalSkeleton,
                                       int maxHoleSize);
             Volume * GetJuThinning(Volume * sourceVolume, Volume * preserve,
@@ -244,14 +244,18 @@ namespace GraySkeletonCPP {
 
     }
 
-    vector<EigenResults3D> VolumeSkeletonizer::GetEigenResults(Volume * maskVol, Vector3Float * imageGradient, ProbDistr3D & gaussianFilter, int gaussianFilterRadius, bool useMask) {
-        vector<EigenResults3D> resultTable(maskVol->getSizeX() * maskVol->getSizeY() * maskVol->getSizeZ());
+    vector<EigenResults3D> VolumeSkeletonizer::GetEigenResults(
+            const Volume & maskVol, vector<Vector3Float> & imageGradient,
+            ProbDistr3D & gaussianFilter, int gaussianFilterRadius,
+            bool useMask)
+    {
+        vector<EigenResults3D> resultTable(maskVol.getSizeX() * maskVol.getSizeY() * maskVol.getSizeZ());
 
-        for(int x = MAX_GAUSSIAN_FILTER_RADIUS; x < maskVol->getSizeX() - MAX_GAUSSIAN_FILTER_RADIUS; x++) {
-            for(int y = MAX_GAUSSIAN_FILTER_RADIUS; y < maskVol->getSizeY() - MAX_GAUSSIAN_FILTER_RADIUS; y++) {
-                for(int z = MAX_GAUSSIAN_FILTER_RADIUS; z < maskVol->getSizeZ() - MAX_GAUSSIAN_FILTER_RADIUS; z++) {
-                    GetEigenResult(resultTable[maskVol->getIndex(x, y, z)], imageGradient, gaussianFilter, x, y, z,
-                            maskVol->getSizeX(), maskVol->getSizeY(), maskVol->getSizeZ(), gaussianFilterRadius, (useMask && (maskVol->getDataAt(x, y, z) == 0)));
+        for(int x = MAX_GAUSSIAN_FILTER_RADIUS; x < maskVol.getSizeX() - MAX_GAUSSIAN_FILTER_RADIUS; x++) {
+            for(int y = MAX_GAUSSIAN_FILTER_RADIUS; y < maskVol.getSizeY() - MAX_GAUSSIAN_FILTER_RADIUS; y++) {
+                for(int z = MAX_GAUSSIAN_FILTER_RADIUS; z < maskVol.getSizeZ() - MAX_GAUSSIAN_FILTER_RADIUS; z++) {
+                    GetEigenResult(resultTable[maskVol.getIndex(x, y, z)], imageGradient, gaussianFilter, x, y, z,
+                            maskVol.getSizeX(), maskVol.getSizeY(), maskVol.getSizeZ(), gaussianFilterRadius, (useMask && (maskVol.getDataAt(x, y, z) == 0)));
                 }
             }
         }
@@ -286,7 +290,7 @@ namespace GraySkeletonCPP {
                 }
             }
 
-            Volume * visited = new Volume(size, size, size);
+            Volume visited(size, size, size);
 
             vector<Vector3Int> list;
             list.push_back(Vector3Int(margin+radius, margin+radius, margin+radius));
@@ -297,12 +301,12 @@ namespace GraySkeletonCPP {
             while(list.size() > 0) {
                 currentPos = list[list.size()-1];
                 list.pop_back();
-                visited->setDataAt(currentPos.X(), currentPos.Y(), currentPos.Z(), 1);
+                visited.setDataAt(currentPos.X(), currentPos.Y(), currentPos.Z(), 1);
                 n6Count = DiscreteMesh::GetN6(n6, block, currentPos.X(), currentPos.Y(), currentPos.Z());
 
                 if(DiscreteMesh::GetN6Count(skeleton, x+currentPos.X()-margin-radius, y+currentPos.Y()-margin-radius, z+currentPos.Z()-margin-radius) <= 2) {
                     for(int i = 0; i < n6Count; i++) {
-                        if(visited->getDataAt(n6[i].X(), n6[i].Y(), n6[i].Z()) < 1) {
+                        if(visited.getDataAt(n6[i].X(), n6[i].Y(), n6[i].Z()) < 1) {
                             list.push_back(n6[i]);
                         }
                     }
@@ -311,14 +315,11 @@ namespace GraySkeletonCPP {
 
             delete block;
 
-            Vector3Float * gradient = GetVolumeGradient(visited);
+            vector<Vector3Float> gradient = GetVolumeGradient(visited);
             EigenResults3D eigen;
             GetEigenResult(eigen, gradient, uniformFilterSkeletonDirectionRadius,
                 margin+radius, margin+radius, margin+radius,
                 size, size, size, radius, false);
-
-            delete [] gradient;
-            delete visited;
 
             direction = eigen.vecs[2];
         }
@@ -332,7 +333,7 @@ namespace GraySkeletonCPP {
     }
 
 
-    Vector3Float VolumeSkeletonizer::GetSurfaceNormal(const Volume & skeleton, int x, int y, int z, int radius, Vector3Float * localDirections) {
+    Vector3Float VolumeSkeletonizer::GetSurfaceNormal(const Volume & skeleton, int x, int y, int z, int radius, vector<Vector3Float> & localDirections) {
         Vector3Float direction = localDirections[skeleton.getIndex(x, y, z)];
 
 
@@ -349,7 +350,7 @@ namespace GraySkeletonCPP {
                 }
             }
 
-            Volume * visited = new Volume(size, size, size);
+            Volume visited(size, size, size);
 
             vector<Vector3Int> list;
             list.push_back(Vector3Int(margin+radius, margin+radius, margin+radius));
@@ -359,7 +360,7 @@ namespace GraySkeletonCPP {
             while(list.size() > 0) {
                 currentPos = list[list.size()-1];
                 list.pop_back();
-                visited->setDataAt(currentPos.X(), currentPos.Y(), currentPos.Z(), 1);
+                visited.setDataAt(currentPos.X(), currentPos.Y(), currentPos.Z(), 1);
                 tempDir = localDirections[skeleton.getIndex(x+currentPos.X()-margin-radius, y+currentPos.Y()-margin-radius, z+currentPos.Z()-margin-radius)];
 
                 if(!tempDir.IsBadNormal()) {
@@ -369,7 +370,7 @@ namespace GraySkeletonCPP {
                            (block->getDataAt(currentPos.X() + VOLUME_NEIGHBOR_FACES[i][2][0], currentPos.Y() + VOLUME_NEIGHBOR_FACES[i][2][1], currentPos.Z() + VOLUME_NEIGHBOR_FACES[i][2][2]) > 0)) {
                             for(int j = 0; j < 3; j++) {
                                 newPos = currentPos + Vector3Int(VOLUME_NEIGHBOR_FACES[i][j][0], VOLUME_NEIGHBOR_FACES[i][j][1], VOLUME_NEIGHBOR_FACES[i][j][2]);
-                                if(visited->getDataAt(newPos.X(), newPos.Y(), newPos.Z()) < 1) {
+                                if(visited.getDataAt(newPos.X(), newPos.Y(), newPos.Z()) < 1) {
                                     list.push_back(newPos);
                                 }
                             }
@@ -381,17 +382,13 @@ namespace GraySkeletonCPP {
 
             delete block;
 
-            Vector3Float * gradient = GetVolumeGradient(visited);
+            vector<Vector3Float> gradient = GetVolumeGradient(visited);
 
             EigenResults3D eigen;
 
             GetEigenResult(eigen, gradient, uniformFilterSkeletonDirectionRadius,
                 margin+radius, margin+radius, margin+radius,
                 size, size, size, radius, false);
-
-
-            delete [] gradient;
-            delete visited;
 
             direction = eigen.vecs[0];
 
@@ -400,31 +397,31 @@ namespace GraySkeletonCPP {
         return direction;
     }
     // Gradient = (x+1,y,z) - (x-1,y,z) ....
-    Vector3Float * VolumeSkeletonizer::GetVolumeGradient(Volume * sourceVolume) {
-        Vector3Float * gradient = new Vector3Float[sourceVolume->getSizeX() * sourceVolume->getSizeY() * sourceVolume->getSizeZ()];
+    vector<Vector3Float> VolumeSkeletonizer::GetVolumeGradient(const Volume & sourceVolume) {
+        vector<Vector3Float> gradient(sourceVolume.getSizeX() * sourceVolume.getSizeY() * sourceVolume.getSizeZ());
         int index;
 
-        for(int x = 0; x < sourceVolume->getSizeX(); x = x + sourceVolume->getSizeX()-1) {
-            for(int y = 0; y < sourceVolume->getSizeY(); y = y + sourceVolume->getSizeY()-1) {
-                for(int z = 0; z < sourceVolume->getSizeZ(); z = z + sourceVolume->getSizeZ()-1) {
-                    index = sourceVolume->getIndex(x, y, z);
+        for(int x = 0; x < sourceVolume.getSizeX(); x = x + sourceVolume.getSizeX()-1) {
+            for(int y = 0; y < sourceVolume.getSizeY(); y = y + sourceVolume.getSizeY()-1) {
+                for(int z = 0; z < sourceVolume.getSizeZ(); z = z + sourceVolume.getSizeZ()-1) {
+                    index = sourceVolume.getIndex(x, y, z);
                     gradient[index] = Vector3Float(0, 0, 0);
                 }
             }
         }
         Vector3Float grad1, grad2;
 
-        for(int x = 1; x < sourceVolume->getSizeX()-1; x++) {
-            for(int y = 1; y < sourceVolume->getSizeY()-1; y++) {
-                for(int z = 1; z < sourceVolume->getSizeZ()-1; z++) {
-                    index = sourceVolume->getIndex(x, y, z);
-                    grad1 = Vector3Float(sourceVolume->getDataAt(x, y, z) - sourceVolume->getDataAt(x-1, y, z),
-                                               sourceVolume->getDataAt(x, y, z) - sourceVolume->getDataAt(x, y-1, z),
-                                               sourceVolume->getDataAt(x, y, z) - sourceVolume->getDataAt(x, y, z-1));
+        for(int x = 1; x < sourceVolume.getSizeX()-1; x++) {
+            for(int y = 1; y < sourceVolume.getSizeY()-1; y++) {
+                for(int z = 1; z < sourceVolume.getSizeZ()-1; z++) {
+                    index = sourceVolume.getIndex(x, y, z);
+                    grad1 = Vector3Float(sourceVolume.getDataAt(x, y, z) - sourceVolume.getDataAt(x-1, y, z),
+                                               sourceVolume.getDataAt(x, y, z) - sourceVolume.getDataAt(x, y-1, z),
+                                               sourceVolume.getDataAt(x, y, z) - sourceVolume.getDataAt(x, y, z-1));
 
-                    grad2 = Vector3Float(sourceVolume->getDataAt(x+1, y, z) - sourceVolume->getDataAt(x, y, z),
-                                               sourceVolume->getDataAt(x, y+1, z) - sourceVolume->getDataAt(x, y, z),
-                                               sourceVolume->getDataAt(x, y, z+1) - sourceVolume->getDataAt(x, y, z));
+                    grad2 = Vector3Float(sourceVolume.getDataAt(x+1, y, z) - sourceVolume.getDataAt(x, y, z),
+                                               sourceVolume.getDataAt(x, y+1, z) - sourceVolume.getDataAt(x, y, z),
+                                               sourceVolume.getDataAt(x, y, z+1) - sourceVolume.getDataAt(x, y, z));
 
 
                     for(int i = 0; i < 3; i++) {
@@ -440,10 +437,10 @@ namespace GraySkeletonCPP {
         return gradient;
     }
 
-    Vector3Float * VolumeSkeletonizer::GetSkeletonDirection(const Volume & skeleton, int type) {
+    vector<Vector3Float> VolumeSkeletonizer::GetSkeletonDirection(const Volume & skeleton, int type) {
         int index;
 
-        Vector3Float * localDirections = new Vector3Float[skeleton.getSizeX() * skeleton.getSizeY() * skeleton.getSizeZ()];
+        vector<Vector3Float> localDirections(skeleton.getSizeX() * skeleton.getSizeY() * skeleton.getSizeZ());
 
         for(int x = 1; x < skeleton.getSizeX()-1; x++) {
             for(int y = 1; y < skeleton.getSizeY()-1; y++) {
@@ -461,7 +458,7 @@ namespace GraySkeletonCPP {
             }
         }
 
-        Vector3Float * directions = new Vector3Float[skeleton.getSizeX() * skeleton.getSizeY() * skeleton.getSizeZ()];
+        vector<Vector3Float> directions(skeleton.getSizeX() * skeleton.getSizeY() * skeleton.getSizeZ());
 
         for(int x = 1; x < skeleton.getSizeX()-1; x++) {
             for(int y = 1; y < skeleton.getSizeY()-1; y++) {
@@ -496,7 +493,7 @@ namespace GraySkeletonCPP {
         res2.normalize();
     }
 
-    void VolumeSkeletonizer::GetEigenResult(EigenResults3D & returnVal, Vector3Float * imageGradient, ProbDistr3D & gaussianFilter, int x, int y, int z, int sizeX, int sizeY, int sizeZ, int gaussianFilterRadius, bool clear) {
+    void VolumeSkeletonizer::GetEigenResult(EigenResults3D & returnVal, vector<Vector3Float> & imageGradient, ProbDistr3D & gaussianFilter, int x, int y, int z, int sizeX, int sizeY, int sizeZ, int gaussianFilterRadius, bool clear) {
         if(clear) {
             for(int r = 0; r < 3; r++) {
                 returnVal.vals[r] = 0;
@@ -577,38 +574,38 @@ namespace GraySkeletonCPP {
         sourceVolume->erodeHelix(pruneLength);
     }
 
-    void VolumeSkeletonizer::PruneSurfaces(Volume * sourceVolume, int pruneLength) {
-        sourceVolume->erodeSheet(pruneLength);
+    void VolumeSkeletonizer::PruneSurfaces(Volume & sourceVolume, int pruneLength) {
+        sourceVolume.erodeSheet(pruneLength);
     }
 
     void VolumeSkeletonizer::PruneUsingStructureTensor(
-            Volume * skeleton, Volume * sourceVolume, Volume * preserveVol,
-            Vector3Float * volumeGradient, vector<EigenResults3D> & volumeEigens,
+            Volume &  skeleton, const Volume & sourceVolume, Volume * preserveVol,
+            vector<Vector3Float> & volumeGradient, vector<EigenResults3D> & volumeEigens,
             ProbDistr3D & filter, double threshold, char pruningClass,
             string outputPath)
     {
-        Volume * tempSkel = new Volume(*skeleton);
-        Volume * costVol = new Volume(skeleton->getSizeX(), skeleton->getSizeY(), skeleton->getSizeZ());
-        Vector3Float * skeletonDirections = GetSkeletonDirection(*skeleton, pruningClass);
+        Volume tempSkel(skeleton);
+        Volume costVol(skeleton.getSizeX(), skeleton.getSizeY(), skeleton.getSizeZ());
+        vector<Vector3Float> skeletonDirections = GetSkeletonDirection(skeleton, pruningClass);
         int index;
         double cost;
         EigenResults3D eigen;
 
-        for(int x = 0; x < skeleton->getSizeX(); x++) {
-            for(int y = 0; y < skeleton->getSizeY(); y++) {
-                for(int z = 0; z < skeleton->getSizeZ(); z++) {
-                    index = skeleton->getIndex(x, y, z);
-                    if(((preserveVol == NULL) || ((preserveVol != NULL) && preserveVol->getDataAt(index) < 0.5)) && (tempSkel->getDataAt(index) > 0)) {
+        for(int x = 0; x < skeleton.getSizeX(); x++) {
+            for(int y = 0; y < skeleton.getSizeY(); y++) {
+                for(int z = 0; z < skeleton.getSizeZ(); z++) {
+                    index = skeleton.getIndex(x, y, z);
+                    if(((preserveVol == NULL) || ((preserveVol != NULL) && preserveVol->getDataAt(index) < 0.5)) && (tempSkel.getDataAt(index) > 0)) {
                         if(volumeEigens.empty()) {
-                            GetEigenResult(eigen, volumeGradient, filter, x, y, z, skeleton->getSizeX(), skeleton->getSizeY(), skeleton->getSizeZ(), filter.R, false);
+                            GetEigenResult(eigen, volumeGradient, filter, x, y, z, skeleton.getSizeX(), skeleton.getSizeY(), skeleton.getSizeZ(), filter.R, false);
                         } else {
                             eigen = volumeEigens[index];
                         }
                         cost = GetVoxelCost(eigen, skeletonDirections[index], pruningClass);
                         if(cost < threshold) {
-                            skeleton->setDataAt(index, 0.0);
+                            skeleton.setDataAt(index, 0.0);
                         }
-                        costVol->setDataAt(index, cost);
+                        costVol.setDataAt(index, cost);
                     }
                 }
             }
@@ -625,12 +622,9 @@ namespace GraySkeletonCPP {
                 WriteSkeletonDirectionToVRMLFile(tempSkel, costVol, skeletonDirections, outputPath + "-SkeletonDirections-small.wrl", false, 0.06);
             }
         #endif
-        delete costVol;
-        delete tempSkel;
-        delete [] skeletonDirections;
     }
 
-    void VolumeSkeletonizer::SmoothenVolume(Volume * & sourceVolume, double minGrayscale, double maxGrayscale, int stRadius) {
+    void VolumeSkeletonizer::SmoothenVolume(Volume & sourceVolume, double minGrayscale, double maxGrayscale, int stRadius) {
         ProbDistr3D mask;
         mask.R = 1;
 
@@ -638,57 +632,54 @@ namespace GraySkeletonCPP {
         smoothenMask.R = stRadius;
         BinomDistr(smoothenMask);
 
-        sourceVolume->pad(MAX_GAUSSIAN_FILTER_RADIUS, 0);
+        sourceVolume.pad(MAX_GAUSSIAN_FILTER_RADIUS, 0);
 
-        Volume * maskVolume = new Volume(sourceVolume->getSizeX(), sourceVolume->getSizeY(), sourceVolume->getSizeZ());
+        Volume maskVolume(sourceVolume.getSizeX(), sourceVolume.getSizeY(), sourceVolume.getSizeZ());
         double data;
-        for(int x = 0; x < sourceVolume->getSizeX(); x++) {
-            for(int y = 0; y < sourceVolume->getSizeY(); y++) {
-                for(int z = 0; z < sourceVolume->getSizeZ(); z++) {
-                    data = sourceVolume->getDataAt(x, y, z);
+        for(int x = 0; x < sourceVolume.getSizeX(); x++) {
+            for(int y = 0; y < sourceVolume.getSizeY(); y++) {
+                for(int z = 0; z < sourceVolume.getSizeZ(); z++) {
+                    data = sourceVolume.getDataAt(x, y, z);
                     if((data >= minGrayscale) && (data <= maxGrayscale)) {
-                        maskVolume->setDataAt(x, y, z, 1.0);
+                        maskVolume.setDataAt(x, y, z, 1.0);
                     } else {
-                        maskVolume->setDataAt(x, y, z, 0.0);
+                        maskVolume.setDataAt(x, y, z, 0.0);
                     }
                 }
             }
         }
 
-        Vector3Float * volumeGradient = GetVolumeGradient(sourceVolume);
+        vector<Vector3Float> volumeGradient = GetVolumeGradient(sourceVolume);
         vector<EigenResults3D> eigens = GetEigenResults(maskVolume, volumeGradient, smoothenMask, stRadius, true);
-        Volume * destVolume = new Volume(sourceVolume->getSizeX(), sourceVolume->getSizeY(), sourceVolume->getSizeZ());
+        Volume destVolume (sourceVolume.getSizeX(), sourceVolume.getSizeY(), sourceVolume.getSizeZ());
         double sourceData;
 
-        for(int x = mask.R; x < sourceVolume->getSizeX()-mask.R; x++) {
-            for(int y = mask.R; y < sourceVolume->getSizeY()-mask.R; y++) {
-                for(int z = mask.R; z < sourceVolume->getSizeZ()-mask.R; z++) {
-                    sourceData = sourceVolume->getDataAt(x, y, z);
+        for(int x = mask.R; x < sourceVolume.getSizeX()-mask.R; x++) {
+            for(int y = mask.R; y < sourceVolume.getSizeY()-mask.R; y++) {
+                for(int z = mask.R; z < sourceVolume.getSizeZ()-mask.R; z++) {
+                    sourceData = sourceVolume.getDataAt(x, y, z);
                     if((sourceData >= minGrayscale) && (sourceData <= maxGrayscale)) {
-                        GetSTBasedDistribution(mask, eigens[sourceVolume->getIndex(x, y, z)]);
+                        GetSTBasedDistribution(mask, eigens[sourceVolume.getIndex(x, y, z)]);
 
                         for(int xx = -mask.R; xx <= mask.R; xx++) {
                             for(int yy = -mask.R; yy <= mask.R; yy++) {
                                 for(int zz = -mask.R; zz <= mask.R; zz++) {
-                                    destVolume->setDataAt(x, y, z,
-                                        destVolume->getDataAt(x, y, z) + sourceVolume->getDataAt(x+xx, y+yy, z+zz) *  mask.vals[xx+mask.R][yy+mask.R][zz+mask.R]);
+                                    destVolume.setDataAt(x, y, z,
+                                        destVolume.getDataAt(x, y, z) + sourceVolume.getDataAt(x+xx, y+yy, z+zz) *  mask.vals[xx+mask.R][yy+mask.R][zz+mask.R]);
                                 }
                             }
                         }
-                        destVolume->setDataAt(x, y, z, sourceVolume->getDataAt(x, y, z) * 0.5 + destVolume->getDataAt(x, y, z) * 0.5);
+                        destVolume.setDataAt(x, y, z, sourceVolume.getDataAt(x, y, z) * 0.5 + destVolume.getDataAt(x, y, z) * 0.5);
                     } else {
-                        destVolume->setDataAt(x, y, z, sourceVolume->getDataAt(x, y, z));
+                        destVolume.setDataAt(x, y, z, sourceVolume.getDataAt(x, y, z));
                     }
                 }
             }
         }
 
-        destVolume->pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
-        delete sourceVolume;
-        sourceVolume = destVolume;
+        destVolume.pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
 
-        delete maskVolume;
-        delete [] volumeGradient;
+        sourceVolume = destVolume;
     }
     void VolumeSkeletonizer::VoxelBinarySubtract(Volume * sourceAndDestVolume1, Volume * sourceVolume2){
         for(int x = 0; x < sourceAndDestVolume1->getSizeX(); x++) {
@@ -736,14 +727,15 @@ namespace GraySkeletonCPP {
         return filledSkeleton;
     }
 
-    Volume * VolumeSkeletonizer::FillSurfaceHoles(Volume * thresholdedSkeleton, Volume * originalSkeleton, int maxHoleSize) {
-        Volume * holes = new Volume(*originalSkeleton);
-        VoxelSubtract(holes, thresholdedSkeleton);
+    Volume VolumeSkeletonizer::FillSurfaceHoles(Volume * thresholdedSkeleton, Volume * originalSkeleton, int maxHoleSize) {
+        Volume holes(*originalSkeleton);
+
+        VoxelSubtract(&holes, thresholdedSkeleton);
         PruneSurfaces(holes, maxHoleSize);
 
-        Volume * filledSkeleton = new Volume(*originalSkeleton);
-        VoxelSubtract(filledSkeleton, holes);
-        delete holes;
+        Volume filledSkeleton(*originalSkeleton);
+        VoxelSubtract(&filledSkeleton, &holes);
+
         return filledSkeleton;
     }
 
@@ -809,33 +801,40 @@ namespace GraySkeletonCPP {
         return thinnedVolume;
     }
 
-    Volume * VolumeSkeletonizer::PerformImmersionSkeletonizationAndPruning(Volume * sourceVol, Volume * preserveVol, double startGray, double endGray, double stepSize, int smoothingIterations, int smoothingRadius, int minCurveSize, int minSurfaceSize, int maxCurveHole, int maxSurfaceHole, string outputPath, bool doPruning, double pointThreshold, double curveThreshold, double surfaceThreshold) {
+    Volume * VolumeSkeletonizer::PerformImmersionSkeletonizationAndPruning(
+            Volume & sourceVol, Volume * preserveVol, double startGray,
+            double endGray, double stepSize, int smoothingIterations,
+            int smoothingRadius, int minCurveSize, int minSurfaceSize,
+            int maxCurveHole, int maxSurfaceHole, string outputPath,
+            bool doPruning, double pointThreshold, double curveThreshold,
+            double surfaceThreshold)
+    {
         appTimeManager.PushCurrentTime();
         for(int i = 0; i < smoothingIterations; i++) {
             SmoothenVolume(sourceVol, startGray, endGray, smoothingRadius);
         }
         appTimeManager.PopAndDisplayTime("Smoothing : %f seconds!\n");
-        Vector3Float * volumeGradient = NULL;
+        vector<Vector3Float> volumeGradient;
         vector<EigenResults3D> volumeEigens;
-        sourceVol->pad(MAX_GAUSSIAN_FILTER_RADIUS, 0);
-        if(preserveVol != NULL) {
+        sourceVol.pad(MAX_GAUSSIAN_FILTER_RADIUS, 0);
+
+        if(preserveVol != NULL)
             preserveVol->pad(MAX_GAUSSIAN_FILTER_RADIUS, 0);
-        }
 
         if(doPruning) {
             volumeGradient = GetVolumeGradient(sourceVol);
         }
 
-        Volume * nullVol = new Volume(sourceVol->getSizeX(), sourceVol->getSizeY(), sourceVol->getSizeZ());
+        Volume nullVol(sourceVol.getSizeX(), sourceVol.getSizeY(), sourceVol.getSizeZ());
         appTimeManager.PushCurrentTime();
-        Volume * surfaceVol = GetImmersionThinning(sourceVol, preserveVol, startGray, endGray, stepSize, THINNING_CLASS_SURFACE_PRESERVATION);
+        Volume * surfaceVol = GetImmersionThinning(&sourceVol, preserveVol, startGray, endGray, stepSize, THINNING_CLASS_SURFACE_PRESERVATION);
         appTimeManager.PopAndDisplayTime("Surface Thinning : %f seconds!\n");
 
         #ifdef SAVE_INTERMEDIATE_RESULTS
             surfaceVol->toMRCFile((char *)(outputPath + "-S-Pre-Prune-Pre-Erode.mrc").c_str());
         #endif
 
-        PruneSurfaces(surfaceVol, minSurfaceSize);
+        PruneSurfaces(*surfaceVol, minSurfaceSize);
 
         appTimeManager.PushCurrentTime();
         if(doPruning) {
@@ -844,11 +843,11 @@ namespace GraySkeletonCPP {
                 WriteVolumeToVRMLFile(surfaceVol, outputPath + "-S-Pre-Prune.wrl");
             #endif
             appTimeManager.PushCurrentTime();
-            volumeEigens = GetEigenResults(surfaceVol, volumeGradient, gaussFiltSrfcR, surfaceRadius, true);
+            volumeEigens = GetEigenResults(*surfaceVol, volumeGradient, gaussFiltSrfcR, surfaceRadius, true);
             appTimeManager.PopAndDisplayTime("  Getting Eigens : %f seconds!\n");
 
             appTimeManager.PushCurrentTime();
-            Volume * prunedSurfaceVol = new Volume(*surfaceVol);
+            Volume prunedSurfaceVol(*surfaceVol);
             appTimeManager.PopAndDisplayTime("  Getting Copy of surface : %f seconds!\n");
 
 
@@ -862,40 +861,38 @@ namespace GraySkeletonCPP {
                 prunedSurfaceVol->toMRCFile((char *)(outputPath + "-S-Post-Prune.mrc").c_str());
             #endif
 
-            delete surfaceVol;
-            surfaceVol = prunedSurfaceVol;
+            *surfaceVol = prunedSurfaceVol;
             appTimeManager.PopAndDisplayTime("  Memory Cleanup: %f seconds!\n");
 
         }
 
-        PruneSurfaces(surfaceVol, minSurfaceSize);
+        PruneSurfaces(*surfaceVol, minSurfaceSize);
         appTimeManager.PopAndDisplayTime("Surface Pruning  : %f seconds!\n");
 
         #ifdef SAVE_INTERMEDIATE_RESULTS
             surfaceVol->toMRCFile((char *)(outputPath + "-S-Post-Erosion.mrc").c_str());
         #endif
 
-        Volume * cleanedSurfaceVol = GetJuSurfaceSkeleton(surfaceVol, nullVol, 0.5);
+        Volume cleanedSurfaceVol = *GetJuSurfaceSkeleton(surfaceVol, &nullVol, 0.5);
         PruneSurfaces(cleanedSurfaceVol, minSurfaceSize);
         #ifdef SAVE_INTERMEDIATE_RESULTS
             cleanedSurfaceVol->toMRCFile((char *)(outputPath + "-S-Cleaned.mrc").c_str());
         #endif
 
-        delete surfaceVol;
-        surfaceVol = cleanedSurfaceVol;
+        *surfaceVol = cleanedSurfaceVol;
         VoxelOr(surfaceVol, preserveVol);
 
         appTimeManager.PushCurrentTime();
 
-        Volume * curveVol = GetImmersionThinning(sourceVol, surfaceVol, startGray, endGray, stepSize, THINNING_CLASS_CURVE_PRESERVATION);
+        Volume curveVol = *GetImmersionThinning(&sourceVol, surfaceVol, startGray, endGray, stepSize, THINNING_CLASS_CURVE_PRESERVATION);
         appTimeManager.PopAndDisplayTime("Curve Thinning   : %f seconds!\n");
 
         #ifdef SAVE_INTERMEDIATE_RESULTS
             curveVol->toMRCFile((char *)(outputPath + "-C-Pre-Prune_Pre-Erode.mrc").c_str());
         #endif
 
-        PruneCurves(curveVol, minCurveSize);
-        VoxelBinarySubtract(curveVol, surfaceVol);
+        PruneCurves(&curveVol, minCurveSize);
+        VoxelBinarySubtract(&curveVol, surfaceVol);
 
         appTimeManager.PushCurrentTime();
         if(doPruning) {
@@ -904,55 +901,54 @@ namespace GraySkeletonCPP {
             #endif
 
             volumeEigens = GetEigenResults(curveVol, volumeGradient, gaussFiltCrvR, curveRadius, true);
-            Volume * prunedCurveVol = new Volume(*curveVol);
+            Volume prunedCurveVol(curveVol);
             PruneUsingStructureTensor(prunedCurveVol, sourceVol, preserveVol, volumeGradient, volumeEigens, gaussFiltCrvR, curveThreshold, PRUNING_CLASS_PRUNE_CURVES, outputPath + "-C");
 
             #ifdef SAVE_INTERMEDIATE_RESULTS
                 prunedCurveVol->toMRCFile((char *)(outputPath + "-C-Post-Prune.mrc").c_str());
             #endif
 
-            Volume * filledCurveVol = FillCurveHoles(prunedCurveVol, curveVol, maxCurveHole);
+            Volume * filledCurveVol = FillCurveHoles(&prunedCurveVol, &curveVol, maxCurveHole);
             #ifdef SAVE_INTERMEDIATE_RESULTS
                 filledCurveVol->toMRCFile((char *)(outputPath + "-C-Post-Fill.mrc").c_str());
             #endif
-            delete curveVol;
-            delete prunedCurveVol;
-            curveVol = filledCurveVol;
+
+            curveVol = *filledCurveVol;
         }
 
-        VoxelOr(curveVol, surfaceVol);
-        PruneCurves(curveVol, minCurveSize);
+        VoxelOr(&curveVol, surfaceVol);
+        PruneCurves(&curveVol, minCurveSize);
         appTimeManager.PopAndDisplayTime("Curve Pruning    : %f seconds!\n");
         #ifdef SAVE_INTERMEDIATE_RESULTS
             curveVol->toMRCFile((char *)(outputPath + "-C-Post-Erosion.mrc").c_str());
         #endif
 
-        Volume * cleanedCurveVol = GetJuCurveSkeleton(curveVol, surfaceVol, 0.5, true);
-        PruneCurves(cleanedCurveVol, minCurveSize);
+        Volume cleanedCurveVol = *GetJuCurveSkeleton(&curveVol, surfaceVol, 0.5, true);
+        PruneCurves(&cleanedCurveVol, minCurveSize);
         #ifdef SAVE_INTERMEDIATE_RESULTS
             cleanedCurveVol->toMRCFile((char *)(outputPath + "-C-Cleaned.mrc").c_str());
         #endif
 
-        delete curveVol;
         curveVol = cleanedCurveVol;
 
-        VoxelOr(curveVol, surfaceVol);
+        VoxelOr(&curveVol, surfaceVol);
         #ifdef SAVE_INTERMEDIATE_RESULTS
             curveVol->toMRCFile((char *)(outputPath + "-SC.mrc").c_str());
         #endif
 
         delete surfaceVol;
         //delete curveVol;
-        delete nullVol;
-        delete [] volumeGradient;
 
         #ifdef SAVE_INTERMEDIATE_RESULTS
             curveVol->toOFFCells2((char *)(outputPath + "-SC.off").c_str());
         #endif
 
-        sourceVol->pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
-        curveVol->pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
-        return curveVol;
+        sourceVol.pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
+        curveVol.pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
+
+        Volume * res = new Volume(curveVol);
+
+        return res;
     }
 
 
@@ -981,7 +977,7 @@ namespace GraySkeletonCPP {
               cout<<"surfaceVol->getSize(): "<<surfaceVol->getSize()<<endl;
         #endif
 
-        PruneSurfaces(surfaceVol, minSurfaceWidth);
+        PruneSurfaces(*surfaceVol, minSurfaceWidth);
         VoxelOr(preservedVol, surfaceVol);
 
         curveVol = VolumeSkeletonizer::GetJuCurveSkeleton(imageVol, preservedVol, threshold, true);

@@ -266,8 +266,8 @@ namespace Protein_Morph {
         int kernelWidth = min(offset, (int)round(2.0/min(min(vol.getSpacingX(), vol.getSpacingY()), vol.getSpacingZ())));
         VolumeSkeletonizer skeletonizer(kernelWidth, kernelWidth, kernelWidth, kernelWidth);
 
-        Vector3Float * volumeGradient = skeletonizer.GetVolumeGradient(&tempVol);
-        vector<EigenResults3D> eigens = skeletonizer.GetEigenResults(&maskVol, volumeGradient, skeletonizer.gaussFiltPtR, kernelWidth, true);
+        vector<Vector3Float> volumeGradient = skeletonizer.GetVolumeGradient(tempVol);
+        vector<EigenResults3D> eigens = skeletonizer.GetEigenResults(maskVol, volumeGradient, skeletonizer.gaussFiltPtR, kernelWidth, true);
 
         float minScore = 10, maxScore = -10;
         vector<float> aspectRatios;
@@ -304,7 +304,6 @@ namespace Protein_Morph {
 //				printf("%f\n", aspectRatios[i]);
         }
 
-        delete [] volumeGradient;
         return aspectRatios;
     }
 
