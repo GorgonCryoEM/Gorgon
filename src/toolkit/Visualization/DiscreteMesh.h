@@ -47,29 +47,22 @@ namespace GraySkeletonCPP {
             bool IsCurvePresent(Vector3Int point1, Vector3Int point2);
             bool IsSurfacePresent(int x, int y, int z, unsigned char direction);
             bool FollowCurve(int & x, int & y, int & z);
-            int GetCurveNeighbors(int x, int y, int z,
-                                  vector<Vector3Int> & neighbors);
+            int GetCurveNeighbors(int x, int y, int z, vector<Vector3Int> & neighbors);
             int GetCurveNeighborsCount(int x, int y, int z);
             int GetSurfaceNeighbors(int x, int y, int z, int * & neighbors);
-            int GetSurfaceNeighbors(int x1, int y1, int z1, int x2, int y2,
-                                    int z2, int * & neighbors);
-            int GetSurfaceNeighborCount(int x1, int y1, int z1, int x2, int y2,
-                                        int z2);
-            void GetSurfacePoints(int x, int y, int z, unsigned char direction,
-                                  Vector3Int * & points);
+            int GetSurfaceNeighbors(int x1, int y1, int z1, int x2, int y2, int z2, int * & neighbors);
+            int GetSurfaceNeighborCount(int x1, int y1, int z1, int x2, int y2, int z2);
+            void GetSurfacePoints(int x, int y, int z, unsigned char direction, Vector3Int * & points);
 
             static int GetC6(Vector3Int * neighbors, int neighborCount,
                              Vector3Int currPoint);
             static int GetC26(Vector3Int * neighbors, int neighborCount,
                               Vector3Int currPoint);
-            static int GetN6(vector<Vector3Int> & n6, Volume * sourceVolume, int x,
-                             int y, int z);
+            static int GetN6(vector<Vector3Int> & n6, Volume * sourceVolume, int x, int y, int z);
             static int GetN6_2(vector<Vector3Int> & n6_2, Volume * sourceVolume,
                                int x, int y, int z);
-            static int GetN18(vector<Vector3Int> & n18, Volume * sourceVolume, int x,
-                              int y, int z);
-            static int GetN26(Vector3Int * & n26, Volume * sourceVolume, int x,
-                              int y, int z);
+            static int GetN18(vector<Vector3Int> & n18, Volume * sourceVolume, int x, int y, int z);
+            static int GetN26(Vector3Int * & n26, Volume * sourceVolume, int x, int y, int z);
             static int GetN6Count(const Volume & sourceVolume, int x, int y, int z);
             static int GetN6_2Count(Volume * sourceVolume, int x, int y, int z);
             static int GetN18Count(Volume * sourceVolume, int x, int y, int z);
@@ -77,25 +70,18 @@ namespace GraySkeletonCPP {
             static int GetMCount(Volume * sourceVolume, int x1, int y1, int z1,
                                  int x2, int y2, int z2);
             static int GetImmersionN6Count(Volume * skeleton, Vector3Int point);
-            static int GetImmersionSkeletalValue(Volume * skeleton,
-                                                 Vector3Int point);
-            static bool IsImmersionBoundary(Volume * skeleton,
-                                            Vector3Int point);
+            static int GetImmersionSkeletalValue(Volume * skeleton, Vector3Int point);
+            static bool IsImmersionBoundary(Volume * skeleton, Vector3Int point);
             static bool IsPoint(Volume * sourceVolume, int x, int y, int z);
             static bool IsCurveEnd(Volume * sourceVolume, int x, int y, int z);
             static bool IsCurveBody(Volume * sourceVolume, int x, int y, int z);
-            static bool IsSurfaceBorder(Volume * sourceVolume, int x, int y,
-                                        int z);
-            static bool IsSurfaceBody(Volume * sourceVolume, int x, int y,
-                                      int z, bool doDependantChecks);
-            static bool IsVolumeBorder(Volume * sourceVolume, int x, int y,
-                                       int z, bool doDependantChecks);
-            static bool IsVolumeBody(Volume * sourceVolume, int x, int y,
-                                     int z);
+            static bool IsSurfaceBorder(Volume * sourceVolume, int x, int y, int z);
+            static bool IsSurfaceBody(Volume * sourceVolume, int x, int y, int z, bool doDependantChecks);
+            static bool IsVolumeBorder(Volume * sourceVolume, int x, int y, int z, bool doDependantChecks);
+            static bool IsVolumeBody(Volume * sourceVolume, int x, int y, int z);
             static bool IsSimple(Volume * sourceVolume, int x, int y, int z);
             static bool IsValidSurface(const Volume & sourceVolume, Vector3Double p0,
-                                       Vector3Double p1, Vector3Double p2,
-                                       Vector3Double p3);
+                                       Vector3Double p1, Vector3Double p2, Vector3Double p3);
 
             static void FindCurveBase(Vector3Double &p1, Vector3Double &p2);
             static void FindCurveBase(Vector3Int &p1, Vector3Int &p2);
