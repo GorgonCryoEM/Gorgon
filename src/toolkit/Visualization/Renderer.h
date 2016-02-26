@@ -99,10 +99,8 @@ namespace Visualization {
     }
 
     void Renderer::UpdateBoundingBox() {
-        for(int i = 0; i < 3; i++) {
-            minPts[i] = -0.5;
-            maxPts[i] = 0.5;
-        }
+        minPts = -0.5;
+        maxPts = 0.5;
     }
 
     bool Renderer::SelectionRotate(Vec3F centerOfMass, Vec3F rotationAxis, float angle) {
