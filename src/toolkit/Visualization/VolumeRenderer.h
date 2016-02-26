@@ -179,7 +179,7 @@ namespace Visualization {
         if((x < 0) || (x > vol->getSizeX()-1) || (y < 0) || (y > vol->getSizeY()-1) || (z < 0) || (z > vol->getSizeZ()-1)) {
             return 0.0f;
         } else {
-            return vol->(*this)(x, y, z);
+            return (*vol)(x, y, z);
         }
     }
 
@@ -272,11 +272,11 @@ namespace Visualization {
                     for(int xx = -radius; xx <= radius; xx++) {
                         for(int yy = -radius; yy <= radius; yy++) {
                             for(int zz = -radius; zz <= radius; zz++) {
-                                val += src->(*this)(2*x+xx, 2*y+yy, 2*z+zz) * gaussianFilter.vals[xx+radius][yy+radius][zz+radius] ;
+                                val += (*src)(2*x+xx, 2*y+yy, 2*z+zz) * gaussianFilter.vals[xx+radius][yy+radius][zz+radius] ;
                             }
                         }
                     }
-                    dest(x, y, z, val);
+                    (*dest)(x, y, z) = val;
                 }
             }
         }
@@ -493,7 +493,7 @@ namespace Visualization {
                 for(iX = 0; iX < 2; iX++) {
                     for(iY = 0; iY < 2; iY++) {
                         for(iZ = 0; iZ < 2; iZ++) {
-                            cuttingVolume(iX, iY, iZ, (cuttingPlaneCenter - Vec3F(iX * getSizeX(), iY * getSizeY(), iZ * getSizeZ()))* cuttingPlaneDirection);
+                            cuttingVolume(iX, iY, iZ) = (cuttingPlaneCenter - Vec3F(iX * getSizeX(), iY * getSizeY(), iZ * getSizeZ()))* cuttingPlaneDirection;
                         }
                     }
                 }
@@ -528,7 +528,7 @@ namespace Visualization {
                     for(iX = 0; iX < 2; iX++) {
                         for(iY = 0; iY < 2; iY++) {
                             for(iZ = 0; iZ < 2; iZ++) {
-                                cuttingVolume(iX, iY, iZ, (center - Vec3F(iX * getSizeX(), iY * getSizeY(), iZ * getSizeZ()))* cuttingPlaneDirection);
+                                cuttingVolume(iX, iY, iZ) = (center - Vec3F(iX * getSizeX(), iY * getSizeY(), iZ * getSizeZ()))* cuttingPlaneDirection;
                             }
                         }
                     }

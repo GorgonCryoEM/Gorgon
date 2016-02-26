@@ -334,7 +334,7 @@ namespace Protein_Morph {
                 for(z = 0; z < src->getSizeZ(); z++) {
                     index = src->getIndex(x, y, z);
                     vertexLocations[index] = -1;
-                    value = (int)round(src->(*this)(index));
+                    value = (int)round((*src)(index));
                     if(value > 0) {
                         tempVertex.position = Vec3F(x, y, z);
                         vertexLocations[index] = AddVertex(tempVertex);
@@ -825,7 +825,7 @@ namespace Protein_Morph {
                 for(unsigned int k = 0; k < 3; k++) {
                     pos[k] = positions[j][k] - minPosInt[k];
                 }
-                vol(pos[0], pos[1], pos[2], 1.0);
+                (*vol)(pos[0], pos[1], pos[2]) = 1.0;
             }
         }
 

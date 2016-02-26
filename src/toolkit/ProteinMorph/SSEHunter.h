@@ -147,7 +147,7 @@ namespace Protein_Morph {
                     } else {
                         value = tempVal*(distance / maxDistance);
                     }
-                    vol(loc.X() + x, loc.Y() + y, loc.Z() + z, value);
+                    vol(loc.X() + x, loc.Y() + y, loc.Z() + z) = value;
                 }
             }
         }
@@ -260,7 +260,7 @@ namespace Protein_Morph {
         for(unsigned int i = 0; i < atomVolumePositions.size(); i++) {
             maskVol(atomVolumePositions[i].X() + offset,
                     atomVolumePositions[i].Y() + offset,
-                    atomVolumePositions[i].Z() + offset, 1.0);
+                    atomVolumePositions[i].Z() + offset) = 1.0;
         }
 
         int kernelWidth = min(offset, (int)round(2.0/min(min(vol.getSpacingX(), vol.getSpacingY()), vol.getSpacingZ())));
@@ -470,7 +470,7 @@ namespace Protein_Morph {
                 for (int k = 0; k < nz; k++) {
                     val = map(i,j,k);
                     val = (val > thresh ? (val - thresh)/norm : 0);
-                    map(i,j,k,val);
+                    map(i,j,k) =val;
                 }
             }
         }
@@ -653,11 +653,11 @@ namespace Protein_Morph {
                     k2 = (k+nz/2) % nz;
 
                     val = best_ccf[ix];
-                    bestCCF(i2,j2,k2, val);
+                    bestCCF(i2,j2,k2) = val;
                     if (az_vol && best_az)
-                        az_vol(i2,j2,k2, best_az[ix]);
+                        (*az_vol)(i2,j2,k2) = best_az[ix];
                     if (alt_vol && best_alt)
-                        alt_vol(i2,j2,k2, best_alt[ix]);
+                        (*alt_vol)(i2,j2,k2) = best_alt[ix];
                 }
             }
         }
@@ -672,17 +672,17 @@ namespace Protein_Morph {
         double max = bestCCF.getMax();
         for (int i=0; i < N; i++) {
             val = bestCCF(i);
-            bestCCF(i, val/max);
+            bestCCF(i) = val/max;
         }
         max = model_copy.getMax();
         for (int i=0; i < N; i++) {
             val = model_copy(i);
-            model_copy(i, val/max);
+            model_copy(i) = val/max;
         }
         //Weight results to favor areas inside high density regions of model_copy.
         for (int i=0; i < N; i++) {
             val = bestCCF(i);
-            bestCCF(i, val*model_copy(i));
+            bestCCF(i) = val*model_copy(i);
             // Note: all voxels in model_copy should have non-negative values because of earlier thresholding
         }
 
@@ -690,7 +690,7 @@ namespace Protein_Morph {
         max = bestCCF.getMax();
         for (int i = 0; i < N; i++) {
             val = bestCCF(i);
-            bestCCF(i, val/max);
+            bestCCF(i) = val/max;
         }
 
 #ifdef USE_TIME_MANAGER

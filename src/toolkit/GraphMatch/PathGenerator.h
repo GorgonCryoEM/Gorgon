@@ -18,7 +18,7 @@ namespace GraphMatch {
         PathGenerator(Graph * graph);
         void GenerateGraph(GraphNode * node, char * outFileName);
         void GenerateGraph(LinkedNodeStub * node, char * outFileName);
-        bool MarkPath(int startHelix, int startCorner, int endHelix, int endCorner, Volume * skeletonVol, Volume * newVol);
+        bool MarkPath(int startHelix, int startCorner, int endHelix, int endCorner, const Volume & skeletonVol, Volume & newVol);
 
     private:
         Graph * graph;
@@ -46,7 +46,7 @@ namespace GraphMatch {
                 int startCorner = node->n2[startNode]%2 + 1;
                 int endHelix = node->n2[endNode]/2;
                 int endCorner = node->n2[endNode]%2 + 1;
-                bool marked = MarkPath(startHelix, startCorner, endHelix, endCorner, skeletonVol, &newVol);
+                bool marked = MarkPath(startHelix, startCorner, endHelix, endCorner, *skeletonVol, newVol);
 
                 if(!marked) {
                     printf("Path between %d and %d was not marked \n", startHelix + 1, endHelix + 1);
@@ -77,7 +77,7 @@ namespace GraphMatch {
             endCorner = ((currentNode->n2Node-1)%2) + 1;
 
             if((startHelix != -1) && (endHelix != -1)) {
-                marked = MarkPath(startHelix, startCorner, endHelix, endCorner, skeletonVol, newVol);
+                marked = MarkPath(startHelix, startCorner, endHelix, endCorner, *skeletonVol, *newVol);
 
     #ifdef VERBOSE
                 if(!marked) {
@@ -95,8 +95,8 @@ namespace GraphMatch {
 
 
     bool PathGenerator::MarkPath(int startHelix, int startCorner, int endHelix,
-                                 int endCorner, Volume * skeletonVol,
-                                 Volume * newVol)
+                                 int endCorner, const Volume & skeletonVol,
+                                 Volume & newVol)
     {
         vector<Point3Int *> oldStack;
         vector<Point3Int *> newStack;
@@ -119,14 +119,14 @@ namespace GraphMatch {
         d[3][0] = 0;		d[3][1] = 1;		d[3][2] = 0;
         d[4][0] = -1;		d[4][1] = 0;		d[4][2] = 0;
         d[5][0] = 1;		d[5][1] = 0;		d[5][2] = 0;
-        Volume * visited = new Volume(*skeletonVol);
+        Volume visited(skeletonVol);
 
         for(int i = 0; i < (int)graph->skeletonHelixes.size(); i++) {
             if(((i != endHelix) && (i != startHelix))) {
             //if(i != endHelix) {
                 for(unsigned int j = 0; j < graph->skeletonHelixes[i]->internalCells.size(); j++) {
                     Point3Int cell = graph->skeletonHelixes[i]->internalCells[j];
-                    visited(cell.x, cell.y, cell.z, 100000);
+                    visited(cell.x, cell.y, cell.z) = 100000;
                 }
             }
 
@@ -134,7 +134,7 @@ namespace GraphMatch {
             for(unsigned int j = 0; j < graph->skeletonHelixes[i]->cornerCells.size(); j++) {
                 Point3Int cell = graph->skeletonHelixes[i]->cornerCells[j];
                 if(((i==startHelix) && (cell.node == startCorner))  || ((i==endHelix) && (cell.node == endCorner))) {
-                    visited(cell.x, cell.y, cell.z, 0);
+                    visited(cell.x, cell.y, cell.z) = 0;
                 }
             }
         }
@@ -167,13 +167,13 @@ namespace GraphMatch {
                         x = currentPoint->x+d[j][0];
                         y = currentPoint->y+d[j][1];
                         z = currentPoint->z+d[j][2];
-                        if((x >= 0) && (x < skeletonVol->getSizeX()) && (y >=0) && (y < skeletonVol->getSizeY()) && (z >= 0) && (z < skeletonVol->getSizeZ())) {
-                            if((visited->(*this)(x, y, z) <= 0.001) && (skeletonVol->(*this)(x, y, z) > 0.001)) {
+                        if((x >= 0) && (x < skeletonVol.getSizeX()) && (y >=0) && (y < skeletonVol.getSizeY()) && (z >= 0) && (z < skeletonVol.getSizeZ())) {
+                            if((visited(x, y, z) <= 0.001) && (skeletonVol(x, y, z) > 0.001)) {
                                 Point3Int * newPoint = new Point3Int(x, y, z, currentPoint->distance + 1);
 
 
                                 newStack.push_back(newPoint);
-                                visited(x, y, z, currentPoint->distance);
+                                visited(x, y, z) = currentPoint->distance;
                             }
                         }
                     }
@@ -190,24 +190,23 @@ namespace GraphMatch {
         }
 
 
-        newVol(xx, yy, zz, 1);
+        newVol(xx, yy, zz) = 1;
         for(int i = foundDistance - 1; i >= 1; i--) {
             for(int j = 0; j < 6; j++) {
                 x = xx+d[j][0];
                 y = yy+d[j][1];
                 z = zz+d[j][2];
-                if((x >= 0) && (x < skeletonVol->getSizeX()) && (y >=0) && (y < skeletonVol->getSizeY()) && (z >= 0) && (z < skeletonVol->getSizeZ())) {
-                    if(int(visited->(*this)(x, y, z) - (double)i + 0.5) == 0) {
+                if((x >= 0) && (x < skeletonVol.getSizeX()) && (y >=0) && (y < skeletonVol.getSizeY()) && (z >= 0) && (z < skeletonVol.getSizeZ())) {
+                    if(int(visited(x, y, z) - (double)i + 0.5) == 0) {
                         xx = x;
                         yy = y;
                         zz = z;
-                        newVol(xx, yy, zz, 1);
+                        newVol(xx, yy, zz) = 1;
                         break;
                     }
                 }
             }
         }
-        delete visited;
         return true;
     }
 }

@@ -147,14 +147,14 @@ namespace GraphMatch {
                 for(int z = 0; z < vol->getSizeZ(); z++) {
                     point[2] = vol->getOriginZ() + z * vol->getSpacingZ();
                     // if this voxel nonzero
-                    if(vol->(*this)(x, y, z) > 0) {
+                    if((*vol)(x, y, z) > 0) {
                         // check all helices to see if it's inside one
                         bool inHelix = false;
                         for(int i = 0; i < (int)helixes.size(); i++) {
                             // if i is a helix and if point is inside helix i
                             if(helixes[i]->shapeType == GRAPHEDGE_HELIX && helixes[i]->IsInsideShape(point)) {
                                 // store helix number for this point in the volume
-                                paintedVol(x, y, z, i+1);
+                                paintedVol(x, y, z) = (float)i+1;
                                 // add this point as as internal cell of the helix
                                 inHelix = true;
                                 helixes[i]->AddInternalCell(Point3Int(x, y, z, 0));
@@ -199,7 +199,7 @@ namespace GraphMatch {
                     for(int z = 0; z < sheetClusters->getSizeZ(); z++) {
                         point[2] = sheetClusters->getOriginZ() + z * sheetClusters->getSpacingZ();
                         // if this voxel nonzero
-                        if(sheetClusters->(*this)(x, y, z) == i) {
+                        if((*sheetClusters)(x, y, z) == i) {
                             count++;
 
                             // measure distance to every SSE sheet, add to running total
@@ -265,13 +265,13 @@ namespace GraphMatch {
                 for(int z = 0; z < sheetClusters->getSizeZ(); z++) {
                     point[2] = sheetClusters->getOriginZ() + z * sheetClusters->getSpacingZ();
                     // check which sheet is associated with this voxel
-                    int skeletonSheetNum = (int)sheetClusters->(*this)(x, y, z);
+                    int skeletonSheetNum = (int)(*sheetClusters)(x, y, z);
                     // for voxels that are assigned to some sheet
                     if (skeletonSheetNum > 0) {
                         int sseSheetNum = helixesMapping[skeletonSheetNum];
                         if (sseSheetNum != -1) {
                             // associate this voxel with this sheet
-                            paintedVol(x, y, z, sseSheetNum+1);
+                            paintedVol(x, y, z) = sseSheetNum+1;
                             // add this point as as internal cell of the helix
                             helixes[sseSheetNum]->AddInternalCell(Point3Int(x, y, z, 0));
                         }
@@ -290,7 +290,7 @@ namespace GraphMatch {
         // create an individual volume for each sheet from the sheetClusters volume
         for (int i = 1; i <= numSheets; i++) {
             Volume* singleSheet = new Volume(sheetClusters->getSizeX(), sheetClusters->getSizeY(), sheetClusters->getSizeZ(), 1.0); // trying something new
-            singleSheet->applyMask(sheetClusters,i,true);
+            singleSheet->applyMask(*sheetClusters,i,true);
             singleSheet->threshold( 0.1, 0, 1 ) ;
             skeletonSheets.push_back(singleSheet);
         }
@@ -478,7 +478,7 @@ namespace GraphMatch {
             for ( int j = 0 ; j < vol->getSizeY() ; j ++ )
                 for ( int k = 0 ; k < vol->getSizeZ() ; k ++ )
                 {
-                    if ( vol->(*this)(i,j,k) <= 0 || svol->(*this)(i,j,k) != 0 )
+                    if ( (*vol)(i,j,k) <= 0 || (*svol)(i,j,k) != 0 )
                     {
                         // Not a data point or has been visited
                         continue ;
@@ -491,7 +491,7 @@ namespace GraphMatch {
 
                     //Initialize queue
                     int numNodes = 1 ;
-                    svol( i, j, k, totSheets ) ;
+                    (*svol)( i, j, k) = totSheets;
                     queue<QueueNode> q;
                     q.push(QueueNode( i, j, k ) );
                     while ( !q.empty() )
@@ -512,9 +512,9 @@ namespace GraphMatch {
                                 int nz = oz + neighbor6[m][2] ;
 
                                 //if ( vol->(*this)(nx,ny,nz) > 0 && svol->(*this)(nx,ny,nz) == 0 )
-                                if ( vol->(*this)(nx,ny,nz) > 0 && svol->(*this)(nx,ny,nz) == 0 && isSkeletonSheet(*vol,nx,ny,nz) )
+                                if ( (*vol)(nx,ny,nz) > 0 && (*svol)(nx,ny,nz) == 0 && isSkeletonSheet(*vol,nx,ny,nz) )
                                 {
-                                    svol(nx,ny,nz,totSheets);
+                                    (*svol)(nx,ny,nz) =totSheets;
                                     q.push(QueueNode(nx,ny,nz));
                                     numNodes ++ ;
                                 }
@@ -538,10 +538,10 @@ namespace GraphMatch {
             for (int j = 0 ; j < vol->getSizeY() ; j ++ )
                 for (int k = 0 ; k < vol->getSizeZ() ; k ++ )
                 {
-                    int cnt = (int) svol->(*this)(i,j,k) ;
+                    int cnt = (int) (*svol)(i,j,k) ;
                     if ( cnt > 0 && sheets[ cnt ] < minSize )
                     {
-                        svol(i,j,k,-1) ;
+                        (*svol)(i,j,k) = -1;
                     }
                 }
         return svol ;
@@ -594,8 +594,8 @@ namespace GraphMatch {
 
             // iterate over 6 neighbor voxels, counting how many lie outside the sheet
             for(int j = 0; j < 6; j++) {
-                if((vol->(*this)(helixes[sheetId]->internalCells[i].x + d[j][0], helixes[sheetId]->internalCells[i].y + d[j][1], helixes[sheetId]->internalCells[i].z + d[j][2]) > 0) &&
-                    (paintedVol->(*this)(helixes[sheetId]->internalCells[i].x + d[j][0], helixes[sheetId]->internalCells[i].y + d[j][1], helixes[sheetId]->internalCells[i].z + d[j][2]) == 0)) {
+                if(((*vol)(helixes[sheetId]->internalCells[i].x + d[j][0], helixes[sheetId]->internalCells[i].y + d[j][1], helixes[sheetId]->internalCells[i].z + d[j][2]) > 0) &&
+                    ((*paintedVol)(helixes[sheetId]->internalCells[i].x + d[j][0], helixes[sheetId]->internalCells[i].y + d[j][1], helixes[sheetId]->internalCells[i].z + d[j][2]) == 0)) {
                     outsideCounter++;
                 }
             }
@@ -826,9 +826,9 @@ namespace GraphMatch {
                 xx = currentPoint->x;
                 yy = currentPoint->y;
                 zz = currentPoint->z;
-                currentHelix = round(coloredVol->(*this)(xx,yy,zz)) - 1;
+                currentHelix = round((*coloredVol)(xx,yy,zz)) - 1;
                 // mark this point as visited
-                visited(xx, yy, zz, 1);
+                (*visited)(xx, yy, zz) = 1;
 
 
 
@@ -908,13 +908,13 @@ namespace GraphMatch {
                             //    volume at this point has value at least 0.001
                             //    this point is not inside the start helix or on the start sheet
                             //  TODO: Consider case where this voxel may have already been visited but with a longer path
-                            if((visited->(*this)(x, y, z) <= 0.001) && (vol->(*this)(x, y, z) > 0.001) &&
-                                (round(coloredVol->(*this)(x, y, z)) - 1 != startHelix)) {
+                            if(((*visited)(x, y, z) <= 0.001) && ((*vol)(x, y, z) > 0.001) &&
+                                (round((*coloredVol)(x, y, z)) - 1 != startHelix)) {
                                 // add this point to newStack with distance = | cPt - nPt |
                                 // the distance is the length of the vector from the cPt voxel to this neighbor nPt
                                 newStack.push_back(new Point3Int(x, y, z, currentPoint->distance + (float)(cPt - nPt).length()));
                                 // mark this point as visited
-                                visited(x, y, z, 1.0);
+                                (*visited)(x, y, z) = 1.0;
                                 // Look up array index in backVol
                                 newIx = coloredVol->getIndex(x,y,z);
                                 backVol[newIx] = back[j];
@@ -1063,7 +1063,7 @@ namespace GraphMatch {
                             // must satisfy one of two cases:
                             //   new voxel is unvisited, and is an allowed voxel according to maskVol
                             //   voxel has already been visited, but with a longer path from the source
-                            if((maskVol->(*this)(newIx) > 0.5) && ((paintVol[newIx] < 0) || (paintVol[newIx] > currVal + 1))) {
+                            if(((*maskVol)(newIx) > 0.5) && ((paintVol[newIx] < 0) || (paintVol[newIx] > currVal + 1))) {
                                 // add new voxel to queue
                                 positions.push(newPos);
                                 // associate a new path length with the new voxel
@@ -1120,7 +1120,7 @@ namespace GraphMatch {
                 if(graph->skeletonHelixes[(int)startIx/2]->IsInsideShape(pt) ||
                         graph->skeletonHelixes[(int)endIx/2]->IsInsideShape(pt)) {
                     // erase the voxel from maskVol
-                    maskVol(currentPos.X(), currentPos.Y(), currentPos.Z(), 0.0);
+                    (*maskVol)(currentPos.X(), currentPos.Y(), currentPos.Z()) = 0.0;
                 }
             }
         }
