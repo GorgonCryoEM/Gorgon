@@ -19,8 +19,8 @@ namespace Core {
 //            virtual ~Mesh();
             virtual int AddMarchingVertex(Vec3F location, int hashKey) =0;
             virtual unsigned long long AddMarchingFace(unsigned long long vertexHash0,
-                                               unsigned long long vertexHash1,
-                                               unsigned long long vertexHash2) =0;
+                                                       unsigned long long vertexHash1,
+                                                       unsigned long long vertexHash2) =0;
 
     };
 
