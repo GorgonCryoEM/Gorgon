@@ -30,10 +30,16 @@ namespace SkeletonMaker {
         Dim3D<float> getOriginObj() const;
 
         float getDataAt(int index) const;
+
         float & operator()(int i, int j, int k);
         const float & operator()(int i, int j, int k) const;
+
+        float & operator()(Vec3I p);
+        const float & operator()(Vec3I p) const;
+
         float & operator()(int i);
         const float & operator()(int i) const;
+
         int getIndex(int x, int y, int z) const;
         int getMaxIndex() const;
 
@@ -155,6 +161,14 @@ namespace SkeletonMaker {
 
     const float & VolumeData::operator()(int i, int j, int k) const {
         return data[getIndex(i, j, k)];
+    }
+
+    float & VolumeData::operator()(Vec3I p) {
+        return const_cast<float &>(static_cast<const VolumeData &>((*this))(p));
+    }
+
+    const float & VolumeData::operator()(Vec3I p) const {
+        return (*this)(p[0], p[1], p[2]);
     }
 
     float & VolumeData::operator()(int i) {
