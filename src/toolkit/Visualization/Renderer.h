@@ -55,8 +55,8 @@ namespace Visualization {
             float getMax(int dimension);
 
         protected:
-            Dim3D<float> minPts;
-            Dim3D<float> maxPts;
+            Vec3F minPts;
+            Vec3F maxPts;
             bool selected;
             Vec3F cuttingPlaneCenter;
             Vec3F cuttingPlaneDirection;
@@ -89,10 +89,10 @@ namespace Visualization {
         glDisable (GL_LIGHTING);
         glPushMatrix();
         glTranslatef(minPts[0] + (maxPts[0] - minPts[0]) / 2.0,
-                minPts[1] + (maxPts[1] - minPts[1]) / 2.0,
-                minPts[2] + (maxPts[2] - minPts[2]) / 2.0);
+                     minPts[1] + (maxPts[1] - minPts[1]) / 2.0,
+                     minPts[2] + (maxPts[2] - minPts[2]) / 2.0);
         glScalef(maxPts[0] - minPts[0], maxPts[1] - minPts[1],
-                maxPts[2] - minPts[2]);
+                 maxPts[2] - minPts[2]);
         glutWireCube(1.0);
         glPopMatrix();
         glPopAttrib();
@@ -114,8 +114,7 @@ namespace Visualization {
     }
 
     Vec3F Renderer::SelectionCenterOfMass() {
-        return Vec3F( (maxPts[0] - minPts[0]) / 2.0,
-                (maxPts[1] - minPts[1]) / 2.0, (maxPts[2] - minPts[2]) / 2.0);
+        return (maxPts - minPts) / 2.0;
     }
 
     bool Renderer::SelectionMove(Vec3F moveDirection) {
@@ -160,10 +159,8 @@ namespace Visualization {
     bool Renderer::SetCuttingPlane(float position,
                                    float vecX, float vecY, float vecZ)
     {
-        Vec3F center = Vec3F( (minPts[0] + maxPts[0]) / 2.0,
-                (minPts[1] + maxPts[1]) / 2.0, (minPts[2] + maxPts[2]) / 2.0);
-        float distance =
-                (Vec3F(minPts[0], minPts[1], minPts[2]) - center).length();
+        Vec3F center = (minPts + maxPts) / 2.0;
+        float distance = (minPts - center).length();
         cuttingPlaneDirection = Vec3F(vecX, vecY, vecZ);
         cuttingPlaneDirection.normalize();
         cuttingPlaneCenter = center + cuttingPlaneDirection * position * distance;
