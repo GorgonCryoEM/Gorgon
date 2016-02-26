@@ -245,13 +245,13 @@ namespace GraySkeletonCPP {
             direction = Vec3F(BAD_NORMAL, BAD_NORMAL, BAD_NORMAL);
         } else {
 
-            int margin = 2;
-            int size = (R+margin)*2 + 1;
+            int marg = 2;
+            int size = (R+marg)*2 + 1;
             Volume block(size, size, size);
-            for(int xx = margin; xx <= size-margin; xx++) {
-                for(int yy = margin; yy <= size-margin; yy++) {
-                    for(int zz = margin; zz <= size-margin; zz++) {
-                        block.setDataAt(xx, yy, zz, skel.getDataAt(x-R-margin+xx, y-R-margin+yy, z-R-margin+zz));
+            for(int xx = marg; xx <= size-marg; xx++) {
+                for(int yy = marg; yy <= size-marg; yy++) {
+                    for(int zz = marg; zz <= size-marg; zz++) {
+                        block.setDataAt(xx, yy, zz, skel.getDataAt(x-R-marg+xx, y-R-marg+yy, z-R-marg+zz));
                     }
                 }
             }
@@ -259,18 +259,18 @@ namespace GraySkeletonCPP {
             Volume visited(size, size, size);
 
             vector<Vec3I> list;
-            list.push_back(Vec3I(margin+R, margin+R, margin+R));
-            Vec3I currentPos;
+            list.push_back(Vec3I(marg+R, marg+R, marg+R));
+            Vec3I pos;
             vector<Vec3I> n6;
             int n6Count;
 
             while(list.size() > 0) {
-                currentPos = list[list.size()-1];
+                pos = list[list.size()-1];
                 list.pop_back();
-                visited.setDataAt(currentPos.X(), currentPos.Y(), currentPos.Z(), 1);
-                n6Count = DiscreteMesh::getN6(n6, block, currentPos.X(), currentPos.Y(), currentPos.Z());
+                visited.setDataAt(pos.X(), pos.Y(), pos.Z(), 1);
+                n6Count = DiscreteMesh::getN6(n6, block, pos.X(), pos.Y(), pos.Z());
 
-                if(DiscreteMesh::getN6Count(skel, x+currentPos.X()-margin-R, y+currentPos.Y()-margin-R, z+currentPos.Z()-margin-R) <= 2) {
+                if(DiscreteMesh::getN6Count(skel, x+pos.X()-marg-R, y+pos.Y()-marg-R, z+pos.Z()-marg-R) <= 2) {
                     for(int i = 0; i < n6Count; i++) {
                         if(visited.getDataAt(n6[i].X(), n6[i].Y(), n6[i].Z()) < 1) {
                             list.push_back(n6[i]);
@@ -282,7 +282,7 @@ namespace GraySkeletonCPP {
             vector<Vec3F> gradient = GetVolumeGradient(visited);
             EigenResults3D eigen;
             GetEigenResult(eigen, gradient, uniformFiltSkelDirR,
-                margin+R, margin+R, margin+R,
+                marg+R, marg+R, marg+R,
                 size, size, size, R, false);
 
             direction = eigen.vecs[2];
