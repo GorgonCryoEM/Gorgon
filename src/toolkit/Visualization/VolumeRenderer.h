@@ -512,9 +512,9 @@ namespace Visualization {
             NonManifoldMesh tempMesh;
 
 
-            Vec3F modelCenter = Vec3F( (minPts[0] + maxPts[0])/2.0, (minPts[1] + maxPts[1])/2.0, (minPts[2] + maxPts[2])/2.0);
+            Vec3F modelCenter = (minPts + maxPts)/2.0;
             Vec3F center;
-            float distance = (Vec3F(minPts[0], minPts[1], minPts[2]) - modelCenter).length();
+            float distance = (minPts - modelCenter).length();
             int iX, iY, iZ;
 
             for(float position = 1.0; position >= -1.0; position -= 0.01) {
@@ -829,14 +829,11 @@ namespace Visualization {
 
     void VolumeRenderer::UpdateBoundingBox() {
         if(volData == NULL) {
-            for(int i = 0; i < 3; i++) {
-                minPts[i] = 0;
-                maxPts[i] = 1;
-            }
+            minPts = 0.0;
+            maxPts = 1.0;
         } else {
-            for(int i = 0; i < 3; i++) {
-                minPts[i] = 0;
-            }
+            minPts = 0.0;
+
             maxPts[0] = getSizeX()-1;
             maxPts[1] = getSizeY()-1;
             maxPts[2] = getSizeZ()-1;
