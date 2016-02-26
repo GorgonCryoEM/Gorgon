@@ -84,7 +84,7 @@ namespace Visualization {
 
     private:
             int GetHashKey(int x, int y, int z, int edge, int iScale);
-            float GetVoxelData(float x, float y, float z);
+            float GetVoxelData(Volume * vol, float x, float y, float z);
             float GetOffset(float fValue1, float fValue2, float fValueDesired);
             bool CalculateSurface();
             bool CalculateCuttingSurface();
@@ -95,10 +95,10 @@ namespace Visualization {
             void InitializeOctree();
             void InitializeOctreeTag(VolumeRendererOctreeNodeType * node);
             void CalculateOctreeNode(VolumeRendererOctreeNodeType * node);
-            void MarchingCube(NonManifoldMesh * mesh,
+            void MarchingCube(Volume * vol, NonManifoldMesh * mesh,
                               const float iso_level, int iX, int iY, int iZ,
                               int iScale);
-            void MarchingCube(VolumeSurfaceMeshType * mesh,
+            void MarchingCube(Volume * vol, VolumeSurfaceMeshType * mesh,
                               const float iso_level, int iX, int iY, int iZ,
                               int iScale);
             int Smallest2ndPower(int value);
@@ -175,15 +175,15 @@ namespace Visualization {
         return surfaceValue;
     }
 
-    float VolumeRenderer::GetVoxelData(float x, float y, float z) {
+    float VolumeRenderer::GetVoxelData(Volume * vol, float x, float y, float z) {
         int f[3] = {(int)x, (int)y, (int)z};
         int c[3] = {f[0]+1, f[1]+1, f[2]+1};
         float d[3] = {x - f[0], y - f[1], z - f[2]};
 
-        float i1 = GetVoxelData(f[0], f[1], f[2]) * (1.0 - d[2]) + GetVoxelData(f[0], f[1], c[2]) * d[2];
-        float i2 = GetVoxelData(f[0], c[1], f[2]) * (1.0 - d[2]) + GetVoxelData(f[0], c[1], c[2]) * d[2];
-        float j1 = GetVoxelData(c[0], f[1], f[2]) * (1.0 - d[2]) + GetVoxelData(c[0], f[1], c[2]) * d[2];
-        float j2 = GetVoxelData(c[0], c[1], f[2]) * (1.0 - d[2]) + GetVoxelData(c[0], c[1], c[2]) * d[2];
+        float i1 = GetVoxelData(vol, f[0], f[1], f[2]) * (1.0 - d[2]) + GetVoxelData(vol, f[0], f[1], c[2]) * d[2];
+        float i2 = GetVoxelData(vol, f[0], c[1], f[2]) * (1.0 - d[2]) + GetVoxelData(vol, f[0], c[1], c[2]) * d[2];
+        float j1 = GetVoxelData(vol, c[0], f[1], f[2]) * (1.0 - d[2]) + GetVoxelData(vol, c[0], f[1], c[2]) * d[2];
+        float j2 = GetVoxelData(vol, c[0], c[1], f[2]) * (1.0 - d[2]) + GetVoxelData(vol, c[0], c[1], c[2]) * d[2];
 
         float w1 = i1 * (1.0 - d[1]) + i2 * d[1];
         float w2 = j1 * (1.0 - d[1]) + j2 * d[1];
@@ -403,7 +403,7 @@ namespace Visualization {
                 if((int)node->cellSize <= sampleInterval + sampleInterval) {
                     for(int i = 0; i < 8; i++) {
                         if(node->children[i] != NULL) {
-                            MarchingCube(surfaceMesh, surfaceValue, node->children[i]->pos[0], node->children[i]->pos[1], node->children[i]->pos[2], sampleInterval);
+                            MarchingCube(this, surfaceMesh, surfaceValue, node->children[i]->pos[0], node->children[i]->pos[1], node->children[i]->pos[2], sampleInterval);
                         }
                     }
                 } else {
@@ -435,7 +435,7 @@ namespace Visualization {
                 for(iX = 0; iX < maxX; iX+=sampleInterval) {
                     for(iY = 0; iY < maxY; iY+=sampleInterval) {
                         for(iZ = 0; iZ < maxZ; iZ+=sampleInterval) {
-                            MarchingCube(surfaceMesh, surfaceValue, iX, iY, iZ, sampleInterval);
+                            MarchingCube(this, surfaceMesh, surfaceValue, iX, iY, iZ, sampleInterval);
                         }
                     }
                 }
@@ -489,7 +489,7 @@ namespace Visualization {
                         }
                     }
                 }
-                cuttingVolume.MarchingCube(cuttingMesh, 0.0f, 0, 0, 0, 1);
+                MarchingCube(&cuttingVolume, cuttingMesh, 0.0f, 0, 0, 0, 1);
             }
         }
         return redraw;
@@ -525,7 +525,7 @@ namespace Visualization {
                         }
                     }
                     tempMesh.Clear();
-                    cuttingVolume.MarchingCube(&tempMesh, 0.0f, 0, 0, 0, 1);
+                    MarchingCube(&cuttingVolume, &tempMesh, 0.0f, 0, 0, 0, 1);
                     cuttingMesh->MergeMesh(&tempMesh);
                 }
             }
@@ -680,7 +680,7 @@ namespace Visualization {
 
         }
     }
-    void VolumeRenderer::MarchingCube(VolumeSurfaceMeshType * mesh, const float iso_level, int iX, int iY, int iZ, int iScale){
+    void VolumeRenderer::MarchingCube(Volume * vol, VolumeSurfaceMeshType * mesh, const float iso_level, int iX, int iY, int iZ, int iScale){
         marchingCubeCallCount++;
         extern int aiCubeEdgeFlags[256];
         extern int a2iTriangleConnectionTable[256][16];
@@ -693,7 +693,8 @@ namespace Visualization {
 
         //Make a local copy of the values at the cube's corners
         for(iVertex = 0; iVertex < 8; iVertex++) {
-            afCubeValue[iVertex] = GetVoxelData(iX + a2iVertexOffset[iVertex][0]*iScale,
+            afCubeValue[iVertex] = GetVoxelData(vol,
+                                                iX + a2iVertexOffset[iVertex][0]*iScale,
                                                 iY + a2iVertexOffset[iVertex][1]*iScale,
                                                 iZ + a2iVertexOffset[iVertex][2]*iScale);
         }
@@ -749,7 +750,7 @@ namespace Visualization {
         }
     }
 
-    void VolumeRenderer::MarchingCube(NonManifoldMesh * mesh, const float iso_level, int iX, int iY, int iZ, int iScale){
+    void VolumeRenderer::MarchingCube(Volume * vol, NonManifoldMesh * mesh, const float iso_level, int iX, int iY, int iZ, int iScale){
         marchingCubeCallCount++;
         extern int aiCubeEdgeFlags[256];
         extern int a2iTriangleConnectionTable[256][16];
@@ -762,7 +763,8 @@ namespace Visualization {
 
         //Make a local copy of the values at the cube's corners
         for(iVertex = 0; iVertex < 8; iVertex++) {
-            afCubeValue[iVertex] = GetVoxelData(iX + a2iVertexOffset[iVertex][0]*iScale,
+            afCubeValue[iVertex] = GetVoxelData(vol,
+                                                iX + a2iVertexOffset[iVertex][0]*iScale,
                                                 iY + a2iVertexOffset[iVertex][1]*iScale,
                                                 iZ + a2iVertexOffset[iVertex][2]*iScale);
         }
