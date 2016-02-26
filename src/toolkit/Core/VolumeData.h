@@ -31,6 +31,8 @@ namespace SkeletonMaker {
 
         float getDataAt(int x, int y, int z) const;
         float getDataAt(int index) const;
+        float & operator()(int i, int j, int k);
+        const float & operator()(int i, int j, int k) const;
         int getIndex(int x, int y, int z) const;
         int getMaxIndex() const;
 
@@ -150,6 +152,14 @@ namespace SkeletonMaker {
 
     float VolumeData::getDataAt(int index) const {
         return data[index];
+    }
+
+    float & VolumeData::operator()(int i, int j, int k) {
+        return const_cast<float &>(static_cast<const VolumeData &>((*this))(i, j, k));
+    }
+
+    const float & VolumeData::operator()(int i, int j, int k) const {
+        return data[getIndex(i, j, k)];
     }
 
     int VolumeData::getIndex(int x, int y, int z) const {
