@@ -514,22 +514,20 @@ namespace Visualization {
 
 
             Vec3F modelCenter = (minPts + maxPts)/2.0;
-            Vec3F center;
             float distance = (minPts - modelCenter).length();
-            int iX, iY, iZ;
 
             for(float position = 1.0; position >= -1.0; position -= 0.01) {
-                center = modelCenter + cuttingPlaneDirection * position * distance;
+                Vec3F center = modelCenter + cuttingPlaneDirection * position * distance;
 
                 if((center.X() >= minPts[0]) && (center.X() <= maxPts[0]) &&
                     (center.Y() >= minPts[1]) && (center.Y() <= maxPts[1]) &&
                     (center.Z() >= minPts[2]) && (center.Z() <= maxPts[2])) {
 
 
-                    for(iX = 0; iX < 2; iX++) {
-                        for(iY = 0; iY < 2; iY++) {
-                            for(iZ = 0; iZ < 2; iZ++) {
-                                cuttingVolume(iX, iY, iZ) = (center - Vec3F(iX * getSizeX(), iY * getSizeY(), iZ * getSizeZ()))* cuttingPlaneDirection;
+                    for(int i = 0; i < 2; i++) {
+                        for(int j = 0; j < 2; j++) {
+                            for(int k = 0; k < 2; k++) {
+                                cuttingVolume(i, j, k) = (center - Vec3F(i * getSizeX(), j * getSizeY(), k * getSizeZ()))* cuttingPlaneDirection;
                             }
                         }
                     }
@@ -801,10 +799,10 @@ namespace Visualization {
         }
     }
 
-
     void VolumeRenderer::SetDisplayRadius(const int radius) {
         displayRadius = radius;
     }
+
     void VolumeRenderer::SetDisplayRadiusOrigin(float radiusOriginX, float radiusOriginY, float radiusOriginZ) {
         radiusOrigin = Vec3F(radiusOriginX, radiusOriginY, radiusOriginZ);
     }
