@@ -61,10 +61,11 @@ namespace Foundation {
         TTag tag;
     };
 
-    template <class TTag> class Octree {
-    public:
-        Octree(unsigned int sizeX, unsigned int sizeY, unsigned int sizeZ);
-        ~Octree();
+    template <class TTag>
+    class Octree {
+        public:
+            Octree(unsigned int sizeX, unsigned int sizeY, unsigned int sizeZ);
+            ~Octree();
 
             OctreeNode<TTag> * GetLeaf(unsigned int xPos, unsigned int yPos,
                                        unsigned int zPos,
@@ -76,13 +77,13 @@ namespace Foundation {
             OctreeNode<TTag> * GetRoot();
             vector<OctreeNode<TTag> *> GetCells();
             vector<OctreeNode<TTag> *> GetNeighbors(OctreeNode<TTag> * node);
-            vector<OctreeNode<TTag> *> IntersectRay(Vec3F ray,
-                                                    Vec3F origin,
+            vector<OctreeNode<TTag> *> IntersectRay(Vec3F ray, Vec3F origin,
                                                     float rayWidth);
             void AddNewLeaf(unsigned int xPos, unsigned int yPos,
                             unsigned int zPos, unsigned int cellSize = 1,
                             OctreeNode<TTag> * node = NULL);
-            void PrintStructure(OctreeNode<TTag> * node = NULL, unsigned int level = 0);
+            void PrintStructure(OctreeNode<TTag> * node = NULL,
+                                unsigned int level = 0);
         private:
             bool IsAdjacent(OctreeNode<TTag> * n1, OctreeNode<TTag> * n2);
             OctreeNode<TTag> * CreateNewLeaf(unsigned int xPos,
@@ -101,14 +102,12 @@ namespace Foundation {
             void SplitLeaf(OctreeNode<TTag> * node);
             unsigned int GetLargest2ndPower(unsigned int value);
             vector<Range> GetMinMax1DProjectionValues(
-                    vector<Vec3F> & testVectors,
-                    vector<Vec3F> & points2D);
+                    vector<Vec3F> & testVectors, vector<Vec3F> & points2D);
             vector<Range> GetMinMax1DProjectionValues(
                     vector<Vec3F> & testVectors,
                     vector<vector<float> > & points1D);
             vector<vector<float> > GetCubeProjectionValues(
-                    vector<Vec3F> & testVectors,
-                    vector<Vec3F> & points2D);
+                    vector<Vec3F> & testVectors, vector<Vec3F> & points2D);
             void GetRayIntersectingLeafs(
                     vector<OctreeNode<TTag> *> & intersectingCells,
                     OctreeNode<TTag> * node,
@@ -116,11 +115,11 @@ namespace Foundation {
                     vector<Vec3F> & testVectors,
                     vector<Range> & minMaxRayPoints1D);
 
-    private:
-        vector<OctreeNode<TTag> *> cells;
-        OctreeNode<TTag> * rootNode;
-    public:
-        unsigned int size[3];
+        private:
+            vector<OctreeNode<TTag> *> cells;
+            OctreeNode<TTag> * rootNode;
+        public:
+            unsigned int size[3];
     };
 
     template <class TTag>
