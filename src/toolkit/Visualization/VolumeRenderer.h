@@ -84,7 +84,6 @@ namespace Visualization {
 
     private:
             int GetHashKey(int x, int y, int z, int edge, int iScale);
-            float GetVoxelData(Volume * vol, int x, int y, int z);
             float GetVoxelData(Volume * vol, float x, float y, float z);
             float GetOffset(float fValue1, float fValue2, float fValueDesired);
             bool CalculateSurface();
@@ -174,14 +173,6 @@ namespace Visualization {
 
     float VolumeRenderer::GetSurfaceValue() const {
         return surfaceValue;
-    }
-
-    float VolumeRenderer::GetVoxelData(Volume * vol, int x, int y, int z) {
-        if((x < 0) || (x > vol->getSizeX()-1) || (y < 0) || (y > vol->getSizeY()-1) || (z < 0) || (z > vol->getSizeZ()-1)) {
-            return 0.0f;
-        } else {
-            return vol->getDataAt(x, y, z);
-        }
     }
 
     float VolumeRenderer::GetVoxelData(Volume * vol, float x, float y, float z) {
