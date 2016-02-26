@@ -630,7 +630,7 @@ namespace Visualization {
 
             // Approximations to avoid division by zero
             if(isZero(minVal - maxVal, 0.000000000001)) {
-                maxVal = minVal + (Volume::getMax() - Volume::getMin()) / 1000.0;
+                maxVal = minVal + (GetMaxDensity() - GetMinDensity()) / 1000.0;
             }
             if(isZero(minVal - maxVal, 0.000000000001)) {
                 maxVal = minVal + 0.0001;
