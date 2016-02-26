@@ -86,8 +86,8 @@ namespace Visualization {
 
     private:
             int GetHashKey(int x, int y, int z, int edge, int iScale);
-            float GetVoxelData(Volume * vol, int x, int y, int z);
-            float GetVoxelData(Volume * vol, float x, float y, float z);
+            float GetVoxelData(int x, int y, int z) const;
+            float GetVoxelData(float x, float y, float z) const;
             float GetOffset(float fValue1, float fValue2, float fValueDesired);
             bool CalculateSurface();
             bool CalculateCuttingSurface();
@@ -173,23 +173,23 @@ namespace Visualization {
         return surfaceValue;
     }
 
-    float VolumeRenderer::GetVoxelData(Volume * vol, int x, int y, int z) {
-        if((x < 0) || (x > vol->getSizeX()-1) || (y < 0) || (y > vol->getSizeY()-1) || (z < 0) || (z > vol->getSizeZ()-1)) {
+    float VolumeRenderer::GetVoxelData(int x, int y, int z) const {
+        if((x < 0) || (x > getSizeX()-1) || (y < 0) || (y > getSizeY()-1) || (z < 0) || (z > getSizeZ()-1)) {
             return 0.0f;
         } else {
-            return (*vol)(x, y, z);
+            return (*this)(x, y, z);
         }
     }
 
-    float VolumeRenderer::GetVoxelData(Volume * vol, float x, float y, float z) {
+    float VolumeRenderer::GetVoxelData(float x, float y, float z) const {
         int f[3] = {(int)x, (int)y, (int)z};
         int c[3] = {f[0]+1, f[1]+1, f[2]+1};
         float d[3] = {x - f[0], y - f[1], z - f[2]};
 
-        float i1 = GetVoxelData(vol, f[0], f[1], f[2]) * (1.0 - d[2]) + GetVoxelData(vol, f[0], f[1], c[2]) * d[2];
-        float i2 = GetVoxelData(vol, f[0], c[1], f[2]) * (1.0 - d[2]) + GetVoxelData(vol, f[0], c[1], c[2]) * d[2];
-        float j1 = GetVoxelData(vol, c[0], f[1], f[2]) * (1.0 - d[2]) + GetVoxelData(vol, c[0], f[1], c[2]) * d[2];
-        float j2 = GetVoxelData(vol, c[0], c[1], f[2]) * (1.0 - d[2]) + GetVoxelData(vol, c[0], c[1], c[2]) * d[2];
+        float i1 = GetVoxelData(f[0], f[1], f[2]) * (1.0 - d[2]) + GetVoxelData(f[0], f[1], c[2]) * d[2];
+        float i2 = GetVoxelData(f[0], c[1], f[2]) * (1.0 - d[2]) + GetVoxelData(f[0], c[1], c[2]) * d[2];
+        float j1 = GetVoxelData(c[0], f[1], f[2]) * (1.0 - d[2]) + GetVoxelData(c[0], f[1], c[2]) * d[2];
+        float j2 = GetVoxelData(c[0], c[1], f[2]) * (1.0 - d[2]) + GetVoxelData(c[0], c[1], c[2]) * d[2];
 
         float w1 = i1 * (1.0 - d[1]) + i2 * d[1];
         float w2 = j1 * (1.0 - d[1]) + j2 * d[1];
@@ -703,8 +703,7 @@ namespace Visualization {
 
         //Make a local copy of the values at the cube's corners
         for(iVertex = 0; iVertex < 8; iVertex++) {
-            afCubeValue[iVertex] = GetVoxelData(vol,
-                                                iX + a2iVertexOffset[iVertex][0]*iScale,
+            afCubeValue[iVertex] = GetVoxelData(iX + a2iVertexOffset[iVertex][0]*iScale,
                                                 iY + a2iVertexOffset[iVertex][1]*iScale,
                                                 iZ + a2iVertexOffset[iVertex][2]*iScale);
         }
