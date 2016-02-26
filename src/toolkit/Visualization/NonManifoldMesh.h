@@ -78,52 +78,51 @@ namespace Protein_Morph {
     #endif
 
     class NonManifoldMesh : public Volume {
-    public:
-        NonManifoldMesh();
-        NonManifoldMesh(Volume * sourceVol);
-        bool IsEdgePresent(int vertexId1, int vertexId2);
-        bool IsSurfaceVertex(int ix) const;
-        int AddVertex(NonManifoldMeshVertex vertex);
-        int AddVertex(Vec3F location);
-        int AddHashedVertex(Vec3F location, int hashKey);
-        int AddEdge(NonManifoldMeshEdge edge);
-        int AddFace(NonManifoldMeshFace face);
-        int GetVertexIndex(int vertexId);
-        int GetFaceIndex(int faceId);
-        int GetEdgeIndex(int edgeId) const;
-        int GetEdgeIndex(int vertexId1, int vertexId2) const;
-        int GetClosestVertexIndex(Vec3F pos);
-        void AddEdge(int vertexId1, int vertexId2, string tag = "");
-        void AddQuad(int vertexId1, int vertexId2, int vertexId3,
-                     int vertexId4, string newEdgeTag = "", string faceTag ="");
-        void AddTriangle(int vertexId1, int vertexId2, int vertexId3,
-                         string newEdgeTag = "", string faceTag = "");
-        void MarkFixedVertices();
-        void MergeMesh(NonManifoldMesh * srcMesh);
-        void Draw(bool drawSurfaceBorders, bool drawSurfaces, bool drawLines, bool drawPoints, bool annotateSurfaces, bool annotateLines, bool annotatePoints, bool disableSurfaceLighting, bool disableCurveLighting, bool disablePointLighting, int lineThickness, bool smoothSurfaceNormals);
-        void RemoveFace(int faceId);
-        void RemoveEdge(int edgeId);
-        void RemoveVertex(int vertexId);
-        void RemoveNullEntries();
-        void ToOffCells(string fileName);
-        void ToMathematicaFile(string fileName);
-        void setScale(float x, float y, float z);
-        void setScale(Dim3D<float> val);
-        void TranslateVertex(int vertexIx, Vec3F translateVector);
-        vector<unsigned int> GetPath(unsigned int edge0Ix,
-                unsigned int edge1Ix);
-        vector<unsigned int> GetNeighboringVertexIndices(
-                unsigned int vertexIx);
-        vector<Vec3F> SampleTriangle(int faceId,
-                double discretizationStep);
-        Volume * ToVolume();
-        Vec3F GetVertexNormal(int vertexId);
-        Vec3F GetFaceNormal(int faceId);
-        NonManifoldMesh SmoothLaplacian(double converganceRate);
-        NonManifoldMesh SmoothLaplacian(double converganceRate,
-                                        int iterations);
-        static NonManifoldMesh * LoadOffFile(string fileName);
-        void Clear();
+        public:
+            NonManifoldMesh();
+            NonManifoldMesh(Volume * sourceVol);
+            bool IsEdgePresent(int vertexId1, int vertexId2);
+            bool IsSurfaceVertex(int ix) const;
+            int AddVertex(NonManifoldMeshVertex vertex);
+            int AddVertex(Vec3F location);
+            int AddHashedVertex(Vec3F location, int hashKey);
+            int AddEdge(NonManifoldMeshEdge edge);
+            int AddFace(NonManifoldMeshFace face);
+            int GetVertexIndex(int vertexId);
+            int GetFaceIndex(int faceId);
+            int GetEdgeIndex(int edgeId) const;
+            int GetEdgeIndex(int vertexId1, int vertexId2) const;
+            int GetClosestVertexIndex(Vec3F pos);
+            void AddEdge(int vertexId1, int vertexId2, string tag = "");
+            void AddQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4,
+                         string newEdgeTag = "", string faceTag ="");
+            void AddTriangle(int vertexId1, int vertexId2, int vertexId3,
+                             string newEdgeTag = "", string faceTag = "");
+            void MarkFixedVertices();
+            void MergeMesh(NonManifoldMesh * srcMesh);
+            void Draw(bool drawSurfaceBorders, bool drawSurfaces, bool drawLines, bool drawPoints,
+                      bool annotateSurfaces, bool annotateLines, bool annotatePoints,
+                      bool disableSurfaceLighting, bool disableCurveLighting, bool disablePointLighting,
+                      int lineThickness, bool smoothSurfaceNormals);
+            void RemoveFace(int faceId);
+            void RemoveEdge(int edgeId);
+            void RemoveVertex(int vertexId);
+            void RemoveNullEntries();
+            void ToOffCells(string fileName);
+            void ToMathematicaFile(string fileName);
+            void setScale(float x, float y, float z);
+            void setScale(Dim3D<float> val);
+            void TranslateVertex(int vertexIx, Vec3F translateVector);
+            vector<unsigned int> GetPath(unsigned int edge0Ix, unsigned int edge1Ix);
+            vector<unsigned int> GetNeighboringVertexIndices(unsigned int vertexIx);
+            vector<Vec3F> SampleTriangle(int faceId, double discretizationStep);
+            Volume * ToVolume();
+            Vec3F GetVertexNormal(int vertexId);
+            Vec3F GetFaceNormal(int faceId);
+            NonManifoldMesh SmoothLaplacian(double converganceRate);
+            NonManifoldMesh SmoothLaplacian(double converganceRate, int iterations);
+            static NonManifoldMesh * LoadOffFile(string fileName);
+            void Clear();
 
     public:
         Dim3D<float> scale;
@@ -148,11 +147,9 @@ namespace Protein_Morph {
 
     void NonManifoldMesh::Draw(bool drawSurfaceBorders, bool drawSurfaces,
                                bool drawLines, bool drawPoints,
-                               bool annotateSurfaces, bool annotateLines,
-                               bool annotatePoints, bool disableSurfaceLighting,
-                               bool disableCurveLighting,
-                               bool disablePointLighting, int lineThickness,
-                               bool smoothSurfaceNormals)
+                               bool annotateSurfaces, bool annotateLines, bool annotatePoints,
+                               bool disableSurfaceLighting, bool disableCurveLighting, bool disablePointLighting,
+                               int lineThickness, bool smoothSurfaceNormals)
     {
         glPushAttrib(GL_LIGHTING_BIT | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT | GL_POINT_BIT);
 
