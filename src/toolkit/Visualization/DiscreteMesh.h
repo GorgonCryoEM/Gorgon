@@ -81,8 +81,8 @@ namespace GraySkeletonCPP {
 
             template <class T>
             static void findCurveBase  (T &p1, T &p2);
-            static void findSurfaceBase(Vec3D &p1, Vec3D &p2, Vec3D &p3, Vec3D &p4);
-            static void findSurfaceBase(Vec3I &p1, Vec3I &p2, Vec3I &p3, Vec3I &p4);
+            template <class T>
+            static void findSurfaceBase(T &p1, T &p2, T &p3, T &p4);
 
             void addPoint     (Vec3I point);
             void addCurve     (Vec3I p1, Vec3I p2);
@@ -417,9 +417,9 @@ namespace GraySkeletonCPP {
         }
     }
 
-    void DiscreteMesh::findSurfaceBase(Vec3D &p1, Vec3D &p2, Vec3D &p3, Vec3D &p4) {
-        Vec3D points[4] = {p1, p2, p3, p4};
-        Vec3D temp;
+    template <class T>
+    void DiscreteMesh::findSurfaceBase(T &p1, T &p2, T &p3, T &p4) {
+        T points[4] = {p1, p2, p3, p4};
         int jVal, minVal, minIndex;
 
         for(int i = 0; i < 3; i++) {
@@ -432,38 +432,8 @@ namespace GraySkeletonCPP {
                     minIndex = j;
                 }
             }
-            temp = points[i];
-            points[i] = points[minIndex];
-            points[minIndex] = temp;
+            swap(points[i], points[minIndex]);
         }
-
-
-        p1 = points[0];
-        p2 = points[1];
-        p3 = points[3];
-        p4 = points[2];
-    }
-
-    void DiscreteMesh::findSurfaceBase(Vec3I &p1, Vec3I &p2, Vec3I &p3, Vec3I &p4) {
-        Vec3I points[4] = {p1, p2, p3, p4};
-        Vec3I temp;
-        int jVal, minVal, minIndex;
-
-        for(int i = 0; i < 3; i++) {
-            minVal = points[i][0] + points[i][1] + points[i][2];
-            minIndex = i;
-            for(int j = i+1; j < 4; j++) {
-                jVal = points[j][0] + points[j][1] + points[j][2];
-                if(jVal < minVal) {
-                    minVal = jVal;
-                    minIndex = j;
-                }
-            }
-            temp = points[i];
-            points[i] = points[minIndex];
-            points[minIndex] = temp;
-        }
-
 
         p1 = points[0];
         p2 = points[1];
