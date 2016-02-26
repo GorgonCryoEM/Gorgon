@@ -256,8 +256,8 @@ namespace Visualization {
         return redraw;
     }
     void VolumeRenderer::DownsampleVolume() {
-        Volume * sourceVol = this;
-        Volume * destVol = new Volume(sourceVol->getSizeX()/2, sourceVol->getSizeY()/2, sourceVol->getSizeZ()/2);
+        Volume * src = this;
+        Volume * dest = new Volume(src->getSizeX()/2, src->getSizeY()/2, src->getSizeZ()/2);
         double val;
 
         int radius = 1;
@@ -266,24 +266,24 @@ namespace Visualization {
         gaussianFilter.R = radius;
         BinomDistr(gaussianFilter);
 
-        for(int x = radius; x < destVol->getSizeX()-radius; x++) {
-            for(int y = radius; y < destVol->getSizeY()-radius; y++) {
-                for(int z = radius; z < destVol->getSizeZ()-radius; z++) {
+        for(int x = radius; x < dest->getSizeX()-radius; x++) {
+            for(int y = radius; y < dest->getSizeY()-radius; y++) {
+                for(int z = radius; z < dest->getSizeZ()-radius; z++) {
                     val = 0;
                     for(int xx = -radius; xx <= radius; xx++) {
                         for(int yy = -radius; yy <= radius; yy++) {
                             for(int zz = -radius; zz <= radius; zz++) {
-                                val += sourceVol->getDataAt(2*x+xx, 2*y+yy, 2*z+zz) * gaussianFilter.vals[xx+radius][yy+radius][zz+radius] ;
+                                val += src->getDataAt(2*x+xx, 2*y+yy, 2*z+zz) * gaussianFilter.vals[xx+radius][yy+radius][zz+radius] ;
                             }
                         }
                     }
-                    destVol->setDataAt(x, y, z, val);
+                    dest->setDataAt(x, y, z, val);
                 }
             }
         }
 
-        delete sourceVol;
-        volData = destVol;
+        delete src;
+        volData = dest;
         InitializeOctree();
         UpdateBoundingBox();
     }
