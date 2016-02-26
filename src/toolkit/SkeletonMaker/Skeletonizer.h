@@ -221,7 +221,7 @@ namespace GraySkeletonCPP {
             for(int y = MAX_GAUSS_FILT_R; y < mask.getSizeY() - MAX_GAUSS_FILT_R; y++) {
                 for(int z = MAX_GAUSS_FILT_R; z < mask.getSizeZ() - MAX_GAUSS_FILT_R; z++) {
                     GetEigenResult(resultTable[mask.getIndex(x, y, z)], imgGrad, gaussFilt, x, y, z,
-                            mask.getSizeX(), mask.getSizeY(), mask.getSizeZ(), gaussFiltR, (useMask && (mask.getDataAt(x, y, z) == 0)));
+                            mask.getSizeX(), mask.getSizeY(), mask.getSizeZ(), gaussFiltR, (useMask && (mask(x, y, z) == 0)));
                 }
             }
         }
@@ -251,7 +251,7 @@ namespace GraySkeletonCPP {
             for(int xx = marg; xx <= size-marg; xx++) {
                 for(int yy = marg; yy <= size-marg; yy++) {
                     for(int zz = marg; zz <= size-marg; zz++) {
-                        block.setDataAt(xx, yy, zz, skel.getDataAt(x-R-marg+xx, y-R-marg+yy, z-R-marg+zz));
+                        block(xx, yy, zz) = skel(x-R-marg+xx, y-R-marg+yy, z-R-marg+zz);
                     }
                 }
             }
@@ -267,12 +267,12 @@ namespace GraySkeletonCPP {
             while(list.size() > 0) {
                 pos = list[list.size()-1];
                 list.pop_back();
-                visited.setDataAt(pos.X(), pos.Y(), pos.Z(), 1);
+                visited(pos.X(), pos.Y(), pos.Z()) = 1;
                 n6Count = DiscreteMesh::getN6(n6, block, pos.X(), pos.Y(), pos.Z());
 
                 if(DiscreteMesh::getN6Count(skel, x+pos.X()-marg-R, y+pos.Y()-marg-R, z+pos.Z()-marg-R) <= 2) {
                     for(int i = 0; i < n6Count; i++) {
-                        if(visited.getDataAt(n6[i].X(), n6[i].Y(), n6[i].Z()) < 1) {
+                        if(visited(n6[i].X(), n6[i].Y(), n6[i].Z()) < 1) {
                             list.push_back(n6[i]);
                         }
                     }
@@ -304,12 +304,12 @@ namespace GraySkeletonCPP {
         if(!direction.isBadNormal()) {
             int margin = 2;
             int size = (R+margin)*2 + 1;
-            Volume * block = new Volume(size, size, size);
+            Volume block(size, size, size);
 
             for(int xx = margin; xx <= size-margin; xx++) {
                 for(int yy = margin; yy <= size-margin; yy++) {
                     for(int zz = margin; zz <= size-margin; zz++) {
-                        block->setDataAt(xx, yy, zz, skel.getDataAt(x-R-margin+xx, y-R-margin+yy, z-R-margin+zz));
+                        block(xx, yy, zz) = skel(x-R-margin+xx, y-R-margin+yy, z-R-margin+zz);
                     }
                 }
             }
@@ -324,17 +324,17 @@ namespace GraySkeletonCPP {
             while(list.size() > 0) {
                 currentPos = list[list.size()-1];
                 list.pop_back();
-                visited.setDataAt(currentPos.X(), currentPos.Y(), currentPos.Z(), 1);
+                visited(currentPos.X(), currentPos.Y(), currentPos.Z()) = 1;
                 tempDir = localDirs[skel.getIndex(x+currentPos.X()-margin-R, y+currentPos.Y()-margin-R, z+currentPos.Z()-margin-R)];
 
                 if(!tempDir.isBadNormal()) {
                     for(int i = 0; i < 12; i++) {
-                        if((block->getDataAt(currentPos.X() + VOLUME_NEIGHBOR_FACES[i][0][0], currentPos.Y() + VOLUME_NEIGHBOR_FACES[i][0][1], currentPos.Z() + VOLUME_NEIGHBOR_FACES[i][0][2]) > 0) &&
-                           (block->getDataAt(currentPos.X() + VOLUME_NEIGHBOR_FACES[i][1][0], currentPos.Y() + VOLUME_NEIGHBOR_FACES[i][1][1], currentPos.Z() + VOLUME_NEIGHBOR_FACES[i][1][2]) > 0) &&
-                           (block->getDataAt(currentPos.X() + VOLUME_NEIGHBOR_FACES[i][2][0], currentPos.Y() + VOLUME_NEIGHBOR_FACES[i][2][1], currentPos.Z() + VOLUME_NEIGHBOR_FACES[i][2][2]) > 0)) {
+                        if((block(currentPos.X() + VOLUME_NEIGHBOR_FACES[i][0][0], currentPos.Y() + VOLUME_NEIGHBOR_FACES[i][0][1], currentPos.Z() + VOLUME_NEIGHBOR_FACES[i][0][2]) > 0) &&
+                           (block(currentPos.X() + VOLUME_NEIGHBOR_FACES[i][1][0], currentPos.Y() + VOLUME_NEIGHBOR_FACES[i][1][1], currentPos.Z() + VOLUME_NEIGHBOR_FACES[i][1][2]) > 0) &&
+                           (block(currentPos.X() + VOLUME_NEIGHBOR_FACES[i][2][0], currentPos.Y() + VOLUME_NEIGHBOR_FACES[i][2][1], currentPos.Z() + VOLUME_NEIGHBOR_FACES[i][2][2]) > 0)) {
                             for(int j = 0; j < 3; j++) {
                                 newPos = currentPos + Vec3I(VOLUME_NEIGHBOR_FACES[i][j][0], VOLUME_NEIGHBOR_FACES[i][j][1], VOLUME_NEIGHBOR_FACES[i][j][2]);
-                                if(visited.getDataAt(newPos.X(), newPos.Y(), newPos.Z()) < 1) {
+                                if(visited(newPos.X(), newPos.Y(), newPos.Z()) < 1) {
                                     list.push_back(newPos);
                                 }
                             }
@@ -343,8 +343,6 @@ namespace GraySkeletonCPP {
                 }
             }
 
-
-            delete block;
 
             vector<Vec3F> gradient = GetVolumeGradient(visited);
 
@@ -379,13 +377,13 @@ namespace GraySkeletonCPP {
             for(int y = 1; y < src.getSizeY()-1; y++) {
                 for(int z = 1; z < src.getSizeZ()-1; z++) {
                     index = src.getIndex(x, y, z);
-                    grad1 = Vec3F(src.getDataAt(x, y, z) - src.getDataAt(x-1, y, z),
-                                               src.getDataAt(x, y, z) - src.getDataAt(x, y-1, z),
-                                               src.getDataAt(x, y, z) - src.getDataAt(x, y, z-1));
+                    grad1 = Vec3F(src(x, y, z) - src(x-1, y, z),
+                                               src(x, y, z) - src(x, y-1, z),
+                                               src(x, y, z) - src(x, y, z-1));
 
-                    grad2 = Vec3F(src.getDataAt(x+1, y, z) - src.getDataAt(x, y, z),
-                                               src.getDataAt(x, y+1, z) - src.getDataAt(x, y, z),
-                                               src.getDataAt(x, y, z+1) - src.getDataAt(x, y, z));
+                    grad2 = Vec3F(src(x+1, y, z) - src(x, y, z),
+                                               src(x, y+1, z) - src(x, y, z),
+                                               src(x, y, z+1) - src(x, y, z));
 
 
                     for(int i = 0; i < 3; i++) {
@@ -411,7 +409,7 @@ namespace GraySkeletonCPP {
                 for(int z = 1; z < skel.getSizeZ()-1; z++) {
                     index = skel.getIndex(x, y, z);
                     localDirs[index] = Vec3F(0,0,0);
-                    if(skel.getDataAt(x,y,z) > 0) {
+                    if(skel(x,y,z) > 0) {
                         switch(type){
                             case PRUNING_CLASS_PRUNE_SURFACES:
                                 localDirs[index] = GetSurfaceNormal(skel, x, y, z);
@@ -429,7 +427,7 @@ namespace GraySkeletonCPP {
                 for(int z = 1; z < skel.getSizeZ()-1; z++) {
                     index = skel.getIndex(x, y, z);
                     directions[index] = Vec3F(0,0,0);
-                    if(skel.getDataAt(x,y,z) > 0) {
+                    if(skel(x,y,z) > 0) {
                         switch(type){
                             case PRUNING_CLASS_PRUNE_CURVES:
                                 directions[index] = GetCurveDirection(skel, x, y, z, skelDirR);
@@ -566,7 +564,7 @@ namespace GraySkeletonCPP {
             for(int y = 0; y < skel.getSizeY(); y++) {
                 for(int z = 0; z < skel.getSizeZ(); z++) {
                     index = skel.getIndex(x, y, z);
-                    if(((preserved == NULL) || ((preserved != NULL) && preserved->getDataAt(index) < 0.5)) && (tempSkel.getDataAt(index) > 0)) {
+                    if(((preserved == NULL) || ((preserved != NULL) && (*preserved)(x, y, z) < 0.5)) && (tempSkel(x, y, z) > 0)) {
                         if(volumeEigens.empty()) {
                             GetEigenResult(eigen, volGrad, filter, x, y, z, skel.getSizeX(), skel.getSizeY(), skel.getSizeZ(), filter.R, false);
                         } else {
@@ -574,9 +572,9 @@ namespace GraySkeletonCPP {
                         }
                         cost = GetVoxelCost(eigen, skelDirs[index], pruningClass);
                         if(cost < threshold) {
-                            skel.setDataAt(index, 0.0);
+                            skel(x, y, z) = 0.0;
                         }
-                        costVol.setDataAt(index, cost);
+                        costVol(x, y, z) = cost;
                     }
                 }
             }
@@ -610,11 +608,11 @@ namespace GraySkeletonCPP {
         for(int x = 0; x < src.getSizeX(); x++) {
             for(int y = 0; y < src.getSizeY(); y++) {
                 for(int z = 0; z < src.getSizeZ(); z++) {
-                    data = src.getDataAt(x, y, z);
+                    data = src(x, y, z);
                     if((data >= minGrayscale) && (data <= maxGrayscale)) {
-                        maskVolume.setDataAt(x, y, z, 1.0);
+                        maskVolume(x, y, z) = 1.0;
                     } else {
-                        maskVolume.setDataAt(x, y, z, 0.0);
+                        maskVolume(x, y, z) = 0.0;
                     }
                 }
             }
@@ -628,21 +626,20 @@ namespace GraySkeletonCPP {
         for(int x = mask.R; x < src.getSizeX()-mask.R; x++) {
             for(int y = mask.R; y < src.getSizeY()-mask.R; y++) {
                 for(int z = mask.R; z < src.getSizeZ()-mask.R; z++) {
-                    sourceData = src.getDataAt(x, y, z);
+                    sourceData = src(x, y, z);
                     if((sourceData >= minGrayscale) && (sourceData <= maxGrayscale)) {
                         GetSTBasedDistribution(mask, eigens[src.getIndex(x, y, z)]);
 
                         for(int xx = -mask.R; xx <= mask.R; xx++) {
                             for(int yy = -mask.R; yy <= mask.R; yy++) {
                                 for(int zz = -mask.R; zz <= mask.R; zz++) {
-                                    dest.setDataAt(x, y, z,
-                                        dest.getDataAt(x, y, z) + src.getDataAt(x+xx, y+yy, z+zz) *  mask.vals[xx+mask.R][yy+mask.R][zz+mask.R]);
+                                    dest(x, y, z) = dest(x, y, z) + src(x+xx, y+yy, z+zz) *  mask.vals[xx+mask.R][yy+mask.R][zz+mask.R];
                                 }
                             }
                         }
-                        dest.setDataAt(x, y, z, src.getDataAt(x, y, z) * 0.5 + dest.getDataAt(x, y, z) * 0.5);
+                        dest(x, y, z) = src(x, y, z) * 0.5 + dest(x, y, z) * 0.5;
                     } else {
-                        dest.setDataAt(x, y, z, src.getDataAt(x, y, z));
+                        dest(x, y, z) = src(x, y, z);
                     }
                 }
             }
@@ -656,8 +653,8 @@ namespace GraySkeletonCPP {
         for(int x = 0; x < dest.getSizeX(); x++) {
             for(int y = 0; y < dest.getSizeY(); y++) {
                 for(int z = 0; z < dest.getSizeZ(); z++) {
-                    if(src.getDataAt(x, y, z) > 0) {
-                        dest.setDataAt(x, y, z, 0);
+                    if(src(x, y, z) > 0) {
+                        dest(x, y, z) = 0;
                     }
                 }
             }
@@ -668,7 +665,7 @@ namespace GraySkeletonCPP {
         for(int x = 0; x < dest.getSizeX(); x++) {
             for(int y = 0; y < dest.getSizeY(); y++) {
                 for(int z = 0; z < dest.getSizeZ(); z++) {
-                    dest.setDataAt(x, y, z, dest.getDataAt(x, y, z) - src.getDataAt(x, y, z));
+                    dest(x, y, z) = dest(x, y, z) - src(x, y, z);
                 }
             }
         }
@@ -679,7 +676,7 @@ namespace GraySkeletonCPP {
             for(int x = 0; x < dest.getSizeX(); x++) {
                 for(int y = 0; y < dest.getSizeY(); y++) {
                     for(int z = 0; z < dest.getSizeZ(); z++) {
-                        dest.setDataAt(x, y, z, max(dest.getDataAt(x, y, z), src->getDataAt(x, y, z)));
+                        dest(x, y, z) = max(dest(x, y, z), (*src)(x, y, z));
                     }
                 }
             }

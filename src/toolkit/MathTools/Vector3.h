@@ -10,6 +10,9 @@
 
 #include "Matrix.h"
 #include "BasicDefines.h"
+#include <iostream>
+
+using namespace std;
 
 using namespace MathTools;
 

@@ -29,10 +29,11 @@ namespace SkeletonMaker {
         float getOriginZ() const;
         Dim3D<float> getOriginObj() const;
 
-        float getDataAt(int x, int y, int z) const;
         float getDataAt(int index) const;
         float & operator()(int i, int j, int k);
         const float & operator()(int i, int j, int k) const;
+        float & operator()(int i);
+        const float & operator()(int i) const;
         int getIndex(int x, int y, int z) const;
         int getMaxIndex() const;
 
@@ -43,8 +44,6 @@ namespace SkeletonMaker {
         void setOrigin(float originX, float originY, float originZ);
         void setSpacing(Dim3D<float>);
         void setOrigin(Dim3D<float>);
-        void setDataAt(int x, int y, int z, float value);
-        void setDataAt(int index, float value);
         void pad(int padBy, double padValue);
     private:
         void setSize(int sizeX, int sizeY, int sizeZ);
@@ -146,10 +145,6 @@ namespace SkeletonMaker {
         return origin.Z();
     }
 
-    float VolumeData::getDataAt(int x, int y, int z) const {
-        return getDataAt(getIndex(x, y, z));
-    }
-
     float VolumeData::getDataAt(int index) const {
         return data[index];
     }
@@ -160,6 +155,14 @@ namespace SkeletonMaker {
 
     const float & VolumeData::operator()(int i, int j, int k) const {
         return data[getIndex(i, j, k)];
+    }
+
+    float & VolumeData::operator()(int i) {
+        return const_cast<float &>(static_cast<const VolumeData &>((*this))(i));
+    }
+
+    const float & VolumeData::operator()(int i) const {
+        return data[i];
     }
 
     int VolumeData::getIndex(int x, int y, int z) const {
@@ -192,13 +195,6 @@ namespace SkeletonMaker {
         data.resize(getMaxIndex());
     }
 
-    void VolumeData::setDataAt(int x, int y, int z, float value) {
-        setDataAt(getIndex(x, y, z), value);
-    }
-
-    void VolumeData::setDataAt(int index, float value) {
-        data[index] = value;
-    }
     void VolumeData::pad(int padBy, double padValue) {
       #ifdef GORGON_DEBUG
             cout<<"\033[36mDEBUG: File:   VolumeData.h"<<endl;
@@ -248,7 +244,7 @@ namespace SkeletonMaker {
                     if ((x < padBy) || (y < padBy) || (z < padBy) || (x >= padBy + sizex) || (y >= padBy + sizey) || (z >= padBy + sizez)) {
                         value = padValue;
                     } else {
-                        value = getDataAt(x-padBy, y-padBy, z-padBy);
+                        value = (*this)(x-padBy, y-padBy, z-padBy);
                     }
 
                     newData[x * newSizeY * newSizeZ + y * newSizeZ + z] = (float)value;
@@ -276,7 +272,7 @@ namespace SkeletonMaker {
             for (int j=0; j < ySize; j++)
                 for (int k=0; k < zSize; k++) {
                     if ( i<getSizeX() && j<getSizeY() && k<getSizeZ() ) {
-                        copy[k+(j+i*ySize)*zSize] = getDataAt(i, j, k);
+                        copy[k+(j+i*ySize)*zSize] = (*this)(i, j, k);
                     } else {
                         copy[k+(j+i*ySize)*zSize] = padValue;
                     }

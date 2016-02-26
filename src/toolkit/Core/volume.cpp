@@ -79,7 +79,7 @@ int Volume::getNonZeroVoxelCount() {
     for(int x = 0; x < getSizeX(); x++) {
         for(int y = 0; y < getSizeY(); y++) {
             for(int z = 0; z < getSizeZ(); z++) {
-                if(this->getDataAt(x, y, z) > 0.0) {
+                if((*this)(x, y, z) > 0.0) {
                     count++;
                 }
             }
@@ -93,7 +93,7 @@ void Volume::print() {
         for(int y = 0; y < getSizeY(); y++) {
             printf("{ ");
             for(int z = 0; z < getSizeZ(); z++) {
-                printf("%f, ", getDataAt(x, y, z));
+                printf("%f, ", (*this)(x, y, z));
             }
             printf("} ");
         }
@@ -102,31 +102,26 @@ void Volume::print() {
     printf("\n");
 }
 
-void Volume::subtract(Volume* vol) {
+void Volume::subtract(const Volume & vol) {
     int i, j, k;
     for(i = 0; i < getSizeX(); i++)
         for(j = 0; j < getSizeY(); j++)
             for(k = 0; k < getSizeZ(); k++) {
-                if(getDataAt(i, j, k) > 0) {
-                    if(vol->getDataAt(i, j, k) > 0) {
-                        setDataAt(i, j, k, 0);
+                if((*this)(i, j, k) > 0) {
+                    if(vol(i, j, k) > 0) {
+                        (*this)(i, j, k) = 0.0;
                     }
                 }
             }
 
 }
 
-void Volume::applyMask(Volume * maskVol, double maskValue, bool keepMaskValue) {
-    for(int x = 0; x < maskVol->getSizeX(); x++) {
-        for(int y = 0; y < maskVol->getSizeY(); y++) {
-            for(int z = 0; z < maskVol->getSizeZ(); z++) {
-                if( ( (maskVol->getDataAt(x, y, z) == maskValue) && !keepMaskValue) || ( (maskVol->getDataAt(
-                                                                                                  x,
-                                                                                                  y,
-                                                                                                  z)
-                                                                                          != maskValue)
-                                                                                        && keepMaskValue)) {
-                    setDataAt(x, y, z, 0);
+void Volume::applyMask(const Volume & mask, double maskValue, bool keepMaskValue) {
+    for(int x = 0; x < mask.getSizeX(); x++) {
+        for(int y = 0; y < mask.getSizeY(); y++) {
+            for(int z = 0; z < mask.getSizeZ(); z++) {
+                if( ( (mask(x, y, z) == maskValue) && !keepMaskValue) || ( (mask(x, y, z) != maskValue) && keepMaskValue)) {
+                    (*this)(x, y, z) = 0;
                 }
             }
         }
@@ -134,31 +129,15 @@ void Volume::applyMask(Volume * maskVol, double maskValue, bool keepMaskValue) {
 }
 
 double Volume::getMin() const {
-    int size = volData->getMaxIndex();
-    double rvalue = volData->getDataAt(0);
-    for(int i = 1; i < size; i++) {
-        float val = volData->getDataAt(i);
-        if(rvalue > val) {
-            rvalue = val;
-        }
-    }
-    return rvalue;
+    return *(min_element(data.begin(), data.end()));
 }
 
 double Volume::getMax() const {
-    int size = volData->getMaxIndex();
-    double rvalue = volData->getDataAt(0);
-    for(int i = 1; i < size; i++) {
-        float val = volData->getDataAt(i);
-        if(rvalue < val) {
-            rvalue = val;
-        }
-    }
-    return rvalue;
+    return *(max_element(data.begin(), data.end()));
 }
 
 double Volume::getMaxValuePosition(int& maxX, int& maxY, int& maxZ) {
-    double maxVal = getDataAt(0, 0, 0);
+    double maxVal = (*this)(0, 0, 0);
     maxX = 0;
     maxY = 0;
     maxZ = 0;
@@ -167,7 +146,7 @@ double Volume::getMaxValuePosition(int& maxX, int& maxY, int& maxZ) {
     for(int x = 0; x < getSizeX(); x++) {
         for(int y = 0; y < getSizeY(); y++) {
             for(int z = 0; z < getSizeZ(); z++) {
-                data = getDataAt(x, y, z);
+                data = (*this)(x, y, z);
                 if(data > maxVal) {
                     maxVal = data;
                     maxX = x;
@@ -186,7 +165,7 @@ int Volume::getNumNeighbor6(int ox, int oy, int oz) {
         int nx = ox + neighbor6[i][0];
         int ny = oy + neighbor6[i][1];
         int nz = oz + neighbor6[i][2];
-        if(getDataAt(nx, ny, nz) >= 0) {
+        if((*this)(nx, ny, nz) >= 0) {
             rvalue++;
         }
     }
@@ -201,7 +180,7 @@ int Volume::isInternal2(int ox, int oy, int oz) {
     for(i = -1; i < 2; i++)
         for(j = -1; j < 2; j++)
             for(k = -1; k < 2; k++) {
-                if(getDataAt(ox + i, oy + j, oz + k) < 0) {
+                if((*this)(ox + i, oy + j, oz + k) < 0) {
                     return 0;
                 }
             }
@@ -213,7 +192,7 @@ int Volume::hasCell(int ox, int oy, int oz) {
     for(int i = 0; i < 2; i++)
         for(int j = 0; j < 2; j++)
             for(int k = 0; k < 2; k++) {
-                if(getDataAt(ox + i, oy + j, oz + k) < 0) {
+                if((*this)(ox + i, oy + j, oz + k) < 0) {
                     return 0;
                 }
             }
@@ -229,14 +208,14 @@ Volume * Volume::markCellFace() {
     for(i = 0; i < getSizeX(); i++)
         for(j = 0; j < getSizeY(); j++)
             for(k = 0; k < getSizeZ(); k++) {
-                if(getDataAt(i, j, k) >= 0) {
+                if((*this)(i, j, k) >= 0) {
                     if(hasCell(i, j, k)) {
                         for(int m = 0; m < 6; m++) {
                             int nx = i + neighbor6[m][0];
                             int ny = j + neighbor6[m][1];
                             int nz = k + neighbor6[m][2];
                             if(!hasCell(nx, ny, nz)) {
-                                fvol->setDataAt(i, j, k, (double) (1 << m));
+                                (*fvol)(i, j, k) = (double) (1 << m);
                                 break;
                             }
                         }
@@ -269,7 +248,7 @@ int Volume::hasCompleteHelix(int ox, int oy, int oz) {
         nx = ox + neighbor6[i][0];
         ny = oy + neighbor6[i][1];
         nz = oz + neighbor6[i][2];
-        if(getDataAt(nx, ny, nz) >= 0) {
+        if((*this)(nx, ny, nz) >= 0) {
             c1++;
             j = i;
         }
@@ -291,7 +270,7 @@ int Volume::isHelixEnd(int ox, int oy, int oz) {
         ny = oy + neighbor6[i][1];
         nz = oz + neighbor6[i][2];
 
-        double val = getDataAt(nx, ny, nz);
+        double val = (*this)(nx, ny, nz);
 
         if(val >= 0) {
             c1++;
@@ -320,7 +299,7 @@ int Volume::isFeatureFace(int ox, int oy, int oz) {
             ny = oy + sheetNeighbor[i][j][1];
             nz = oz + sheetNeighbor[i][j][2];
 
-            if(getDataAt(nx, ny, nz) < 0) {
+            if((*this)(nx, ny, nz) < 0) {
                 ct = -1;
                 break;
             }
@@ -354,7 +333,7 @@ int Volume::isSimple(int ox, int oy, int oz) {
     for(i = -1; i < 2; i++)
         for(j = -1; j < 2; j++)
             for(k = -1; k < 2; k++) {
-                double tval = getDataAt(ox + i, oy + j, oz + k);
+                double tval = (*this)(ox + i, oy + j, oz + k);
                 vox[i + 1][j + 1][k + 1] = tval;
             }
 
@@ -375,7 +354,7 @@ int Volume::isPiercable(int ox, int oy, int oz) {
     for(i = -1; i < 2; i++)
         for(j = -1; j < 2; j++)
             for(k = -1; k < 2; k++) {
-                double tval = getDataAt(ox + i, oy + j, oz + k);
+                double tval = (*this)(ox + i, oy + j, oz + k);
                 vox[i + 1][j + 1][k + 1] = tval;
             }
 
@@ -389,17 +368,17 @@ int Volume::isPiercable(int ox, int oy, int oz) {
 
 int Volume::getNumPotComplex(int ox, int oy, int oz) {
     int i;
-    double val = getDataAt(ox, oy, oz);
+    double val = (*this)(ox, oy, oz);
 
     int rvalue = 0, nx, ny, nz;
-    setDataAt(ox, oy, oz, -val);
+    (*this)(ox, oy, oz) = -val;
 
     for(i = 0; i < 6; i++) {
         nx = ox + neighbor6[i][0];
         ny = oy + neighbor6[i][1];
         nz = oz + neighbor6[i][2];
 
-        if(getDataAt(nx, ny, nz) >= 0) {
+        if((*this)(nx, ny, nz) >= 0) {
             int num = getNumNeighbor6(nx, ny, nz);
             if(num > rvalue) {
                 rvalue = num;
@@ -407,7 +386,7 @@ int Volume::getNumPotComplex(int ox, int oy, int oz) {
         }
     }
 
-    setDataAt(ox, oy, oz, val);
+    (*this)(ox, oy, oz) = val;
 
     return rvalue + getNumNeighbor6(ox, oy, oz) * 10;
 }
@@ -592,7 +571,7 @@ int Volume::countIntEuler(int ox, int oy, int oz) {
     for(i = 0; i < 3; i++)
         for(j = 0; j < 3; j++)
             for(k = 0; k < 3; k++) {
-                vox[i][j][k] = getDataAt(ox - 1 + i, oy - 1 + j, oz - 1 + k);
+                vox[i][j][k] = (*this)(ox - 1 + i, oy - 1 + j, oz - 1 + k);
                 tvox[i][j][k] = 0;
             }
 
@@ -655,18 +634,18 @@ void Volume::curveSkeleton(const Volume & grayvol, float lowthr, float highthr,
     for(i = 0; i < getSizeX(); i++)
         for(j = 0; j < getSizeY(); j++)
             for(k = 0; k < getSizeZ(); k++) {
-                if(getDataAt(i, j, k) >= 0) {
-                    double v = grayvol.getDataAt(i, j, k);
-                    if(svol.getDataAt(i, j, k) > 0
+                if((*this)(i, j, k) >= 0) {
+                    double v = grayvol(i, j, k);
+                    if(svol(i, j, k) > 0
                        || v <= lowthr || v > highthr) {
-                        setDataAt(i, j, k, MAX_ERODE);
+                        (*this)(i, j, k) = MAX_ERODE;
                     }
                     else {
                         for(int m = 0; m < 6; m++) {
-                            if(getDataAt(i + neighbor6[m][0],
+                            if((*this)(i + neighbor6[m][0],
                                        j + neighbor6[m][1], k + neighbor6[m][2])
                                < 0) {
-                                // setDataAt( i, j, k, 1 ) ;
+                                // (*this)( i, j, k, 1 ) ;
                                 queue2->prepend(i, j, k);
                                 break;
                             }
@@ -685,11 +664,7 @@ void Volume::curveSkeleton(const Volume & grayvol, float lowthr, float highthr,
     gridPoint gp;
     int ox, oy, oz;
     int score;
-    Volume* scrvol = new Volume(this->getSizeX(), this->getSizeY(),
-            this->getSizeZ());
-    for(i = 0; i < getSizeX() * getSizeY() * getSizeZ(); i++) {
-        scrvol->setDataAt(i, -1);
-    }
+    Volume* scrvol = new Volume(this->getSizeX(), this->getSizeY(), this->getSizeZ(), -1);
 
     for(int curwid = 1; curwid <= wid; curwid++) {
         // At the start of each iteration,
@@ -711,11 +686,11 @@ void Volume::curveSkeleton(const Volume & grayvol, float lowthr, float highthr,
             oy = ele->y;
             oz = ele->z;
 
-            if(getDataAt(ox, oy, oz) == curwid) {
+            if((*this)(ox, oy, oz) == curwid) {
                 ele = queue2->remove();
             }
             else {
-                setDataAt(ox, oy, oz, curwid);
+                (*this)(ox, oy, oz) = curwid;
                 ele = queue2->getNext();
             }
         }
@@ -742,7 +717,7 @@ void Volume::curveSkeleton(const Volume & grayvol, float lowthr, float highthr,
 
             // Compute score
             score = getNumPotComplex2(ox, oy, oz);
-            scrvol->setDataAt(ox, oy, oz, score);
+            (*scrvol)(ox, oy, oz) = score;
 
             // Push to queue
             gridPoint gp(ox, oy, oz);
@@ -775,20 +750,18 @@ void Volume::curveSkeleton(const Volume & grayvol, float lowthr, float highthr,
             // Ignore the node
             // if it has been processed before
             // or it has an updated score
-            if(getDataAt(ox, oy, oz) != curwid || (int)scrvol->getDataAt(ox, oy,
-                                                          oz)
-                                                  != score) {
+            if((*this)(ox, oy, oz) != curwid || (int)(*scrvol)(ox, oy, oz) != score) {
                 continue;
             }
 
             if(isHelixEnd(ox, oy, oz) || !isSimple(ox, oy, oz)) {
                 // Complex, set to next layer
-                setDataAt(ox, oy, oz, curwid + 1);
+                (*this)(ox, oy, oz) = curwid + 1;
                 queue4->prepend(ox, oy, oz);
                 numComplex++;
             }
             else {
-                setDataAt(ox, oy, oz, -1);
+                (*this)(ox, oy, oz) = -1;
                 numSimple++;
 
                 /* Adding ends */
@@ -797,8 +770,8 @@ void Volume::curveSkeleton(const Volume & grayvol, float lowthr, float highthr,
                     int nx = ox + neighbor6[m][0];
                     int ny = oy + neighbor6[m][1];
                     int nz = oz + neighbor6[m][2];
-                    if(getDataAt(nx, ny, nz) == 0) {
-                        // setDataAt( nx, ny, nz, curwid + 1 ) ;
+                    if((*this)(nx, ny, nz) == 0) {
+                        // (*this)( nx, ny, nz, curwid + 1 ) ;
                         queue2->prepend(nx, ny, nz);
                     }
                 }
@@ -814,13 +787,13 @@ void Volume::curveSkeleton(const Volume & grayvol, float lowthr, float highthr,
                         int ny = oy + j;
                         int nz = oz + k;
 
-                        if(getDataAt(nx, ny, nz) == curwid) {
+                        if((*this)(nx, ny, nz) == curwid) {
                             // Compute score
                             score = getNumPotComplex2(nx, ny, nz);
 
-                            if(score != (int)scrvol->getDataAt(nx, ny, nz)) {
+                            if(score != (int)(*scrvol)(nx, ny, nz)) {
                                 // printf("Update\n") ;
-                                scrvol->setDataAt(nx, ny, nz, score);
+                                (*scrvol)(nx, ny, nz) = score;
                                 // Push to queue
                                 gridPoint gp(ox, oy, oz);
                                 gp.x = nx;
@@ -855,7 +828,7 @@ void Volume::curveSkeleton(const Volume & grayvol, float lowthr, float highthr,
         if(isPiercable(ox, oy, oz) == 1) // hasCompleteSheet( ox, oy, oz ) == 1 ) //
         {
             queue2->prepend(ox, oy, oz);
-            //	setDataAt( ox, oy, oz, -1 ) ;
+            //	(*this)( ox, oy, oz, -1 ) ;
         }
         ele = queue4->remove();
     }
@@ -863,7 +836,7 @@ void Volume::curveSkeleton(const Volume & grayvol, float lowthr, float highthr,
     for(i = 0; i < getSizeX(); i++)
         for(j = 0; j < getSizeY(); j++)
             for(k = 0; k < getSizeZ(); k++) {
-                if(getDataAt(i, j, k) == 0 && isPiercable(i, j, k)) //hasCompleteSheet(i,j,k) == 1) //
+                if((*this)(i, j, k) == 0 && isPiercable(i, j, k)) //hasCompleteSheet(i,j,k) == 1) //
                            {
                     queue2->prepend(i, j, k);
                 }
@@ -874,7 +847,7 @@ void Volume::curveSkeleton(const Volume & grayvol, float lowthr, float highthr,
         ox = ele->x;
         oy = ele->y;
         oz = ele->z;
-        setDataAt(ox, oy, oz, -1);
+        (*this)(ox, oy, oz) = -1;
         ele = queue2->remove();
     }
 
@@ -915,16 +888,16 @@ void Volume::curveSkeleton(float thr, const Volume & svol) {
     for(i = 0; i < getSizeX(); i++)
         for(j = 0; j < getSizeY(); j++)
             for(k = 0; k < getSizeZ(); k++) {
-                if(getDataAt(i, j, k) >= 0) {
-                    if(svol.getDataAt(i, j, k) > 0) {
-                        setDataAt(i, j, k, MAX_ERODE);
+                if((*this)(i, j, k) >= 0) {
+                    if(svol(i, j, k) > 0) {
+                        (*this)(i, j, k) = MAX_ERODE;
                     }
                     else {
                         for(int m = 0; m < 6; m++) {
-                            if(getDataAt(i + neighbor6[m][0],
+                            if((*this)(i + neighbor6[m][0],
                                        j + neighbor6[m][1], k + neighbor6[m][2])
                                < 0) {
-                                // setDataAt( i, j, k, 1 ) ;
+                                // (*this)( i, j, k, 1 ) ;
                                 queue2->prepend(i, j, k);
                                 break;
                             }
@@ -943,11 +916,7 @@ void Volume::curveSkeleton(float thr, const Volume & svol) {
     gridPoint gp;
     int ox, oy, oz;
     int score;
-    Volume* scrvol = new Volume(this->getSizeX(), this->getSizeY(),
-            this->getSizeZ());
-    for(i = 0; i < getSizeX() * getSizeY() * getSizeZ(); i++) {
-        scrvol->setDataAt(i, -1);
-    }
+    Volume* scrvol = new Volume(this->getSizeX(), this->getSizeY(), this->getSizeZ(), -1);
 
     for(int curwid = 1; curwid <= wid; curwid++) {
         // At the start of each iteration,
@@ -969,11 +938,11 @@ void Volume::curveSkeleton(float thr, const Volume & svol) {
             oy = ele->y;
             oz = ele->z;
 
-            if(getDataAt(ox, oy, oz) == curwid) {
+            if((*this)(ox, oy, oz) == curwid) {
                 ele = queue2->remove();
             }
             else {
-                setDataAt(ox, oy, oz, curwid);
+                (*this)(ox, oy, oz) = curwid;
                 ele = queue2->getNext();
             }
         }
@@ -1000,7 +969,7 @@ void Volume::curveSkeleton(float thr, const Volume & svol) {
 
             // Compute score
             score = getNumPotComplex2(ox, oy, oz);
-            scrvol->setDataAt(ox, oy, oz, score);
+            (*scrvol)(ox, oy, oz) = score;
 
             // Push to queue
             gridPoint gp(ox, oy, oz);
@@ -1033,20 +1002,18 @@ void Volume::curveSkeleton(float thr, const Volume & svol) {
             // Ignore the node
             // if it has been processed before
             // or it has an updated score
-            if(getDataAt(ox, oy, oz) != curwid || (int)scrvol->getDataAt(ox, oy,
-                                                          oz)
-                                                  != score) {
+            if((*this)(ox, oy, oz) != curwid || (int)(*scrvol)(ox, oy, oz) != score) {
                 continue;
             }
 
             if(isHelixEnd(ox, oy, oz) || !isSimple(ox, oy, oz)) {
                 // Complex, set to next layer
-                setDataAt(ox, oy, oz, curwid + 1);
+                (*this)(ox, oy, oz) = curwid + 1;
                 queue4->prepend(ox, oy, oz);
                 numComplex++;
             }
             else {
-                setDataAt(ox, oy, oz, -1);
+                (*this)(ox, oy, oz) = -1;
                 numSimple++;
             }
             /* Adding ends */
@@ -1056,8 +1023,8 @@ void Volume::curveSkeleton(float thr, const Volume & svol) {
                 int nx = ox + neighbor6[m][0];
                 int ny = oy + neighbor6[m][1];
                 int nz = oz + neighbor6[m][2];
-                if(getDataAt(nx, ny, nz) == 0) {
-                    // setDataAt( nx, ny, nz, curwid + 1 ) ;
+                if((*this)(nx, ny, nz) == 0) {
+                    // (*this)( nx, ny, nz, curwid + 1 ) ;
                     queue2->prepend(nx, ny, nz);
                 }
             }
@@ -1071,13 +1038,13 @@ void Volume::curveSkeleton(float thr, const Volume & svol) {
                         int ny = oy + j;
                         int nz = oz + k;
 
-                        if(getDataAt(nx, ny, nz) == curwid) {
+                        if((*this)(nx, ny, nz) == curwid) {
                             // Compute score
                             score = getNumPotComplex2(nx, ny, nz);
 
-                            if(score != (int)scrvol->getDataAt(nx, ny, nz)) {
+                            if(score != (int)(*scrvol)(nx, ny, nz)) {
                                 // printf("Update\n") ;
-                                scrvol->setDataAt(nx, ny, nz, score);
+                                (*scrvol)(nx, ny, nz) = score;
                                 // Push to queue
                                 gridPoint gp(ox, oy, oz);
                                 gp.x = nx;
@@ -1137,16 +1104,16 @@ void Volume::curveSkeleton2D(float thr, const Volume & svol) {
     for(i = 0; i < getSizeX(); i++)
         for(j = 0; j < getSizeY(); j++)
             for(k = 0; k < getSizeZ(); k++) {
-                if(getDataAt(i, j, k) >= 0) {
-                    if(svol.getDataAt(i, j, k) > 0) {
-                        setDataAt(i, j, k, MAX_ERODE);
+                if((*this)(i, j, k) >= 0) {
+                    if(svol(i, j, k) > 0) {
+                        (*this)(i, j, k) = MAX_ERODE;
                     }
                     else {
                         for(int m = 0; m < 4; m++) {
-                            if(getDataAt(i + neighbor4[m][0],
+                            if((*this)(i + neighbor4[m][0],
                                        j + neighbor4[m][1], k)
                                < 0) {
-                                // setDataAt( i, j, k, 1 ) ;
+                                // (*this)( i, j, k, 1 ) ;
                                 queue2->prepend(i, j, k);
                                 break;
                             }
@@ -1165,11 +1132,7 @@ void Volume::curveSkeleton2D(float thr, const Volume & svol) {
     gridPoint gp;
     int ox, oy, oz;
     int score;
-    Volume* scrvol = new Volume(this->getSizeX(), this->getSizeY(),
-            this->getSizeZ());
-    for(i = 0; i < getSizeX() * getSizeY() * getSizeZ(); i++) {
-        scrvol->setDataAt(i, -1);
-    }
+    Volume* scrvol = new Volume(this->getSizeX(), this->getSizeY(), this->getSizeZ(), -1);
 
     for(int curwid = 1; curwid <= wid; curwid++) {
         // At the start of each iteration,
@@ -1191,11 +1154,11 @@ void Volume::curveSkeleton2D(float thr, const Volume & svol) {
             oy = ele->y;
             oz = ele->z;
 
-            if(getDataAt(ox, oy, oz) == curwid) {
+            if((*this)(ox, oy, oz) == curwid) {
                 ele = queue2->remove();
             }
             else {
-                setDataAt(ox, oy, oz, curwid);
+                (*this)(ox, oy, oz) = curwid;
                 ele = queue2->getNext();
             }
         }
@@ -1222,7 +1185,7 @@ void Volume::curveSkeleton2D(float thr, const Volume & svol) {
 
             // Compute score
             score = getNumPotComplex2(ox, oy, oz);
-            scrvol->setDataAt(ox, oy, oz, score);
+            (*scrvol)(ox, oy, oz) = score;
 
             // Push to queue
             gridPoint gp(ox, oy, oz);
@@ -1255,20 +1218,18 @@ void Volume::curveSkeleton2D(float thr, const Volume & svol) {
             // Ignore the node
             // if it has been processed before
             // or it has an updated score
-            if(getDataAt(ox, oy, oz) != curwid || (int)scrvol->getDataAt(ox, oy,
-                                                          oz)
-                                                  != score) {
+            if((*this)(ox, oy, oz) != curwid || (int)(*scrvol)(ox, oy, oz) != score) {
                 continue;
             }
 
             if(isHelixEnd(ox, oy, oz) || !isSimple(ox, oy, oz)) {
                 // Complex, set to next layer
-                setDataAt(ox, oy, oz, curwid + 1);
+                (*this)(ox, oy, oz) = curwid + 1;
                 queue4->prepend(ox, oy, oz);
                 numComplex++;
             }
             else {
-                setDataAt(ox, oy, oz, -1);
+                (*this)(ox, oy, oz) = -1;
                 numSimple++;
             }
             /* Adding ends */
@@ -1278,8 +1239,8 @@ void Volume::curveSkeleton2D(float thr, const Volume & svol) {
                 int nx = ox + neighbor4[m][0];
                 int ny = oy + neighbor4[m][1];
                 int nz = oz;
-                if(getDataAt(nx, ny, nz) == 0) {
-                    // setDataAt( nx, ny, nz, curwid + 1 ) ;
+                if((*this)(nx, ny, nz) == 0) {
+                    // (*this)( nx, ny, nz, curwid + 1 ) ;
                     queue2->prepend(nx, ny, nz);
                 }
             }
@@ -1293,13 +1254,13 @@ void Volume::curveSkeleton2D(float thr, const Volume & svol) {
                         int ny = oy + j;
                         int nz = oz + k;
 
-                        if(getDataAt(nx, ny, nz) == curwid) {
+                        if((*this)(nx, ny, nz) == curwid) {
                             // Compute score
                             score = getNumPotComplex2(nx, ny, nz);
 
-                            if(score != (int)scrvol->getDataAt(nx, ny, nz)) {
+                            if(score != (int)(*scrvol)(nx, ny, nz)) {
                                 // printf("Update\n") ;
-                                scrvol->setDataAt(nx, ny, nz, score);
+                                (*scrvol)(nx, ny, nz) = score;
                                 // Push to queue
                                 gridPoint gp(ox, oy, oz);
                                 gp.x = nx;
@@ -1362,19 +1323,19 @@ void Volume::pointSkeleton(const Volume & grayvol, float lowthr, float highthr,
     for(i = 0; i < getSizeX(); i++)
         for(j = 0; j < getSizeY(); j++)
             for(k = 0; k < getSizeZ(); k++) {
-                if(getDataAt(i, j, k) >= 0) {
-                    float v = (float)grayvol.getDataAt(i, j, k);
+                if((*this)(i, j, k) >= 0) {
+                    float v = (float)grayvol(i, j, k);
                     if(v <= lowthr || v > highthr
-                       || svol.getDataAt(i, j, k) > 0
-                       || hvol.getDataAt(i, j, k) > 0) {
-                        setDataAt(i, j, k, MAX_ERODE);
+                       || svol(i, j, k) > 0
+                       || hvol(i, j, k) > 0) {
+                        (*this)(i, j, k) = MAX_ERODE;
                     }
                     else {
                         for(int m = 0; m < 6; m++) {
-                            if(getDataAt(i + neighbor6[m][0],
+                            if((*this)(i + neighbor6[m][0],
                                        j + neighbor6[m][1], k + neighbor6[m][2])
                                < 0) {
-                                setDataAt(i, j, k, 1);
+                                (*this)(i, j, k) = 1;
                                 queue2->prepend(i, j, k);
                                 break;
                             }
@@ -1395,11 +1356,7 @@ void Volume::pointSkeleton(const Volume & grayvol, float lowthr, float highthr,
     gridPoint gp;
     int ox, oy, oz;
     int score;
-    Volume* scrvol = new Volume(this->getSizeX(), this->getSizeY(),
-            this->getSizeZ());
-    for(i = 0; i < getSizeX() * getSizeY() * getSizeZ(); i++) {
-        scrvol->setDataAt(i, -1);
-    }
+    Volume* scrvol = new Volume(this->getSizeX(), this->getSizeY(), this->getSizeZ(), -1);
 
     for(int curwid = 1; curwid <= wid; curwid++) {
         // At the start of each iteration,
@@ -1423,7 +1380,7 @@ void Volume::pointSkeleton(const Volume & grayvol, float lowthr, float highthr,
 
             // Compute score
             score = getNumPotComplex2(ox, oy, oz);
-            scrvol->setDataAt(ox, oy, oz, score);
+            (*scrvol)(ox, oy, oz) = score;
 
             // Push to queue
             gridPoint gp(ox, oy, oz);
@@ -1456,7 +1413,7 @@ void Volume::pointSkeleton(const Volume & grayvol, float lowthr, float highthr,
             // Ignore the node
             // if it has been processed before
             // or it has an updated score
-            if(getDataAt(ox, oy, oz) != curwid || (int)scrvol->getDataAt(ox, oy,
+            if((*this)(ox, oy, oz) != curwid || (int)(*scrvol)(ox, oy,
                                                           oz)
                                                   != score) {
                 continue;
@@ -1466,12 +1423,12 @@ void Volume::pointSkeleton(const Volume & grayvol, float lowthr, float highthr,
             // Check simple
             if(!isSimple(ox, oy, oz)) {
                 // Complex, set to next layer
-                setDataAt(ox, oy, oz, curwid + 1);
+                (*this)(ox, oy, oz) = curwid + 1;
                 queue2->prepend(ox, oy, oz);
                 numComplex++;
             }
             else {
-                setDataAt(ox, oy, oz, -1);
+                (*this)(ox, oy, oz) = -1;
                 numSimple++;
                 /* Adding ends */
 
@@ -1480,8 +1437,8 @@ void Volume::pointSkeleton(const Volume & grayvol, float lowthr, float highthr,
                     int nx = ox + neighbor6[m][0];
                     int ny = oy + neighbor6[m][1];
                     int nz = oz + neighbor6[m][2];
-                    if(getDataAt(nx, ny, nz) == 0) {
-                        setDataAt(nx, ny, nz, curwid + 1);
+                    if((*this)(nx, ny, nz) == 0) {
+                        (*this)(nx, ny, nz) = curwid + 1;
                         queue2->prepend(nx, ny, nz);
                     }
                 }
@@ -1498,13 +1455,13 @@ void Volume::pointSkeleton(const Volume & grayvol, float lowthr, float highthr,
                         int ny = oy + j;
                         int nz = oz + k;
 
-                        if(getDataAt(nx, ny, nz) == curwid) {
+                        if((*this)(nx, ny, nz) == curwid) {
                             // Compute score
                             score = getNumPotComplex2(nx, ny, nz);
 
-                            if(score != (int)scrvol->getDataAt(nx, ny, nz)) {
+                            if(score != (int)(*scrvol)(nx, ny, nz)) {
                                 // printf("Update\n") ;
-                                scrvol->setDataAt(nx, ny, nz, score);
+                                (*scrvol)(nx, ny, nz) = score;
                                 // Push to queue
                                 gridPoint gp(ox, oy, oz);
                                 gp.x = nx;
@@ -1545,7 +1502,7 @@ void Volume::pointSkeleton(const Volume & grayvol, float lowthr, float highthr,
     for(i = 0; i < getSizeX(); i++)
         for(j = 0; j < getSizeY(); j++)
             for(k = 0; k < getSizeZ(); k++) {
-                if(getDataAt(i, j, k) == 0 && hasCompleteHelix(i, j, k) == 1) {
+                if((*this)(i, j, k) == 0 && hasCompleteHelix(i, j, k) == 1) {
                     queue2->prepend(i, j, k);
                 }
             }
@@ -1555,7 +1512,7 @@ void Volume::pointSkeleton(const Volume & grayvol, float lowthr, float highthr,
         ox = ele->x;
         oy = ele->y;
         oz = ele->z;
-        setDataAt(ox, oy, oz, -1);
+        (*this)(ox, oy, oz) = -1;
         ele = queue2->remove();
     }
 
@@ -1594,17 +1551,17 @@ void Volume::skeleton(float thr, const Volume & svol, const Volume & hvol) {
     for(i = 0; i < getSizeX(); i++)
         for(j = 0; j < getSizeY(); j++)
             for(k = 0; k < getSizeZ(); k++) {
-                if(getDataAt(i, j, k) >= 0) {
-                    if(svol.getDataAt(i, j, k) > 0 || hvol.getDataAt(i, j, k)
+                if((*this)(i, j, k) >= 0) {
+                    if(svol(i, j, k) > 0 || hvol(i, j, k)
                             > 0) {
-                        setDataAt(i, j, k, MAX_ERODE);
+                        (*this)(i, j, k) = MAX_ERODE;
                     }
                     else {
                         for(int m = 0; m < 6; m++) {
-                            if(getDataAt(i + neighbor6[m][0],
+                            if((*this)(i + neighbor6[m][0],
                                        j + neighbor6[m][1], k + neighbor6[m][2])
                                < 0) {
-                                setDataAt(i, j, k, 1);
+                                (*this)(i, j, k) = 1;
                                 queue2->prepend(i, j, k);
                                 break;
                             }
@@ -1623,11 +1580,7 @@ void Volume::skeleton(float thr, const Volume & svol, const Volume & hvol) {
     gridPoint gp;
     int ox, oy, oz;
     int score;
-    Volume* scrvol = new Volume(this->getSizeX(), this->getSizeY(),
-            this->getSizeZ());
-    for(i = 0; i < getSizeX() * getSizeY() * getSizeZ(); i++) {
-        scrvol->setDataAt(i, -1);
-    }
+    Volume* scrvol = new Volume(this->getSizeX(), this->getSizeY(), this->getSizeZ(), -1);
 
     for(int curwid = 1; curwid <= wid; curwid++) {
         // At the start of each iteration,
@@ -1651,7 +1604,7 @@ void Volume::skeleton(float thr, const Volume & svol, const Volume & hvol) {
 
             // Compute score
             score = getNumPotComplex2(ox, oy, oz);
-            scrvol->setDataAt(ox, oy, oz, score);
+            (*scrvol)(ox, oy, oz) = score;
 
             // Push to queue
             gridPoint gp(ox, oy, oz);
@@ -1684,9 +1637,7 @@ void Volume::skeleton(float thr, const Volume & svol, const Volume & hvol) {
             // Ignore the node
             // if it has been processed before
             // or it has an updated score
-            if(getDataAt(ox, oy, oz) != curwid || (int)scrvol->getDataAt(ox, oy,
-                                                          oz)
-                                                  != score) {
+            if((*this)(ox, oy, oz) != curwid || (int)(*scrvol)(ox, oy, oz) != score) {
                 continue;
             }
 
@@ -1694,12 +1645,12 @@ void Volume::skeleton(float thr, const Volume & svol, const Volume & hvol) {
             // Check simple
             if(!isSimple(ox, oy, oz)) {
                 // Complex, set to next layer
-                setDataAt(ox, oy, oz, curwid + 1);
+                (*this)(ox, oy, oz) = curwid + 1;
                 queue2->prepend(ox, oy, oz);
                 numComplex++;
             }
             else {
-                setDataAt(ox, oy, oz, -1);
+                (*this)(ox, oy, oz) = -1;
                 numSimple++;
             }
             /* Adding ends */
@@ -1709,8 +1660,8 @@ void Volume::skeleton(float thr, const Volume & svol, const Volume & hvol) {
                 int nx = ox + neighbor6[m][0];
                 int ny = oy + neighbor6[m][1];
                 int nz = oz + neighbor6[m][2];
-                if(getDataAt(nx, ny, nz) == 0) {
-                    setDataAt(nx, ny, nz, curwid + 1);
+                if((*this)(nx, ny, nz) == 0) {
+                    (*this)(nx, ny, nz) = curwid + 1;
                     queue2->prepend(nx, ny, nz);
                 }
             }
@@ -1725,13 +1676,13 @@ void Volume::skeleton(float thr, const Volume & svol, const Volume & hvol) {
                         int ny = oy + j;
                         int nz = oz + k;
 
-                        if(getDataAt(nx, ny, nz) == curwid) {
+                        if((*this)(nx, ny, nz) == curwid) {
                             // Compute score
                             score = getNumPotComplex2(nx, ny, nz);
 
-                            if(score != (int)scrvol->getDataAt(nx, ny, nz)) {
+                            if(score != (int)(*scrvol)(nx, ny, nz)) {
                                 // printf("Update\n") ;
-                                scrvol->setDataAt(nx, ny, nz, score);
+                                (*scrvol)(nx, ny, nz) = score;
                                 // Push to queue
                                 gridPoint gp(ox, oy, oz);
                                 gp.x = nx;
@@ -1785,12 +1736,12 @@ void Volume::erodeHelix(int disthr) {
     for(i = 0; i < getSizeX(); i++)
         for(j = 0; j < getSizeY(); j++)
             for(k = 0; k < getSizeZ(); k++) {
-                if(getDataAt(i, j, k) >= 0) {
+                if((*this)(i, j, k) >= 0) {
                     if(!hasCompleteHelix(i, j, k))
                     // if ( ! hasCompleteHelix( i, j, k, facevol ) )
                             {
                         queue2->prepend(i, j, k);
-                        fvol->setDataAt(i, j, k, -1);
+                        (*fvol)(i, j, k) = -1;
                     }
                 }
             }
@@ -1806,7 +1757,7 @@ void Volume::erodeHelix(int disthr) {
         //printf("Distance transform to %d...", dis) ;
         queue2->reset();
         while( (ele = queue2->getNext()) != NULL) {
-            setDataAt(ele->x, ele->y, ele->z, dis);
+            (*this)(ele->x, ele->y, ele->z) = dis;
             queues[-dis]->prepend(ele->x, ele->y, ele->z);
         }
         //printf("%d nodes\n", queues[-dis]->size()) ;
@@ -1819,13 +1770,13 @@ void Volume::erodeHelix(int disthr) {
                 int nx = ele->x + neighbor6[m][0];
                 int ny = ele->y + neighbor6[m][1];
                 int nz = ele->z + neighbor6[m][2];
-                if(getDataAt(nx, ny, nz) == 0) {
-                    fvol->setDataAt(nx, ny, nz, dis);
+                if((*this)(nx, ny, nz) == 0) {
+                    (*fvol)(nx, ny, nz) = dis;
 
                     if(!hasCompleteHelix(nx, ny, nz))
                     // if ( ! hasCompleteHelix( nx, ny, nz, facevol ) )
                             {
-                        setDataAt(nx, ny, nz, 1);
+                        (*this)(nx, ny, nz) = 1;
                         queue3->prepend(nx, ny, nz);
                     }
                 }
@@ -1850,8 +1801,8 @@ void Volume::erodeHelix(int disthr) {
     for(i = 0; i < getSizeX(); i++)
         for(j = 0; j < getSizeY(); j++)
             for(k = 0; k < getSizeZ(); k++) {
-                if(getDataAt(i, j, k) == 0) {
-                    setDataAt(i, j, k, dis);
+                if((*this)(i, j, k) == 0) {
+                    (*this)(i, j, k) = dis;
                     queues[-dis]->prepend(i, j, k);
                     ftot++;
                 }
@@ -1870,7 +1821,7 @@ void Volume::erodeHelix(int disthr) {
     for(d = -dis; d > disthr + 1; d--) {
         queues[d]->reset();
         while( (ele = queues[d]->getNext()) != NULL) {
-            setDataAt(ele->x, ele->y, ele->z, d);
+            (*this)(ele->x, ele->y, ele->z) = d;
         }
     }
 
@@ -1885,21 +1836,21 @@ void Volume::erodeHelix(int disthr) {
                 int nx = ele->x + neighbor6[m][0];
                 int ny = ele->y + neighbor6[m][1];
                 int nz = ele->z + neighbor6[m][2];
-                if(getDataAt(nx, ny, nz) == d + 1) {
+                if((*this)(nx, ny, nz) == d + 1) {
                     dilatable = 1;
                     break;
                 }
             }
 
             if(!dilatable) {
-                setDataAt(ele->x, ele->y, ele->z, -d + 1);
+                (*this)(ele->x, ele->y, ele->z) = -d + 1;
                 if(d > 2) {
                     queues[d - 1]->prepend(ele->x, ele->y, ele->z);
                 }
                 ele = queues[d]->remove();
             }
             else {
-                setDataAt(ele->x, ele->y, ele->z, d);
+                (*this)(ele->x, ele->y, ele->z) = d;
                 ele = queues[d]->getNext();
             }
 
@@ -1912,7 +1863,7 @@ void Volume::erodeHelix(int disthr) {
             ele = queues[d]->getNext();
             while(ele != NULL) {
                 int critical = 0;
-                setDataAt(ele->x, ele->y, ele->z, -1);
+                (*this)(ele->x, ele->y, ele->z) = -1;
 
                 for(i = -1; i < 2; i++) {
                     for(j = -1; j < 2; j++) {
@@ -1923,7 +1874,7 @@ void Volume::erodeHelix(int disthr) {
                             int nx = ele->x + i;
                             int ny = ele->y + j;
                             int nz = ele->z + k;
-                            if(getDataAt(nx, ny, nz) == d + 1 && !hasCompleteHelix(
+                            if((*this)(nx, ny, nz) == d + 1 && !hasCompleteHelix(
                                        nx, ny, nz)) //, facevol ) )
                                        {
                                 critical = 1;
@@ -1940,11 +1891,11 @@ void Volume::erodeHelix(int disthr) {
                 }
 
                 if(critical) {
-                    setDataAt(ele->x, ele->y, ele->z, d);
+                    (*this)(ele->x, ele->y, ele->z) = d;
                     ele = queues[d]->getNext();
                 }
                 else {
-                    setDataAt(ele->x, ele->y, ele->z, -d + 1);
+                    (*this)(ele->x, ele->y, ele->z) = -d + 1;
                     if(d > 2) {
                         queues[d - 1]->prepend(ele->x, ele->y, ele->z);
                     }
@@ -2002,10 +1953,10 @@ int Volume::erodeSheet(int disthr) {
     for(i = 0; i < getSizeX(); i++)
         for(j = 0; j < getSizeY(); j++)
             for(k = 0; k < getSizeZ(); k++) {
-                if(getDataAt(i, j, k) >= 0) {
+                if((*this)(i, j, k) >= 0) {
                     if(!hasCompleteSheet(i, j, k)) {
                         queue2->prepend(i, j, k);
-                        fvol->setDataAt(i, j, k, -1);
+                        (*fvol)(i, j, k) = -1;
                     }
                 }
             }
@@ -2023,7 +1974,7 @@ int Volume::erodeSheet(int disthr) {
         //printf("Distance transform to %d...", dis) ;
         queue2->reset();
         while( (ele = queue2->getNext()) != NULL) {
-            setDataAt(ele->x, ele->y, ele->z, dis);
+            (*this)(ele->x, ele->y, ele->z) = dis;
             queues[-dis]->prepend(ele->x, ele->y, ele->z);
         }
         //printf("%d nodes\n", queues[-dis]->size()) ;
@@ -2043,11 +1994,11 @@ int Volume::erodeSheet(int disthr) {
                         int ny = ele->y + my;
                         int nz = ele->z + mz;
 
-                        if(getDataAt(nx, ny, nz) == 0) {
-                            fvol->setDataAt(nx, ny, nz, dis);
+                        if((*this)(nx, ny, nz) == 0) {
+                            (*fvol)(nx, ny, nz) = dis;
 
                             if(!hasCompleteSheet(nx, ny, nz)) {
-                                setDataAt(nx, ny, nz, 1);
+                                (*this)(nx, ny, nz) = 1;
                                 queue3->prepend(nx, ny, nz);
                             }
                         }
@@ -2073,8 +2024,8 @@ int Volume::erodeSheet(int disthr) {
     for(i = 0; i < getSizeX(); i++)
         for(j = 0; j < getSizeY(); j++)
             for(k = 0; k < getSizeZ(); k++) {
-                if(getDataAt(i, j, k) == 0) {
-                    setDataAt(i, j, k, dis);
+                if((*this)(i, j, k) == 0) {
+                    (*this)(i, j, k) = dis;
                     queues[-dis]->prepend(i, j, k);
 
                     ftot++;
@@ -2093,7 +2044,7 @@ int Volume::erodeSheet(int disthr) {
     for(d = -dis; d > disthr + 1; d--) {
         queues[d]->reset();
         while( (ele = queues[d]->getNext()) != NULL) {
-            setDataAt(ele->x, ele->y, ele->z, d);
+            (*this)(ele->x, ele->y, ele->z) = d;
         }
     }
 
@@ -2112,7 +2063,7 @@ int Volume::erodeSheet(int disthr) {
                     int ny = ele->y + sheetNeighbor[i][j][1];
                     int nz = ele->z + sheetNeighbor[i][j][2];
 
-                    double val = getDataAt(nx, ny, nz);
+                    double val = (*this)(nx, ny, nz);
 
                     if(val > -d && val < 0) {
                         flag = 0;
@@ -2130,14 +2081,14 @@ int Volume::erodeSheet(int disthr) {
             }
 
             if(!dilatable) {
-                setDataAt(ele->x, ele->y, ele->z, -d + 1);
+                (*this)(ele->x, ele->y, ele->z) = -d + 1;
                 if(d > 2) {
                     queues[d - 1]->prepend(ele->x, ele->y, ele->z);
                 }
                 ele = queues[d]->remove();
             }
             else {
-                setDataAt(ele->x, ele->y, ele->z, d);
+                (*this)(ele->x, ele->y, ele->z) = d;
                 ele = queues[d]->getNext();
             }
         }
@@ -2149,7 +2100,7 @@ int Volume::erodeSheet(int disthr) {
             ele = queues[d]->getNext();
             while(ele != NULL) {
                 int critical = 0;
-                setDataAt(ele->x, ele->y, ele->z, -1);
+                (*this)(ele->x, ele->y, ele->z) = -1;
 
                 for(i = -1; i < 2; i++) {
                     for(j = -1; j < 2; j++) {
@@ -2160,8 +2111,8 @@ int Volume::erodeSheet(int disthr) {
                             int nx = ele->x + i;
                             int ny = ele->y + j;
                             int nz = ele->z + k;
-                            // if ( getDataAt(nx,ny,nz) == d + 1 && !hasCompleteSheet( nx,ny,nz, facevol ) )
-                            if(getDataAt(nx, ny, nz) == d + 1 && !hasCompleteSheet(
+                            // if ( (*this)(nx,ny,nz) == d + 1 && !hasCompleteSheet( nx,ny,nz, facevol ) )
+                            if((*this)(nx, ny, nz) == d + 1 && !hasCompleteSheet(
                                        nx, ny, nz)) {
                                 critical = 1;
                                 break;
@@ -2177,11 +2128,11 @@ int Volume::erodeSheet(int disthr) {
                 }
 
                 if(critical) {
-                    setDataAt(ele->x, ele->y, ele->z, d);
+                    (*this)(ele->x, ele->y, ele->z) = d;
                     ele = queues[d]->getNext();
                 }
                 else {
-                    setDataAt(ele->x, ele->y, ele->z, -d + 1);
+                    (*this)(ele->x, ele->y, ele->z) = -d + 1;
                     if(d > 2) {
                         queues[d - 1]->prepend(ele->x, ele->y, ele->z);
                     }
@@ -2237,16 +2188,16 @@ void Volume::surfaceSkeleton(const Volume & grayvol, float lowthr, float highthr
     for(i = 0; i < getSizeX(); i++)
         for(j = 0; j < getSizeY(); j++)
             for(k = 0; k < getSizeZ(); k++) {
-                if(getDataAt(i, j, k) >= 0) {
-                    float v = (float)grayvol.getDataAt(i, j, k);
+                if((*this)(i, j, k) >= 0) {
+                    float v = (float)grayvol(i, j, k);
                     if(v > highthr || v <= lowthr) {
-                        setDataAt(i, j, k, MAX_ERODE);
+                        (*this)(i, j, k) = MAX_ERODE;
                     }
                     else {
                         ct++;
 
                         for(int m = 0; m < 6; m++) {
-                            if(getDataAt(i + neighbor6[m][0],
+                            if((*this)(i + neighbor6[m][0],
                                        j + neighbor6[m][1], k + neighbor6[m][2])
                                < 0) {
                                 queue2->prepend(i, j, k);
@@ -2263,11 +2214,7 @@ void Volume::surfaceSkeleton(const Volume & grayvol, float lowthr, float highthr
     gridPoint gp;
     int ox, oy, oz;
     int score;
-    Volume* scrvol = new Volume(this->getSizeX(), this->getSizeY(),
-            this->getSizeZ());
-    for(i = 0; i < getSizeX() * getSizeY() * getSizeZ(); i++) {
-        scrvol->setDataAt(i, -1);
-    }
+    Volume* scrvol = new Volume(this->getSizeX(), this->getSizeY(), this->getSizeZ(), -1);
 
     for(int curwid = 1; curwid <= wid; curwid++) {
 
@@ -2283,11 +2230,11 @@ void Volume::surfaceSkeleton(const Volume & grayvol, float lowthr, float highthr
             oy = ele->y;
             oz = ele->z;
 
-            if(getDataAt(ox, oy, oz) == curwid) {
+            if((*this)(ox, oy, oz) == curwid) {
                 ele = queue2->remove();
             }
             else {
-                setDataAt(ox, oy, oz, curwid);
+                (*this)(ox, oy, oz) = curwid;
                 ele = queue2->getNext();
             }
         }
@@ -2311,7 +2258,7 @@ void Volume::surfaceSkeleton(const Volume & grayvol, float lowthr, float highthr
 
             // Compute score
             score = getNumPotComplex(ox, oy, oz);
-            scrvol->setDataAt(ox, oy, oz, score);
+            (*scrvol)(ox, oy, oz) = score;
 
             // Push to queue
             gridPoint gp(ox, oy, oz);
@@ -2339,30 +2286,28 @@ void Volume::surfaceSkeleton(const Volume & grayvol, float lowthr, float highthr
             oz = gp.z;
 
 
-            if(getDataAt(ox, oy, oz) != curwid || (int)scrvol->getDataAt(ox, oy,
-                                                          oz)
-                                                  != score) {
+            if((*this)(ox, oy, oz) != curwid || (int)(*scrvol)(ox, oy, oz) != score) {
                 continue;
             }
 
             if( (!isSimple(ox, oy, oz)) || isSheetEnd(ox, oy, oz)) {
                 // Complex, set to next layer
-                setDataAt(ox, oy, oz, curwid + 1);
+                (*this)(ox, oy, oz) = curwid + 1;
                 queue4->prepend(ox, oy, oz);
                 numComplex++;
 
                 nowComplex = 1;
             }
             else {
-                setDataAt(ox, oy, oz, -1);
+                (*this)(ox, oy, oz) = -1;
                 numSimple++;
 
                 for(int m = 0; m < 6; m++) {
                     int nx = ox + neighbor6[m][0];
                     int ny = oy + neighbor6[m][1];
                     int nz = oz + neighbor6[m][2];
-                    if(getDataAt(nx, ny, nz) == 0) {
-                        // setDataAt( nx, ny, nz, curwid + 1 ) ;
+                    if((*this)(nx, ny, nz) == 0) {
+                        // (*this)( nx, ny, nz, curwid + 1 ) ;
                         queue2->prepend(nx, ny, nz);
                     }
                 }
@@ -2383,13 +2328,13 @@ void Volume::surfaceSkeleton(const Volume & grayvol, float lowthr, float highthr
                         int ny = oy + j;
                         int nz = oz + k;
 
-                        if(getDataAt(nx, ny, nz) == curwid) {
+                        if((*this)(nx, ny, nz) == curwid) {
                             // Compute score
                             score = getNumPotComplex(nx, ny, nz);
 
-                            if(score != (int)scrvol->getDataAt(nx, ny, nz)) {
+                            if(score != (int)(*scrvol)(nx, ny, nz)) {
                                 // printf("Update\n") ;
-                                scrvol->setDataAt(nx, ny, nz, score);
+                                (*scrvol)(nx, ny, nz) = score;
                                 // Push to queue
                                 gridPoint gp(ox, oy, oz);
                                 gp.x = nx;
@@ -2424,7 +2369,7 @@ void Volume::surfaceSkeleton(const Volume & grayvol, float lowthr, float highthr
     for(i = 0; i < getSizeX(); i++)
         for(j = 0; j < getSizeY(); j++)
             for(k = 0; k < getSizeZ(); k++) {
-                if(getDataAt(i, j, k) == 0 && isInternal2(i, j, k) == 1) {
+                if((*this)(i, j, k) == 0 && isInternal2(i, j, k) == 1) {
                     queue2->prepend(i, j, k);
                 }
             }
@@ -2434,7 +2379,7 @@ void Volume::surfaceSkeleton(const Volume & grayvol, float lowthr, float highthr
         ox = ele->x;
         oy = ele->y;
         oz = ele->z;
-        setDataAt(ox, oy, oz, -1);
+        (*this)(ox, oy, oz) = -1;
         ele = queue2->remove();
     }
 
@@ -2473,16 +2418,16 @@ void Volume::surfaceSkeletonPres(float thr, const Volume & preserve) {
     for(i = 0; i < getSizeX(); i++)
         for(j = 0; j < getSizeY(); j++)
             for(k = 0; k < getSizeZ(); k++) {
-                if(getDataAt(i, j, k) >= 0) {
-                    if(preserve.getDataAt(i, j, k) > 0) {
-                        setDataAt(i, j, k, MAX_ERODE);
+                if((*this)(i, j, k) >= 0) {
+                    if(preserve(i, j, k) > 0) {
+                        (*this)(i, j, k) = MAX_ERODE;
                     }
                     else {
                         for(int m = 0; m < 6; m++) {
-                            if(getDataAt(i + neighbor6[m][0],
+                            if((*this)(i + neighbor6[m][0],
                                        j + neighbor6[m][1], k + neighbor6[m][2])
                                < 0) {
-                                // setDataAt( i, j, k, 1 ) ;
+                                // (*this)( i, j, k, 1 ) ;
                                 queue2->prepend(i, j, k);
                                 break;
                             }
@@ -2501,11 +2446,7 @@ void Volume::surfaceSkeletonPres(float thr, const Volume & preserve) {
     gridPoint gp;
     int ox, oy, oz;
     int score;
-    Volume* scrvol = new Volume(this->getSizeX(), this->getSizeY(),
-            this->getSizeZ());
-    for(i = 0; i < getSizeX() * getSizeY() * getSizeZ(); i++) {
-        scrvol->setDataAt(i, -1);
-    }
+    Volume* scrvol = new Volume(this->getSizeX(), this->getSizeY(), this->getSizeZ(), -1);
 
     for(int curwid = 1; curwid <= wid; curwid++) {
         // At the start of each iteration,
@@ -2527,11 +2468,11 @@ void Volume::surfaceSkeletonPres(float thr, const Volume & preserve) {
             oy = ele->y;
             oz = ele->z;
 
-            if(getDataAt(ox, oy, oz) == curwid) {
+            if((*this)(ox, oy, oz) == curwid) {
                 ele = queue2->remove();
             }
             else {
-                setDataAt(ox, oy, oz, curwid);
+                (*this)(ox, oy, oz) = curwid;
                 ele = queue2->getNext();
             }
         }
@@ -2558,7 +2499,7 @@ void Volume::surfaceSkeletonPres(float thr, const Volume & preserve) {
 
             // Compute score
             score = getNumPotComplex(ox, oy, oz);
-            scrvol->setDataAt(ox, oy, oz, score);
+            (*scrvol)(ox, oy, oz) = score;
 
             // Push to queue
             gridPoint gp(ox, oy, oz);
@@ -2592,21 +2533,19 @@ void Volume::surfaceSkeletonPres(float thr, const Volume & preserve) {
             // Ignore the node
             // if it has been processed before
             // or it has an updated score
-            if(getDataAt(ox, oy, oz) != curwid || (int)scrvol->getDataAt(ox, oy,
-                                                          oz)
-                                                  != score) {
+            if((*this)(ox, oy, oz) != curwid || (int)(*scrvol)(ox, oy, oz) != score) {
                 continue;
             }
 
             if( (!isSimple(ox, oy, oz)) || isSheetEnd(ox, oy, oz)) {
                 // Complex, set to next layer
-                setDataAt(ox, oy, oz, curwid + 1);
+                (*this)(ox, oy, oz) = curwid + 1;
                 queue4->prepend(ox, oy, oz);
                 numComplex++;
 
             }
             else {
-                setDataAt(ox, oy, oz, -1);
+                (*this)(ox, oy, oz) = -1;
                 numSimple++;
 
             }
@@ -2617,8 +2556,8 @@ void Volume::surfaceSkeletonPres(float thr, const Volume & preserve) {
                 int nx = ox + neighbor6[m][0];
                 int ny = oy + neighbor6[m][1];
                 int nz = oz + neighbor6[m][2];
-                if(getDataAt(nx, ny, nz) == 0) {
-                    // setDataAt( nx, ny, nz, curwid + 1 ) ;
+                if((*this)(nx, ny, nz) == 0) {
+                    // (*this)( nx, ny, nz, curwid + 1 ) ;
                     queue2->prepend(nx, ny, nz);
                 }
             }
@@ -2632,13 +2571,13 @@ void Volume::surfaceSkeletonPres(float thr, const Volume & preserve) {
                         int ny = oy + j;
                         int nz = oz + k;
 
-                        if(getDataAt(nx, ny, nz) == curwid) {
+                        if((*this)(nx, ny, nz) == curwid) {
                             // Compute score
                             score = getNumPotComplex(nx, ny, nz);
 
-                            if(score != (int)scrvol->getDataAt(nx, ny, nz)) {
+                            if(score != (int)(*scrvol)(nx, ny, nz)) {
                                 // printf("Update\n") ;
-                                scrvol->setDataAt(nx, ny, nz, score);
+                                (*scrvol)(nx, ny, nz) = score;
                                 // Push to queue
                                 gridPoint gp(nx, ny, nz);
                                 gp.x = nx;
@@ -2693,27 +2632,27 @@ void Volume::threshold(double thr, int out, int in, int boundary,
     for(int i = 0; i < getSizeX(); i++)
         for(int j = 0; j < getSizeY(); j++)
             for(int k = 0; k < getSizeZ(); k++) {
-                val = (float)getDataAt(i, j, k);
+                val = (float)(*this)(i, j, k);
                 if(markBoundary) {
                     if(i > 1 && i < getSizeX() - 2 && j > 1
                        && j < getSizeY() - 2 && k > 1 && k < getSizeZ() - 2) {
                         if(val < thr) {
-                            setDataAt(i, j, k, out);
+                            (*this)(i, j, k) = out;
                         }
                         else {
-                            setDataAt(i, j, k, in);
+                            (*this)(i, j, k) = in;
                         }
                     }
                     else {
-                        setDataAt(i, j, k, boundary);
+                        (*this)(i, j, k) = boundary;
                     }
                 }
                 else {
                     if(val < thr) {
-                        setDataAt(i, j, k, out);
+                        (*this)(i, j, k) = out;
                     }
                     else {
-                        setDataAt(i, j, k, in);
+                        (*this)(i, j, k) = in;
                     }
                 }
             }
@@ -2723,12 +2662,12 @@ void Volume::threshold2(double thr, int out, int in) {
     for(int i = 0; i < getSizeX(); i++)
         for(int j = 0; j < getSizeY(); j++)
             for(int k = 0; k < getSizeZ(); k++) {
-                double val = getDataAt(i, j, k);
+                double val = (*this)(i, j, k);
                 if(val <= thr) {
-                    setDataAt(i, j, k, out);
+                    (*this)(i, j, k) = out;
                 }
                 else {
-                    setDataAt(i, j, k, in);
+                    (*this)(i, j, k) = in;
                 }
             }
 }
@@ -2741,8 +2680,7 @@ void Volume::normalize(double min, double max) {
 
     int size = volData->getMaxIndex();
     for(int i = 0; i < size; i++) {
-        setDataAt(i,
-                ( (getDataAt(i) - (float)imin) / (float)irange) * (float)range + (float)min);
+        (*this)(i) = ( ((*this)(i) - (float)imin) / (float)irange) * (float)range + (float)min;
     }
 }
 
@@ -2753,8 +2691,7 @@ Volume Volume::getDataRange(int x, int y, int z, int radius) {
     for(int xx = x - radius; xx <= x + radius; xx++) {
         for(int yy = y - radius; yy <= y + radius; yy++) {
             for(int zz = z - radius; zz <= z + radius; zz++) {
-                range.setDataAt(xx - x + radius, yy - y + radius,
-                        zz - z + radius, getDataAt(xx, yy, zz));
+                range(xx - x + radius, yy - y + radius, zz - z + radius) = (*this)(xx, yy, zz);
             }
         }
     }
@@ -2798,7 +2735,7 @@ void Volume::toMRCFile(string fname) {
     int i;
     int size = volData->getMaxIndex();
     for(i = 0; i < size; i++) {
-        float val = (float)getDataAt(i);
+        float val = (float)(*this)(i);
         if(val < dmin) {
             dmin = val;
         }
@@ -2829,7 +2766,7 @@ void Volume::toMRCFile(string fname) {
     for(int z = 0; z < getSizeZ(); z++)
         for(int y = 0; y < getSizeY(); y++)
             for(int x = 0; x < getSizeX(); x++) {
-                float d = (float)getDataAt(x, y, z);
+                float d = (float)(*this)(x, y, z);
                 fwrite(&d, sizeof(float), 1, fout);
             }
 
@@ -2841,7 +2778,7 @@ float Volume::getMean() {
     int N = volData->getMaxIndex();
     double mass = 0;
     for(int i = 0; i < N; i++)
-        mass += getDataAt(i);
+        mass += (*this)(i);
     float mean = (float)mass / N;
     return mean;
 }
@@ -2856,7 +2793,7 @@ float Volume::getStdDev() {
     float val;
 
     for(int i = 0; i < N; i++) {
-        val = (float)getDataAt(i);
+        val = (float)(*this)(i);
         voxel_sum += val;
         voxel_squared_sum += val * val;
     }
@@ -2954,7 +2891,7 @@ void Volume::buildHistogram(int binCount) {
     for(unsigned int i = 0; i < getSizeX(); i++) {
         for(unsigned int j = 0; j < getSizeY(); j++) {
             for(unsigned int k = 0; k < getSizeZ(); k++) {
-                binIx = (int)((getDataAt(i,j,k) - minVal)/binSize);
+                binIx = (int)(((*this)(i,j,k) - minVal)/binSize);
                 histogram[binIx]++;
             }
         }

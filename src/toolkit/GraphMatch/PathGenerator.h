@@ -126,7 +126,7 @@ namespace GraphMatch {
             //if(i != endHelix) {
                 for(unsigned int j = 0; j < graph->skeletonHelixes[i]->internalCells.size(); j++) {
                     Point3Int cell = graph->skeletonHelixes[i]->internalCells[j];
-                    visited->setDataAt(cell.x, cell.y, cell.z, 100000);
+                    visited(cell.x, cell.y, cell.z, 100000);
                 }
             }
 
@@ -134,7 +134,7 @@ namespace GraphMatch {
             for(unsigned int j = 0; j < graph->skeletonHelixes[i]->cornerCells.size(); j++) {
                 Point3Int cell = graph->skeletonHelixes[i]->cornerCells[j];
                 if(((i==startHelix) && (cell.node == startCorner))  || ((i==endHelix) && (cell.node == endCorner))) {
-                    visited->setDataAt(cell.x, cell.y, cell.z, 0);
+                    visited(cell.x, cell.y, cell.z, 0);
                 }
             }
         }
@@ -168,12 +168,12 @@ namespace GraphMatch {
                         y = currentPoint->y+d[j][1];
                         z = currentPoint->z+d[j][2];
                         if((x >= 0) && (x < skeletonVol->getSizeX()) && (y >=0) && (y < skeletonVol->getSizeY()) && (z >= 0) && (z < skeletonVol->getSizeZ())) {
-                            if((visited->getDataAt(x, y, z) <= 0.001) && (skeletonVol->getDataAt(x, y, z) > 0.001)) {
+                            if((visited->(*this)(x, y, z) <= 0.001) && (skeletonVol->(*this)(x, y, z) > 0.001)) {
                                 Point3Int * newPoint = new Point3Int(x, y, z, currentPoint->distance + 1);
 
 
                                 newStack.push_back(newPoint);
-                                visited->setDataAt(x, y, z, currentPoint->distance);
+                                visited(x, y, z, currentPoint->distance);
                             }
                         }
                     }
@@ -190,18 +190,18 @@ namespace GraphMatch {
         }
 
 
-        newVol->setDataAt(xx, yy, zz, 1);
+        newVol(xx, yy, zz, 1);
         for(int i = foundDistance - 1; i >= 1; i--) {
             for(int j = 0; j < 6; j++) {
                 x = xx+d[j][0];
                 y = yy+d[j][1];
                 z = zz+d[j][2];
                 if((x >= 0) && (x < skeletonVol->getSizeX()) && (y >=0) && (y < skeletonVol->getSizeY()) && (z >= 0) && (z < skeletonVol->getSizeZ())) {
-                    if(int(visited->getDataAt(x, y, z) - (double)i + 0.5) == 0) {
+                    if(int(visited->(*this)(x, y, z) - (double)i + 0.5) == 0) {
                         xx = x;
                         yy = y;
                         zz = z;
-                        newVol->setDataAt(xx, yy, zz, 1);
+                        newVol(xx, yy, zz, 1);
                         break;
                     }
                 }

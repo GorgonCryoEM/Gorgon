@@ -111,8 +111,8 @@ namespace SkeletonMaker {
 
         int getNonZeroVoxelCount();
         void print();
-        void subtract(Volume * vol);
-        void applyMask(Volume * maskVol, double maskValue, bool keepMaskValue);
+        void subtract(const Volume & vol);
+        void applyMask(const Volume & mask, double maskValue, bool keepMaskValue);
         double getMin() const;
         double getMax() const;
         double getMaxValuePosition(int& maxX, int& maxY, int& maxZ);

@@ -86,7 +86,7 @@ namespace SkeletonMaker {
                             noff[0] = off[0] + i ;
                             noff[1] = off[1] + j ;
                             noff[2] = off[2] + k ;
-                            vol->setDataAt( noff[0], noff[1], noff[2], - sg ) ;
+                            (*vol)( noff[0], noff[1], noff[2]) = - sg;
                         }
             }
             else if ( type == 2 )
@@ -103,7 +103,7 @@ namespace SkeletonMaker {
                             noff[0] = off[0] + i ;
                             noff[1] = off[1] + j ;
                             noff[2] = off[2] + k ;
-                            vol->setDataAt( noff[0], noff[1], noff[2], - (( sg >> t ) & 1) ) ;
+                            (*vol)( noff[0], noff[1], noff[2]) = - (( sg >> t ) & 1);
                             t ++ ;
                         }
             }
@@ -282,7 +282,7 @@ namespace SkeletonMaker {
             fseek( fin, 0, SEEK_SET ) ;
 
             // Next, parse data
-            Volume* rvalue = new Volume( sx, sy, sz ) ;
+            Volume * rvalue = new Volume( sx, sy, sz ) ;
             while ( !feof( fin ) )
             {
                 float x, y, z ;
@@ -292,7 +292,7 @@ namespace SkeletonMaker {
                 int iy = (int)(( y - miny ) / spc) ;
                 int iz = (int)(( z - minz ) / spc) ;
 
-                rvalue->setDataAt( ix + padding, iy + padding, iz + padding, 1 ) ;
+                (*rvalue)( ix + padding, iy + padding, iz + padding) = 1;
 
                 // printf("Value at %f %f %f is %f %f %f\n", ix, iy, iz, val[0], val[1], val[2] ) ;
             }
@@ -418,7 +418,7 @@ namespace SkeletonMaker {
                 for ( iy = padd / 2 ; iy <= (sy-1)/step + padd + padd / 2 ; iy ++ )
                     for ( iz = padd / 2 ; iz <= (sz-1)/step + padd + padd / 2 ; iz ++ )
                     {
-                        rvalue->setDataAt( ix, iy, iz, 1 ) ;
+                        (*rvalue)( ix, iy, iz) =1;
                     }
 
             for ( ix = 0 ; ix < sx ; ix ++ )
@@ -437,7 +437,7 @@ namespace SkeletonMaker {
                         }
 
                         sscanf( token, "%f", &v ) ;
-                        rvalue->setDataAt( ix/step + padd, iy/step + padd, iz/step + padd, v ) ;
+                        (*rvalue)( ix/step + padd, iy/step + padd, iz/step + padd) = v;
                         items ++ ;
                         //printf("%f\n", v);
 
@@ -575,7 +575,7 @@ namespace SkeletonMaker {
                             break ;
                         }
 
-                        vol->setDataAt( k, j, i, d ) ;
+                        (*vol)( k, j, i) = d;
                     }
 
             float ax, ay, az;
@@ -733,7 +733,7 @@ namespace SkeletonMaker {
 
     //					printf("%g\n", d) ;exit(0) ;
 
-                        vol->setDataAt( k, j, i, d ) ;
+                        (*vol)( k, j, i) = d;
                     }
             fclose( fin ) ;
 
@@ -852,7 +852,7 @@ namespace SkeletonMaker {
                         fread( &d, sizeof( float ), 1, fin ) ;
                         flipBits32( &d ) ;
                         // printf("%g\n", d) ;exit(0) ;
-                        vol->setDataAt( k, j, i, d ) ;
+                        (*vol)( k, j, i) = d;
                     }
             fclose( fin ) ;
 
@@ -990,7 +990,7 @@ namespace SkeletonMaker {
 
 
 
-                        vol->setDataAt( i,j,k, (double) ( tempdata[ ct ] ) );
+                        (*vol)(i,j,k) = (double)(tempdata[ct]);
 
                         ct ++ ;
 
@@ -1163,7 +1163,7 @@ namespace SkeletonMaker {
 
 
 
-                        vol->setDataAt( i,j,k, (double) ( tempdata[ ct ] ) );
+                        (*vol)( i,j,k) = (double) (tempdata[ct]);
 
                         ct ++ ;
 
@@ -1311,7 +1311,7 @@ namespace SkeletonMaker {
 
                         // printf("%g\n", d) ;exit(0) ;
 
-                        vol->setDataAt( i,j,k, d ) ;
+                        (*vol)( i,j,k) = d;
 
                     }
 
@@ -1738,7 +1738,7 @@ namespace SkeletonMaker {
 
                         fscanf( fid, "%f ", &data ) ;
 
-                        vol->setDataAt( x, y, z, data ) ;
+                        (*vol)( x, y, z) = data;
 
 
 
@@ -1844,7 +1844,7 @@ namespace SkeletonMaker {
 
                         fscanf( fid, "%f ", &data ) ;
 
-                        vol->setDataAt( x, y, z, data ) ;
+                        vol( x, y, z) = data ) ;
 
 
 
@@ -2150,7 +2150,7 @@ namespace SkeletonMaker {
 
                         int d = (( data[ct] >> ind ) & 1 ) ;
 
-                        vol->setDataAt( x, y, z, (double) d ) ;
+                        (*vol)( x, y, z) = (double) d;
 
                         ct ++ ;
 
@@ -2422,7 +2422,7 @@ namespace SkeletonMaker {
 
                         float d = data[ct] ;
 
-                        vol->setDataAt( x, y, z, d ) ;
+                        (*vol)( x, y, z) = d;
 
                         ct ++ ;
 
@@ -2560,15 +2560,15 @@ namespace SkeletonMaker {
 
                         if ( fabs( y - cent ) > thick )
                         {
-                            vol->setDataAt( x, y, z, - ( fabs( y - cent ) - thick ) ) ;
+                            (*vol)( x, y, z) = - ( fabs( y - cent ) - thick );
                         }
                         else
                         {
-                            vol->setDataAt( x, y, z, radius - dis ) ;
+                            (*vol)( x, y, z) = radius - dis;
                         }
 
                         // double dis = ( z - cent ) * ( z - cent ) + ( x - cent ) * ( x - cent );
-                        // vol->setDataAt( x, y, z, 10 - 10 * dis / r2 ) ;
+                        // vol( x, y, z) = 10 - 10 * dis / r2 ) ;
                     };
 
             return vol ;
@@ -2613,10 +2613,10 @@ namespace SkeletonMaker {
                         if(dis < 0) {
                             dis = -dis;
                         }
-                        vol->setDataAt( x, y, z, 10 - 10 * dis / height ) ;
+                        (*vol)( x, y, z) = 10 - 10 * dis / height;
 
                         // double dis = ( z - cent ) * ( z - cent ) + ( x - cent ) * ( x - cent );
-                        // vol->setDataAt( x, y, z, 10 - 10 * dis / r2 ) ;
+                        // vol( x, y, z) = 10 - 10 * dis / r2 ) ;
                     };
 
             return vol ;
@@ -2665,8 +2665,8 @@ namespace SkeletonMaker {
                         double d = rx * ( x - ( size - 1 ) / 2) * ( x - ( size - 1 ) / 2) +
                             ry * ( y - ( size - 1 ) / 2) * ( y - ( size - 1 ) / 2) +
                             rz * ( z - ( size - 1 ) / 2) * ( z - ( size - 1 ) / 2) ;
-                        vol->setDataAt( x, y, z, 10 - 10 * sqrt(d) / sqrt(dis) ) ;
-                        // vol->setDataAt( x, y, z, 10 - 10 * (x + y) / size ) ;
+                        (*vol)( x, y, z) = 10 - 10 * sqrt(d) / sqrt(dis);
+                        // (*vol)( x, y, z) = 10 - 10 * (x + y) / size ) ;
                     };
 
             return vol ;

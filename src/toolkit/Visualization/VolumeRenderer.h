@@ -179,7 +179,7 @@ namespace Visualization {
         if((x < 0) || (x > vol->getSizeX()-1) || (y < 0) || (y > vol->getSizeY()-1) || (z < 0) || (z > vol->getSizeZ()-1)) {
             return 0.0f;
         } else {
-            return vol->getDataAt(x, y, z);
+            return vol->(*this)(x, y, z);
         }
     }
 
@@ -272,11 +272,11 @@ namespace Visualization {
                     for(int xx = -radius; xx <= radius; xx++) {
                         for(int yy = -radius; yy <= radius; yy++) {
                             for(int zz = -radius; zz <= radius; zz++) {
-                                val += src->getDataAt(2*x+xx, 2*y+yy, 2*z+zz) * gaussianFilter.vals[xx+radius][yy+radius][zz+radius] ;
+                                val += src->(*this)(2*x+xx, 2*y+yy, 2*z+zz) * gaussianFilter.vals[xx+radius][yy+radius][zz+radius] ;
                             }
                         }
                     }
-                    dest->setDataAt(x, y, z, val);
+                    dest(x, y, z, val);
                 }
             }
         }
@@ -316,7 +316,7 @@ namespace Visualization {
                         for(unsigned int xx = 0; xx < 2; xx++) {
                             for(unsigned int yy = 0; yy < 2; yy++) {
                                 for(unsigned int zz = 0; zz < 2; zz++) {
-                                    val = dataVolume->getDataAt(x+xx, y+yy, z+zz);
+                                    val = dataVolume->(*this)(x+xx, y+yy, z+zz);
                                     minVal = min(minVal, val);
                                     maxVal = max(maxVal, val);
                                 }
@@ -493,7 +493,7 @@ namespace Visualization {
                 for(iX = 0; iX < 2; iX++) {
                     for(iY = 0; iY < 2; iY++) {
                         for(iZ = 0; iZ < 2; iZ++) {
-                            cuttingVolume.setDataAt(iX, iY, iZ, (cuttingPlaneCenter - Vec3F(iX * getSizeX(), iY * getSizeY(), iZ * getSizeZ()))* cuttingPlaneDirection);
+                            cuttingVolume(iX, iY, iZ, (cuttingPlaneCenter - Vec3F(iX * getSizeX(), iY * getSizeY(), iZ * getSizeZ()))* cuttingPlaneDirection);
                         }
                     }
                 }
@@ -528,7 +528,7 @@ namespace Visualization {
                     for(iX = 0; iX < 2; iX++) {
                         for(iY = 0; iY < 2; iY++) {
                             for(iZ = 0; iZ < 2; iZ++) {
-                                cuttingVolume.setDataAt(iX, iY, iZ, (center - Vec3F(iX * getSizeX(), iY * getSizeY(), iZ * getSizeZ()))* cuttingPlaneDirection);
+                                cuttingVolume(iX, iY, iZ, (center - Vec3F(iX * getSizeX(), iY * getSizeY(), iZ * getSizeZ()))* cuttingPlaneDirection);
                             }
                         }
                     }
@@ -588,7 +588,7 @@ namespace Visualization {
                 for(int y = 0; y < textureSize.Y(); y++) {
                     for(int x = 0; x < textureSize.X(); x++) {
                         if((x < getSizeX()) && (y < getSizeY()) && (z < getSizeZ())) {
-                            val = (unsigned char)round((min(max((double)getDataAt(x, y, z), minVal), maxVal) - minVal) * 255.0 / (maxVal - minVal));
+                            val = (unsigned char)round((min(max((double)(*this)(x, y, z), minVal), maxVal) - minVal) * 255.0 / (maxVal - minVal));
                         } else {
                             val = 0;
                         }
@@ -644,7 +644,7 @@ namespace Visualization {
                 for(int y = 0; y < textureSize.Y(); y++) {
                     for(int x = 0; x < textureSize.X(); x++) {
                         if((x < getSizeX()) && (y < getSizeY()) && (z < getSizeZ())) {
-                            val = (unsigned char)round((min(max((double)getDataAt(x, y, z), minVal), maxVal) - minVal) * 255.0 / (maxVal - minVal));
+                            val = (unsigned char)round((min(max((double)(*this)(x, y, z), minVal), maxVal) - minVal) * 255.0 / (maxVal - minVal));
                         } else {
                             val = 0;
                         }

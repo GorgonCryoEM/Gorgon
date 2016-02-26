@@ -8,6 +8,10 @@
 #ifndef SRC_TOOLKIT_VISUALIZATION_MESH_H_
 #define SRC_TOOLKIT_VISUALIZATION_MESH_H_
 
+#include "MathTools/Vector3.h"
+
+using namespace GraphMatch;
+
 namespace Core {
 
     /*
