@@ -76,8 +76,7 @@ namespace Visualization {
             void SetSampleInterval(const int size);
             void SetSurfaceValue(const float value);
             void SetMaxSurfaceValue(const float value);
-            bool SetCuttingPlane(float position, float vecX, float vecY,
-                                 float vecZ);
+            bool SetCuttingPlane(float position, float vecX, float vecY, float vecZ);
             void UpdateBoundingBox();
             void Unload();
             void NormalizeVolume();
