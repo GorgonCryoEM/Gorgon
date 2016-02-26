@@ -215,7 +215,7 @@ namespace GraySkeletonCPP {
             ProbDistr3D & gaussFilt, int gaussFiltR,
             bool useMask)
     {
-        vector<EigenResults3D> resultTable(mask.getSizeX() * mask.getSizeY() * mask.getSizeZ());
+        vector<EigenResults3D> resultTable(mask.getSize());
 
         for(int x = MAX_GAUSS_FILT_R; x < mask.getSizeX() - MAX_GAUSS_FILT_R; x++) {
             for(int y = MAX_GAUSS_FILT_R; y < mask.getSizeY() - MAX_GAUSS_FILT_R; y++) {
