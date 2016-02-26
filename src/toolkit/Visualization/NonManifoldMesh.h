@@ -86,6 +86,10 @@ namespace Protein_Morph {
             int AddVertex(NonManifoldMeshVertex vertex);
             int AddVertex(Vec3F location);
             int AddHashedVertex(Vec3F location, int hashKey);
+            int AddMarchingVertex(Vec3F location, int hashKey);
+            unsigned long long AddMarchingFace(unsigned long long vertexHash0,
+                                       unsigned long long vertexHash1,
+                                       unsigned long long vertexHash2);
             int AddEdge(NonManifoldMeshEdge edge);
             int AddFace(NonManifoldMeshFace face);
             int GetVertexIndex(int vertexId);
@@ -144,6 +148,16 @@ namespace Protein_Morph {
                       <<"\033[0m";
         }
     };
+
+    int NonManifoldMesh::AddMarchingVertex(Vec3F location, int hashKey){
+        return AddHashedVertex(location, hashKey);
+    }
+
+    unsigned long long NonManifoldMesh::AddMarchingFace(unsigned long long vertexHash0,
+                               unsigned long long vertexHash1,
+                               unsigned long long vertexHash2) {
+        AddTriangle(vertexHash0, vertexHash1, vertexHash2);
+    }
 
     void NonManifoldMesh::Draw(bool drawSurfaceBorders, bool drawSurfaces,
                                bool drawLines, bool drawPoints,

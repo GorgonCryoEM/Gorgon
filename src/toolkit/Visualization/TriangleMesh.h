@@ -30,6 +30,10 @@ namespace Protein_Morph {
             void Clear();
             unsigned long long AddVertex(TriangleMeshVertex vertex,
                                          unsigned long long hashKey);
+            int AddMarchingVertex(Vec3F location, int hashKey);
+            unsigned long long AddMarchingFace(unsigned long long vertexHash0,
+                                       unsigned long long vertexHash1,
+                                       unsigned long long vertexHash2);
             unsigned long long AddFace(TriangleMeshFace face);
             unsigned long long AddFace(unsigned long long vertexHash0,
                                        unsigned long long vertexHash1,
@@ -47,6 +51,16 @@ namespace Protein_Morph {
             TriangleMeshVertexType vertices;
             vector<TriangleMeshFace> faces;
     };
+
+    int TriangleMesh::AddMarchingVertex(Vec3F location, int hashKey){
+        return AddVertex(TriangleMeshVertex(location), hashKey);
+    }
+
+    unsigned long long TriangleMesh::AddMarchingFace(unsigned long long vertexHash0,
+                               unsigned long long vertexHash1,
+                               unsigned long long vertexHash2) {
+        return AddFace(vertexHash0, vertexHash1, vertexHash2);
+    }
 
     TriangleMesh::TriangleMesh() {
         Clear();
