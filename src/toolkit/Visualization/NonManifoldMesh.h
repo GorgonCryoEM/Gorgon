@@ -80,7 +80,7 @@ namespace Protein_Morph {
     class NonManifoldMesh : public Volume {
         public:
             NonManifoldMesh();
-            NonManifoldMesh(Volume * sourceVol);
+            NonManifoldMesh(Volume * src);
             bool IsEdgePresent(int vertexId1, int vertexId2);
             bool IsSurfaceVertex(int ix) const;
             int AddVertex(NonManifoldMeshVertex vertex);
@@ -293,31 +293,31 @@ namespace Protein_Morph {
       setOrigin(0,0,0);
     }
 
-    NonManifoldMesh::NonManifoldMesh(Volume * sourceVol) {
+    NonManifoldMesh::NonManifoldMesh(Volume * src) {
       #ifdef GORGON_DEBUG
             cout<<"\033[33mDEBUG: File:   NonManifoldMesh.h"<<endl;
             cout<<"DEBUG: Method: NonManifoldMesh::NonManifoldMesh\033[0m"<<endl;
             cout<<"DEBUG: Args: Volume*\033[0m"<<endl;
-            cout<<"sourceVol->getSize(): "<<sourceVol->getSize()<<endl;
+            cout<<"src->getSize(): "<<src->getSize()<<endl;
       #endif
 
         int x, y, z, i, j, index, index2;
-        int * vertexLocations = new int[sourceVol->getMaxIndex()];
+        int * vertexLocations = new int[src->getSize()];
         int value;
         fromVolume = true;
-        size = sourceVol->getSizeObj();
-        setOrigin(sourceVol->getOriginX(), sourceVol->getOriginY(), sourceVol->getOriginZ());
-        setScale(sourceVol->getSpacingX(), sourceVol->getSpacingY(), sourceVol->getSpacingZ());
+        size = src->getSizeObj();
+        setOrigin(src->getOriginX(), src->getOriginY(), src->getOriginZ());
+        setScale(src->getSpacingX(), src->getSpacingY(), src->getSpacingZ());
 
         // Adding vertices
         NonManifoldMeshVertex tempVertex;
         tempVertex.edgeIds.clear();
-        for(x = 0; x < sourceVol->getSizeX(); x++) {
-            for(y = 0; y < sourceVol->getSizeY(); y++) {
-                for(z = 0; z < sourceVol->getSizeZ(); z++) {
-                    index = sourceVol->getIndex(x, y, z);
+        for(x = 0; x < src->getSizeX(); x++) {
+            for(y = 0; y < src->getSizeY(); y++) {
+                for(z = 0; z < src->getSizeZ(); z++) {
+                    index = src->getIndex(x, y, z);
                     vertexLocations[index] = -1;
-                    value = (int)round(sourceVol->getDataAt(index));
+                    value = (int)round(src->getDataAt(index));
                     if(value > 0) {
                         tempVertex.position = Vec3F(x, y, z);
                         vertexLocations[index] = AddVertex(tempVertex);
@@ -328,12 +328,12 @@ namespace Protein_Morph {
 
         //Adding edges
         int edgeNeighbors[3][3] = {{1,0,0}, {0,1,0}, {0,0,1}};
-        for(x = 0; x < sourceVol->getSizeX()-1; x++) {
-            for(y = 0; y < sourceVol->getSizeY()-1; y++) {
-                for(z = 0; z < sourceVol->getSizeZ()-1; z++) {
-                    index = sourceVol->getIndex(x, y, z);
+        for(x = 0; x < src->getSizeX()-1; x++) {
+            for(y = 0; y < src->getSizeY()-1; y++) {
+                for(z = 0; z < src->getSizeZ()-1; z++) {
+                    index = src->getIndex(x, y, z);
                     for(i = 0; i < 3; i++) {
-                        index2 = sourceVol->getIndex(x+edgeNeighbors[i][0], y+edgeNeighbors[i][1], z+edgeNeighbors[i][2]);
+                        index2 = src->getIndex(x+edgeNeighbors[i][0], y+edgeNeighbors[i][1], z+edgeNeighbors[i][2]);
                         if((vertexLocations[index] >= 0) && (vertexLocations[index2] >= 0)) {
                             AddEdge(vertexLocations[index], vertexLocations[index2]);
                         }
@@ -348,16 +348,16 @@ namespace Protein_Morph {
                                         {{0,1,0}, {0,1,1}, {0,0,1}}};
         int indices[4];
         bool faceFound;
-        for(x = 0; x < sourceVol->getSizeX()-1; x++) {
-            for(y = 0; y < sourceVol->getSizeY()-1; y++) {
-                for(z = 0; z < sourceVol->getSizeZ()-1; z++) {
-                    index = sourceVol->getIndex(x, y, z);
+        for(x = 0; x < src->getSizeX()-1; x++) {
+            for(y = 0; y < src->getSizeY()-1; y++) {
+                for(z = 0; z < src->getSizeZ()-1; z++) {
+                    index = src->getIndex(x, y, z);
                     if(vertexLocations[index] >= 0) {
                         for(i = 0; i < 3; i++) {
                             faceFound = true;
                             indices[0] = vertexLocations[index];
                             for(j = 0; j < 3; j++) {
-                                index2 = sourceVol->getIndex(x+faceNeighbors[i][j][0], y+faceNeighbors[i][j][1], z+faceNeighbors[i][j][2]);
+                                index2 = src->getIndex(x+faceNeighbors[i][j][0], y+faceNeighbors[i][j][1], z+faceNeighbors[i][j][2]);
                                 indices[j+1] = vertexLocations[index2];
                                 faceFound = faceFound && vertexLocations[index2] >= 0;
                             }
