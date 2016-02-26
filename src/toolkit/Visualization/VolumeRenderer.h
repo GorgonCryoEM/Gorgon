@@ -437,14 +437,13 @@ namespace Visualization {
             marchingCubeCallCount = 0;
             if(drawEnabled && volData != NULL) {
                 redraw = true;
-                int iX, iY, iZ;
                 int maxX = getSizeX();
                 int maxY = getSizeY();
                 int maxZ = getSizeZ();
-                for(iX = 0; iX < maxX; iX+=sampleInterval) {
-                    for(iY = 0; iY < maxY; iY+=sampleInterval) {
-                        for(iZ = 0; iZ < maxZ; iZ+=sampleInterval) {
-                            MarchingCube(this, surfaceMesh, surfaceValue, iX, iY, iZ, sampleInterval);
+                for(int i = 0; i < maxX; i+=sampleInterval) {
+                    for(int j = 0; j < maxY; j+=sampleInterval) {
+                        for(int k = 0; k < maxZ; k+=sampleInterval) {
+                            MarchingCube(this, surfaceMesh, surfaceValue, i, j, k, sampleInterval);
                         }
                     }
                 }
