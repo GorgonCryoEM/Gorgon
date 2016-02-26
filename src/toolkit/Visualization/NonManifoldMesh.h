@@ -15,10 +15,13 @@
 	using namespace stdext;
 #endif
 
+#include "Mesh.h"
+
 using namespace std;
 using namespace MathTools;
 using namespace Foundation;
 using namespace SkeletonMaker;
+using namespace Core;
 
 
 namespace Protein_Morph {
@@ -77,7 +80,7 @@ namespace Protein_Morph {
         typedef map<int, int> HashMapType;
     #endif
 
-    class NonManifoldMesh : public Volume {
+    class NonManifoldMesh : public Volume, public Mesh {
         public:
             NonManifoldMesh();
             NonManifoldMesh(Volume * src);

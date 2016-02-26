@@ -16,13 +16,15 @@
 #include "TriangleMeshFace.h"
 #include "TriangleMeshVertex.h"
 
+#include "Mesh.h"
 
 using namespace std;
 //using namespace Foundation;
+using namespace Core;
 
 namespace Protein_Morph {
 
-    class TriangleMesh {
+    class TriangleMesh : public Mesh {
         public:
             TriangleMesh();
             ~TriangleMesh();
