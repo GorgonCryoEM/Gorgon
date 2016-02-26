@@ -79,8 +79,8 @@ namespace GraySkeletonCPP {
             static bool isValidSurface  (const Volume & src, Vec3D p0,
                                        Vec3D p1, Vec3D p2, Vec3D p3);
 
-            static void findCurveBase  (Vec3D &p1, Vec3D &p2);
-            static void findCurveBase  (Vec3I &p1, Vec3I &p2);
+            template <class T>
+            static void findCurveBase  (T &p1, T &p2);
             static void findSurfaceBase(Vec3D &p1, Vec3D &p2, Vec3D &p3, Vec3D &p4);
             static void findSurfaceBase(Vec3I &p1, Vec3I &p2, Vec3I &p3, Vec3I &p4);
 
@@ -408,26 +408,12 @@ namespace GraySkeletonCPP {
         surfaces[index] = surfaces[index] & ~surfaceType;
     }
 
-
-    void DiscreteMesh::findCurveBase(Vec3D &p1, Vec3D &p2) {
-        Vec3D temp;
+    template <class T>
+    void DiscreteMesh::findCurveBase(T &p1, T &p2) {
         if ((p1[0] > p2[0]) ||
             (p1[1] > p2[1]) ||
             (p1[2] > p2[2])) {
-            temp = p1;
-            p1 = p2;
-            p2 = temp;
-        }
-    }
-
-    void DiscreteMesh::findCurveBase(Vec3I &p1, Vec3I &p2) {
-        Vec3I temp;
-        if ((p1[0] > p2[0]) ||
-            (p1[1] > p2[1]) ||
-            (p1[2] > p2[2])) {
-            temp = p1;
-            p1 = p2;
-            p2 = temp;
+            swap(p1, p2);
         }
     }
 
