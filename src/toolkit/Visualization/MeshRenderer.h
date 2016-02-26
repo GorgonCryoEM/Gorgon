@@ -22,7 +22,7 @@ namespace Visualization {
         NonManifoldMesh getMesh();
         Vec3F get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
         void loadFile(string fileName);
-        void loadVolume(Volume * sourceVolume);
+        void loadVolume(Volume * src);
         void saveFile(string fileName);
         void PerformSmoothLaplacian(double convergenceRate, int iterations);
         string getSupportedLoadFileFormats();
@@ -115,8 +115,8 @@ namespace Visualization {
             }
     }
 
-    void MeshRenderer::loadVolume(Volume * sourceVolume) {
-        mesh = new NonManifoldMesh(sourceVolume);
+    void MeshRenderer::loadVolume(Volume * src) {
+        mesh = new NonManifoldMesh(src);
     }
 
     void MeshRenderer::PerformSmoothLaplacian(double convergenceRate, int iterations) {
