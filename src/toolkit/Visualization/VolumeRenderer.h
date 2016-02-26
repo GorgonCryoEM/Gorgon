@@ -692,14 +692,14 @@ namespace Visualization {
         extern int aiCubeEdgeFlags[256];
         extern int a2iTriangleConnectionTable[256][16];
 
-        int iCorner, iVertex, iVertexTest, iEdge, iTriangle, iFlagIndex, iEdgeFlags;
+        int iVertex, iFlagIndex, iEdgeFlags;
         float fOffset;
         float afCubeValue[8];
         Vec3D asEdgeVertex[12];
         int vertexIds[12];
 
         //Make a local copy of the values at the cube's corners
-        for(iVertex = 0; iVertex < 8; iVertex++) {
+        for(int iVertex = 0; iVertex < 8; iVertex++) {
             afCubeValue[iVertex] = GetVoxelData(iX + a2iVertexOffset[iVertex][0]*iScale,
                                                 iY + a2iVertexOffset[iVertex][1]*iScale,
                                                 iZ + a2iVertexOffset[iVertex][2]*iScale);
@@ -707,7 +707,7 @@ namespace Visualization {
 
         //Find which vertices are inside of the surface and which are outside
         iFlagIndex = 0;
-        for(iVertexTest = 0; iVertexTest < 8; iVertexTest++)
+        for(int iVertexTest = 0; iVertexTest < 8; iVertexTest++)
         {
                 if(afCubeValue[iVertexTest] <= iso_level)
                         iFlagIndex |= 1<<iVertexTest;
@@ -724,7 +724,7 @@ namespace Visualization {
 
         //Find the point of intersection of the surface with each edge
         //Then find the normal to the surface at those points
-        for(iEdge = 0; iEdge < 12; iEdge++)
+        for(int iEdge = 0; iEdge < 12; iEdge++)
         {
                 //if there is an intersection on this edge
                 if(iEdgeFlags & (1<<iEdge))
@@ -741,12 +741,12 @@ namespace Visualization {
 
 
         //Draw the triangles that were found.  There can be up to five per cube
-        for(iTriangle = 0; iTriangle < 5; iTriangle++)
+        for(int iTriangle = 0; iTriangle < 5; iTriangle++)
         {
                 if(a2iTriangleConnectionTable[iFlagIndex][3*iTriangle] < 0)
                         break;
                 int triangleVertices[3];
-                for(iCorner = 0; iCorner < 3; iCorner++)
+                for(int iCorner = 0; iCorner < 3; iCorner++)
                 {
                     iVertex = a2iTriangleConnectionTable[iFlagIndex][3*iTriangle+iCorner];
                     triangleVertices[iCorner] = vertexIds[iVertex];
