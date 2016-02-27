@@ -162,6 +162,8 @@ namespace SkeletonMaker {
         void toMRCFile( string fname );
 
         void normalizeVolume();
+        void downsampleVolume();
+
         virtual void load(string fileName);
         virtual void save(string fileName);
         Volume * PerformBinarySkeletonizationJu2007(double threshold, int minCurveSize, int minSurfaceSize);

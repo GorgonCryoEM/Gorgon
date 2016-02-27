@@ -2848,6 +2848,37 @@ void Volume::normalizeVolume() {
     normalize(0, 1);
 }
 
+void Volume::downsampleVolume() {
+    Volume * src = this;
+    Volume * dest = new Volume(src->getSizeX()/2, src->getSizeY()/2, src->getSizeZ()/2);
+    double val;
+
+    int radius = 1;
+
+    ProbDistr3D gaussianFilter;
+    gaussianFilter.R = radius;
+    BinomDistr(gaussianFilter);
+
+    for(int x = radius; x < dest->getSizeX()-radius; x++) {
+        for(int y = radius; y < dest->getSizeY()-radius; y++) {
+            for(int z = radius; z < dest->getSizeZ()-radius; z++) {
+                val = 0;
+                for(int xx = -radius; xx <= radius; xx++) {
+                    for(int yy = -radius; yy <= radius; yy++) {
+                        for(int zz = -radius; zz <= radius; zz++) {
+                            val += (*src)(2*x+xx, 2*y+yy, 2*z+zz) * gaussianFilter.vals[xx+radius][yy+radius][zz+radius] ;
+                        }
+                    }
+                }
+                (*dest)(x, y, z) = val;
+            }
+        }
+    }
+
+    delete src;
+    volData = dest;
+}
+
 void Volume::load(string inputFile) {
 
     *volData = *MRCReaderPicker::pick(inputFile.c_str())->getVolume();
