@@ -40,9 +40,9 @@ namespace Visualization {
             virtual string GetSupportedLoadFileFormats();
             virtual string GetSupportedSaveFileFormats();
             virtual Vec3F Get3DCoordinates(int subsceneIndex, int ix0,
-                                                  int ix1 = -1, int ix2 = -1,
-                                                  int ix3 = -1, int ix4 = -1);
-            bool SetCuttingPlane(float position, float vecX, float vecY, float vecZ);
+                                           int ix1 = -1, int ix2 = -1,
+                                           int ix3 = -1, int ix4 = -1);
+            virtual bool SetCuttingPlane(float position, float vecX, float vecY, float vecZ);
             void static DrawSphere(Vec3F center, float radius);
             void static DrawCylinder(Vec3F pt1, Vec3F pt2,
                                      float radius, int slices = 10, int stacks = 10);
