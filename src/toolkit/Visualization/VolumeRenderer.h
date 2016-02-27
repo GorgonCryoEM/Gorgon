@@ -61,28 +61,28 @@ namespace Visualization {
 
             float getMaxDensity();
             float getMinDensity();
-            float GetSurfaceValue() const;
-            int GetSampleInterval() const;
-            string GetSupportedLoadFileFormats();
-            string GetSupportedSaveFileFormats();
-            void EnableDraw(bool enable);
+            float getSurfaceValue() const;
+            int getSampleInterval() const;
+            string getSupportedLoadFileFormats();
+            string getSupportedSaveFileFormats();
+            void enableDraw(bool enable);
             void draw(int subSceneIndex, bool selectEnabled);
             void load(string fileName);
             void save(string fileName);
-            void SetDisplayRadius(const int radius);
-            void SetDisplayRadiusOrigin(float radiusOriginX,
+            void setDisplayRadius(const int radius);
+            void setDisplayRadiusOrigin(float radiusOriginX,
                                         float radiusOriginY,
                                         float radiusOriginZ);
-            void UseDisplayRadius(bool useRadius);
-            void SetViewingType(const int type);
-            void SetSampleInterval(const int size);
-            void SetSurfaceValue(const float value);
-            void SetMaxSurfaceValue(const float value);
-            bool SetCuttingPlane(float position, float vecX, float vecY, float vecZ);
-            void UpdateBoundingBox();
-            void Unload();
-            void NormalizeVolume();
-            void DownsampleVolume();
+            void useDisplayRadius(bool useRadius);
+            void setViewingType(const int type);
+            void setSampleInterval(const int size);
+            void setSurfaceValue(const float value);
+            void setMaxSurfaceValue(const float value);
+            bool setCuttingPlane(float position, float vecX, float vecY, float vecZ);
+            void updateBoundingBox();
+            void unload();
+            void normalizeVolume();
+            void downsampleVolume();
 
     private:
             int GetHashKey(int x, int y, int z, int edge, int iScale);
@@ -169,7 +169,7 @@ namespace Visualization {
         return (fValueDesired - fValue1)/fDelta;
     }
 
-    float VolumeRenderer::GetSurfaceValue() const {
+    float VolumeRenderer::getSurfaceValue() const {
         return surfaceValue;
     }
 
@@ -207,7 +207,7 @@ namespace Visualization {
         return x * getSizeY() * getSizeZ() * 3 + y * getSizeZ() * 3 + z * 3 + edge;
     }
 
-    int VolumeRenderer::GetSampleInterval() const  {
+    int VolumeRenderer::getSampleInterval() const  {
         return sampleInterval;
     }
 
@@ -219,15 +219,15 @@ namespace Visualization {
         return power;
     }
 
-    string VolumeRenderer::GetSupportedLoadFileFormats() {
+    string VolumeRenderer::getSupportedLoadFileFormats() {
         return "All Files (*.mrc *.ccp4 *.map *.raw *.pts);; Volumes (*.mrc *.ccp4 *.map *.raw);;Point Cloud (*.pts)";
     }
 
-    string VolumeRenderer::GetSupportedSaveFileFormats() {
+    string VolumeRenderer::getSupportedSaveFileFormats() {
         return "Volumes (*.mrc *.ccp4 *.map *.raw);;Mathematica List (*.nb);;Bitmap Image set (*.bmp);;Structure Tensor Field (*.tns);;Surface Mesh(*.off)";
     }
 
-    void VolumeRenderer::EnableDraw(bool enable) {
+    void VolumeRenderer::enableDraw(bool enable) {
         if(drawEnabled != enable) {
             drawEnabled = enable;
             if(drawEnabled) {
@@ -236,7 +236,7 @@ namespace Visualization {
         }
     }
 
-    void VolumeRenderer::SetViewingType(const int type) {
+    void VolumeRenderer::setViewingType(const int type) {
         viewingType = type;
         if(viewingType == VIEWING_TYPE_SOLID) {
             Load3DTextureSolidRendering();
@@ -246,8 +246,8 @@ namespace Visualization {
         CalculateDisplay();
     }
 
-    bool VolumeRenderer::SetCuttingPlane(float position, float vecX, float vecY, float vecZ) {
-        Renderer::SetCuttingPlane(position, vecX, vecY, vecZ);
+    bool VolumeRenderer::setCuttingPlane(float position, float vecX, float vecY, float vecZ) {
+        Renderer::setCuttingPlane(position, vecX, vecY, vecZ);
         bool redraw = false;
         if((viewingType == VIEWING_TYPE_CROSS_SECTION) || (viewingType == VIEWING_TYPE_SOLID)) {
             redraw = CalculateDisplay();
@@ -255,7 +255,7 @@ namespace Visualization {
         return redraw;
     }
 
-    void VolumeRenderer::DownsampleVolume() {
+    void VolumeRenderer::downsampleVolume() {
         Volume * src = this;
         Volume * dest = new Volume(src->getSizeX()/2, src->getSizeY()/2, src->getSizeZ()/2);
         double val;
@@ -285,7 +285,7 @@ namespace Visualization {
         delete src;
         volData = dest;
         InitializeOctree();
-        UpdateBoundingBox();
+        updateBoundingBox();
     }
 
     void VolumeRenderer::InitializeOctree() {
@@ -557,13 +557,13 @@ namespace Visualization {
     void VolumeRenderer::load(string fileName) {
         Volume::load(fileName);
         InitializeOctree();
-        UpdateBoundingBox();
+        updateBoundingBox();
 
         #ifdef _WIN32
             glTexImage3D = (PFNGLTEXIMAGE3DPROC) wglGetProcAddress("glTexImage3D");
         #endif
 
-        SetDisplayRadiusOrigin(getSizeX()/2, getSizeY()/2, getSizeZ()/2);
+        setDisplayRadiusOrigin(getSizeX()/2, getSizeY()/2, getSizeZ()/2);
     }
 
     void VolumeRenderer::Load3DTextureSolidRendering() {
@@ -757,10 +757,10 @@ namespace Visualization {
     }
 
 
-    void VolumeRenderer::NormalizeVolume(){
+    void VolumeRenderer::normalizeVolume(){
         normalize(0, 1);
     }
-    void VolumeRenderer::SetSampleInterval(const int size) {
+    void VolumeRenderer::setSampleInterval(const int size) {
         sampleInterval = size;
         if(viewingType == VIEWING_TYPE_ISO_SURFACE) {
             CalculateSurface();
@@ -769,7 +769,7 @@ namespace Visualization {
         }
     }
 
-    void VolumeRenderer::SetSurfaceValue(const float value) {
+    void VolumeRenderer::setSurfaceValue(const float value) {
         surfaceValue = value;
         switch(viewingType) {
             case VIEWING_TYPE_ISO_SURFACE:
@@ -784,7 +784,7 @@ namespace Visualization {
         }
     }
 
-    void VolumeRenderer::SetMaxSurfaceValue(const float value) {
+    void VolumeRenderer::setMaxSurfaceValue(const float value) {
         maxSurfaceValue = value;
         switch(viewingType) {
             case VIEWING_TYPE_ISO_SURFACE:
@@ -798,20 +798,20 @@ namespace Visualization {
         }
     }
 
-    void VolumeRenderer::SetDisplayRadius(const int radius) {
+    void VolumeRenderer::setDisplayRadius(const int radius) {
         displayRadius = radius;
     }
 
-    void VolumeRenderer::SetDisplayRadiusOrigin(float radiusOriginX, float radiusOriginY, float radiusOriginZ) {
+    void VolumeRenderer::setDisplayRadiusOrigin(float radiusOriginX, float radiusOriginY, float radiusOriginZ) {
         radiusOrigin = Vec3F(radiusOriginX, radiusOriginY, radiusOriginZ);
     }
 
-    void VolumeRenderer::UseDisplayRadius(bool useRadius) {
+    void VolumeRenderer::useDisplayRadius(bool useRadius) {
         useDisplayRadius = useRadius;
     }
 
-    void VolumeRenderer::Unload() {
-        Renderer::Unload();
+    void VolumeRenderer::unload() {
+        Renderer::unload();
         if(octree != NULL) {
             delete octree;
         }
@@ -821,10 +821,10 @@ namespace Visualization {
             textureLoaded = false;
         }
         CalculateSurface();
-        UpdateBoundingBox();
+        updateBoundingBox();
     }
 
-    void VolumeRenderer::UpdateBoundingBox() {
+    void VolumeRenderer::updateBoundingBox() {
         if(volData == NULL) {
             minPts = 0.0;
             maxPts = 1.0;

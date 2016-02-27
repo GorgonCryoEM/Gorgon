@@ -25,31 +25,31 @@ namespace Visualization {
         public:
             Renderer();
             virtual ~Renderer();
-            virtual void DrawBoundingBox();
-            virtual void Unload();
-            virtual bool SelectionRotate(Vec3F centerOfMass,
+            virtual void drawBoundingBox();
+            virtual void unload();
+            virtual bool selectionRotate(Vec3F centerOfMass,
                                          Vec3F rotationAxis,
                                          float angle);
-            virtual int SelectionObjectCount();
-            virtual Vec3F SelectionCenterOfMass();
-            virtual bool SelectionMove(Vec3F moveDirection);
-            virtual bool SelectionClear();
-            virtual void SelectionToggle(int subsceneIndex, bool forceTrue,
+            virtual int selectionObjectCount();
+            virtual Vec3F selectionCenterOfMass();
+            virtual bool selectionMove(Vec3F moveDirection);
+            virtual bool selectionClear();
+            virtual void selectionToggle(int subsceneIndex, bool forceTrue,
                                          int ix0, int ix1 = -1, int ix2 = -1,
                                          int ix3 = -1, int ix4 = -1);
-            virtual string GetSupportedLoadFileFormats();
-            virtual string GetSupportedSaveFileFormats();
-            virtual Vec3F Get3DCoordinates(int subsceneIndex, int ix0,
+            virtual string getSupportedLoadFileFormats();
+            virtual string getSupportedSaveFileFormats();
+            virtual Vec3F set3DCoordinates(int subsceneIndex, int ix0,
                                            int ix1 = -1, int ix2 = -1,
                                            int ix3 = -1, int ix4 = -1);
-            virtual bool SetCuttingPlane(float position, float vecX, float vecY, float vecZ);
-            void static DrawSphere(Vec3F center, float radius);
-            void static DrawCylinder(Vec3F pt1, Vec3F pt2,
+            virtual bool setCuttingPlane(float position, float vecX, float vecY, float vecZ);
+            void static drawSphere(Vec3F center, float radius);
+            void static drawCylinder(Vec3F pt1, Vec3F pt2,
                                      float radius, int slices = 10, int stacks = 10);
-            void static DrawLine(Vec3F pt1, Vec3F pt2);
-            virtual void SetDisplayStyle(int style);
-            virtual void SetObjectSpecificColoring(bool objectSpecific);
-            virtual void UpdateBoundingBox();
+            void static drawLine(Vec3F pt1, Vec3F pt2);
+            virtual void setDisplayStyle(int style);
+            virtual void setObjectSpecificColoring(bool objectSpecific);
+            virtual void updateBoundingBox();
 
             float getMin(int dimension);
             float getMax(int dimension);
@@ -80,11 +80,11 @@ namespace Visualization {
         return maxPts[dimension];
     }
 
-    void Renderer::SetObjectSpecificColoring(bool objectSpecific) {
+    void Renderer::setObjectSpecificColoring(bool objectSpecific) {
         isObjectSpecificColoring = objectSpecific;
     }
 
-    void Renderer::DrawBoundingBox() {
+    void Renderer::drawBoundingBox() {
         glPushAttrib(GL_LIGHTING_BIT | GL_ENABLE_BIT);
         glDisable (GL_LIGHTING);
         glPushMatrix();
@@ -98,29 +98,29 @@ namespace Visualization {
         glPopAttrib();
     }
 
-    void Renderer::UpdateBoundingBox() {
+    void Renderer::updateBoundingBox() {
         minPts = -0.5;
         maxPts = 0.5;
     }
 
-    bool Renderer::SelectionRotate(Vec3F centerOfMass, Vec3F rotationAxis, float angle) {
+    bool Renderer::selectionRotate(Vec3F centerOfMass, Vec3F rotationAxis, float angle) {
         return false;
     }
 
-    int Renderer::SelectionObjectCount() {
+    int Renderer::selectionObjectCount() {
         return 0;
     }
 
-    Vec3F Renderer::SelectionCenterOfMass() {
+    Vec3F Renderer::selectionCenterOfMass() {
         return (maxPts - minPts) / 2.0;
     }
 
-    bool Renderer::SelectionMove(Vec3F moveDirection) {
+    bool Renderer::selectionMove(Vec3F moveDirection) {
         //printf("Moving by %f %f %f\n", moveDirection.X(), moveDirection.Y(), moveDirection.Z());
         return false;
     }
 
-    bool Renderer::SelectionClear() {
+    bool Renderer::selectionClear() {
         if(selected) {
             selected = false;
             return true;
@@ -130,31 +130,31 @@ namespace Visualization {
 
     }
 
-    void Renderer::SelectionToggle(int subsceneIndex, bool forceTrue,
+    void Renderer::selectionToggle(int subsceneIndex, bool forceTrue,
                                    int ix0, int ix1, int ix2, int ix3, int ix4)
     {
         selected = true;
     }
 
-    Vec3F Renderer::Get3DCoordinates(int subsceneIndex,
+    Vec3F Renderer::set3DCoordinates(int subsceneIndex,
                                      int ix0, int ix1, int ix2, int ix3, int ix4)
     {
         return Vec3F(0, 0, 0);
     }
 
-    void Renderer::Unload() {
+    void Renderer::unload() {
         selected = false;
     }
 
-    string Renderer::GetSupportedLoadFileFormats() {
+    string Renderer::getSupportedLoadFileFormats() {
         return "All Files (*.*)";
     }
 
-    string Renderer::GetSupportedSaveFileFormats() {
+    string Renderer::getSupportedSaveFileFormats() {
         return "All Files (*.*)";
     }
 
-    bool Renderer::SetCuttingPlane(float position,
+    bool Renderer::setCuttingPlane(float position,
                                    float vecX, float vecY, float vecZ)
     {
         Vec3F center = (minPts + maxPts) / 2.0;
@@ -166,7 +166,7 @@ namespace Visualization {
         return false;
     }
 
-    void Renderer::DrawSphere(Vec3F center, float radius) {
+    void Renderer::drawSphere(Vec3F center, float radius) {
         glPushMatrix();
         glTranslatef(center.X(), center.Y(), center.Z());
         GLUquadric * quadricSphere = gluNewQuadric();
@@ -175,7 +175,7 @@ namespace Visualization {
         glPopMatrix();
     }
 
-    void Renderer::DrawCylinder(Vec3F pt1, Vec3F pt2,
+    void Renderer::drawCylinder(Vec3F pt1, Vec3F pt2,
                                 float radius, int slices, int stacks)
     {
         Vec3F qmp = pt1-pt2;
@@ -196,14 +196,14 @@ namespace Visualization {
         glPopMatrix();
     }
 
-    void Renderer::DrawLine(Vec3F pt1, Vec3F pt2) {
+    void Renderer::drawLine(Vec3F pt1, Vec3F pt2) {
         glBegin(GL_LINES);
         glVertex3f(pt1.X(), pt1.Y(), pt1.Z());
         glVertex3f(pt2.X(), pt2.Y(), pt2.Z());
         glEnd();
     }
 
-    void Renderer::SetDisplayStyle(int style) {
+    void Renderer::setDisplayStyle(int style) {
         this->displayStyle = style;
     }
 }
