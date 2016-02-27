@@ -396,13 +396,10 @@ namespace Visualization {
                 (cuttingPlaneCenter.Y() >= minPts[1]) && (cuttingPlaneCenter.Y() <= maxPts[1]) &&
                 (cuttingPlaneCenter.Z() >= minPts[2]) && (cuttingPlaneCenter.Z() <= maxPts[2])) {
 
-
-                int iX, iY, iZ;
-
-                for(iX = 0; iX < 2; iX++) {
-                    for(iY = 0; iY < 2; iY++) {
-                        for(iZ = 0; iZ < 2; iZ++) {
-                            cuttingVolume(iX, iY, iZ) = (cuttingPlaneCenter - Vec3F(iX * getSizeX(), iY * getSizeY(), iZ * getSizeZ()))* cuttingPlaneDirection;
+                for(int i = 0; i < 2; i++) {
+                    for(int j = 0; j < 2; j++) {
+                        for(int k = 0; k < 2; k++) {
+                            cuttingVolume(i, j, k) = (cuttingPlaneCenter - Vec3F(i * getSizeX(), j * getSizeY(), k * getSizeZ()))* cuttingPlaneDirection;
                         }
                     }
                 }
