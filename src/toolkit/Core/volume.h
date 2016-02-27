@@ -161,8 +161,8 @@ namespace SkeletonMaker {
         Volume getDataRange(int x, int y, int z, int radius);
         void toMRCFile( string fname );
 
-        void normalizeVolume();
-        void downsampleVolume();
+        void Normalize();
+        void downsample();
 
         virtual void load(string fileName);
         virtual void save(string fileName);
