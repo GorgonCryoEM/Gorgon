@@ -66,7 +66,7 @@ namespace Visualization {
             string GetSupportedLoadFileFormats();
             string GetSupportedSaveFileFormats();
             void EnableDraw(bool enable);
-            void Draw(int subSceneIndex, bool selectEnabled);
+            void draw(int subSceneIndex, bool selectEnabled);
             void load(string fileName);
             void save(string fileName);
             void SetDisplayRadius(const int radius);
@@ -347,10 +347,10 @@ namespace Visualization {
         }
     }
 
-    void VolumeRenderer::Draw(int subSceneIndex, bool selectEnabled) {
+    void VolumeRenderer::draw(int subSceneIndex, bool selectEnabled) {
         if(subSceneIndex == 0) {
             if((viewingType == VIEWING_TYPE_ISO_SURFACE) && (surfaceMesh != NULL)) {
-                surfaceMesh->Draw(true, selectEnabled, useDisplayRadius, displayRadius, radiusOrigin);
+                surfaceMesh->draw(true, selectEnabled, useDisplayRadius, displayRadius, radiusOrigin);
             } else if((viewingType == VIEWING_TYPE_CROSS_SECTION) || (viewingType == VIEWING_TYPE_SOLID)) {
                 glPushAttrib(GL_LIGHTING_BIT | GL_ENABLE_BIT);
                 glDisable(GL_LIGHTING);

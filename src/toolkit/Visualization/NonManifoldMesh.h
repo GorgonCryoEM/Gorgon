@@ -107,7 +107,7 @@ namespace Protein_Morph {
                              string newEdgeTag = "", string faceTag = "");
             void MarkFixedVertices();
             void MergeMesh(NonManifoldMesh * srcMesh);
-            void Draw(bool drawSurfaceBorders, bool drawSurfaces, bool drawLines, bool drawPoints,
+            void draw(bool drawSurfaceBorders, bool drawSurfaces, bool drawLines, bool drawPoints,
                       bool annotateSurfaces, bool annotateLines, bool annotatePoints,
                       bool disableSurfaceLighting, bool disableCurveLighting, bool disablePointLighting,
                       int lineThickness, bool smoothSurfaceNormals);
@@ -162,7 +162,7 @@ namespace Protein_Morph {
         AddTriangle(vertexHash0, vertexHash1, vertexHash2);
     }
 
-    void NonManifoldMesh::Draw(bool drawSurfaceBorders, bool drawSurfaces,
+    void NonManifoldMesh::draw(bool drawSurfaceBorders, bool drawSurfaces,
                                bool drawLines, bool drawPoints,
                                bool annotateSurfaces, bool annotateLines, bool annotatePoints,
                                bool disableSurfaceLighting, bool disableCurveLighting, bool disablePointLighting,

@@ -43,7 +43,7 @@ namespace Protein_Morph {
 
             Vec3F GetVertexNormal(unsigned long long vertexHash);
             Vec3F GetFaceNormal(unsigned long long faceHash);
-            void Draw(bool drawSurfaces, bool annotateSurfaces,
+            void draw(bool drawSurfaces, bool annotateSurfaces,
                       bool fadeExtreme, int radius, Vec3F center);
             void SaveFile(string fileName);
 
@@ -125,7 +125,7 @@ namespace Protein_Morph {
         return normal;
     }
 
-    void TriangleMesh::Draw(bool drawSurfaces,
+    void TriangleMesh::draw(bool drawSurfaces,
                             bool annotateSurfaces,
                             bool fadeExtreme, int radius,
                             Vec3F center)

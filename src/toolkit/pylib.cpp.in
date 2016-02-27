@@ -87,7 +87,7 @@ BOOST_PYTHON_MODULE(@current_pylib@)
   ;
   
   class_<Renderer>("Renderer", init<>())
-//        .def("draw", &Renderer::Draw)
+//        .def("draw", &Renderer::draw)
 //        .def("drawBoundingBox", &Renderer::DrawBoundingBox)
 //        .def("loadFile", &Renderer::LoadFile)
 //        .def("saveFile", &Renderer::SaveFile)
@@ -119,7 +119,7 @@ BOOST_PYTHON_MODULE(@current_pylib@)
     ;
   
   class_<VolumeRenderer, bases<Volume> >("VolumeRenderer", init<>())
-        .def("draw", &VolumeRenderer::Draw)
+        .def("draw", &VolumeRenderer::draw)
         .def("drawBoundingBox", &VolumeRenderer::DrawBoundingBox)
         .def("enableDraw", &VolumeRenderer::EnableDraw)
         .def("loadFile", &VolumeRenderer::load)
@@ -165,7 +165,7 @@ BOOST_PYTHON_MODULE(@current_pylib@)
   ;
   
   class_< MeshRenderer, bases<Volume> >("MeshRenderer", init<>())
-      .def("draw", &MeshRenderer::Draw)
+      .def("draw", &MeshRenderer::draw)
 //      .def("drawBoundingBox", &MeshRenderer::DrawBoundingBox)
       .def("loadFile", &MeshRenderer::load)
 //      .def("loadVolume", &MeshRenderer::LoadVolume)

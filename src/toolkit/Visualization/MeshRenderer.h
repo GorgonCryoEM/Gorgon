@@ -31,7 +31,7 @@ namespace Visualization {
         Vec3F getIntersectionPoint(int ix);
 
         void setLineThickness(int thickness);
-        void Draw(int subSceneIndex, bool selectEnabled);
+        void draw(int subSceneIndex, bool selectEnabled);
     private:
         NonManifoldMesh mesh;
         vector<Vec3F> intersectionPoints;
@@ -39,16 +39,16 @@ namespace Visualization {
     };
 
 
-    void MeshRenderer::Draw(int subSceneIndex, bool selectEnabled) {
+    void MeshRenderer::draw(int subSceneIndex, bool selectEnabled) {
         switch(subSceneIndex) {
             case 0:
-                    mesh.Draw(false, false, true, false, selectEnabled, selectEnabled, false, false, true, true, lineThickness, false);
+                    mesh.draw(false, false, true, false, selectEnabled, selectEnabled, false, false, true, true, lineThickness, false);
                 break;
             case 1:
-                    mesh.Draw(false, true, false, false, selectEnabled, selectEnabled, false, false, true, true, lineThickness, false);
+                    mesh.draw(false, true, false, false, selectEnabled, selectEnabled, false, false, true, true, lineThickness, false);
                 break;
             case 2:
-                    mesh.Draw(true, false, false, false, selectEnabled, selectEnabled, false, false, true, true, lineThickness, false);
+                    mesh.draw(true, false, false, false, selectEnabled, selectEnabled, false, false, true, true, lineThickness, false);
                 break;
         }
     }
