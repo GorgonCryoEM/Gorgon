@@ -30,7 +30,7 @@ namespace Visualization {
         int IntersectMeshAndSphere(Vec3F center, float radius);
         Vec3F getIntersectionPoint(int ix);
 
-        void SetLineThickness(int thickness);
+        void setLineThickness(int thickness);
         void Draw(int subSceneIndex, bool selectEnabled);
     private:
         NonManifoldMesh mesh;
@@ -53,7 +53,7 @@ namespace Visualization {
         }
     }
 
-    void MeshRenderer::SetLineThickness(int thickness) {
+    void MeshRenderer::setLineThickness(int thickness) {
         lineThickness = thickness;
     }
 
