@@ -74,6 +74,48 @@ VolumeData * Volume::getVolumeData() {
     return dynamic_cast<VolumeData *>(this);
 }
 
+float Volume::getOffset(float fValue1, float fValue2, float fValueDesired) {
+    double fDelta = fValue2 - fValue1;
+    if(fDelta == 0.0) {
+            return 0.5;
+    }
+    return (fValueDesired - fValue1)/fDelta;
+}
+
+float Volume::getVoxelData(int x, int y, int z) const {
+    if((x < 0) || (x > getSizeX()-1) || (y < 0) || (y > getSizeY()-1) || (z < 0) || (z > getSizeZ()-1)) {
+        return 0.0f;
+    } else {
+        return (*this)(x, y, z);
+    }
+}
+
+float Volume::getVoxelData(float x, float y, float z) const {
+    int f[3] = {(int)x, (int)y, (int)z};
+    int c[3] = {f[0]+1, f[1]+1, f[2]+1};
+    float d[3] = {x - f[0], y - f[1], z - f[2]};
+
+    float i1 = getVoxelData(f[0], f[1], f[2]) * (1.0 - d[2]) + getVoxelData(f[0], f[1], c[2]) * d[2];
+    float i2 = getVoxelData(f[0], c[1], f[2]) * (1.0 - d[2]) + getVoxelData(f[0], c[1], c[2]) * d[2];
+    float j1 = getVoxelData(c[0], f[1], f[2]) * (1.0 - d[2]) + getVoxelData(c[0], f[1], c[2]) * d[2];
+    float j2 = getVoxelData(c[0], c[1], f[2]) * (1.0 - d[2]) + getVoxelData(c[0], c[1], c[2]) * d[2];
+
+    float w1 = i1 * (1.0 - d[1]) + i2 * d[1];
+    float w2 = j1 * (1.0 - d[1]) + j2 * d[1];
+
+    return w1 * (1.0 - d[0]) + w2 * d[0];
+}
+
+int Volume::getHashKey(int x, int y, int z, int edge, int iScale) {
+
+    x += a2iEdgeHash[edge][1]*iScale;
+    y += a2iEdgeHash[edge][2]*iScale;
+    z += a2iEdgeHash[edge][3]*iScale;
+
+    edge = a2iEdgeHash[edge][0];
+    return x * getSizeY() * getSizeZ() * 3 + y * getSizeZ() * 3 + z * 3 + edge;
+}
+
 int Volume::getNonZeroVoxelCount() {
     int count = 0;
     for(int x = 0; x < getSizeX(); x++) {
