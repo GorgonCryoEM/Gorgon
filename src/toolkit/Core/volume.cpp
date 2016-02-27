@@ -2806,7 +2806,7 @@ void Volume::normalizeVolume() {
     normalize(0, 1);
 }
 
-void Volume::loadFile(string inputFile) {
+void Volume::load(string inputFile) {
 
     *volData = *MRCReaderPicker::pick(inputFile.c_str())->getVolume();
 
@@ -2818,7 +2818,7 @@ void Volume::loadFile(string inputFile) {
 #endif
 }
 
-void Volume::saveFile(string fileName) {
+void Volume::save(string fileName) {
     int pos = fileName.rfind(".") + 1;
     string extension = fileName.substr(pos, fileName.length() - pos);
 

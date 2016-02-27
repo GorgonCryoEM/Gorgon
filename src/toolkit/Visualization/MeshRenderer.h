@@ -21,9 +21,9 @@ namespace Visualization {
     public:
         NonManifoldMesh getMesh();
         Vec3F get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
-        void loadFile(string fileName);
+        void load(string fileName);
         void loadVolume(Volume * src);
-        void saveFile(string fileName);
+        void save(string fileName);
         void PerformSmoothLaplacian(double convergenceRate, int iterations);
         string getSupportedLoadFileFormats();
         string getSupportedSaveFileFormats();
@@ -66,7 +66,7 @@ namespace Visualization {
     }
 
 
-    void MeshRenderer::loadFile(string fileName) {
+    void MeshRenderer::load(string fileName) {
         int pos = fileName.rfind(".") + 1;
         string extension = fileName.substr(pos, fileName.length()-pos);
         extension = StringUtils::StringToUpper(extension);
@@ -98,7 +98,7 @@ namespace Visualization {
         }
     }
 
-    void MeshRenderer::saveFile(string fileName) {
+    void MeshRenderer::save(string fileName) {
             int pos = fileName.rfind(".") + 1;
             string extension = fileName.substr(pos, fileName.length()-pos);
 
