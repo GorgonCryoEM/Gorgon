@@ -81,7 +81,6 @@ namespace Visualization {
             bool setCuttingPlane(float position, float vecX, float vecY, float vecZ);
             void updateBoundingBox();
             void unload();
-            void normalizeVolume();
             void downsampleVolume();
 
     private:
@@ -710,10 +709,6 @@ namespace Visualization {
         }
     }
 
-
-    void VolumeRenderer::normalizeVolume(){
-        normalize(0, 1);
-    }
     void VolumeRenderer::setSampleInterval(const int size) {
         sampleInterval = size;
         if(viewingType == VIEWING_TYPE_ISO_SURFACE) {
