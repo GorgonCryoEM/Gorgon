@@ -27,7 +27,7 @@ namespace Visualization {
         void PerformSmoothLaplacian(double convergenceRate, int iterations);
         string getSupportedLoadFileFormats();
         string getSupportedSaveFileFormats();
-        int IntersectMeshAndSphere(Vec3F center, float radius);
+        int intersectMeshAndSphere(Vec3F center, float radius);
         Vec3F getIntersectionPoint(int ix);
 
         void setLineThickness(int thickness);
@@ -123,7 +123,7 @@ namespace Visualization {
         mesh = mesh.SmoothLaplacian(convergenceRate, iterations);
     }
 
-    int MeshRenderer::IntersectMeshAndSphere(Vec3F center, float radius) {
+    int MeshRenderer::intersectMeshAndSphere(Vec3F center, float radius) {
         float x1, y1, z1, x2, y2, z2, x3, y3, z3, r, a, b, c, d, u;
         Vec3F p1, p2;
         x3 = center.X();
