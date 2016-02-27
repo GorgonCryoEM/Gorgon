@@ -141,8 +141,8 @@ namespace SkeletonMaker {
         void curveSkeleton( const Volume & grayvol, float lowthr, float highthr, const Volume & svol );
         void curveSkeleton  (float thr, const Volume & svol);
         void curveSkeleton2D(float thr, const Volume & svol);
-            void pointSkeleton(const Volume & grayvol, float lowthr, float highthr,
-                               const Volume & svol, const Volume & hvol);
+        void pointSkeleton(const Volume & grayvol, float lowthr, float highthr,
+                           const Volume & svol, const Volume & hvol);
         void skeleton( float thr, const Volume & svol, const Volume & hvol );
         void erodeHelix( int disthr );
         int erodeSheet( int disthr );
