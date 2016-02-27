@@ -24,7 +24,7 @@ namespace Visualization {
         void load(string fileName);
         void loadVolume(Volume * src);
         void save(string fileName);
-        void PerformSmoothLaplacian(double convergenceRate, int iterations);
+        void performSmoothLaplacian(double convergenceRate, int iterations);
         string getSupportedLoadFileFormats();
         string getSupportedSaveFileFormats();
         int intersectMeshAndSphere(Vec3F center, float radius);
@@ -119,7 +119,7 @@ namespace Visualization {
         mesh = new NonManifoldMesh(src);
     }
 
-    void MeshRenderer::PerformSmoothLaplacian(double convergenceRate, int iterations) {
+    void MeshRenderer::performSmoothLaplacian(double convergenceRate, int iterations) {
         mesh = mesh.SmoothLaplacian(convergenceRate, iterations);
     }
 
