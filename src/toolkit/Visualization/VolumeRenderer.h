@@ -59,8 +59,6 @@ namespace Visualization {
         VolumeRenderer();
         ~VolumeRenderer();
 
-            float getMaxDensity();
-            float getMinDensity();
             float getSurfaceValue() const;
             int getSampleInterval() const;
             string getSupportedLoadFileFormats();
@@ -145,14 +143,6 @@ namespace Visualization {
             delete octree;
         }
         delete cuttingMesh;
-    }
-
-    float VolumeRenderer::getMaxDensity(){
-        return Volume::getMax();
-    }
-
-    float VolumeRenderer::getMinDensity() {
-        return Volume::getMin();
     }
 
     float VolumeRenderer::getSurfaceValue() const {
@@ -549,7 +539,7 @@ namespace Visualization {
 
             // Approximations to avoid division by zero
             if(isZero(minVal - maxVal, 0.000000000001)) {
-                maxVal = minVal + (getMaxDensity() - getMinDensity()) / 1000.0;
+                maxVal = minVal + (Volume::getMax() - Volume::getMin()) / 1000.0;
             }
             if(isZero(minVal - maxVal, 0.000000000001)) {
                 maxVal = minVal + 0.0001;
