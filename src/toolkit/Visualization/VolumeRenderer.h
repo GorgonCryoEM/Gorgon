@@ -16,7 +16,7 @@
 //#include <GorgonGL.h>
 //#include <string>
 //#include <GraphMatch/VectorMath.h>
-#include "Renderer.h"
+#include "RendererBase.h"
 //#include "GlobalConstants.h"
 //#include "MeshRenderer.h"
 #include <Core/volume.h>
@@ -54,7 +54,7 @@ namespace Visualization {
     typedef OctreeNode<Range> VolumeRendererOctreeNodeType;
     typedef TriangleMesh VolumeSurfaceMeshType;
 
-    class VolumeRenderer : public Volume, public Renderer {
+    class VolumeRenderer : public Volume, public RendererBase {
     public:
         VolumeRenderer();
         ~VolumeRenderer();
@@ -118,7 +118,7 @@ namespace Visualization {
     };
 
     VolumeRenderer::VolumeRenderer()
-        : Renderer(),
+        : RendererBase(),
         cuttingVolume(Volume(2, 2, 2))
     {
         textureLoaded = false;
@@ -189,7 +189,7 @@ namespace Visualization {
     }
 
     bool VolumeRenderer::setCuttingPlane(float position, float vecX, float vecY, float vecZ) {
-        Renderer::setCuttingPlane(position, vecX, vecY, vecZ);
+        RendererBase::setCuttingPlane(position, vecX, vecY, vecZ);
         bool redraw = false;
         if((viewingType == VIEWING_TYPE_CROSS_SECTION) || (viewingType == VIEWING_TYPE_SOLID)) {
             redraw = calculateDisplay();
@@ -716,7 +716,7 @@ namespace Visualization {
     }
 
     void VolumeRenderer::unload() {
-        Renderer::unload();
+        RendererBase::unload();
         if(octree != NULL) {
             delete octree;
         }

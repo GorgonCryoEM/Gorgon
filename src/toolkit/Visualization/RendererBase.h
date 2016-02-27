@@ -5,9 +5,8 @@
  *
  */
 
-
-#ifndef SRC_TOOLKIT_VISUALIZATION_RENDERER_H_
-#define SRC_TOOLKIT_VISUALIZATION_RENDERER_H_
+#ifndef SRC_TOOLKIT_VISUALIZATION_RENDERERBASE_H_
+#define SRC_TOOLKIT_VISUALIZATION_RENDERERBASE_H_
 
 //#include <string>
 //#include <GorgonGL.h>
@@ -21,10 +20,10 @@
 using namespace Foundation;
 
 namespace Visualization {
-    class Renderer {
+    class RendererBase {
         public:
-            Renderer();
-            virtual ~Renderer();
+            RendererBase();
+            virtual ~RendererBase();
             virtual void drawBoundingBox();
             virtual void unload();
             virtual bool selectionRotate(Vec3F centerOfMass,
@@ -64,27 +63,27 @@ namespace Visualization {
             bool isObjectSpecificColoring;
     };
 
-    Renderer::Renderer() {
+    RendererBase::RendererBase() {
         selected = false;
         isObjectSpecificColoring = false;
     }
 
-    Renderer::~Renderer() {
+    RendererBase::~RendererBase() {
     }
 
-    float Renderer::getMin(int dimension) {
+    float RendererBase::getMin(int dimension) {
         return minPts[dimension];
     }
 
-    float Renderer::getMax(int dimension) {
+    float RendererBase::getMax(int dimension) {
         return maxPts[dimension];
     }
 
-    void Renderer::setObjectSpecificColoring(bool objectSpecific) {
+    void RendererBase::setObjectSpecificColoring(bool objectSpecific) {
         isObjectSpecificColoring = objectSpecific;
     }
 
-    void Renderer::drawBoundingBox() {
+    void RendererBase::drawBoundingBox() {
         glPushAttrib(GL_LIGHTING_BIT | GL_ENABLE_BIT);
         glDisable (GL_LIGHTING);
         glPushMatrix();
@@ -98,29 +97,29 @@ namespace Visualization {
         glPopAttrib();
     }
 
-    void Renderer::updateBoundingBox() {
+    void RendererBase::updateBoundingBox() {
         minPts = -0.5;
         maxPts = 0.5;
     }
 
-    bool Renderer::selectionRotate(Vec3F centerOfMass, Vec3F rotationAxis, float angle) {
+    bool RendererBase::selectionRotate(Vec3F centerOfMass, Vec3F rotationAxis, float angle) {
         return false;
     }
 
-    int Renderer::selectionObjectCount() {
+    int RendererBase::selectionObjectCount() {
         return 0;
     }
 
-    Vec3F Renderer::selectionCenterOfMass() {
+    Vec3F RendererBase::selectionCenterOfMass() {
         return (maxPts - minPts) / 2.0;
     }
 
-    bool Renderer::selectionMove(Vec3F moveDirection) {
+    bool RendererBase::selectionMove(Vec3F moveDirection) {
         //printf("Moving by %f %f %f\n", moveDirection.X(), moveDirection.Y(), moveDirection.Z());
         return false;
     }
 
-    bool Renderer::selectionClear() {
+    bool RendererBase::selectionClear() {
         if(selected) {
             selected = false;
             return true;
@@ -130,31 +129,31 @@ namespace Visualization {
 
     }
 
-    void Renderer::selectionToggle(int subsceneIndex, bool forceTrue,
+    void RendererBase::selectionToggle(int subsceneIndex, bool forceTrue,
                                    int ix0, int ix1, int ix2, int ix3, int ix4)
     {
         selected = true;
     }
 
-    Vec3F Renderer::set3DCoordinates(int subsceneIndex,
+    Vec3F RendererBase::set3DCoordinates(int subsceneIndex,
                                      int ix0, int ix1, int ix2, int ix3, int ix4)
     {
         return Vec3F(0, 0, 0);
     }
 
-    void Renderer::unload() {
+    void RendererBase::unload() {
         selected = false;
     }
 
-    string Renderer::getSupportedLoadFileFormats() {
+    string RendererBase::getSupportedLoadFileFormats() {
         return "All Files (*.*)";
     }
 
-    string Renderer::getSupportedSaveFileFormats() {
+    string RendererBase::getSupportedSaveFileFormats() {
         return "All Files (*.*)";
     }
 
-    bool Renderer::setCuttingPlane(float position,
+    bool RendererBase::setCuttingPlane(float position,
                                    float vecX, float vecY, float vecZ)
     {
         Vec3F center = (minPts + maxPts) / 2.0;
@@ -166,7 +165,7 @@ namespace Visualization {
         return false;
     }
 
-    void Renderer::drawSphere(Vec3F center, float radius) {
+    void RendererBase::drawSphere(Vec3F center, float radius) {
         glPushMatrix();
         glTranslatef(center.X(), center.Y(), center.Z());
         GLUquadric * quadricSphere = gluNewQuadric();
@@ -175,7 +174,7 @@ namespace Visualization {
         glPopMatrix();
     }
 
-    void Renderer::drawCylinder(Vec3F pt1, Vec3F pt2,
+    void RendererBase::drawCylinder(Vec3F pt1, Vec3F pt2,
                                 float radius, int slices, int stacks)
     {
         Vec3F qmp = pt1-pt2;
@@ -196,16 +195,16 @@ namespace Visualization {
         glPopMatrix();
     }
 
-    void Renderer::drawLine(Vec3F pt1, Vec3F pt2) {
+    void RendererBase::drawLine(Vec3F pt1, Vec3F pt2) {
         glBegin(GL_LINES);
         glVertex3f(pt1.X(), pt1.Y(), pt1.Z());
         glVertex3f(pt2.X(), pt2.Y(), pt2.Z());
         glEnd();
     }
 
-    void Renderer::setDisplayStyle(int style) {
+    void RendererBase::setDisplayStyle(int style) {
         this->displayStyle = style;
     }
 }
 
-#endif /* SRC_TOOLKIT_VISUALIZATION_RENDERER_H_ */
+#endif /* SRC_TOOLKIT_VISUALIZATION_RENDERERBASE_H_ */
