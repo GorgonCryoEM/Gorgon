@@ -22,7 +22,7 @@
 //#include <GraySkeletonCPP/GlobalDefinitions.h>
 //#include <GraySkeletonCPP/VolumeSkeletonizer.h>
 //#include <GraySkeletonCPP/VolumeFormatConverter.h>
-//#include <ProteinMorph/NonManifoldMesh.h>
+#include "NonManifoldMesh.h"
 #include "TriangleMesh.h"
 #include "MathTools/Vector3.h"
 #include "MathTools/Dim3D.h"

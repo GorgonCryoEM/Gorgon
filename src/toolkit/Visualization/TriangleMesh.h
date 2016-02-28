@@ -9,7 +9,7 @@
 #ifndef SRC_TOOLKIT_VISUALIZATION_TRIANGLEMESH_H_
 #define SRC_TOOLKIT_VISUALIZATION_TRIANGLEMESH_H_
 
-//#include <map>
+#include <map>
 //#include <vector>
 //#include <string>
 #include "OpenGLUtils.h"
