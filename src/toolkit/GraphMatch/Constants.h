@@ -155,24 +155,24 @@ namespace GraphMatch {
     int notAllowedConstraints[MAX_NODES][MAX_NODES];
     unsigned int nNotAllowedConstraints[MAX_NODES];
 
-    void ClearAllowedConstraints() {
+    inline void ClearAllowedConstraints() {
         for(int i = 0; i < MAX_NODES; i++) {
             nAllowedConstraints[i] = 0;
         }
     }
 
-    void ClearNotAllowedConstraints() {
+    inline void ClearNotAllowedConstraints() {
         for(int i = 0; i < MAX_NODES; i++) {
             nNotAllowedConstraints[i] = 0;
         }
     }
 
-    void AddNodeConstraint(int patternNode, int baseNode) {
+    inline void AddNodeConstraint(int patternNode, int baseNode) {
         allowedConstraints[patternNode-1][nAllowedConstraints[patternNode-1]] = baseNode;
         nAllowedConstraints[patternNode-1]++;
     }
 
-    int GetNodeConstraint(int patternNode, int constraintNum) {
+    inline int GetNodeConstraint(int patternNode, int constraintNum) {
         if (constraintNum < 0 || constraintNum >= (int)nAllowedConstraints[patternNode-1]) {
             return 0;
         } else {
@@ -180,12 +180,12 @@ namespace GraphMatch {
         }
     }
 
-    void AddNodeMismatch(int patternNode, int baseNode) {
+    inline void AddNodeMismatch(int patternNode, int baseNode) {
         notAllowedConstraints[patternNode-1][nNotAllowedConstraints[patternNode-1]] = baseNode;
         nNotAllowedConstraints[patternNode-1]++;
     }
 
-    void AddHelixConstraint(int patternHelix, int baseHelix) {
+    inline void AddHelixConstraint(int patternHelix, int baseHelix) {
         int patternNode1 = patternHelix;
         int patternNode2 = patternHelix+1;
 
@@ -202,7 +202,7 @@ namespace GraphMatch {
         }
     }
 
-    void AddHelixMismatch(int patternHelix, int baseHelix) {
+    inline void AddHelixMismatch(int patternHelix, int baseHelix) {
         int patternNode1 = patternHelix*2 - 1;
         int patternNode2 = patternHelix*2;
 
@@ -219,7 +219,7 @@ namespace GraphMatch {
         }
     }
 
-    bool setConstantFree(string token, string stringValue){
+    inline bool setConstantFree(string token, string stringValue){
         if(token == TOKEN_SSE_FILE_NAME) {
             SSE_FILE_NAME = stringValue;
         } else if(token == TOKEN_VRML_HELIX_FILE_NAME) {
@@ -238,7 +238,7 @@ namespace GraphMatch {
         return true;
     }
 
-    bool setConstantFree(string token, double doubleValue){
+    inline bool setConstantFree(string token, double doubleValue){
         if(token == TOKEN_MAXIMUM_DISTANCE_SHEET_SKELETON) {
             MAXIMUM_DISTANCE_SHEET_SKELETON = doubleValue;
         } else if(token == TOKEN_EUCLIDEAN_DISTANCE_THRESHOLD) {
@@ -281,7 +281,7 @@ namespace GraphMatch {
         return true;
     }
 
-    bool setConstantFree(string token, int intValue){
+    inline bool setConstantFree(string token, int intValue){
         if(token == TOKEN_COST_FUNCTION) {
             COST_FUNCTION = intValue;
         } else if(token == TOKEN_INCLUDE_STRANDS) {
@@ -296,7 +296,7 @@ namespace GraphMatch {
         return true;
     }
 
-    bool setConstantFree(string token, bool boolValue){
+    inline bool setConstantFree(string token, bool boolValue){
         if(token == TOKEN_NORMALIZE_GRAPHS) {
             NORMALIZE_GRAPHS = boolValue;
         } else if(token == TOKEN_TRANSLATE_VOLUMETRIC_COORDINATES) {
@@ -307,7 +307,7 @@ namespace GraphMatch {
         return true;
     }
 
-    bool GetConstantFromToken(string token, string stringValue, double &doubleValue, int &intValue, bool &boolValue) {
+    inline bool GetConstantFromToken(string token, string stringValue, double &doubleValue, int &intValue, bool &boolValue) {
         if(token == TOKEN_SSE_FILE_NAME) {
             stringValue = SSE_FILE_NAME;
         } else if(token == TOKEN_VRML_HELIX_FILE_NAME) {
@@ -379,7 +379,7 @@ namespace GraphMatch {
     }
 
 
-    void LoadConstantsFromFile(string settingsFile) {
+    inline void LoadConstantsFromFile(string settingsFile) {
         for(int i = 0; i < MAX_NODES; i++) {
             SOLUTION[i] = -2;
             nAllowedConstraints[i] = 0;
