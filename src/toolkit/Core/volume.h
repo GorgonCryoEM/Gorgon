@@ -93,7 +93,7 @@ namespace SkeletonMaker {
         {}
     };
 
-    ostream & operator<<(ostream & out, const gridPoint & obj){
+inline ostream & operator<<(ostream & out, const gridPoint & obj){
         return out
                 <<"{"
                 <<obj.x<<", "

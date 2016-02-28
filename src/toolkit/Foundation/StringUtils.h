@@ -71,7 +71,7 @@ namespace Foundation {
         source.erase(source.find_last_not_of(t)+1);
     }
 
-    void StringUtils::LeftTrim(string &source, string t) {
+    inline void StringUtils::LeftTrim(string &source, string t) {
         source.erase(0, source.find_first_not_of(t));
     }
 
