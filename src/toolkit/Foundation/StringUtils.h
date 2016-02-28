@@ -20,7 +20,7 @@ namespace Foundation {
         static string LeftPad(string source, int strLength, string padChar = " ");
     };
 
-    string StringUtils::DoubleToString(double number, int padSize, string padChar, int digits, int decimals) {
+    inline string StringUtils::DoubleToString(double number, int padSize, string padChar, int digits, int decimals) {
         char * x = new char[20];
         char * y = new char[20];
         if((digits > 0) && (decimals > 0) ) {
@@ -40,7 +40,7 @@ namespace Foundation {
         return retVal;
     }
 
-    string StringUtils::IntToString(int number, int padSize, string padChar) {
+    inline string StringUtils::IntToString(int number, int padSize, string padChar) {
         char * x = new char[20];
         sprintf(x, "%d", number);
         string retVal = x;
@@ -52,14 +52,14 @@ namespace Foundation {
         return retVal;
     }
 
-    string StringUtils::StringToUpper(string strToConvert) {
+    inline string StringUtils::StringToUpper(string strToConvert) {
        for(unsigned int i=0;i<strToConvert.length();i++)   {
           strToConvert[i] = (char)toupper(strToConvert[i]);
        }
        return strToConvert;
     }
 
-    string StringUtils::StringToLower(string strToConvert)
+    inline string StringUtils::StringToLower(string strToConvert)
     {
        for(unsigned int i=0;i<strToConvert.length();i++)  {
           strToConvert[i] = (char)tolower(strToConvert[i]);
@@ -67,7 +67,7 @@ namespace Foundation {
        return strToConvert;
     }
 
-    void StringUtils::RightTrim(string &source, string t) {
+    inline void StringUtils::RightTrim(string &source, string t) {
         source.erase(source.find_last_not_of(t)+1);
     }
 
@@ -75,7 +75,7 @@ namespace Foundation {
         source.erase(0, source.find_first_not_of(t));
     }
 
-    string StringUtils::RightPad(string source, int strLength, string padChar) {
+    inline string StringUtils::RightPad(string source, int strLength, string padChar) {
         string temp = "";
         int i;
         for(i = 0; i < min((int)source.size(), strLength); i++) {
@@ -87,7 +87,7 @@ namespace Foundation {
         return temp;
     }
 
-    string StringUtils::LeftPad(string source, int strLength, string padChar) {
+    inline string StringUtils::LeftPad(string source, int strLength, string padChar) {
         string temp = "";
         int i;
         for(int j = 0; j < strLength - (int)source.size(); j++) {
