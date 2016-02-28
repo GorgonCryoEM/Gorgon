@@ -595,8 +595,8 @@ namespace Visualization {
 
     void Renderer::MarchingCube(Volume * vol, Mesh * mesh, const float iso_level, int iX, int iY, int iZ, int iScale){
         marchingCubeCallCount++;
-        extern int aiCubeEdgeFlags[256];
-        extern int a2iTriangleConnectionTable[256][16];
+//        extern int aiCubeEdgeFlags[256];
+//        extern int a2iTriangleConnectionTable[256][16];
 
         int iVertex, iFlagIndex, iEdgeFlags;
         float fOffset;
