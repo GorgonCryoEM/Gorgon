@@ -36,7 +36,7 @@ namespace Protein_Morph {
         string tag;
     };
 
-    ostream& operator<<(ostream& out, const NonManifoldMeshEdge& obj){
+    inline ostream& operator<<(ostream& out, const NonManifoldMeshEdge& obj){
         return out<<"\033[34m"
                   <<"faceIds.size(): "<<obj.faceIds.size()
                   <<endl
