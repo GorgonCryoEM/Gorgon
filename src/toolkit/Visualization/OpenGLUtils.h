@@ -19,7 +19,7 @@ namespace Foundation {
         void static GetColor(float &colorR, float &colorG, float &colorB, float &colorA);
     };
 
-    void OpenGLUtils::GetColor(float &colorR, float &colorG, float &colorB, float &colorA) {
+    inline void OpenGLUtils::GetColor(float &colorR, float &colorG, float &colorB, float &colorA) {
         GLfloat diffuse[4] = {0,0,0,0};
         glGetMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse);
         colorR = diffuse[0];
@@ -28,7 +28,7 @@ namespace Foundation {
         colorA = diffuse[3];
     }
 
-    void OpenGLUtils::SetColor(float colorR, float colorG, float colorB, float colorA)  {
+    inline void OpenGLUtils::SetColor(float colorR, float colorG, float colorB, float colorA)  {
         glColor4f(colorR, colorG, colorB, colorA);
         GLfloat diffuse[4] = {colorR, colorG, colorB, colorA};
         GLfloat ambient[4] = {colorR*0.2, colorG*0.2, colorB*0.2, colorA};
