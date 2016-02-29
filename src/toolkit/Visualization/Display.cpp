@@ -13,7 +13,7 @@
 using namespace Visualization;
 
 Display::Display()
-    : DisplayBase()
+    : DisplayBase(), vol(static_cast<Volume &>(*this))
 {
     displays.push_back(new IsoSurface);
     displays.push_back(new CrossSection);

@@ -22,6 +22,8 @@ namespace Visualization {
         private:
             vector<DisplayBase *> displays;
             DisplayBase * cur;
+
+            Volume & vol;
     };
 }
 
