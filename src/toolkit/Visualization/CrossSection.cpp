@@ -100,7 +100,7 @@ namespace Visualization {
 
     void CrossSection::setSampleInterval(const int size) {
         sampleInterval = size;
-        calculateCuttingSurface();
+        calculateDisplay();
     }
 
     void CrossSection::setSurfaceValue(const float value) {
