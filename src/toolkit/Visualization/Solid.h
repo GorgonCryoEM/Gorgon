@@ -24,7 +24,7 @@ namespace Visualization {
             bool calculateDisplay();
             void load3DTexture();
 
-//            void draw(int subSceneIndex, bool selectEnabled);
+            void draw(int subSceneIndex, bool selectEnabled);
             void setSampleInterval(const int size);
             void setSurfaceValue(const float value);
             void setMaxSurfaceValue(const float value);

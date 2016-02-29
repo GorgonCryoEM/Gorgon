@@ -89,6 +89,13 @@ namespace Visualization {
         maxSurfaceValue = value;
     }
 
+    void IsoSurface::draw(int subSceneIndex, bool selectEnabled) {
+        if(subSceneIndex == 0) {
+            if(surfaceMesh != NULL)
+                surfaceMesh->draw(true, selectEnabled, _useDisplayRadius, displayRadius, radiusOrigin);
+        }
+    }
+
     bool IsoSurface::setCuttingPlane(float position, float vecX, float vecY,
                                      float vecZ)
     {
