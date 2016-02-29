@@ -8,14 +8,14 @@
 #ifndef SRC_TOOLKIT_VISUALIZATION_ISOSURFACE_H_
 #define SRC_TOOLKIT_VISUALIZATION_ISOSURFACE_H_
 
-#include "Display.h"
+#include "DisplayBase.h"
 
 namespace Visualization {
 
     /*
      *
      */
-    class IsoSurface : public Display {
+    class IsoSurface : public DisplayBase {
         public:
             IsoSurface();
             virtual ~IsoSurface();

@@ -8,14 +8,14 @@
 #ifndef SRC_TOOLKIT_VISUALIZATION_CROSSSECTION_H_
 #define SRC_TOOLKIT_VISUALIZATION_CROSSSECTION_H_
 
-#include "Display.h"
+#include "DisplayBase.h"
 
 namespace Visualization {
 
     /*
      *
      */
-    class CrossSection : public Display {
+    class CrossSection : public DisplayBase {
         public:
             CrossSection();
             virtual ~CrossSection();

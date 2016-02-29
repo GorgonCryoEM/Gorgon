@@ -8,14 +8,14 @@
 #ifndef SRC_TOOLKIT_VISUALIZATION_SOLID_H_
 #define SRC_TOOLKIT_VISUALIZATION_SOLID_H_
 
-#include "Display.h"
+#include "DisplayBase.h"
 
 namespace Visualization {
 
     /*
      *
      */
-    class Solid : public Display {
+    class Solid : public DisplayBase {
         public:
             Solid();
             virtual ~Solid();
