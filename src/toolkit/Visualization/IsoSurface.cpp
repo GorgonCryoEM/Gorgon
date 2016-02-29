@@ -18,7 +18,7 @@ namespace Visualization {
         // TODO Auto-generated destructor stub
     }
 
-    IsoSurface::IsoSurface(const RendererBase& rend)
+    IsoSurface::IsoSurface(const DisplayBase& rend)
             : DisplayBase(rend)
     {
     }

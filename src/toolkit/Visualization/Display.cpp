@@ -14,7 +14,7 @@ using namespace Visualization;
 
 Display::Display()
     : DisplayBase(),
-      renderer(static_cast<RendererBase &>(*this))
+      renderer(static_cast<DisplayBase &>(*this))
 {
     displays.push_back(new IsoSurface  (renderer));
     displays.push_back(new CrossSection(renderer));

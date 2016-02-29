@@ -18,7 +18,7 @@ namespace Visualization {
         // TODO Auto-generated destructor stub
     }
 
-    CrossSection::CrossSection(const RendererBase& rend)
+    CrossSection::CrossSection(const DisplayBase& rend)
             : DisplayBase(rend)
     {
     }
