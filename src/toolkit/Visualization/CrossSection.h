@@ -19,6 +19,8 @@ namespace Visualization {
         public:
             CrossSection();
             virtual ~CrossSection();
+
+            bool calculateDisplay();
     };
 
 } /* namespace Visualization */

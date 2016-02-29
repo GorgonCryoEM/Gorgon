@@ -19,6 +19,8 @@ namespace Visualization {
         public:
             Solid();
             virtual ~Solid();
+
+            bool calculateDisplay();
     };
 
 } /* namespace Visualization */

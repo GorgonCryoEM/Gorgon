@@ -19,6 +19,8 @@ namespace Visualization {
         public:
             IsoSurface();
             virtual ~IsoSurface();
+
+            bool calculateDisplay();
     };
 
 } /* namespace Visualization */
