@@ -90,7 +90,7 @@ namespace Visualization {
             bool calculateSurface();
             bool calculateCuttingSurface();
             bool calculateSolidRendering();
-            bool calculateDisplay();
+            virtual bool calculateDisplay();
             void load3DTextureSolidRendering();
             void load3DTextureCrossSection();
             void initializeOctree();
