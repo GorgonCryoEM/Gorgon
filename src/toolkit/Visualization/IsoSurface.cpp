@@ -82,7 +82,7 @@ namespace Visualization {
 
     void IsoSurface::setSurfaceValue(const float value) {
         surfaceValue = value;
-        calculateSurface();
+        calculateDisplay();
     }
 
 } /* namespace Visualization */
