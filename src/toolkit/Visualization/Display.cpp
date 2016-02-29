@@ -27,6 +27,16 @@ bool Display::calculateDisplay() {
 //    return cur->calculateDisplay();
 }
 
+Visualization::Display::~Display() {
+    for(vector<DisplayBase *>::iterator it=displays.begin();
+            it!=displays.end();
+            ++it
+            )
+    {
+        delete *it;
+    }
+}
+
 void Display::setViewingType(const int type) {
     viewingType = type;
     if(viewingType == VIEWING_TYPE_SOLID) {

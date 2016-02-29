@@ -15,6 +15,7 @@ namespace Visualization {
     class Display : public DisplayBase {
         public:
             Display();
+            ~Display();
 
             bool calculateDisplay();
             void setViewingType(const int type);
