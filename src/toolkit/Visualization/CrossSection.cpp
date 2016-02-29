@@ -50,9 +50,9 @@ namespace Visualization {
         }
 
         if(volData != NULL) {
-            textureSize[0] = smallest2ndPower(getSizeX());
-            textureSize[1] = smallest2ndPower(getSizeY());
-            textureSize[2] = smallest2ndPower(getSizeZ());
+            textureSize[0] = smallest2ndPower(volData->getSizeX());
+            textureSize[1] = smallest2ndPower(volData->getSizeY());
+            textureSize[2] = smallest2ndPower(volData->getSizeZ());
             double maxVal = maxSurfaceValue;
             double minVal = surfaceValue;
             unsigned char val;
