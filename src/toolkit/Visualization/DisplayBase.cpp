@@ -46,14 +46,6 @@ namespace Visualization {
         return sampleInterval;
     }
 
-    int smallest2ndPower(int value) {
-        int power = 1;
-        while (power < value) {
-            power = power * 2;
-        }
-        return power;
-    }
-
     string DisplayBase::getSupportedLoadFileFormats() {
         return "All Files (*.mrc *.ccp4 *.map *.raw *.pts);; Volumes (*.mrc *.ccp4 *.map *.raw);;Point Cloud (*.pts)";
     }
@@ -643,7 +635,13 @@ namespace Visualization {
             maxPts[2] = getSizeZ()-1;
         }
     }
-
+    int smallest2ndPower(int value) {
+        int power = 1;
+        while (power < value) {
+            power = power * 2;
+        }
+        return power;
+    }
 
 }
 
