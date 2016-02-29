@@ -622,10 +622,10 @@ namespace Visualization {
     }
 
 
-} /* namespace Visualization */
+}
 
-DisplayBase::DisplayBase(const Volume& vol)
-        : Volume(vol),
+DisplayBase::DisplayBase(const RendererBase& rend)
+        :
           RendererBase(),
           cuttingVolume(Volume(2, 2, 2))
 {

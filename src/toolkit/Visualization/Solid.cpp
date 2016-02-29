@@ -18,8 +18,8 @@ namespace Visualization {
         // TODO Auto-generated destructor stub
     }
 
-    Solid::Solid(const Volume& vol)
-        : DisplayBase(vol)
+    Solid::Solid(const RendererBase& rend)
+        : DisplayBase(rend)
     {
     }
 

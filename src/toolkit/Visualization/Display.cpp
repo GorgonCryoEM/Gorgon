@@ -13,11 +13,12 @@
 using namespace Visualization;
 
 Display::Display()
-    : DisplayBase(), vol(static_cast<Volume &>(*this))
+    : DisplayBase(),
+      renderer(static_cast<RendererBase &>(*this))
 {
-    displays.push_back(new IsoSurface  (vol));
-    displays.push_back(new CrossSection(vol));
-    displays.push_back(new Solid       (vol));
+    displays.push_back(new IsoSurface  (renderer));
+    displays.push_back(new CrossSection(renderer));
+    displays.push_back(new Solid       (renderer));
 
     cur = displays[0];
 }

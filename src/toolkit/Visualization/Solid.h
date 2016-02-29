@@ -18,7 +18,7 @@ namespace Visualization {
     class Solid : public DisplayBase {
         public:
             Solid();
-            Solid(const Volume & vol);
+            Solid(const RendererBase & rend);
             virtual ~Solid();
 
             bool calculateDisplay();

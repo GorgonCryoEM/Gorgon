@@ -18,7 +18,7 @@ namespace Visualization {
     class CrossSection : public DisplayBase {
         public:
             CrossSection();
-            CrossSection(const Volume & vol);
+            CrossSection(const RendererBase & rend);
             virtual ~CrossSection();
 
             bool calculateDisplay();

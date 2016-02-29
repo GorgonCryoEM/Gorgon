@@ -23,7 +23,7 @@ namespace Visualization {
             vector<DisplayBase *> displays;
             DisplayBase * cur;
 
-            Volume & vol;
+            RendererBase & renderer;
     };
 }
 
