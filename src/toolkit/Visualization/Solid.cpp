@@ -18,11 +18,6 @@ namespace Visualization {
         // TODO Auto-generated destructor stub
     }
 
-    Solid::Solid(const DisplayBase& rend)
-        : DisplayBase(rend)
-    {
-    }
-
     bool Solid::calculateDisplay() {
         cuttingMesh->Clear();
         bool redraw = false;

@@ -18,11 +18,6 @@ namespace Visualization {
         // TODO Auto-generated destructor stub
     }
 
-    IsoSurface::IsoSurface(const DisplayBase& rend)
-            : DisplayBase(rend)
-    {
-    }
-
     bool IsoSurface::calculateDisplay() {
         bool redraw = false;
         #ifndef USE_OCTREE_OPTIMIZATION

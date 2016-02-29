@@ -18,11 +18,6 @@ namespace Visualization {
         // TODO Auto-generated destructor stub
     }
 
-    CrossSection::CrossSection(const DisplayBase& rend)
-            : DisplayBase(rend)
-    {
-    }
-
     bool CrossSection::calculateDisplay() {
         cuttingMesh->Clear();
 
