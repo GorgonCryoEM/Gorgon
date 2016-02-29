@@ -11,7 +11,6 @@
 
 
 #include "GorgonGL.h"
-using namespace std;
 
 namespace Foundation {
     class OpenGLUtils {
