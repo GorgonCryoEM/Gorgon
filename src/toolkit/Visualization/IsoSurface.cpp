@@ -89,4 +89,10 @@ namespace Visualization {
         maxSurfaceValue = value;
     }
 
+    bool IsoSurface::setCuttingPlane(float position, float vecX, float vecY,
+                                     float vecZ)
+    {
+        DisplayBase::setCuttingPlane(position, vecX, vecY, vecZ);
+    }
+
 } /* namespace Visualization */

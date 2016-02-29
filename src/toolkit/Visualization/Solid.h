@@ -28,7 +28,7 @@ namespace Visualization {
             void setSampleInterval(const int size);
             void setSurfaceValue(const float value);
             void setMaxSurfaceValue(const float value);
-//            bool setCuttingPlane(float position, float vecX, float vecY, float vecZ);
+            bool setCuttingPlane(float position, float vecX, float vecY, float vecZ);
     };
 
 } /* namespace Visualization */
