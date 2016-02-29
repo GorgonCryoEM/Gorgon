@@ -95,7 +95,6 @@ namespace Visualization {
                               int iScale);
             int smallest2ndPower(int value);
     private:
-        int marchingCubeCallCount;
         bool drawEnabled;
         bool textureLoaded;
         Dim3D<int> textureSize;
@@ -343,7 +342,7 @@ namespace Visualization {
             surfaceMesh->Clear();
             //appTimeManager.PopAndDisplayTime("Marching Cubes)  Clearing : %f seconds |");
             redraw = false;
-            marchingCubeCallCount = 0;
+
             if(drawEnabled && volData != NULL) {
                 redraw = true;
                 int maxX = getSizeX();
@@ -594,7 +593,6 @@ namespace Visualization {
     }
 
     void Display::MarchingCube(Volume * vol, Mesh * mesh, const float iso_level, int iX, int iY, int iZ, int iScale){
-        marchingCubeCallCount++;
 //        extern int aiCubeEdgeFlags[256];
 //        extern int a2iTriangleConnectionTable[256][16];
 
