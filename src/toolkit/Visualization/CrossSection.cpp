@@ -103,6 +103,11 @@ namespace Visualization {
         }
     }
 
+    void CrossSection::setSampleInterval(const int size) {
+        sampleInterval = size;
+        calculateCuttingSurface();
+    }
+
     void CrossSection::setSurfaceValue(const float value) {
         surfaceValue = value;
         load3DTexture();

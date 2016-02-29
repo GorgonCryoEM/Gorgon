@@ -75,6 +75,11 @@ namespace Visualization {
     void IsoSurface::load3DTexture() {
     }
 
+    void IsoSurface::setSampleInterval(const int size) {
+        sampleInterval = size;
+        calculateDisplay();
+    }
+
     void IsoSurface::setSurfaceValue(const float value) {
         surfaceValue = value;
         calculateSurface();
