@@ -37,3 +37,25 @@ void Display::setViewingType(const int type) {
     }
     calculateDisplay();
 }
+
+void Visualization::Display::draw(int subSceneIndex, bool selectEnabled) {
+    DisplayBase::draw(subSceneIndex, selectEnabled);
+}
+
+void Visualization::Display::setSampleInterval(const int size) {
+    DisplayBase::setSampleInterval(size);
+}
+
+void Visualization::Display::setSurfaceValue(const float value) {
+    DisplayBase::setSurfaceValue(value);
+}
+
+void Visualization::Display::setMaxSurfaceValue(const float value) {
+    DisplayBase::setMaxSurfaceValue(value);
+}
+
+bool Visualization::Display::setCuttingPlane(float position, float vecX,
+                                             float vecY, float vecZ)
+{
+    return DisplayBase::setCuttingPlane(position, vecX, vecY, vecZ);
+}

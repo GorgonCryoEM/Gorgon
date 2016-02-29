@@ -19,11 +19,11 @@ namespace Visualization {
             bool calculateDisplay();
             void setViewingType(const int type);
 
-//            void draw(int subSceneIndex, bool selectEnabled);
-//            void setSampleInterval(const int size);
-//            void setSurfaceValue(const float value);
-//            void setMaxSurfaceValue(const float value);
-//            bool setCuttingPlane(float position, float vecX, float vecY, float vecZ);
+            void draw(int subSceneIndex, bool selectEnabled);
+            void setSampleInterval(const int size);
+            void setSurfaceValue(const float value);
+            void setMaxSurfaceValue(const float value);
+            bool setCuttingPlane(float position, float vecX, float vecY, float vecZ);
         private:
             vector<DisplayBase *> displays;
             DisplayBase * cur;
