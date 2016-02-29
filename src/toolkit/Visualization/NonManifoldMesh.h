@@ -49,7 +49,7 @@ namespace Protein_Morph {
         string tag;
     };
 
-    ostream& operator<<(ostream& out, const NonManifoldMeshFace& obj){
+    inline ostream& operator<<(ostream& out, const NonManifoldMeshFace& obj){
             return out<<"\033[34m"
                       <<"edgeIds.size(): "<<obj.edgeIds.size()
                       <<"vertexIds.size(): "<<obj.vertexIds.size()
@@ -63,7 +63,7 @@ namespace Protein_Morph {
         bool tag;
     };
 
-    ostream& operator<<(ostream& out, const NonManifoldMeshVertex& obj){
+    inline ostream& operator<<(ostream& out, const NonManifoldMeshVertex& obj){
             return out<<"\033[34m"
                       <<"edgeIds.size(): "<<obj.edgeIds.size()
                       <<endl
