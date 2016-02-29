@@ -19,6 +19,8 @@ namespace Visualization {
         public:
             Display();
 
+            bool calculateDisplay();
+
         private:
             vector<DisplayBase *> displays;
     };
@@ -30,6 +32,10 @@ namespace Visualization {
         displays.push_back(new CrossSection);
         displays.push_back(new Solid);
 }
+
+    inline bool Display::calculateDisplay() {
+        return true;
+    }
 
 }
 
