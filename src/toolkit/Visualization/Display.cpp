@@ -10,6 +10,8 @@
 #include "CrossSection.h"
 #include "Solid.h"
 
+#include "macros.h"
+
 using namespace Visualization;
 
 Display::Display()
@@ -22,6 +24,8 @@ Display::Display()
     cur = displays[0];
 }
 
+#ifdef BASE
+
 void Display::setViewingType(const int type) {
     viewingType = type;
     if(viewingType == VIEWING_TYPE_SOLID) {
@@ -32,9 +36,6 @@ void Display::setViewingType(const int type) {
     calculateDisplay();
 }
 
-
-#define BASE
-#ifdef BASE
 bool Display::calculateDisplay() {
     return DisplayBase::calculateDisplay();
 }
