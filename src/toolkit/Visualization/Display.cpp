@@ -15,9 +15,9 @@ using namespace Visualization;
 Display::Display()
     : DisplayBase(), vol(static_cast<Volume &>(*this))
 {
-    displays.push_back(new IsoSurface);
-    displays.push_back(new CrossSection);
-    displays.push_back(new Solid);
+    displays.push_back(new IsoSurface  (vol));
+    displays.push_back(new CrossSection(vol));
+    displays.push_back(new Solid       (vol));
 
     cur = displays[0];
 }
