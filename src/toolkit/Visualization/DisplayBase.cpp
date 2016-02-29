@@ -12,7 +12,7 @@ namespace Visualization {
 
     DisplayBase::DisplayBase()
         : RendererBase(),
-        cuttingVolume(Volume(2, 2, 2))
+          cuttingVolume(Volume(2, 2, 2))
     {
         textureLoaded = false;
         _useDisplayRadius = false;
@@ -625,6 +625,18 @@ namespace Visualization {
 } /* namespace Visualization */
 
 DisplayBase::DisplayBase(const Volume& vol)
-        : Volume(vol)
+        : Volume(vol),
+          RendererBase(),
+          cuttingVolume(Volume(2, 2, 2))
 {
+    textureLoaded = false;
+    _useDisplayRadius = false;
+    viewingType = VIEWING_TYPE_ISO_SURFACE;
+    surfaceMesh = new VolumeSurfaceMeshType();
+    octree = NULL;
+    surfaceValue = 1.5;
+    displayRadius = 1;
+    sampleInterval = 1;
+    cuttingMesh = new NonManifoldMesh();
+    drawEnabled = false;
 }
