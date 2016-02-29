@@ -166,7 +166,7 @@ namespace Visualization {
     bool Solid::setCuttingPlane(float position, float vecX, float vecY,
                                 float vecZ)
     {
-        DisplayBase::setCuttingPlane(position, vecX, vecY, vecZ);
+        return DisplayBase::setCuttingPlane(position, vecX, vecY, vecZ);
     }
 
 } /* namespace Visualization */
