@@ -23,11 +23,6 @@ Display::Display()
     cur = displays[0];
 }
 
-bool Display::calculateDisplay() {
-    return DisplayBase::calculateDisplay();
-//    return cur->calculateDisplay();
-}
-
 void Display::setViewingType(const int type) {
     viewingType = type;
     if(viewingType == VIEWING_TYPE_SOLID) {
@@ -36,6 +31,13 @@ void Display::setViewingType(const int type) {
         load3DTextureCrossSection();
     }
     calculateDisplay();
+}
+
+
+#define BASE
+#ifdef BASE
+bool Display::calculateDisplay() {
+    return DisplayBase::calculateDisplay();
 }
 
 void Visualization::Display::draw(int subSceneIndex, bool selectEnabled) {
@@ -59,3 +61,31 @@ bool Visualization::Display::setCuttingPlane(float position, float vecX,
 {
     return DisplayBase::setCuttingPlane(position, vecX, vecY, vecZ);
 }
+#else
+bool Display::calculateDisplay() {
+    return cur->calculateDisplay();
+}
+
+void Visualization::Display::draw(int subSceneIndex, bool selectEnabled) {
+    cur->draw(subSceneIndex, selectEnabled);
+}
+
+void Visualization::Display::setSampleInterval(const int size) {
+    cur->setSampleInterval(size);
+}
+
+void Visualization::Display::setSurfaceValue(const float value) {
+    cur->setSurfaceValue(value);
+}
+
+void Visualization::Display::setMaxSurfaceValue(const float value) {
+    cur->setMaxSurfaceValue(value);
+}
+
+bool Visualization::Display::setCuttingPlane(float position, float vecX,
+                                             float vecY, float vecZ)
+{
+    return cur->setCuttingPlane(position, vecX, vecY, vecZ);
+}
+#endif
+
