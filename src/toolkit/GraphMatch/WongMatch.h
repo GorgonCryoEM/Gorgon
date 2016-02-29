@@ -103,7 +103,7 @@ namespace GraphMatch {
         delete pathGenerator;
     }
 
-    void WongMatch::Init(Graph * patternGraph,
+    inline void WongMatch::Init(Graph * patternGraph,
                          Graph * baseGraph)
     {
 #ifdef VERBOSE
@@ -219,7 +219,7 @@ namespace GraphMatch {
     }
 
     // searches for correspondences between the pattern graph and base graph.
-    int WongMatch::RunMatching(clock_t startTime) {
+    inline int WongMatch::RunMatching(clock_t startTime) {
 #ifdef VERBOSE
         cout << "Starting to search for correspondences." << endl;
         DisplayConstants();
@@ -294,12 +294,12 @@ namespace GraphMatch {
     }
 
     // returns one of the results of a correspondence search
-    SSEResult WongMatch::GetResult(int rank) {
+    inline SSEResult WongMatch::GetResult(int rank) {
         return solutions[rank - 1];
     }
 
     // prints correspondence search results
-    void WongMatch::SaveResults() {
+    inline void WongMatch::SaveResults() {
 #ifdef VERBOSE
         printf("Time taken in GetA %f\n", timeInGetA / (double)CLOCKS_PER_SEC);
         printf("Time taken in GetB %f\n", timeInGetB / (double)CLOCKS_PER_SEC);
@@ -310,7 +310,7 @@ namespace GraphMatch {
 
     // returns the cost of matching node p in the pattern graph to node qp in the base graph
     // this method does not include any cost for matching strands to sheets.
-    double WongMatch::GetC(int p, int qp) {
+    inline double WongMatch::GetC(int p, int qp) {
         double cost = GetC(p, p, qp, qp);
 
         // if sheet-to-strand match, compute the cost of the match based on the unused sheet capacity and the strand length
@@ -329,7 +329,7 @@ namespace GraphMatch {
     //   j != p and qj == qp -- edge match cost, special case where same sheet revisited by two consecutive nodes
     //   j != p and qj != qp -- edge match cost
     // note: only the first case is ever used, as all calls to this method have j=p and qj=qp.
-    double WongMatch::GetC(int j, int p, int qj, int qp) {
+    inline double WongMatch::GetC(int j, int p, int qj, int qp) {
 
         double jpCost;
         double qjqpCost;
@@ -369,7 +369,7 @@ namespace GraphMatch {
     // m is the number of missing helices or sheets in the pattern graph
     // qj is the start node in the base graph
     // qp is the end node in the base graph
-    double WongMatch::GetCost(int d, int m, int qj, int qp, bool debugMsg) {
+    inline double WongMatch::GetCost(int d, int m, int qj, int qp, bool debugMsg) {
         // TODO: Fix patthernLength and baseLength for sheet-to-sheet case.
         double patternLength = 0;
         double baseLength;
@@ -559,11 +559,11 @@ namespace GraphMatch {
         return 0;
     }
 
-    double WongMatch::GetF() {
+    inline double WongMatch::GetF() {
         return currentNode->costGStar;
     }
 
-    void WongMatch::PopBestNode() {
+    inline void WongMatch::PopBestNode() {
 #ifdef VERBOSE
         clock_t start = clock();
 #endif
@@ -578,7 +578,7 @@ namespace GraphMatch {
 
     // add in penalties for skipped helices and sheets
     // m is the number of nodes involved in the match. m=1 is no skipped helices or sheets.
-    double WongMatch::GetPenaltyCost(int d, int m, bool debugMsg) {
+    inline double WongMatch::GetPenaltyCost(int d, int m, bool debugMsg) {
         double cost = 0.0;
         int lastPatternNode = patternGraph->GetNodeCount() - 1;
         bool startAtBeginning = (d == 0);
@@ -653,7 +653,7 @@ namespace GraphMatch {
     // if an edge is found, match the pattern graph to that edge and add the match to the queue.
     // also match edges that include skip edges in the pattern graph
     // costs of matches are determined by the GetC method
-    bool WongMatch::ExpandNode(LinkedNodeStub * currentStub) {
+    inline bool WongMatch::ExpandNode(LinkedNodeStub * currentStub) {
         bool expanded = false;
         nExpand++;
 
@@ -834,7 +834,7 @@ namespace GraphMatch {
         return expanded;
     }
 
-    void WongMatch::NormalizeGraphs() {
+    inline void WongMatch::NormalizeGraphs() {
 #ifdef VERBOSE
         printf("Normalizing Graphs\n");
         printf("\tNormalizing the base graph from Angstroms to amino acids\nNormalized Graph:\n");
@@ -864,7 +864,7 @@ namespace GraphMatch {
 #endif
     }
 
-    void WongMatch::NormalizeSheets() {
+    inline void WongMatch::NormalizeSheets() {
 #ifdef VERBOSE
         printf("\tNormalizing the sheet nodes in the base graph based on sheet ratio\nNormalized Graph:\n");
 #endif

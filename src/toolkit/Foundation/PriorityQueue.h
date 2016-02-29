@@ -8,7 +8,7 @@
 namespace SkeletonMaker {
 
     template<class T>
-    bool operator<(const pair<T,int> &l, const pair<T,int> &r){
+    inline bool operator<(const pair<T,int> &l, const pair<T,int> &r){
         return l.second < r.second;
     }
 

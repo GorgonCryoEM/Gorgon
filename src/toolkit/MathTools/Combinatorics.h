@@ -17,7 +17,7 @@ namespace MathTools {
     static void UniformDistr(ProbDistr3D & distro);
     static void AnisoDistrAxisAligned(ProbDistr3D & distr, int xR, int yR, int zR);
 
-    unsigned long long Combinations(int n, int r) {
+    inline unsigned long long Combinations(int n, int r) {
         long long c = 1;
         for(int i = r+1; i <= n; i++) {
             c = c * i;
@@ -28,7 +28,7 @@ namespace MathTools {
         return c;
     }
 
-    unsigned long long Permutations(int n, int r) {
+    inline unsigned long long Permutations(int n, int r) {
         long long p = 1;
         for(int i = n-r+1; i <= n; i++) {
             p = p * i;
@@ -36,7 +36,7 @@ namespace MathTools {
         return p;
     }
 
-    void BinomDistr(ProbDistr1D & distro) {
+    inline void BinomDistr(ProbDistr1D & distro) {
         double total = 0;
 
         for(int x = -distro.R, i=0; x <= distro.R; x++, i++) {
@@ -49,7 +49,7 @@ namespace MathTools {
         }
     }
 
-    void BinomDistr(ProbDistr2D & distro) {
+    inline void BinomDistr(ProbDistr2D & distro) {
         ProbDistr1D dist1D;
         dist1D.R = distro.R;
         BinomDistr(dist1D);
@@ -60,7 +60,7 @@ namespace MathTools {
         }
     }
 
-    void BinomDistr(ProbDistr3D & distro) {
+    inline void BinomDistr(ProbDistr3D & distro) {
         ProbDistr1D dist1D;
         dist1D.R = distro.R;
         BinomDistr(dist1D);
@@ -73,7 +73,7 @@ namespace MathTools {
         }
     }
 
-    void UniformDistr(ProbDistr3D & distro) {
+    inline void UniformDistr(ProbDistr3D & distro) {
         double probability = 1.0 / (double)(distro.R * 2 +1) * (distro.R * 2 +1) * (distro.R * 2 +1);
         for(int x = 0; x < distro.R * 2 +1; x++) {
             for(int y = 0; y < distro.R * 2 +1; y++) {
@@ -84,7 +84,7 @@ namespace MathTools {
         }
     }
 
-    void AnisoDistrAxisAligned(ProbDistr3D & distr, int xR, int yR, int zR) {
+    inline void AnisoDistrAxisAligned(ProbDistr3D & distr, int xR, int yR, int zR) {
         distr.R = max (xR, max(yR, zR));
 
         Dim3D<int> R(xR, yR, zR);

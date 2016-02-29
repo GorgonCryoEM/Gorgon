@@ -74,7 +74,7 @@ namespace GraphMatch {
 
 
 
-    vector<int> LinkedNode::GetNodeCorrespondence() {
+    inline vector<int> LinkedNode::GetNodeCorrespondence() {
         vector<bool> used(MAX_NODES, false);
         vector<int>    n1(MAX_NODES);
         vector<int>    n2(MAX_NODES);
@@ -122,19 +122,19 @@ namespace GraphMatch {
         return correspondance;
     }
 
-    double LinkedNode::GetCost() {
+    inline double LinkedNode::GetCost() {
         return cost;
     }
 
-    void LinkedNode::AddNodeToBitmap(unsigned long long & bitmap, int node) {
+    inline void LinkedNode::AddNodeToBitmap(unsigned long long & bitmap, int node) {
         bitmap = bitmap | ((unsigned long long)1 << node);
     }
 
-    void LinkedNode::RemoveNodeFromBitmap(unsigned long long & bitmap, int node) {
+    inline void LinkedNode::RemoveNodeFromBitmap(unsigned long long & bitmap, int node) {
         bitmap = bitmap - ((unsigned long long)1 << node);
     }
 
-    bool LinkedNode::IsNodeInBitmap(unsigned long long bitmap, int node) {
+    inline bool LinkedNode::IsNodeInBitmap(unsigned long long bitmap, int node) {
         unsigned long long bitvalue = ((unsigned long long)1 << node);
         return ((bitmap & bitvalue) == bitvalue);
     }
