@@ -9,6 +9,10 @@
 #ifndef SRC_TOOLKIT_VISUALIZATION_TRIANGLEMESHVERTEX_H_
 #define SRC_TOOLKIT_VISUALIZATION_TRIANGLEMESHVERTEX_H_
 
+#include "MathTools/Vector3.h"
+
+using namespace GraphMatch;
+
 
 using namespace std;
 
@@ -23,11 +27,11 @@ namespace Protein_Morph {
             bool tag;
     };
 
-    TriangleMeshVertex::TriangleMeshVertex() {
+    inline TriangleMeshVertex::TriangleMeshVertex() {
         position = Vec3F(0, 0, 0);
     }
 
-    TriangleMeshVertex::TriangleMeshVertex(Vec3F position) {
+    inline TriangleMeshVertex::TriangleMeshVertex(Vec3F position) {
         this->position = position;
     }
 }
