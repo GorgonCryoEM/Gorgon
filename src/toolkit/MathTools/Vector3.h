@@ -103,12 +103,12 @@ namespace GraphMatch {
     typedef Vector3<double> Vec3D;
 
     template <class T>
-    Vector3<T>::Vector3()
+    inline Vector3<T>::Vector3()
             : x(0), y(0), z(0)
     {}
 
     template <class T>
-    T* Vector3<T>::getValues() const {
+    inline T* Vector3<T>::getValues() const {
             T * vals = new T[3];
             vals[0] = x;
             vals[1] = y;
@@ -118,14 +118,14 @@ namespace GraphMatch {
     }
 
     template <class T>
-    Vector3<T>::Vector3(const vector<T>& vec)
+    inline Vector3<T>::Vector3(const vector<T>& vec)
         : x(vec[0]),
           y(vec[1]),
           z(vec[2])
     {}
 
     template <class T>
-    Vector3<T> Vector3<T>::operator=(T r) {
+    inline Vector3<T> Vector3<T>::operator=(T r) {
             x = r;
             y = r;
             z = r;
@@ -134,67 +134,67 @@ namespace GraphMatch {
     }
 
     template <class T>
-    Vector3<T>::Vector3(T _x, T _y, T _z)
+    inline Vector3<T>::Vector3(T _x, T _y, T _z)
             : x(_x), y(_y), z(_z)
     {}
 
     template <class T>
-    const T& Vector3<T>::X() const {
+    inline const T& Vector3<T>::X() const {
         return x;
     }
 
     template <class T>
-    const T& Vector3<T>::Y() const {
+    inline const T& Vector3<T>::Y() const {
         return y;
     }
 
     template <class T>
-    const T& Vector3<T>::Z() const {
+    inline const T& Vector3<T>::Z() const {
         return z;
     }
 
     template <class T>
-    T& Vector3<T>::X() {
+    inline T& Vector3<T>::X() {
         return x;
     }
 
     template <class T>
-    T& Vector3<T>::Y() {
+    inline T& Vector3<T>::Y() {
         return y;
     }
 
     template <class T>
-    T& Vector3<T>::Z() {
+    inline T& Vector3<T>::Z() {
         return z;
     }
 
     template <class T>
-    int Vector3<T>::XInt() {
+    inline int Vector3<T>::XInt() {
         return (int)round((*this)[0]);
     }
 
     template <class T>
-    int Vector3<T>::YInt() {
+    inline int Vector3<T>::YInt() {
         return (int)round((*this)[1]);
     }
 
     template <class T>
-    int Vector3<T>::ZInt() {
+    inline int Vector3<T>::ZInt() {
         return (int)round((*this)[2]);
     }
 
     template <class T>
-    const T& Vector3<T>::operator[](int n) const {
+    inline const T& Vector3<T>::operator[](int n) const {
         return (&x)[n];
     }
 
     template <class T>
-    T& Vector3<T>::operator[](int n) {
+    inline T& Vector3<T>::operator[](int n) {
         return (&x)[n];
     }
 
     template <class T>
-    Vector3<T>& Vector3<T>::operator+=(const Vector3<T>& a) {
+    inline Vector3<T>& Vector3<T>::operator+=(const Vector3<T>& a) {
         x += a[0];
         y += a[1];
         z += a[2];
@@ -202,7 +202,7 @@ namespace GraphMatch {
     }
 
     template <class T>
-    Vector3<T>& Vector3<T>::operator-=(const Vector3<T>& a) {
+    inline Vector3<T>& Vector3<T>::operator-=(const Vector3<T>& a) {
         x -= a[0];
         y -= a[1];
         z -= a[2];
@@ -210,7 +210,7 @@ namespace GraphMatch {
     }
 
     template <class T>
-    Vector3<T>& Vector3<T>::operator*=(T s) {
+    inline Vector3<T>& Vector3<T>::operator*=(T s) {
         x *= s;
         y *= s;
         z *= s;
@@ -218,66 +218,66 @@ namespace GraphMatch {
     }
 
     template <class T>
-    Vector3<T>& Vector3<T>::operator/=(T s) {
+    inline Vector3<T>& Vector3<T>::operator/=(T s) {
         return (*this) *= T(1.0)/s;
     }
 
     template <class T>
-    Vector3<T> Vector3<T>::operator-() const {
+    inline Vector3<T> Vector3<T>::operator-() const {
         return Vector3<T>(-x, -y, -z);
     }
 
     template <class T>
-    Vector3<T> Vector3<T>::operator+() const {
+    inline Vector3<T> Vector3<T>::operator+() const {
         return *this;
     }
 
     template <class T>
-    Vector3<T> Vector3<T>::operator+(const Vector3<T> &v) const {
+    inline Vector3<T> Vector3<T>::operator+(const Vector3<T> &v) const {
         return Vector3<T>(x + v.x, y + v.y, z + v.z);
     }
 
     template <class T>
-    Vector3<T> Vector3<T>::operator-(const Vector3<T> &v) const {
+    inline Vector3<T> Vector3<T>::operator-(const Vector3<T> &v) const {
         return Vector3<T>(x - v.x, y - v.y, z - v.z);
     }
 
     template <class T>
-    Vector3<T> Vector3<T>::operator/(const T s) const {
+    inline Vector3<T> Vector3<T>::operator/(const T s) const {
         assert(s > 0.0);
         return Vector3<T>(x / s, y / s, z / s);
     }
 
     template <class T>
-    Vector3<T> Vector3<T>::operator*(const T s) const {
+    inline Vector3<T> Vector3<T>::operator*(const T s) const {
         return Vector3<T>(x * s, y * s, z * s);
     }
 
     // Dot
     template <class T>
-    T Vector3<T>::operator*(const Vector3<T> &v) const {
+    inline T Vector3<T>::operator*(const Vector3<T> &v) const {
         return x * v.x + y * v.y + z * v.z;
     }
 
     // Cross product
     template <class T>
-    Vector3<T> Vector3<T>::operator^(const Vector3<T> &v) const {
+    inline Vector3<T> Vector3<T>::operator^(const Vector3<T> &v) const {
         return Vector3<T>(y * v.z - z * v.y, z * v.x - x * v.z,
                 x * v.y - y * v.x);
     }
 
     template <class T>
-    T Vector3<T>::length() const {
+    inline T Vector3<T>::length() const {
         return (T)sqrt(x * x + y * y + z * z);
     }
 
     template <class T>
-    T Vector3<T>::lengthSquared() const {
+    inline T Vector3<T>::lengthSquared() const {
         return x * x + y * y + z * z;
     }
 
     template <class T>
-    Vector3<T> Vector3<T>::normalize() {
+    inline Vector3<T> Vector3<T>::normalize() {
         T s = 1.0 / (T)sqrt(x * x + y * y + z * z);
         x *= s;
         y *= s;
@@ -287,19 +287,19 @@ namespace GraphMatch {
     }
 
     template <class T>
-    Vector3<T> Vector3<T>::normalize(Vector3<T> v){
+    inline Vector3<T> Vector3<T>::normalize(Vector3<T> v){
         v.normalize();
         return v;
     }
 
     template <class T>
-    Vector3<T> Vector3<T>::project3Dto2D(Vector3<T> point, Vector3<T> planePt, Vector3<T> planeVec1, Vector3<T> planeVec2) {
+    inline Vector3<T> Vector3<T>::project3Dto2D(Vector3<T> point, Vector3<T> planePt, Vector3<T> planeVec1, Vector3<T> planeVec2) {
         Vector3<T> ray = point - planePt;
         return Vector3<T>(ray * planeVec1, ray * planeVec2, 0);
     }
 
     template <class T>
-    Vector3<T> Vector3<T>::getOrthogonal() const {
+    inline Vector3<T> Vector3<T>::getOrthogonal() const {
         Vector3<T> orthVec = Vector3<T>(1, 1, 1);
         orthVec = Vector3<T>(this->X(), this->Y(), this->Z()) ^ orthVec;
         if(isZero(orthVec.length())) {
@@ -310,7 +310,7 @@ namespace GraphMatch {
     }
 
     template <class T>
-    Vector3<T> Vector3<T>::rotate(Vector3<T> axis, T angle) {
+    inline Vector3<T> Vector3<T>::rotate(Vector3<T> axis, T angle) {
         double r = angle;
         T a = axis[0];
         T b = axis[1];
@@ -337,7 +337,7 @@ namespace GraphMatch {
     }
 
     template <class T>
-    Vector3<T> Vector3<T>::transform(Matrix<T> t) {
+    inline Vector3<T> Vector3<T>::transform(Matrix<T> t) {
         Matrix<T> p = Matrix<T>(4, 1);
         p.SetValue((*this)[0], 0, 0);
         p.SetValue((*this)[1], 1, 0);
@@ -349,48 +349,48 @@ namespace GraphMatch {
     }
 
     template <class T>
-    bool Vector3<T>::isBadNormal() {
+    inline bool Vector3<T>::isBadNormal() {
         return !isZero(length() - 1.0, 0.00001);
     }
 
     template <class T>
-    bool Vector3<T>::operator==(const Vector3<T> &v) const {
+    inline bool Vector3<T>::operator==(const Vector3<T> &v) const {
         return x == v.x && y == v.y && z == v.z;
     }
 
     template <class T>
-    bool Vector3<T>::operator!=(const Vector3<T> &v) const {
+    inline bool Vector3<T>::operator!=(const Vector3<T> &v) const {
         return x != v.x || y != v.y || z != v.z;
     }
 
     template <class T>
-    bool Vector3<T>::approxEqual(const Vector3<T> &v, T eps) const {
+    inline bool Vector3<T>::approxEqual(const Vector3<T> &v, T eps) const {
         return isZero(x - v.x, eps) && isZero(y - v.y, eps)
                && isZero(z - v.z, eps);
     }
 
     template <class T>
-    bool Vector3<T>::operator<(const Vector3<T> &v) const {
+    inline bool Vector3<T>::operator<(const Vector3<T> &v) const {
         return x < v.x && y < v.y && z < v.z;
     }
 
     template <class T>
-    bool Vector3<T>::operator>=(const Vector3<T> &v) const {
+    inline bool Vector3<T>::operator>=(const Vector3<T> &v) const {
         return !(*this < v);
     }
 
     template <class T>
-    bool Vector3<T>::operator>(const Vector3<T> &v) const {
+    inline bool Vector3<T>::operator>(const Vector3<T> &v) const {
         return x > v.x && y > v.y && z > v.z;
     }
 
     template <class T>
-    bool Vector3<T>::operator<=(const Vector3<T> &v) const {
+    inline bool Vector3<T>::operator<=(const Vector3<T> &v) const {
             return !(*this > v);
     }
 
     template <class T>
-    void Vector3<T>::print() const {
+    inline void Vector3<T>::print() const {
         std::cout << x << " " << y << " " << z << "\n";
     }
 
