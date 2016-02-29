@@ -11,6 +11,7 @@
 #include "Matrix.h"
 #include "BasicDefines.h"
 #include <iostream>
+#include <cassert>
 
 using namespace std;
 
@@ -244,7 +245,7 @@ namespace GraphMatch {
 
     template <class T>
     inline Vector3<T> Vector3<T>::operator/(const T s) const {
-        assert(s > 0.0);
+        assert(isZero(s));
         return Vector3<T>(x / s, y / s, z / s);
     }
 
