@@ -114,4 +114,9 @@ namespace Visualization {
         load3DTexture();
     }
 
+    void Solid::setMaxSurfaceValue(const float value) {
+        maxSurfaceValue = value;
+        load3DTexture();
+    }
+
 } /* namespace Visualization */

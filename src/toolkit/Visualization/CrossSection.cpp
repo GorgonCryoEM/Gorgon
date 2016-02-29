@@ -113,4 +113,9 @@ namespace Visualization {
         load3DTexture();
     }
 
+    void CrossSection::setMaxSurfaceValue(const float value) {
+        maxSurfaceValue = value;
+        load3DTexture();
+    }
+
 } /* namespace Visualization */

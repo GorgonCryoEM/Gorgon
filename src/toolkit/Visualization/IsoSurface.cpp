@@ -85,4 +85,8 @@ namespace Visualization {
         calculateDisplay();
     }
 
+    void IsoSurface::setMaxSurfaceValue(const float value) {
+        maxSurfaceValue = value;
+    }
+
 } /* namespace Visualization */
