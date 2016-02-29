@@ -71,7 +71,7 @@ namespace Visualization {
             string getSupportedLoadFileFormats();
             string getSupportedSaveFileFormats();
             void enableDraw(bool enable);
-            void draw(int subSceneIndex, bool selectEnabled);
+            virtual void draw(int subSceneIndex, bool selectEnabled);
             void load(string fileName);
             void save(string fileName);
             void setDisplayRadius(const int radius);
@@ -79,10 +79,10 @@ namespace Visualization {
                                         float radiusOriginY,
                                         float radiusOriginZ);
             void useDisplayRadius(bool useRadius);
-            void setSampleInterval(const int size);
-            void setSurfaceValue(const float value);
-            void setMaxSurfaceValue(const float value);
-            bool setCuttingPlane(float position, float vecX, float vecY, float vecZ);
+            virtual void setSampleInterval(const int size);
+            virtual void setSurfaceValue(const float value);
+            virtual void setMaxSurfaceValue(const float value);
+            virtual bool setCuttingPlane(float position, float vecX, float vecY, float vecZ);
             void updateBoundingBox();
             void unload();
 
