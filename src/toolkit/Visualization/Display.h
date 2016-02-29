@@ -24,19 +24,6 @@ namespace Visualization {
         private:
             vector<DisplayBase *> displays;
     };
-
-    Display::Display()
-        : DisplayBase()
-{
-        displays.push_back(new IsoSurface);
-        displays.push_back(new CrossSection);
-        displays.push_back(new Solid);
-}
-
-    inline bool Display::calculateDisplay() {
-        return DisplayBase::calculateDisplay();
-    }
-
 }
 
 
