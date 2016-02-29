@@ -6,6 +6,7 @@
  */
 
 #include "DisplayBase.h"
+#include "Foundation/StringUtils.h"
 
 namespace Visualization {
 

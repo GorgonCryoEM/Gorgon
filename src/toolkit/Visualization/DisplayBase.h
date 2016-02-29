@@ -12,35 +12,35 @@
 #define GL_GLEXT_PROTOTYPES
 //#define USE_OCTREE_OPTIMIZATION
 
-//#include <iostream>
-//#include <GorgonGL.h>
-//#include <string>
-//#include <GraphMatch/VectorMath.h>
+////#include <iostream>
+////#include <GorgonGL.h>
+////#include <string>
+////#include <GraphMatch/VectorMath.h>
 #include "RendererBase.h"
-//#include "GlobalConstants.h"
-//#include "MeshRenderer.h"
+////#include "GlobalConstants.h"
+////#include "MeshRenderer.h"
 #include <Core/volume.h>
-//#include <GraySkeletonCPP/GlobalDefinitions.h>
-//#include <GraySkeletonCPP/VolumeSkeletonizer.h>
-//#include <GraySkeletonCPP/VolumeFormatConverter.h>
+////#include <GraySkeletonCPP/GlobalDefinitions.h>
+////#include <GraySkeletonCPP/VolumeSkeletonizer.h>
+////#include <GraySkeletonCPP/VolumeFormatConverter.h>
 #include "NonManifoldMesh.h"
 #include "TriangleMesh.h"
-#include "MathTools/Vector3.h"
-#include "MathTools/Dim3D.h"
+//#include "MathTools/Vector3.h"
+//#include "MathTools/Dim3D.h"
 #include "Octree.h"
-//#include <queue>
-#include <Readers/reader.h>
-#include <algorithm>
-#include "Mesh.h"
-#include "Foundation/StringUtils.h"
+////#include <queue>
+//#include <Readers/reader.h>
+//#include <algorithm>
+//#include "Mesh.h"
+//#include "Foundation/StringUtils.h"
 
 using namespace std;
 
 //using namespace wustl_mm::GraySkeletonCPP;
 using namespace Protein_Morph;
-using namespace MathTools;
-using namespace GraphMatch;
-using namespace SkeletonMaker;
+//using namespace MathTools;
+//using namespace GraphMatch;
+//using namespace SkeletonMaker;
 using namespace Core;
 
 namespace Visualization {

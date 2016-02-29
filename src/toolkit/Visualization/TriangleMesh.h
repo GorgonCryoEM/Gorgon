@@ -12,10 +12,10 @@
 #include <map>
 //#include <vector>
 //#include <string>
-#include "OpenGLUtils.h"
+//#include "OpenGLUtils.h"
 #include "TriangleMeshFace.h"
 #include "TriangleMeshVertex.h"
-
+//
 #include "Mesh.h"
 
 using namespace std;
