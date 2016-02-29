@@ -18,6 +18,11 @@ namespace Visualization {
         // TODO Auto-generated destructor stub
     }
 
+    IsoSurface::IsoSurface(const Volume& vol)
+            : DisplayBase(vol)
+    {
+    }
+
     bool IsoSurface::calculateDisplay() {
         bool redraw = false;
         #ifndef USE_OCTREE_OPTIMIZATION

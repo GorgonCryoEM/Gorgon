@@ -18,6 +18,7 @@ namespace Visualization {
     class IsoSurface : public DisplayBase {
         public:
             IsoSurface();
+            IsoSurface(const Volume & vol);
             virtual ~IsoSurface();
 
             bool calculateDisplay();

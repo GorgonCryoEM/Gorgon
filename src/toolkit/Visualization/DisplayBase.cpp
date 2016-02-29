@@ -623,3 +623,8 @@ namespace Visualization {
 
 
 } /* namespace Visualization */
+
+DisplayBase::DisplayBase(const Volume& vol)
+        : Volume(vol)
+{
+}
