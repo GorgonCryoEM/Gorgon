@@ -345,6 +345,9 @@ namespace Visualization {
         return redraw;
     }
 
+    void DisplayBase::load3DTexture() {
+    }
+
     void DisplayBase::load(string fileName) {
 //        #ifdef GORGON_DEBUG
               cout<<"\033[32mDEBUG: File:   DisplayBase.cpp"<<endl;

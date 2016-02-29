@@ -89,6 +89,7 @@ namespace Visualization {
             void unload();
 
             virtual bool calculateDisplay();
+            virtual void load3DTexture();
 
     protected:
             bool calculateSurface();
