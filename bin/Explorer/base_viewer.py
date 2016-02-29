@@ -4,7 +4,7 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
-from libpytoolkit import Renderer
+from libpytoolkit import Display
 from libpytoolkit import *
 from .libs import Vec3
 

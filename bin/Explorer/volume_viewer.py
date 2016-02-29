@@ -1,6 +1,6 @@
 from PyQt4 import QtGui, QtCore, QtOpenGL
 from base_viewer import BaseViewer
-from libpytoolkit import Renderer
+from libpytoolkit import Display
 from volume_surface_editor_form import VolumeSurfaceEditorForm
 from model_visualization_form import ModelVisualizationForm
 from string import split, upper
@@ -17,7 +17,7 @@ class VolumeViewer(BaseViewer):
         self.title = "Volume"
         self.shortTitle = "VOL"
 
-        self.renderer = Renderer()
+        self.renderer = Display()
         self.loaded = False
         self.createUI()
         self.initVisualizationOptions(ModelVisualizationForm(self.app, self))

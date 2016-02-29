@@ -8,7 +8,7 @@
 #include <Core/volume.h>
 #include <Readers/reader.h>
 #include <Visualization/NonManifoldMesh.h>
-#include "Renderer.h"
+#include "Display.h"
 #include <Foundation/StringUtils.h>
 
 using namespace Protein_Morph;
