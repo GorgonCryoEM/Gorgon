@@ -15,7 +15,7 @@ namespace Foundation {
         static vector<Vec3I> ScanConvertLine(Vec3I p1, Vec3I p2);
     };
 
-    vector<Vec3I> Rasterizer::ScanConvertLineC8(int x1, int y1, int z1, int x2, int y2, int z2) {
+    inline vector<Vec3I> Rasterizer::ScanConvertLineC8(int x1, int y1, int z1, int x2, int y2, int z2) {
         vector<Vec3I> points = ScanConvertLine(x1, y1, z1, x2, y2, z2);
         vector<Vec3I> newPoints;
         for(unsigned int i = 0; i < points.size()-1; i++) {
@@ -42,7 +42,7 @@ namespace Foundation {
     }
 
     // Scan converts to 26 connectivity
-    vector<Vec3I> Rasterizer::ScanConvertLine(int x1, int y1, int z1, int x2, int y2, int z2) {
+    inline vector<Vec3I> Rasterizer::ScanConvertLine(int x1, int y1, int z1, int x2, int y2, int z2) {
         vector<Vec3I> pseudoVertices;
 
         int i, dx, dy, dz, l, m, n, x_inc, y_inc, z_inc, err_1, err_2, dx2, dy2, dz2;
@@ -124,7 +124,7 @@ namespace Foundation {
         return pseudoVertices;
     }
 
-    vector<Vec3I> Rasterizer::ScanConvertLine(Vec3I p1, Vec3I p2) {
+    inline vector<Vec3I> Rasterizer::ScanConvertLine(Vec3I p1, Vec3I p2) {
         return ScanConvertLine(p1.X(), p1.Y(), p1.Z(), p2.X(), p2.Y(), p2.Z());
     }
 }
