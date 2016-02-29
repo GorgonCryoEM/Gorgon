@@ -46,7 +46,7 @@ namespace Visualization {
         return sampleInterval;
     }
 
-    int DisplayBase::smallest2ndPower(int value) {
+    int smallest2ndPower(int value) {
         int power = 1;
         while (power < value) {
             power = power * 2;

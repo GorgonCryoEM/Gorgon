@@ -48,6 +48,7 @@ namespace Visualization {
     /*
      *
      */
+    int smallest2ndPower(int value);
 
     const int VIEWING_TYPE_ISO_SURFACE = 0;
     const int VIEWING_TYPE_CROSS_SECTION = 1;
@@ -101,7 +102,6 @@ namespace Visualization {
             void MarchingCube(Volume * vol, Mesh * mesh,
                               const float iso_level, int iX, int iY, int iZ,
                               int iScale);
-            int smallest2ndPower(int value);
     protected:
         bool drawEnabled;
         bool textureLoaded;
