@@ -26,7 +26,7 @@ namespace Visualization {
 
 //            void draw(int subSceneIndex, bool selectEnabled);
 //            void setSampleInterval(const int size);
-//            void setSurfaceValue(const float value);
+            void setSurfaceValue(const float value);
 //            void setMaxSurfaceValue(const float value);
 //            bool setCuttingPlane(float position, float vecX, float vecY, float vecZ);
     };

@@ -73,6 +73,10 @@ namespace Visualization {
     }
 
     void IsoSurface::load3DTexture() {
+    }
+
+    void IsoSurface::setSurfaceValue(const float value) {
+        surfaceValue = value;
         calculateSurface();
     }
 

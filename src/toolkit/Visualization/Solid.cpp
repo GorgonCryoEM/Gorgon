@@ -105,4 +105,9 @@ namespace Visualization {
         }
     }
 
+    void Solid::setSurfaceValue(const float value) {
+        surfaceValue = value;
+        load3DTexture();
+    }
+
 } /* namespace Visualization */

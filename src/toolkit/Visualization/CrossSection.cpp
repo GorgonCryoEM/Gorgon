@@ -103,4 +103,9 @@ namespace Visualization {
         }
     }
 
+    void CrossSection::setSurfaceValue(const float value) {
+        surfaceValue = value;
+        load3DTexture();
+    }
+
 } /* namespace Visualization */
