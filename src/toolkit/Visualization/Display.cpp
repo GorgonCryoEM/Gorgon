@@ -24,5 +24,6 @@ Display::Display()
 
 bool Display::calculateDisplay() {
     return DisplayBase::calculateDisplay();
+//    return cur->calculateDisplay();
 }
 
