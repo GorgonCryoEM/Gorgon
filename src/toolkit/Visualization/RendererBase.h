@@ -46,7 +46,6 @@ namespace Visualization {
             void static drawCylinder(Vec3F pt1, Vec3F pt2,
                                      float radius, int slices = 10, int stacks = 10);
             void static drawLine(Vec3F pt1, Vec3F pt2);
-            virtual void setDisplayStyle(int style);
             virtual void setObjectSpecificColoring(bool objectSpecific);
             virtual void updateBoundingBox();
 
@@ -59,7 +58,6 @@ namespace Visualization {
             bool selected;
             Vec3F cuttingPlaneCenter;
             Vec3F cuttingPlaneDirection;
-            int displayStyle;
             bool isObjectSpecificColoring;
     };
 
@@ -200,10 +198,6 @@ namespace Visualization {
         glVertex3f(pt1.X(), pt1.Y(), pt1.Z());
         glVertex3f(pt2.X(), pt2.Y(), pt2.Z());
         glEnd();
-    }
-
-    void RendererBase::setDisplayStyle(int style) {
-        this->displayStyle = style;
     }
 }
 
