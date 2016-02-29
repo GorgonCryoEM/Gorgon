@@ -114,7 +114,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
         
     def setDisplayStyle(self, style):
         self.displayStyle = style
-        self.renderer.setDisplayStyle(style)
         self.emitModelVisualizationChanged()
 
     def setModelVisibility(self, visible):

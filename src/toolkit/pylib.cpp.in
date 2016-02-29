@@ -152,7 +152,6 @@ BOOST_PYTHON_MODULE(@current_pylib@)
 //        .def("performPreservingGrayscaleSkeletonizationAbeysinghe2008", &Display::PerformPreservingGrayscaleSkeletonizationAbeysinghe2008, return_value_policy<reference_existing_object>())     
         .def("useDisplayRadius", &Display::useDisplayRadius)
 //        .def("performSmoothLaplacian", &Display::performSmoothLaplacian)     
-        .def("setDisplayStyle", &Display::setDisplayStyle)
         .def("setObjectSpecificColoring", &Display::setObjectSpecificColoring)
         .def("updateBoundingBox", &Display::updateBoundingBox)
     ;
