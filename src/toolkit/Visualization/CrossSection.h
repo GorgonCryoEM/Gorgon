@@ -22,6 +22,7 @@ namespace Visualization {
             virtual ~CrossSection();
 
             bool calculateDisplay();
+            void load3DTexture();
     };
 
 } /* namespace Visualization */

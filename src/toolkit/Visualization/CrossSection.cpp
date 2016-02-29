@@ -48,4 +48,7 @@ namespace Visualization {
         return redraw;
     }
 
+    void CrossSection::load3DTexture() {
+    }
+
 } /* namespace Visualization */

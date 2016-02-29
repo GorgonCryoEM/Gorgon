@@ -72,4 +72,7 @@ namespace Visualization {
 
     }
 
+    void IsoSurface::load3DTexture() {
+    }
+
 } /* namespace Visualization */

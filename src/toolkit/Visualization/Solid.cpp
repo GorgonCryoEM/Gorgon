@@ -58,4 +58,7 @@ namespace Visualization {
         return redraw;
     }
 
+    void Solid::load3DTexture() {
+    }
+
 } /* namespace Visualization */

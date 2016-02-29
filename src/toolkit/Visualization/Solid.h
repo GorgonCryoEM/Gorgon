@@ -22,6 +22,7 @@ namespace Visualization {
             virtual ~Solid();
 
             bool calculateDisplay();
+            void load3DTexture();
     };
 
 } /* namespace Visualization */

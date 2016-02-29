@@ -22,6 +22,7 @@ namespace Visualization {
             virtual ~IsoSurface();
 
             bool calculateDisplay();
+            void load3DTexture();
     };
 
 } /* namespace Visualization */
