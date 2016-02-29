@@ -9,9 +9,6 @@
 #define SRC_TOOLKIT_VISUALIZATION_DISPLAY_H_
 
 #include "DisplayBase.h"
-#include "IsoSurface.h"
-#include "CrossSection.h"
-#include "Solid.h"
 
 namespace Visualization {
 

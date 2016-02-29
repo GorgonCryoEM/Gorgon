@@ -6,6 +6,9 @@
  */
 
 #include "Display.h"
+#include "IsoSurface.h"
+#include "CrossSection.h"
+#include "Solid.h"
 
 using namespace Visualization;
 
