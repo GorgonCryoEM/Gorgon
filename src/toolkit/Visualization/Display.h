@@ -34,7 +34,7 @@ namespace Visualization {
 }
 
     inline bool Display::calculateDisplay() {
-        return true;
+        return DisplayBase::calculateDisplay();
     }
 
 }
