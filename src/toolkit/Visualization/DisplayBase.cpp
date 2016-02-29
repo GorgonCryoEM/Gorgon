@@ -71,16 +71,6 @@ namespace Visualization {
         }
     }
 
-    void DisplayBase::setViewingType(const int type) {
-        viewingType = type;
-        if(viewingType == VIEWING_TYPE_SOLID) {
-            load3DTextureSolidRendering();
-        } else if  (viewingType == VIEWING_TYPE_CROSS_SECTION) {
-            load3DTextureCrossSection();
-        }
-        calculateDisplay();
-    }
-
     bool DisplayBase::setCuttingPlane(float position, float vecX, float vecY, float vecZ) {
         RendererBase::setCuttingPlane(position, vecX, vecY, vecZ);
         bool redraw = false;

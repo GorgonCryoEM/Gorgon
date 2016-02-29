@@ -78,7 +78,6 @@ namespace Visualization {
                                         float radiusOriginY,
                                         float radiusOriginZ);
             void useDisplayRadius(bool useRadius);
-            void setViewingType(const int type);
             void setSampleInterval(const int size);
             void setSurfaceValue(const float value);
             void setMaxSurfaceValue(const float value);

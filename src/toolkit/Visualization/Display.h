@@ -17,6 +17,7 @@ namespace Visualization {
             Display();
 
             bool calculateDisplay();
+            void setViewingType(const int type);
 
         private:
             vector<DisplayBase *> displays;

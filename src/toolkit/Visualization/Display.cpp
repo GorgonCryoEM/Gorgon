@@ -27,3 +27,12 @@ bool Display::calculateDisplay() {
 //    return cur->calculateDisplay();
 }
 
+void Display::setViewingType(const int type) {
+    viewingType = type;
+    if(viewingType == VIEWING_TYPE_SOLID) {
+        load3DTextureSolidRendering();
+    } else if  (viewingType == VIEWING_TYPE_CROSS_SECTION) {
+        load3DTextureCrossSection();
+    }
+    calculateDisplay();
+}
