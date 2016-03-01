@@ -11,8 +11,6 @@
 #include "Readers/SEQReader.h"
 #include "Visualization/Display.h"
 
-#include "macros.h"
-
 using namespace SkeletonMaker;
 using namespace Protein_Morph;
 using namespace Visualization;
@@ -120,7 +118,6 @@ BOOST_PYTHON_MODULE(@current_pylib@)
 //        .def("clearOtherHighlights", &RendererBase::ClearOtherHighlights)
     ;
   
-#ifdef BASE
   class_<Display, bases<Volume> >("Display", init<>())
         .def("draw", &Display::draw)
         .def("drawBoundingBox", &Display::drawBoundingBox)
@@ -158,45 +155,6 @@ BOOST_PYTHON_MODULE(@current_pylib@)
         .def("setObjectSpecificColoring", &Display::setObjectSpecificColoring)
         .def("updateBoundingBox", &Display::updateBoundingBox)
     ;
-#else
-  class_<DisplayBase, bases<Volume> >("Display", init<>())
-        .def("draw", &DisplayBase::draw)
-        .def("drawBoundingBox", &DisplayBase::drawBoundingBox)
-        .def("enableDraw", &DisplayBase::enableDraw)
-        .def("loadFile", &DisplayBase::load)
-//        .def("loadFileRAW", &DisplayBase::LoadFileRAW)
-        .def("saveFile", &DisplayBase::save)
-        .def("unload", &DisplayBase::unload)
-        .def("selectionRotate", &DisplayBase::selectionRotate)
-        .def("selectionObjectCount", &DisplayBase::selectionObjectCount)
-        .def("selectionCenterOfMass", &DisplayBase::selectionCenterOfMass)
-        .def("selectionMove", &DisplayBase::selectionMove)
-        .def("selectionClear", &DisplayBase::selectionClear)     
-        .def("selectionToggle", &DisplayBase::selectionToggle)   
-        .def("getSupportedLoadFileFormats", &DisplayBase::getSupportedLoadFileFormats)
-        .def("getSupportedSaveFileFormats", &DisplayBase::getSupportedSaveFileFormats)
-        .def("getMin", &RendererBase::getMin)
-        .def("getMax", &RendererBase::getMax)
-//        .def("getVolume", &DisplayBase::GetVolume, return_value_policy<reference_existing_object>())     
-//        .def("getSurfaceValue", &DisplayBase::getSurfaceValue)
-//        .def("get3DCoordinates", &DisplayBase::get3DCoordinates)
-        .def("setSurfaceValue", &DisplayBase::setSurfaceValue)       
-        .def("setMaxSurfaceValue", &DisplayBase::setMaxSurfaceValue)     
-        .def("setSampleInterval", &DisplayBase::setSampleInterval)
-        .def("setDisplayRadius", &DisplayBase::setDisplayRadius)
-        .def("setDisplayRadiusOrigin", &DisplayBase::setDisplayRadiusOrigin)     
-        .def("setCuttingPlane", &DisplayBase::setCuttingPlane)
-        .def("setViewingType", &DisplayBase::setViewingType)
-//        .def("cropVolume", &DisplayBase::CropVolume)
-        .def("performBinarySkeletonizationJu2007", &DisplayBase::PerformBinarySkeletonizationJu2007, return_value_policy<reference_existing_object>())       
-        .def("performGrayscaleSkeletonizationAbeysinghe2008", &DisplayBase::PerformGrayscaleSkeletonizationAbeysinghe2008, return_value_policy<reference_existing_object>())     
-//        .def("performPreservingGrayscaleSkeletonizationAbeysinghe2008", &DisplayBase::PerformPreservingGrayscaleSkeletonizationAbeysinghe2008, return_value_policy<reference_existing_object>())     
-        .def("useDisplayRadius", &DisplayBase::useDisplayRadius)
-//        .def("performSmoothLaplacian", &DisplayBase::performSmoothLaplacian)     
-        .def("setObjectSpecificColoring", &DisplayBase::setObjectSpecificColoring)
-        .def("updateBoundingBox", &DisplayBase::updateBoundingBox)
-    ;
-#endif
 
   class_<NonManifoldMesh, bases<Volume> >("NonManifoldMesh", init<>())
   ;

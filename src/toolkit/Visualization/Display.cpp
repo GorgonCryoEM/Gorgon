@@ -10,12 +10,9 @@
 #include "CrossSection.h"
 #include "Solid.h"
 
-#include "macros.h"
-
 using namespace Visualization;
 
 Display::Display()
-    : DisplayBase()
 {
     displays.push_back(new IsoSurface  );
     displays.push_back(new CrossSection);
@@ -30,6 +27,7 @@ Display::Display()
 
 }
 
+#define BASE
 #ifdef BASE
 
 void Display::setViewingType(const int type) {
@@ -93,20 +91,6 @@ bool Visualization::Display::setCuttingPlane(float position, float vecX,
 {
     return cur->setCuttingPlane(position, vecX, vecY, vecZ);
 }
-//    #ifdef GORGON_DEBUG
-          cout<<"\033[32mDEBUG: File:   Display.cpp"<<endl;
-          cout<<"DEBUG: Method: Display::load(string)\033[0m"<<endl;
-          cout<<"this: "<<this<<endl;
-          cout<<getSize()<<endl;
-//    #endif
-
-    bool calc = calculateDisplay();
-//    #ifdef GORGON_DEBUG
-          cout<<"\033[33mDEBUG: File:   Display.cpp"<<endl;
-          cout<<"DEBUG: Method: Display::load(string)\033[0m"<<endl;
-          cout<<"calculateDisplay(): "<<calc<<endl;
-          cout<<"getSize(): "<<getSize()<<endl;
-//    #endif
 
 #endif
 
