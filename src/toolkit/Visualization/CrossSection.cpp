@@ -12,13 +12,6 @@ namespace Visualization {
     CrossSection::CrossSection() {
         // TODO Auto-generated constructor stub
 
-//        #ifdef GORGON_DEBUG
-              cout<<"\033[32mDEBUG: File:   CrossSection.cpp"<<endl;
-              cout<<"DEBUG: Method: CrossSection::CrossSection(Volume&)\033[0m"<<endl;
-              cout<<"&vol: "<<&vol<<endl;
-              cout<<vol.getSize()<<endl;
-//        #endif
-
     }
 
     CrossSection::~CrossSection() {

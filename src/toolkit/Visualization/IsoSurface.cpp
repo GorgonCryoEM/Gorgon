@@ -13,13 +13,6 @@ namespace Visualization {
         // TODO Auto-generated constructor stub
 
 
-//        #ifdef GORGON_DEBUG
-              cout<<"\033[32mDEBUG: File:   IsoSurface.cpp"<<endl;
-              cout<<"DEBUG: Method: IsoSurface::IsoSurface(Volume&)\033[0m"<<endl;
-              cout<<"&vol: "<<&vol<<endl;
-              cout<<vol.getSize()<<endl;
-//        #endif
-
     }
 
     IsoSurface::~IsoSurface() {
@@ -71,7 +64,8 @@ namespace Visualization {
             appTimeManager.PopAndDisplayTime("Meshing: %f seconds |");
         #endif
         //printf("Marching Cubes called %d times\n", marchingCubeCallCount);
-        return redraw;
+
+            return redraw;
 
     }
 

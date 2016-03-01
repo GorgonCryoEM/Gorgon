@@ -22,6 +22,12 @@ Display::Display()
     displays.push_back(new Solid       );
 
     cur = displays[0];
+//    #ifdef GORGON_DEBUG
+          cout<<"\033[32mDEBUG: File:   Display.cpp"<<endl;
+          cout<<"DEBUG: Method: Display::Display()\033[0m"<<endl;
+          cout<<getSize()<<endl;
+//    #endif
+
 }
 
 #ifdef BASE
@@ -92,6 +98,14 @@ bool Visualization::Display::setCuttingPlane(float position, float vecX,
           cout<<"DEBUG: Method: Display::load(string)\033[0m"<<endl;
           cout<<"this: "<<this<<endl;
           cout<<getSize()<<endl;
+//    #endif
+
+    bool calc = calculateDisplay();
+//    #ifdef GORGON_DEBUG
+          cout<<"\033[33mDEBUG: File:   Display.cpp"<<endl;
+          cout<<"DEBUG: Method: Display::load(string)\033[0m"<<endl;
+          cout<<"calculateDisplay(): "<<calc<<endl;
+          cout<<"getSize(): "<<getSize()<<endl;
 //    #endif
 
 #endif
