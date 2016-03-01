@@ -52,6 +52,14 @@ namespace Protein_Morph {
 
             TriangleMeshVertexType vertices;
             vector<TriangleMeshFace> faces;
+
+            friend ostream & operator<<(ostream & out, const TriangleMesh & obj) {
+                return out
+                        <<"TriangleMesh:\n"
+                        <<"vertices.size(): "<<obj.vertices.size()<<endl
+                        <<"faces.size(): "<<obj.faces.size()
+                        <<endl;
+            }
     };
 }
 
