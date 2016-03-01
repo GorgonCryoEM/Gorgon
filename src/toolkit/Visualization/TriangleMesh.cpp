@@ -102,7 +102,6 @@ void TriangleMesh::draw(bool drawSurfaces,
                         bool fadeExtreme, int radius,
                         Vec3F center)
 {
-    int k;
     if(drawSurfaces) {
         if(annotateSurfaces) {
             glPushName(0);
@@ -119,7 +118,7 @@ void TriangleMesh::draw(bool drawSurfaces,
             bool drawTriangle = true;
             if(fadeExtreme) {
                 for(unsigned int j = 0; j < 3; j++) {
-                    k = faces[i].vertexHashes[j];
+                    int k = faces[i].vertexHashes[j];
                     drawTriangle =
                             drawTriangle && ( (vertices[k].position - center).length()
                                     <= radius);
@@ -127,7 +126,7 @@ void TriangleMesh::draw(bool drawSurfaces,
             }
             if(drawTriangle) {
                 for(unsigned int j = 0; j < 3; j++) {
-                    k = faces[i].vertexHashes[j];
+                    int k = faces[i].vertexHashes[j];
                     normal = GetVertexNormal(k);
                     glNormal3f(normal.X(), normal.Y(), normal.Z());
                     glVertex3fv(vertices[k].position.getValues());
@@ -173,5 +172,3 @@ void TriangleMesh::SaveFile(string fileName) {
     }
     fclose(outFile);
 }
-
-
