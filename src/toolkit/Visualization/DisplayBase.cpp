@@ -354,7 +354,20 @@ namespace Visualization {
     }
 
     void DisplayBase::load(string fileName) {
+//        #ifdef GORGON_DEBUG
+              cout<<"\033[32mDEBUG: File:   DisplayBase.cpp"<<endl;
+              cout<<"DEBUG: Method: DisplayBase::load(string)\033[0m"<<endl;
+              cout<<(Volume)(*this)<<endl;
+//        #endif
+
         Volume::load(fileName);
+
+//        #ifdef GORGON_DEBUG
+              cout<<"\033[32mDEBUG: File:   DisplayBase.cpp"<<endl;
+              cout<<"DEBUG: After load()\033[0m"<<endl;
+              cout<<(Volume)(*this)<<endl;
+//        #endif
+
         initializeOctree();
         updateBoundingBox();
 
