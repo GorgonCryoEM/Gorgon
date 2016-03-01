@@ -12,6 +12,13 @@ namespace Visualization {
     Solid::Solid() {
         // TODO Auto-generated constructor stub
 
+//        #ifdef GORGON_DEBUG
+              cout<<"\033[32mDEBUG: File:   Solid.cpp"<<endl;
+              cout<<"DEBUG: Method: Solid::Solid(Volume&)\033[0m"<<endl;
+              cout<<"&vol: "<<&vol<<endl;
+              cout<<vol.getSize()<<endl;
+//        #endif
+
     }
 
     Solid::~Solid() {

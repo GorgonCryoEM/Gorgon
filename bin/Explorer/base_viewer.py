@@ -273,6 +273,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.setCursor(QtCore.Qt.WaitCursor)
         try:
             self.renderer.loadFile(str(fileName))
+            print self.renderer.getSize()
             self.setScaleNoEmit(self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ())
             self.loaded = True
             self.dirty = False

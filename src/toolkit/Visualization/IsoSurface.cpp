@@ -12,6 +12,14 @@ namespace Visualization {
     IsoSurface::IsoSurface() {
         // TODO Auto-generated constructor stub
 
+
+//        #ifdef GORGON_DEBUG
+              cout<<"\033[32mDEBUG: File:   IsoSurface.cpp"<<endl;
+              cout<<"DEBUG: Method: IsoSurface::IsoSurface(Volume&)\033[0m"<<endl;
+              cout<<"&vol: "<<&vol<<endl;
+              cout<<vol.getSize()<<endl;
+//        #endif
+
     }
 
     IsoSurface::~IsoSurface() {

@@ -87,5 +87,12 @@ bool Visualization::Display::setCuttingPlane(float position, float vecX,
 {
     return cur->setCuttingPlane(position, vecX, vecY, vecZ);
 }
+//    #ifdef GORGON_DEBUG
+          cout<<"\033[32mDEBUG: File:   Display.cpp"<<endl;
+          cout<<"DEBUG: Method: Display::load(string)\033[0m"<<endl;
+          cout<<"this: "<<this<<endl;
+          cout<<getSize()<<endl;
+//    #endif
+
 #endif
 
