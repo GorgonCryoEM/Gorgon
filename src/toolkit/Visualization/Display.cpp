@@ -66,6 +66,16 @@ bool Visualization::Display::setCuttingPlane(float position, float vecX,
     return DisplayBase::setCuttingPlane(position, vecX, vecY, vecZ);
 }
 #else
+
+void Display::setViewingType(const int type) {
+    viewingType = type;
+
+    cur = displays[viewingType];
+
+    cur->load3DTexture();
+    cur->calculateDisplay();
+}
+
 bool Display::calculateDisplay() {
     return cur->calculateDisplay();
 }
