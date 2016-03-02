@@ -86,7 +86,6 @@ namespace Visualization {
             void setSampleInterval(const int size);
             void setSurfaceValue(const float value);
             void setMaxSurfaceValue(const float value);
-            virtual bool setCuttingPlane(float position, float vecX, float vecY, float vecZ);
             void updateBoundingBox();
             void unload();
 

@@ -147,10 +147,4 @@ namespace Visualization {
         }
     }
 
-    bool CrossSection::setCuttingPlane(float position, float vecX, float vecY,
-                                       float vecZ)
-    {
-        return DisplayBase::setCuttingPlane(position, vecX, vecY, vecZ);
-    }
-
 } /* namespace Visualization */

@@ -70,10 +70,6 @@ namespace Visualization {
         calculateDisplay();
     }
 
-    bool DisplayBase::setCuttingPlane(float position, float vecX, float vecY, float vecZ) {
-        return false;
-    }
-
     void DisplayBase::initializeOctree() {
         #ifdef USE_OCTREE_OPTIMIZATION
             if(octree != NULL) {

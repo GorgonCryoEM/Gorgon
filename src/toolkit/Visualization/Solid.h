@@ -24,7 +24,6 @@ namespace Visualization {
             void load3DTexture();
 
             void draw(int subSceneIndex, bool selectEnabled);
-            bool setCuttingPlane(float position, float vecX, float vecY, float vecZ);
     };
 
 } /* namespace Visualization */

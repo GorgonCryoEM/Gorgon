@@ -23,7 +23,6 @@ namespace Visualization {
             bool calculateDisplay();
 
             void draw(int subSceneIndex, bool selectEnabled);
-            bool setCuttingPlane(float position, float vecX, float vecY, float vecZ);
     };
 
 } /* namespace Visualization */
