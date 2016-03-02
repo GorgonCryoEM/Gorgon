@@ -74,25 +74,25 @@ namespace GraySkeletonCPP {
             static int getN6_2 (vector<Vec3I> & n6_2, const Volume & src, int x, int y, int z);
             static int getN18  (vector<Vec3I> &  n18, const Volume & src, int x, int y, int z);
             static int getN26  (vector<Vec3I> &  n26, const Volume & src, int x, int y, int z);
-            static int getN6Count  (const Volume & src, int x, int y, int z);
-            static int getN6_2Count(const Volume & src, int x, int y, int z);
-            static int getN18Count (const Volume & src, int x, int y, int z);
-            static int getN26Count (const Volume & src, int x, int y, int z);
-            static int getMCount   (const Volume & src, int x1, int y1, int z1,
-                                                        int x2, int y2, int z2);
+            static int getN6Count                    (const Volume & src, int x, int y, int z);
+            static int getN6_2Count                  (const Volume & src, int x, int y, int z);
+            static int getN18Count                   (const Volume & src, int x, int y, int z);
+            static int getN26Count                   (const Volume & src, int x, int y, int z);
+            static int getMCount                     (const Volume & src, int x1, int y1, int z1,
+                                                                          int x2, int y2, int z2);
             static int getImmersionN6Count       (Volume & skel, Vec3I point);
             static int getImmersionSkeletalValue (Volume & skel, Vec3I point);
             static bool isImmersionBoundary(const Volume & skel, Vec3I point);
-            static bool isPoint         (const Volume & src, int x, int y, int z);
-            static bool isCurveEnd      (const Volume & src, int x, int y, int z);
-            static bool isCurveBody     (const Volume & src, int x, int y, int z);
-            static bool isSurfaceBorder (const Volume & src, int x, int y, int z);
-            static bool isSurfaceBody   (const Volume & src, int x, int y, int z, bool doDependantChecks);
-            static bool isVolumeBorder  (const Volume & src, int x, int y, int z, bool doDependantChecks);
-            static bool isVolumeBody    (const Volume & src, int x, int y, int z);
-            static bool isSimple        (      Volume & src, int x, int y, int z);
-            static bool isValidSurface  (const Volume & src,
-                                         Vec3D p0, Vec3D p1, Vec3D p2, Vec3D p3);
+            static bool isPoint                      (const Volume & src, int x, int y, int z);
+            static bool isCurveEnd                   (const Volume & src, int x, int y, int z);
+            static bool isCurveBody                  (const Volume & src, int x, int y, int z);
+            static bool isSurfaceBorder              (const Volume & src, int x, int y, int z);
+            static bool isSurfaceBody                (const Volume & src, int x, int y, int z, bool doDependantChecks);
+            static bool isVolumeBorder               (const Volume & src, int x, int y, int z, bool doDependantChecks);
+            static bool isVolumeBody                 (const Volume & src, int x, int y, int z);
+            static bool isSimple                     (      Volume & src, int x, int y, int z);
+            static bool isValidSurface               (const Volume & src,
+                                                      Vec3D p0, Vec3D p1, Vec3D p2, Vec3D p3);
 
             template <class T>
             static void findCurveBase  (T &p1, T &p2);
@@ -108,7 +108,7 @@ namespace GraySkeletonCPP {
             void removeSurface(int x, int y, int z, unsigned char surfaceType);
 
         private:
-            vector<bool> points;
+            vector<bool>          points;
             vector<unsigned char> curves;
             vector<unsigned char> surfaces;
         };
