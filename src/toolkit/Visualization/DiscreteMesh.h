@@ -52,8 +52,8 @@ namespace GraySkeletonCPP {
 
     class DiscreteMesh : public Volume {
         public:
-            DiscreteMesh(int sizeX, int sizeY, int sizeZ);
-            DiscreteMesh(const Volume & volume);
+            DiscreteMesh(int sX, int sY, int sZ);
+            DiscreteMesh(const Volume & vol);
 
             void addVoxel              (int x, int y, int z);
             bool isPointPresent        (int x, int y, int z);

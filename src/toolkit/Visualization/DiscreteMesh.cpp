@@ -12,15 +12,15 @@
 namespace GraySkeletonCPP {
 
 
-    DiscreteMesh::DiscreteMesh(int sizeX, int sizeY, int sizeZ)
-            : Volume(sizeX, sizeY, sizeZ),
-              points   (sizeX * sizeY * sizeZ, false),
-              curves   (sizeX * sizeY * sizeZ, 0),
-              surfaces (sizeX * sizeY * sizeZ, 0)
+    DiscreteMesh::DiscreteMesh(int sX, int sY, int sZ)
+            : Volume(sX, sY, sZ),
+              points   (sX * sY * sZ, false),
+              curves   (sX * sY * sZ, 0),
+              surfaces (sX * sY * sZ, 0)
     {}
 
-    DiscreteMesh::DiscreteMesh(const Volume & volume)
-        :  Volume(volume),
+    DiscreteMesh::DiscreteMesh(const Volume & vol)
+        :  Volume(vol),
            points   (size.X() * size.Y() * size.Z(), false),
            curves   (size.X() * size.Y() * size.Z(), 0),
            surfaces (size.X() * size.Y() * size.Z(), 0)
