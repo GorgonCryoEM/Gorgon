@@ -92,9 +92,6 @@ namespace Visualization {
             virtual void load3DTexture();
 
     protected:
-            bool calculateSurface();
-            bool calculateCuttingSurface();
-            bool calculateSolidRendering();
             void load3DTextureSolidRendering();
             void load3DTextureCrossSection();
             void initializeOctree();
