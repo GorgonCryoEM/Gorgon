@@ -30,12 +30,13 @@ namespace Protein_Morph {
             ~TriangleMesh();
 
             void clear();
-            unsigned long long addVertex(TriangleMeshVertex vertex,
-                                         unsigned long long hashKey);
             int addMarchingVertex(Vec3F location, int hashKey);
             unsigned long long addMarchingFace(unsigned long long vertexHash0,
                                        unsigned long long vertexHash1,
                                        unsigned long long vertexHash2);
+
+            unsigned long long addVertex(TriangleMeshVertex vertex,
+                                         unsigned long long hashKey);
             unsigned long long addFace(TriangleMeshFace face);
             unsigned long long addFace(unsigned long long vertexHash0,
                                        unsigned long long vertexHash1,
@@ -45,6 +46,7 @@ namespace Protein_Morph {
             Vec3F getFaceNormal(unsigned long long faceHash);
             void draw(bool drawSurfaces, bool annotateSurfaces,
                       bool fadeExtreme, int radius, Vec3F center);
+
             void save(string fileName);
 
         private:

@@ -84,17 +84,29 @@ namespace Protein_Morph {
         public:
             NonManifoldMesh();
             NonManifoldMesh(const Volume & src);
-            bool isEdgePresent(int vertexId1, int vertexId2);
-            bool isSurfaceVertex(int ix) const;
-            int addVertex(NonManifoldMeshVertex vertex);
-            int addVertex(Vec3F location);
-            int addHashedVertex(Vec3F location, int hashKey);
+
+            void clear();
             int addMarchingVertex(Vec3F location, int hashKey);
             unsigned long long addMarchingFace(unsigned long long vertexHash0,
                                        unsigned long long vertexHash1,
                                        unsigned long long vertexHash2);
-            int addEdge(NonManifoldMeshEdge edge);
+
+            int addVertex(NonManifoldMeshVertex vertex);
+            int addVertex(Vec3F location);
+            int addHashedVertex(Vec3F location, int hashKey);
             int addFace(NonManifoldMeshFace face);
+
+            int addEdge(NonManifoldMeshEdge edge);
+
+            Vec3F getVertexNormal(int vertexId);
+            Vec3F getFaceNormal(int faceId);
+            void draw(bool drawSurfaceBorders, bool drawSurfaces, bool drawLines, bool drawPoints,
+                      bool annotateSurfaces, bool annotateLines, bool annotatePoints,
+                      bool disableSurfaceLighting, bool disableCurveLighting, bool disablePointLighting,
+                      int lineThickness, bool smoothSurfaceNormals);
+
+            bool isEdgePresent(int vertexId1, int vertexId2);
+            bool isSurfaceVertex(int ix) const;
             int getVertexIndex(int vertexId);
             int getFaceIndex(int faceId);
             int getEdgeIndex(int edgeId) const;
@@ -107,10 +119,6 @@ namespace Protein_Morph {
                              string newEdgeTag = "", string faceTag = "");
             void markFixedVertices();
             void mergeMesh(const NonManifoldMesh & srcMesh);
-            void draw(bool drawSurfaceBorders, bool drawSurfaces, bool drawLines, bool drawPoints,
-                      bool annotateSurfaces, bool annotateLines, bool annotatePoints,
-                      bool disableSurfaceLighting, bool disableCurveLighting, bool disablePointLighting,
-                      int lineThickness, bool smoothSurfaceNormals);
             void removeFace(int faceId);
             void removeEdge(int edgeId);
             void removeVertex(int vertexId);
@@ -124,12 +132,9 @@ namespace Protein_Morph {
             vector<unsigned int> getNeighboringVertexIndices(unsigned int vertexIx);
             vector<Vec3F> sampleTriangle(int faceId, double discretizationStep);
             Volume toVolume();
-            Vec3F getVertexNormal(int vertexId);
-            Vec3F getFaceNormal(int faceId);
             NonManifoldMesh smoothLaplacian(double converganceRate);
             NonManifoldMesh smoothLaplacian(double converganceRate, int iterations);
             static NonManifoldMesh loadOffFile(string fileName);
-            void clear();
 
     public:
         Dim3D<float> scale;
