@@ -108,20 +108,6 @@ namespace Visualization {
             Vec3F vertex;
             // The outside box
 
-            if(viewingType == VIEWING_TYPE_CROSS_SECTION) {
-                glBegin(GL_LINES);
-                for(unsigned int i = 0; i < cuttingMesh->edges.size(); i++) {
-                    if(cuttingMesh->edges[i].faceIds.size() == 1) {
-
-                        for(unsigned int j = 0; j < 2; j++) {
-                            vertex = cuttingMesh->vertices[cuttingMesh->GetVertexIndex(cuttingMesh->edges[i].vertexIds[j])].position;
-                            glVertex3f(vertex.X() * (float)getSizeX(), vertex.Y() * (float)getSizeY(), vertex.Z() * (float)getSizeZ());
-                        }
-                    }
-                }
-                glEnd();
-            }
-
 
             // The cutting surface
             glEnable(GL_TEXTURE_3D);
