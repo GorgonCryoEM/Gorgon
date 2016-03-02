@@ -109,10 +109,10 @@ inline ostream & operator<<(ostream & out, const gridPoint & obj){
         Volume(const Volume& obj);
         virtual ~Volume( );
 
-        int getHashKey(int x, int y, int z, int edge, int iScale);
+        int getHashKey(int x, int y, int z, int edge, int iScale) const;
         float getVoxelData(int x, int y, int z) const;
         float getVoxelData(float x, float y, float z) const;
-        float getOffset(float fValue1, float fValue2, float fValueDesired);
+        float getOffset(float fValue1, float fValue2, float fValueDesired) const;
 
         int getNonZeroVoxelCount();
         void print();

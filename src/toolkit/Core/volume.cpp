@@ -74,7 +74,7 @@ VolumeData * Volume::getVolumeData() {
     return dynamic_cast<VolumeData *>(this);
 }
 
-float Volume::getOffset(float fValue1, float fValue2, float fValueDesired) {
+float Volume::getOffset(float fValue1, float fValue2, float fValueDesired) const {
     double fDelta = fValue2 - fValue1;
     if(fDelta == 0.0) {
             return 0.5;
@@ -106,7 +106,7 @@ float Volume::getVoxelData(float x, float y, float z) const {
     return w1 * (1.0 - d[0]) + w2 * d[0];
 }
 
-int Volume::getHashKey(int x, int y, int z, int edge, int iScale) {
+int Volume::getHashKey(int x, int y, int z, int edge, int iScale) const {
 
     x += a2iEdgeHash[edge][1]*iScale;
     y += a2iEdgeHash[edge][2]*iScale;
