@@ -281,40 +281,21 @@ namespace Visualization {
 
     void DisplayBase::setSampleInterval(const int size) {
         sampleInterval = size;
-        if(viewingType == VIEWING_TYPE_ISO_SURFACE) {
-            calculateSurface();
-        } else if (viewingType == VIEWING_TYPE_CROSS_SECTION) {
-            calculateCuttingSurface();
-        }
+
+        calculateDisplay();
     }
 
     void DisplayBase::setSurfaceValue(const float value) {
         surfaceValue = value;
-        switch(viewingType) {
-            case VIEWING_TYPE_ISO_SURFACE:
-                calculateSurface();
-                break;
-            case VIEWING_TYPE_CROSS_SECTION:
-                load3DTextureCrossSection();
-                break;
-            case VIEWING_TYPE_SOLID:
-                load3DTextureSolidRendering();
-                break;
-        }
+
+        calculateDisplay();
+        load3DTexture();
     }
 
     void DisplayBase::setMaxSurfaceValue(const float value) {
         maxSurfaceValue = value;
-        switch(viewingType) {
-            case VIEWING_TYPE_ISO_SURFACE:
-                break;
-            case VIEWING_TYPE_CROSS_SECTION:
-                load3DTextureCrossSection();
-                break;
-            case VIEWING_TYPE_SOLID:
-                load3DTextureSolidRendering();
-                break;
-        }
+
+        load3DTexture();
     }
 
     void DisplayBase::setDisplayRadius(const int radius) {
@@ -339,7 +320,7 @@ namespace Visualization {
             glDeleteTextures(1, &textureName);
             textureLoaded = false;
         }
-        calculateSurface();
+        calculateDisplay();
         updateBoundingBox();
     }
 
