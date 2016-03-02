@@ -25,9 +25,13 @@ namespace Visualization {
             void draw(int subSceneIndex, bool selectEnabled);
 
             void setDisplayRadius(const int radius);
+            void setDisplayRadiusOrigin(float radiusOriginX,
+                                        float radiusOriginY,
+                                        float radiusOriginZ);
 
         private:
             int displayRadius;
+            Vec3F radiusOrigin;
     };
 
 } /* namespace Visualization */

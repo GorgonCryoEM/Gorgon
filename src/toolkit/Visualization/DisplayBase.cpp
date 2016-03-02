@@ -100,7 +100,6 @@ namespace Visualization {
             glTexImage3D = (PFNGLTEXIMAGE3DPROC) wglGetProcAddress("glTexImage3D");
         #endif
 
-        setDisplayRadiusOrigin(getSizeX()/2, getSizeY()/2, getSizeZ()/2);
     }
 
     void DisplayBase::save(string fileName) {
@@ -137,10 +136,6 @@ namespace Visualization {
         maxSurfaceValue = value;
 
         load3DTexture();
-    }
-
-    void DisplayBase::setDisplayRadiusOrigin(float radiusOriginX, float radiusOriginY, float radiusOriginZ) {
-        radiusOrigin = Vec3F(radiusOriginX, radiusOriginY, radiusOriginZ);
     }
 
     void DisplayBase::useDisplayRadius(bool useRadius) {

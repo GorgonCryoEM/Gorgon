@@ -78,4 +78,8 @@ namespace Visualization {
         displayRadius = radius;
     }
 
+    void IsoSurface::setDisplayRadiusOrigin(float radiusOriginX, float radiusOriginY, float radiusOriginZ) {
+        radiusOrigin = Vec3F(radiusOriginX, radiusOriginY, radiusOriginZ);
+    }
+
 } /* namespace Visualization */

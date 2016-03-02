@@ -77,9 +77,6 @@ namespace Visualization {
             virtual void draw(int subSceneIndex, bool selectEnabled);
             void load(string fileName);
             void save(string fileName);
-            void setDisplayRadiusOrigin(float radiusOriginX,
-                                        float radiusOriginY,
-                                        float radiusOriginZ);
             void useDisplayRadius(bool useRadius);
             void setViewingType(const int type);
             void setSampleInterval(const int size);
@@ -101,7 +98,6 @@ namespace Visualization {
         int sampleInterval;
         int viewingType;
         Volume cuttingVolume;
-        Vec3F radiusOrigin;
         bool _useDisplayRadius;
 
         VolumeSurfaceMeshType * surfaceMesh;
