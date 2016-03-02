@@ -49,7 +49,7 @@ namespace GraySkeletonCPP {
             int getCurveNeighbors     (int x, int y, int z, vector<Vec3I> & neighbors);
             int getCurveNeighborsCount(int x, int y, int z);
             int getSurfaceNeighbors   (int x, int y, int z, vector<int> & neighbors);
-            int getSurfaceNeighbors(int x1, int y1, int z1, int x2, int y2, int z2, vector<int> & neighbors);
+            int getSurfaceNeighbors    (int x1, int y1, int z1, int x2, int y2, int z2, vector<int> & neighbors);
             int getSurfaceNeighborCount(int x1, int y1, int z1, int x2, int y2, int z2);
             void getSurfacePoints     (int x, int y, int z, unsigned char direction, vector<Vec3I> & points);
 
