@@ -185,74 +185,6 @@ namespace Visualization {
         }
     }
 
-    void DisplayBase::MarchingCube(Volume * vol, Mesh * mesh, const float iso_level, int iX, int iY, int iZ, int iScale){
-//        extern int aiCubeEdgeFlags[256];
-//        extern int a2iTriangleConnectionTable[256][16];
-
-        int iVertex, iFlagIndex, iEdgeFlags;
-        float fOffset;
-        float afCubeValue[8];
-        Vec3D asEdgeVertex[12];
-        int vertexIds[12];
-
-        //Make a local copy of the values at the cube's corners
-        for(int iVertex = 0; iVertex < 8; iVertex++) {
-            afCubeValue[iVertex] = getVoxelData(iX + a2iVertexOffset[iVertex][0]*iScale,
-                                                iY + a2iVertexOffset[iVertex][1]*iScale,
-                                                iZ + a2iVertexOffset[iVertex][2]*iScale);
-        }
-
-        //Find which vertices are inside of the surface and which are outside
-        iFlagIndex = 0;
-        for(int iVertexTest = 0; iVertexTest < 8; iVertexTest++)
-        {
-                if(afCubeValue[iVertexTest] <= iso_level)
-                        iFlagIndex |= 1<<iVertexTest;
-        }
-
-        //Find which edges are intersected by the surface
-        iEdgeFlags = aiCubeEdgeFlags[iFlagIndex];
-
-        //If the cube is entirely inside or outside of the surface, then there will be no intersections
-        if(iEdgeFlags == 0)
-        {
-                return;
-        }
-
-        //Find the point of intersection of the surface with each edge
-        //Then find the normal to the surface at those points
-        for(int iEdge = 0; iEdge < 12; iEdge++)
-        {
-                //if there is an intersection on this edge
-                if(iEdgeFlags & (1<<iEdge))
-                {
-                        fOffset = getOffset(afCubeValue[ a2iEdgeConnection[iEdge][0] ], afCubeValue[ a2iEdgeConnection[iEdge][1] ], iso_level);
-
-                        asEdgeVertex[iEdge][0] = (float)iX + ((float)a2iVertexOffset[ a2iEdgeConnection[iEdge][0] ][0] +  fOffset * (float)a2iEdgeDirection[iEdge][0]) * (float)iScale;
-                        asEdgeVertex[iEdge][1] = (float)iY + ((float)a2iVertexOffset[ a2iEdgeConnection[iEdge][0] ][1] +  fOffset * (float)a2iEdgeDirection[iEdge][1]) * (float)iScale;
-                        asEdgeVertex[iEdge][2] = (float)iZ + ((float)a2iVertexOffset[ a2iEdgeConnection[iEdge][0] ][2] +  fOffset * (float)a2iEdgeDirection[iEdge][2]) * (float)iScale;
-
-                        vertexIds[iEdge] = mesh->AddMarchingVertex(Vec3F(asEdgeVertex[iEdge][0], asEdgeVertex[iEdge][1], asEdgeVertex[iEdge][2]), getHashKey(iX, iY, iZ, iEdge, iScale));
-                }
-        }
-
-
-        //Draw the triangles that were found.  There can be up to five per cube
-        for(int iTriangle = 0; iTriangle < 5; iTriangle++)
-        {
-                if(a2iTriangleConnectionTable[iFlagIndex][3*iTriangle] < 0)
-                        break;
-                int triangleVertices[3];
-                for(int iCorner = 0; iCorner < 3; iCorner++)
-                {
-                    iVertex = a2iTriangleConnectionTable[iFlagIndex][3*iTriangle+iCorner];
-                    triangleVertices[iCorner] = vertexIds[iVertex];
-                }
-
-                mesh->AddMarchingFace(triangleVertices[0], triangleVertices[1], triangleVertices[2]);
-        }
-    }
-
     void DisplayBase::setSampleInterval(const int size) {
         sampleInterval = size;
 
@@ -317,6 +249,74 @@ namespace Visualization {
             power = power * 2;
         }
         return power;
+    }
+
+    void MarchingCube(Volume * vol, Mesh * mesh, const float iso_level, int iX, int iY, int iZ, int iScale){
+        //        extern int aiCubeEdgeFlags[256];
+        //        extern int a2iTriangleConnectionTable[256][16];
+
+        int iVertex, iFlagIndex, iEdgeFlags;
+        float fOffset;
+        float afCubeValue[8];
+        Vec3D asEdgeVertex[12];
+        int vertexIds[12];
+
+        //Make a local copy of the values at the cube's corners
+        for(int iVertex = 0; iVertex < 8; iVertex++) {
+            afCubeValue[iVertex] = vol->getVoxelData(iX + a2iVertexOffset[iVertex][0]*iScale,
+                    iY + a2iVertexOffset[iVertex][1]*iScale,
+                    iZ + a2iVertexOffset[iVertex][2]*iScale);
+        }
+
+        //Find which vertices are inside of the surface and which are outside
+        iFlagIndex = 0;
+        for(int iVertexTest = 0; iVertexTest < 8; iVertexTest++)
+        {
+            if(afCubeValue[iVertexTest] <= iso_level)
+                iFlagIndex |= 1<<iVertexTest;
+        }
+
+        //Find which edges are intersected by the surface
+        iEdgeFlags = aiCubeEdgeFlags[iFlagIndex];
+
+        //If the cube is entirely inside or outside of the surface, then there will be no intersections
+        if(iEdgeFlags == 0)
+        {
+            return;
+        }
+
+        //Find the point of intersection of the surface with each edge
+        //Then find the normal to the surface at those points
+        for(int iEdge = 0; iEdge < 12; iEdge++)
+        {
+            //if there is an intersection on this edge
+            if(iEdgeFlags & (1<<iEdge))
+            {
+                fOffset = vol->getOffset(afCubeValue[ a2iEdgeConnection[iEdge][0] ], afCubeValue[ a2iEdgeConnection[iEdge][1] ], iso_level);
+
+                asEdgeVertex[iEdge][0] = (float)iX + ((float)a2iVertexOffset[ a2iEdgeConnection[iEdge][0] ][0] +  fOffset * (float)a2iEdgeDirection[iEdge][0]) * (float)iScale;
+                asEdgeVertex[iEdge][1] = (float)iY + ((float)a2iVertexOffset[ a2iEdgeConnection[iEdge][0] ][1] +  fOffset * (float)a2iEdgeDirection[iEdge][1]) * (float)iScale;
+                asEdgeVertex[iEdge][2] = (float)iZ + ((float)a2iVertexOffset[ a2iEdgeConnection[iEdge][0] ][2] +  fOffset * (float)a2iEdgeDirection[iEdge][2]) * (float)iScale;
+
+                vertexIds[iEdge] = mesh->AddMarchingVertex(Vec3F(asEdgeVertex[iEdge][0], asEdgeVertex[iEdge][1], asEdgeVertex[iEdge][2]), vol->getHashKey(iX, iY, iZ, iEdge, iScale));
+            }
+        }
+
+
+        //Draw the triangles that were found.  There can be up to five per cube
+        for(int iTriangle = 0; iTriangle < 5; iTriangle++)
+        {
+            if(a2iTriangleConnectionTable[iFlagIndex][3*iTriangle] < 0)
+                break;
+            int triangleVertices[3];
+            for(int iCorner = 0; iCorner < 3; iCorner++)
+            {
+                iVertex = a2iTriangleConnectionTable[iFlagIndex][3*iTriangle+iCorner];
+                triangleVertices[iCorner] = vertexIds[iVertex];
+            }
+
+            mesh->AddMarchingFace(triangleVertices[0], triangleVertices[1], triangleVertices[2]);
+        }
     }
 
 }

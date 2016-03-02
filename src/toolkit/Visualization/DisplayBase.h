@@ -49,6 +49,9 @@ namespace Visualization {
      *
      */
     int smallest2ndPower(int value);
+    void MarchingCube(Volume * vol, Mesh * mesh,
+                      const float iso_level, int iX, int iY, int iZ,
+                      int iScale);
 
     const int VIEWING_TYPE_ISO_SURFACE = 0;
     const int VIEWING_TYPE_CROSS_SECTION = 1;
@@ -93,9 +96,6 @@ namespace Visualization {
     protected:
             void initializeOctree();
             void initializeOctreeTag(VolumeRendererOctreeNodeType * node);
-            void MarchingCube(Volume * vol, Mesh * mesh,
-                              const float iso_level, int iX, int iY, int iZ,
-                              int iScale);
     protected:
         bool drawEnabled;
         bool textureLoaded;
