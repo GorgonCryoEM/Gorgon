@@ -163,19 +163,7 @@ namespace Visualization {
     }
 
     bool DisplayBase::calculateDisplay() {
-        bool redraw = false;
-        switch (viewingType) {
-            case VIEWING_TYPE_ISO_SURFACE:
-                redraw = calculateSurface();
-                break;
-            case VIEWING_TYPE_CROSS_SECTION:
-                redraw = calculateCuttingSurface();
-                break;
-            case VIEWING_TYPE_SOLID:
-                redraw = calculateSolidRendering();
-                break;
-        }
-        return redraw;
+        return false;
     }
 
     void DisplayBase::load3DTexture() {
