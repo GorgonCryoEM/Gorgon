@@ -65,21 +65,13 @@ namespace Visualization {
 
     void DisplayBase::setViewingType(const int type) {
         viewingType = type;
-        if(viewingType == VIEWING_TYPE_SOLID) {
-            load3DTextureSolidRendering();
-        } else if  (viewingType == VIEWING_TYPE_CROSS_SECTION) {
-            load3DTextureCrossSection();
-        }
+
+        load3DTexture();
         calculateDisplay();
     }
 
     bool DisplayBase::setCuttingPlane(float position, float vecX, float vecY, float vecZ) {
-        RendererBase::setCuttingPlane(position, vecX, vecY, vecZ);
-        bool redraw = false;
-        if((viewingType == VIEWING_TYPE_CROSS_SECTION) || (viewingType == VIEWING_TYPE_SOLID)) {
-            redraw = calculateDisplay();
-        }
-        return redraw;
+        return false;
     }
 
     void DisplayBase::initializeOctree() {
@@ -142,56 +134,6 @@ namespace Visualization {
     }
 
     void DisplayBase::draw(int subSceneIndex, bool selectEnabled) {
-        if(subSceneIndex == 0) {
-            if((viewingType == VIEWING_TYPE_ISO_SURFACE) && (surfaceMesh != NULL)) {
-                surfaceMesh->draw(true, selectEnabled, _useDisplayRadius, displayRadius, radiusOrigin);
-            } else if((viewingType == VIEWING_TYPE_CROSS_SECTION) || (viewingType == VIEWING_TYPE_SOLID)) {
-                glPushAttrib(GL_LIGHTING_BIT | GL_ENABLE_BIT);
-                glDisable(GL_LIGHTING);
-                glDisable(GL_CULL_FACE);
-                Vec3F vertex;
-                // The outside box
-
-                if(viewingType == VIEWING_TYPE_CROSS_SECTION) {
-                    glBegin(GL_LINES);
-                    for(unsigned int i = 0; i < cuttingMesh->edges.size(); i++) {
-                        if(cuttingMesh->edges[i].faceIds.size() == 1) {
-
-                            for(unsigned int j = 0; j < 2; j++) {
-                                vertex = cuttingMesh->vertices[cuttingMesh->GetVertexIndex(cuttingMesh->edges[i].vertexIds[j])].position;
-                                glVertex3f(vertex.X() * (float)getSizeX(), vertex.Y() * (float)getSizeY(), vertex.Z() * (float)getSizeZ());
-                            }
-                        }
-                    }
-                    glEnd();
-                }
-
-
-                // The cutting surface
-                glEnable(GL_TEXTURE_3D);
-                //GLboolean resident;
-                //glAreTexturesResident(1, &textureName, &resident);
-                //if(resident) {
-                    glBindTexture(GL_TEXTURE_3D, textureName);
-
-                    double xRatio = (double)getSizeX() / (double)textureSize.X();
-                    double yRatio = (double)getSizeY() / (double)textureSize.Y();
-                    double zRatio = (double)getSizeZ() / (double)textureSize.Z();
-
-                    for(unsigned int i = 0; i < cuttingMesh->faces.size(); i++) {
-                        glBegin(GL_POLYGON);
-                        for(unsigned int j = 0; j < cuttingMesh->faces[i].vertexIds.size(); j++) {
-                            vertex = cuttingMesh->vertices[cuttingMesh->GetVertexIndex(cuttingMesh->faces[i].vertexIds[j])].position;
-                            glTexCoord3d(vertex.X() * xRatio, vertex.Y()* yRatio, vertex.Z() * zRatio);
-                            glVertex3f(vertex.X() * (float)getSizeX(), vertex.Y() * (float)getSizeY(), vertex.Z() * (float)getSizeZ());
-                        }
-                        glEnd();
-                    }
-                //}
-
-                glPopAttrib();
-            }
-        }
     }
 
 
