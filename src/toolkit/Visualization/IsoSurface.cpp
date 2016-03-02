@@ -69,9 +69,6 @@ namespace Visualization {
 
     }
 
-    void IsoSurface::load3DTexture() {
-    }
-
     void IsoSurface::draw(int subSceneIndex, bool selectEnabled) {
         if(subSceneIndex == 0) {
             if(surfaceMesh != NULL)
