@@ -36,7 +36,7 @@ namespace Visualization {
                 for(int i = 0; i < maxX; i+=sampleInterval) {
                     for(int j = 0; j < maxY; j+=sampleInterval) {
                         for(int k = 0; k < maxZ; k+=sampleInterval) {
-                            MarchingCube(this, surfaceMesh, surfaceValue, i, j, k, sampleInterval);
+                            MarchingCube(*this, *surfaceMesh, surfaceValue, i, j, k, sampleInterval);
                         }
                     }
                 }

@@ -37,7 +37,7 @@ namespace Visualization {
                         }
                     }
                 }
-                MarchingCube(&cuttingVolume, cuttingMesh, 0.0f, 0, 0, 0, 1);
+                MarchingCube(cuttingVolume, *cuttingMesh, 0.0f, 0, 0, 0, 1);
             }
         }
         return redraw;
