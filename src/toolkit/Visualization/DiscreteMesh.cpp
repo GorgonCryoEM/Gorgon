@@ -6,6 +6,8 @@
  */
 
 #include "DiscreteMesh.h"
+#include "SkeletonMaker/Skeletonizer.h"
+#include <MathTools/Vector3.h>
 
 namespace GraySkeletonCPP {
 
