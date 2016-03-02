@@ -8,6 +8,18 @@
 #ifndef SRC_TOOLKIT_VISUALIZATION_CALPHARENDERER_H_
 #define SRC_TOOLKIT_VISUALIZATION_CALPHARENDERER_H_
 
+#include "GraphMatch/PDBBond.h"
+#include "GraphMatch/PDBAtom.h"
+#include "Core/volume.h"
+
+#include <string>
+#include <map>
+
+#include <boost/tuple/tuple.hpp>
+
+using namespace SkeletonMaker;
+
+
 namespace Visualization {
 
     typedef map<unsigned long long, PDBAtom> AtomMapType;

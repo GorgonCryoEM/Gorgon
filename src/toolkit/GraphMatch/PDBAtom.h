@@ -1,13 +1,16 @@
 #ifndef TOOLKIT_GRAPH_MATCH_PDB_ATOM_H
 #define TOOLKIT_GRAPH_MATCH_PDB_ATOM_H
 
-//#include <MathTools/Vector3.h>
-//#include <Foundation/StringUtils.h>
-//#include <string>
+#include <MathTools/Vector3.h>
+#include <Foundation/StringUtils.h>
+#include <string>
 //#include <MathTools/Matrix.h>
 
 //using namespace MathTools;
-//using namespace Foundation;
+using namespace Foundation;
+using namespace GraphMatch;
+
+using namespace std;
 
 namespace GraphMatch {
     static const int ATOM_ROLE_COUNT = 44;

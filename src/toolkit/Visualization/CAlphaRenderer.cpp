@@ -6,6 +6,7 @@
  */
 
 #include "CAlphaRenderer.h"
+#include "GraphMatch/PDBReader.h"
 
 namespace Visualization {
 
