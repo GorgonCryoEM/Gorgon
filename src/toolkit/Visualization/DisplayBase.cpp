@@ -15,7 +15,6 @@ namespace Visualization {
     {
         textureLoaded = false;
         viewingType = VIEWING_TYPE_ISO_SURFACE;
-        surfaceMesh = new VolumeSurfaceMeshType();
         surfaceValue = 1.5;
         sampleInterval = 1;
         drawEnabled = false;
@@ -26,7 +25,6 @@ namespace Visualization {
             glDeleteTextures(1, &textureName);
             textureLoaded = false;
         }
-        delete surfaceMesh;
     }
 
     float DisplayBase::getSurfaceValue() const {

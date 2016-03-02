@@ -97,7 +97,6 @@ namespace Visualization {
         int sampleInterval;
         int viewingType;
 
-        VolumeSurfaceMeshType * surfaceMesh;
         #ifdef _WIN32
             PFNGLTEXIMAGE3DPROC glTexImage3D;
         #endif
