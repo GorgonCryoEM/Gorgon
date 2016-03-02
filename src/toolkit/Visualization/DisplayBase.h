@@ -92,8 +92,6 @@ namespace Visualization {
             virtual void load3DTexture();
 
     protected:
-            void load3DTextureSolidRendering();
-            void load3DTextureCrossSection();
             void initializeOctree();
             void initializeOctreeTag(VolumeRendererOctreeNodeType * node);
             void calculateOctreeNode(VolumeRendererOctreeNodeType * node);
