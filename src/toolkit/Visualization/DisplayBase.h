@@ -93,7 +93,6 @@ namespace Visualization {
             virtual void load3DTexture();
 
     protected:
-            void initializeOctree();
             void initializeOctreeTag(VolumeRendererOctreeNodeType * node);
     protected:
         bool drawEnabled;
