@@ -23,6 +23,11 @@ namespace Visualization {
             bool calculateDisplay();
 
             void draw(int subSceneIndex, bool selectEnabled);
+
+            void setDisplayRadius(const int radius);
+
+        private:
+            int displayRadius;
     };
 
 } /* namespace Visualization */

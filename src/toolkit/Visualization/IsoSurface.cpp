@@ -10,9 +10,7 @@
 namespace Visualization {
 
     IsoSurface::IsoSurface() {
-        // TODO Auto-generated constructor stub
-
-
+        displayRadius = 1;
     }
 
     IsoSurface::~IsoSurface() {
@@ -74,6 +72,10 @@ namespace Visualization {
             if(surfaceMesh != NULL)
                 surfaceMesh->draw(true, selectEnabled, _useDisplayRadius, displayRadius, radiusOrigin);
         }
+    }
+
+    void IsoSurface::setDisplayRadius(const int radius) {
+        displayRadius = radius;
     }
 
 } /* namespace Visualization */

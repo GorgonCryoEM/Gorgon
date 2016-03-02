@@ -20,7 +20,6 @@ namespace Visualization {
         surfaceMesh = new VolumeSurfaceMeshType();
         octree = NULL;
         surfaceValue = 1.5;
-        displayRadius = 1;
         sampleInterval = 1;
         cuttingMesh = new NonManifoldMesh();
         drawEnabled = false;
@@ -138,10 +137,6 @@ namespace Visualization {
         maxSurfaceValue = value;
 
         load3DTexture();
-    }
-
-    void DisplayBase::setDisplayRadius(const int radius) {
-        displayRadius = radius;
     }
 
     void DisplayBase::setDisplayRadiusOrigin(float radiusOriginX, float radiusOriginY, float radiusOriginZ) {

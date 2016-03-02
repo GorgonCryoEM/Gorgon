@@ -77,7 +77,6 @@ namespace Visualization {
             virtual void draw(int subSceneIndex, bool selectEnabled);
             void load(string fileName);
             void save(string fileName);
-            void setDisplayRadius(const int radius);
             void setDisplayRadiusOrigin(float radiusOriginX,
                                         float radiusOriginY,
                                         float radiusOriginZ);
@@ -100,7 +99,6 @@ namespace Visualization {
         float surfaceValue;
         float maxSurfaceValue;
         int sampleInterval;
-        int displayRadius;
         int viewingType;
         Volume cuttingVolume;
         Vec3F radiusOrigin;
