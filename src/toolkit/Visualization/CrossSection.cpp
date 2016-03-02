@@ -98,21 +98,6 @@ namespace Visualization {
         }
     }
 
-    void CrossSection::setSampleInterval(const int size) {
-        sampleInterval = size;
-        calculateDisplay();
-    }
-
-    void CrossSection::setSurfaceValue(const float value) {
-        surfaceValue = value;
-        load3DTexture();
-    }
-
-    void CrossSection::setMaxSurfaceValue(const float value) {
-        maxSurfaceValue = value;
-        load3DTexture();
-    }
-
     void CrossSection::draw(int subSceneIndex, bool selectEnabled) {
         if(subSceneIndex == 0) {
             glPushAttrib(GL_LIGHTING_BIT | GL_ENABLE_BIT);

@@ -72,20 +72,6 @@ namespace Visualization {
     void IsoSurface::load3DTexture() {
     }
 
-    void IsoSurface::setSampleInterval(const int size) {
-        sampleInterval = size;
-        calculateDisplay();
-    }
-
-    void IsoSurface::setSurfaceValue(const float value) {
-        surfaceValue = value;
-        calculateDisplay();
-    }
-
-    void IsoSurface::setMaxSurfaceValue(const float value) {
-        maxSurfaceValue = value;
-    }
-
     void IsoSurface::draw(int subSceneIndex, bool selectEnabled) {
         if(subSceneIndex == 0) {
             if(surfaceMesh != NULL)

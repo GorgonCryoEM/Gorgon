@@ -83,9 +83,9 @@ namespace Visualization {
                                         float radiusOriginZ);
             void useDisplayRadius(bool useRadius);
             void setViewingType(const int type);
-            virtual void setSampleInterval(const int size);
-            virtual void setSurfaceValue(const float value);
-            virtual void setMaxSurfaceValue(const float value);
+            void setSampleInterval(const int size);
+            void setSurfaceValue(const float value);
+            void setMaxSurfaceValue(const float value);
             virtual bool setCuttingPlane(float position, float vecX, float vecY, float vecZ);
             void updateBoundingBox();
             void unload();
