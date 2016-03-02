@@ -49,9 +49,9 @@ namespace Visualization {
 #endif
 
         if(extension == "OFF") {
-            mesh = *NonManifoldMesh::LoadOffFile(fileName);
+            mesh = NonManifoldMesh::LoadOffFile(fileName);
         } else if(extension == "MRC" || extension == "ATOM") {
-            Volume * volume = MRCReaderPicker::pick(fileName.c_str())->getVolume();
+            Volume volume = *MRCReaderPicker::pick(fileName.c_str())->getVolume();
             #ifdef GORGON_DEBUG
                   cout<<"\033[36mDEBUG: After VolumeFormatConverter::LoadVolume(fileName)"<<endl;
                   cout<<"FileName: "<<fileName<<endl;
@@ -62,7 +62,6 @@ namespace Visualization {
 #ifdef GORGON_DEBUG
       cout<<"\033[35m"<<mesh.getSize()<<"\033[0m"<<endl;
 #endif
-            delete volume;
         } else {
             cout<<"Input format "<<extension<<" not supported!"<<endl;
         }
@@ -85,8 +84,8 @@ namespace Visualization {
             }
     }
 
-    void MeshRenderer::loadVolume(Volume * src) {
-        mesh = new NonManifoldMesh(src);
+    void MeshRenderer::loadVolume(const Volume & src) {
+        mesh = NonManifoldMesh(src);
     }
 
     void MeshRenderer::performSmoothLaplacian(double convergenceRate, int iterations) {

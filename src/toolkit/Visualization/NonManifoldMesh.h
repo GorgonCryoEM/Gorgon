@@ -83,7 +83,7 @@ namespace Protein_Morph {
     class NonManifoldMesh : public Volume, public Mesh {
         public:
             NonManifoldMesh();
-            NonManifoldMesh(Volume * src);
+            NonManifoldMesh(const Volume & src);
             bool IsEdgePresent(int vertexId1, int vertexId2);
             bool IsSurfaceVertex(int ix) const;
             int AddVertex(NonManifoldMeshVertex vertex);
@@ -128,7 +128,7 @@ namespace Protein_Morph {
             Vec3F GetFaceNormal(int faceId);
             NonManifoldMesh SmoothLaplacian(double converganceRate);
             NonManifoldMesh SmoothLaplacian(double converganceRate, int iterations);
-            static NonManifoldMesh * LoadOffFile(string fileName);
+            static NonManifoldMesh LoadOffFile(string fileName);
             void Clear();
 
     public:

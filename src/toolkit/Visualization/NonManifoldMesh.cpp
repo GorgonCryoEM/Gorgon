@@ -169,31 +169,31 @@ NonManifoldMesh::NonManifoldMesh()
     setOrigin(0,0,0);
 }
 
-NonManifoldMesh::NonManifoldMesh(Volume * src) {
+NonManifoldMesh::NonManifoldMesh(const Volume & src) {
 #ifdef GORGON_DEBUG
 cout<<"\033[33mDEBUG: File:   NonManifoldMesh.h"<<endl;
 cout<<"DEBUG: Method: NonManifoldMesh::NonManifoldMesh\033[0m"<<endl;
 cout<<"DEBUG: Args: Volume*\033[0m"<<endl;
-cout<<"src->getSize(): "<<src->getSize()<<endl;
+cout<<"src.getSize(): "<<src.getSize()<<endl;
 #endif
 
 int x, y, z, i, j, index, index2;
-int * vertexLocations = new int[src->getSize()];
+int * vertexLocations = new int[src.getSize()];
 int value;
 fromVolume = true;
-size = src->getSizeObj();
-setOrigin(src->getOriginX(), src->getOriginY(), src->getOriginZ());
-setScale(src->getSpacingX(), src->getSpacingY(), src->getSpacingZ());
+size = src.getSizeObj();
+setOrigin(src.getOriginX(), src.getOriginY(), src.getOriginZ());
+setScale(src.getSpacingX(), src.getSpacingY(), src.getSpacingZ());
 
 // Adding vertices
 NonManifoldMeshVertex tempVertex;
 tempVertex.edgeIds.clear();
-for(x = 0; x < src->getSizeX(); x++) {
-    for(y = 0; y < src->getSizeY(); y++) {
-        for(z = 0; z < src->getSizeZ(); z++) {
-            index = src->getIndex(x, y, z);
+for(x = 0; x < src.getSizeX(); x++) {
+    for(y = 0; y < src.getSizeY(); y++) {
+        for(z = 0; z < src.getSizeZ(); z++) {
+            index = src.getIndex(x, y, z);
             vertexLocations[index] = -1;
-            value = (int)round((*src)(index));
+            value = (int)round(src(index));
             if(value > 0) {
                 tempVertex.position = Vec3F(x, y, z);
                 vertexLocations[index] = AddVertex(tempVertex);
@@ -204,12 +204,12 @@ for(x = 0; x < src->getSizeX(); x++) {
 
 //Adding edges
 int edgeNeighbors[3][3] = {{1,0,0}, {0,1,0}, {0,0,1}};
-for(x = 0; x < src->getSizeX()-1; x++) {
-    for(y = 0; y < src->getSizeY()-1; y++) {
-        for(z = 0; z < src->getSizeZ()-1; z++) {
-            index = src->getIndex(x, y, z);
+for(x = 0; x < src.getSizeX()-1; x++) {
+    for(y = 0; y < src.getSizeY()-1; y++) {
+        for(z = 0; z < src.getSizeZ()-1; z++) {
+            index = src.getIndex(x, y, z);
             for(i = 0; i < 3; i++) {
-                index2 = src->getIndex(x+edgeNeighbors[i][0], y+edgeNeighbors[i][1], z+edgeNeighbors[i][2]);
+                index2 = src.getIndex(x+edgeNeighbors[i][0], y+edgeNeighbors[i][1], z+edgeNeighbors[i][2]);
                 if((vertexLocations[index] >= 0) && (vertexLocations[index2] >= 0)) {
                     AddEdge(vertexLocations[index], vertexLocations[index2]);
                 }
@@ -224,16 +224,16 @@ int faceNeighbors[3][3][3] = {  {{1,0,0}, {1,0,1}, {0,0,1}},
                                 {{0,1,0}, {0,1,1}, {0,0,1}}};
 int indices[4];
 bool faceFound;
-for(x = 0; x < src->getSizeX()-1; x++) {
-    for(y = 0; y < src->getSizeY()-1; y++) {
-        for(z = 0; z < src->getSizeZ()-1; z++) {
-            index = src->getIndex(x, y, z);
+for(x = 0; x < src.getSizeX()-1; x++) {
+    for(y = 0; y < src.getSizeY()-1; y++) {
+        for(z = 0; z < src.getSizeZ()-1; z++) {
+            index = src.getIndex(x, y, z);
             if(vertexLocations[index] >= 0) {
                 for(i = 0; i < 3; i++) {
                     faceFound = true;
                     indices[0] = vertexLocations[index];
                     for(j = 0; j < 3; j++) {
-                        index2 = src->getIndex(x+faceNeighbors[i][j][0], y+faceNeighbors[i][j][1], z+faceNeighbors[i][j][2]);
+                        index2 = src.getIndex(x+faceNeighbors[i][j][0], y+faceNeighbors[i][j][1], z+faceNeighbors[i][j][2]);
                         indices[j+1] = vertexLocations[index2];
                         faceFound = faceFound && vertexLocations[index2] >= 0;
                     }
@@ -722,7 +722,7 @@ Vec3F NonManifoldMesh::GetFaceNormal(int faceId) {
 }
 
 NonManifoldMesh NonManifoldMesh::SmoothLaplacian(double converganceRate) {
-    NonManifoldMesh smoothedMesh = NonManifoldMesh(this);
+    NonManifoldMesh smoothedMesh(*this);
     int i, j, vertexIndex;
     Vec3F newPosition;
     NonManifoldMeshVertex vertex;
@@ -752,7 +752,7 @@ NonManifoldMesh NonManifoldMesh::SmoothLaplacian(double converganceRate) {
 
 NonManifoldMesh NonManifoldMesh::SmoothLaplacian(double converganceRate, int iterations) {
     NonManifoldMesh newMesh;
-    NonManifoldMesh oldMesh = NonManifoldMesh(this);
+    NonManifoldMesh oldMesh(*this);
 
     for(int i = 0; i < iterations; i++) {
         oldMesh = oldMesh.SmoothLaplacian(converganceRate);
@@ -761,8 +761,8 @@ NonManifoldMesh NonManifoldMesh::SmoothLaplacian(double converganceRate, int ite
     return oldMesh;
 }
 
-NonManifoldMesh * NonManifoldMesh::LoadOffFile(string fileName) {
-    NonManifoldMesh * mesh = new NonManifoldMesh();
+NonManifoldMesh NonManifoldMesh::LoadOffFile(string fileName) {
+    NonManifoldMesh mesh;
     ifstream inFile(fileName.c_str());
     string strTemp;
     int nVertices, nEdges, nFaces;
@@ -781,7 +781,7 @@ NonManifoldMesh * NonManifoldMesh::LoadOffFile(string fileName) {
         lVertices++;
         inFile>>xPos>>yPos>>zPos;
         //printf("[%f] [%f] [%f]\n", xPos, yPos, zPos);
-        mesh->AddVertex(Vec3F(xPos, yPos, zPos));
+        mesh.AddVertex(Vec3F(xPos, yPos, zPos));
         inFile>>strTemp;
     }
 
@@ -805,9 +805,9 @@ NonManifoldMesh * NonManifoldMesh::LoadOffFile(string fileName) {
 
                 if((faceNodes[0] != faceNodes[1]) && (faceNodes[0] != faceNodes[2]) && (faceNodes[0] != faceNodes[3])
                         && (faceNodes[1] != faceNodes[2]) && (faceNodes[1] != faceNodes[3]) && (faceNodes[2] != faceNodes[3])) {
-                    mesh->AddQuad(faceNodes[0], faceNodes[1], faceNodes[2], faceNodes[3]);
+                    mesh.AddQuad(faceNodes[0], faceNodes[1], faceNodes[2], faceNodes[3]);
                 } else {
-                    mesh->AddEdge(faceNodes[0], faceNodes[2]);
+                    mesh.AddEdge(faceNodes[0], faceNodes[2]);
                 }
                 break;
             default :
@@ -817,7 +817,7 @@ NonManifoldMesh * NonManifoldMesh::LoadOffFile(string fileName) {
                     inFile>>faceNodes[i];
                 }
                 for(int i = 2; i < nFaceNodes; i++) {
-                    mesh->AddTriangle(faceNodes[0], faceNodes[i-1], faceNodes[i]);
+                    mesh.AddTriangle(faceNodes[0], faceNodes[i-1], faceNodes[i]);
                 }
                 break;
 
