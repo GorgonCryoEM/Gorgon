@@ -98,7 +98,6 @@ namespace Visualization {
         int viewingType;
 
         VolumeSurfaceMeshType * surfaceMesh;
-        NonManifoldMesh * cuttingMesh;
         #ifdef _WIN32
             PFNGLTEXIMAGE3DPROC glTexImage3D;
         #endif

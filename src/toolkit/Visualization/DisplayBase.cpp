@@ -18,7 +18,6 @@ namespace Visualization {
         surfaceMesh = new VolumeSurfaceMeshType();
         surfaceValue = 1.5;
         sampleInterval = 1;
-        cuttingMesh = new NonManifoldMesh();
         drawEnabled = false;
     }
 
@@ -28,7 +27,6 @@ namespace Visualization {
             textureLoaded = false;
         }
         delete surfaceMesh;
-        delete cuttingMesh;
     }
 
     float DisplayBase::getSurfaceValue() const {

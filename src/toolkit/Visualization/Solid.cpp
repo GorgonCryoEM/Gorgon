@@ -12,10 +12,11 @@ namespace Visualization {
     Solid::Solid()
             : cuttingVolume(Volume(2, 2, 2))
     {
+        cuttingMesh = new NonManifoldMesh();
     }
 
     Solid::~Solid() {
-        // TODO Auto-generated destructor stub
+        delete cuttingMesh;
     }
 
     bool Solid::calculateDisplay() {

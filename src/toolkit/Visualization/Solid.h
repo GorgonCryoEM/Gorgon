@@ -26,6 +26,7 @@ namespace Visualization {
             void draw(int subSceneIndex, bool selectEnabled);
         private:
             Volume cuttingVolume;
+            NonManifoldMesh * cuttingMesh;
 
     };
 

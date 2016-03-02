@@ -27,6 +27,7 @@ namespace Visualization {
 
         private:
             Volume cuttingVolume;
+            NonManifoldMesh * cuttingMesh;
     };
 
 } /* namespace Visualization */

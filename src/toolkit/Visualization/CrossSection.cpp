@@ -12,10 +12,11 @@ namespace Visualization {
     CrossSection::CrossSection()
                 : cuttingVolume(Volume(2, 2, 2))
 {
+        cuttingMesh = new NonManifoldMesh();
 }
 
     CrossSection::~CrossSection() {
-        // TODO Auto-generated destructor stub
+        delete cuttingMesh;
     }
 
     bool CrossSection::calculateDisplay() {
