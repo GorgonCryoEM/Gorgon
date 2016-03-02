@@ -336,6 +336,7 @@ namespace Visualization {
             maxPts[2] = getSizeZ()-1;
         }
     }
+
     int smallest2ndPower(int value) {
         int power = 1;
         while (power < value) {
@@ -344,21 +345,4 @@ namespace Visualization {
         return power;
     }
 
-}
-
-DisplayBase::DisplayBase(const RendererBase& rend)
-        :
-          RendererBase(),
-          cuttingVolume(Volume(2, 2, 2))
-{
-    textureLoaded = false;
-    _useDisplayRadius = false;
-    viewingType = VIEWING_TYPE_ISO_SURFACE;
-    surfaceMesh = new VolumeSurfaceMeshType();
-    octree = NULL;
-    surfaceValue = 1.5;
-    displayRadius = 1;
-    sampleInterval = 1;
-    cuttingMesh = new NonManifoldMesh();
-    drawEnabled = false;
 }
