@@ -191,7 +191,7 @@ namespace Visualization {
         bool isEnd = false, isStart;
         float dist1, dist2;
         for(set<unsigned int>::iterator i = internalVertices.begin(); i != internalVertices.end(); i++) {
-            neighbors = pathMesh->GetNeighboringVertexIndices(*i);
+            neighbors = pathMesh->getNeighboringVertexIndices(*i);
             for(unsigned int j = 0; j < neighbors.size(); j++) {
                 isEnd = isEnd || (internalVertices.find(neighbors[j]) == internalVertices.end());
             }
@@ -246,7 +246,7 @@ namespace Visualization {
             if(mesh.vertices[currIx].tag) {
                 mesh.vertices[currIx].tag = false;
                 pathVertices.push_back(currIx);
-                neighbors = mesh.GetNeighboringVertexIndices(currIx);
+                neighbors = mesh.getNeighboringVertexIndices(currIx);
                 for(unsigned int i = 0; i < neighbors.size(); i++) {
                     if(mesh.vertices[neighbors[i]].tag) {
                         queue.push_back(neighbors[i]);
@@ -261,13 +261,13 @@ namespace Visualization {
         map<unsigned int, unsigned int> vertexMap;
         for(unsigned int i=0; i < mesh.vertices.size(); i++) {
             if(!mesh.vertices[i].tag) {
-                vertexMap[i] = singlePathMesh->AddVertex(mesh.vertices[i]);
+                vertexMap[i] = singlePathMesh->addVertex(mesh.vertices[i]);
             }
         }
 
         for(unsigned int i=0; i < mesh.edges.size(); i++) {
             if(!mesh.vertices[mesh.edges[i].vertexIds[0]].tag && !mesh.vertices[mesh.edges[i].vertexIds[1]].tag) {
-                singlePathMesh->AddEdge(vertexMap[mesh.edges[i].vertexIds[0]], vertexMap[mesh.edges[i].vertexIds[1]], mesh.edges[i].tag);
+                singlePathMesh->addEdge(vertexMap[mesh.edges[i].vertexIds[0]], vertexMap[mesh.edges[i].vertexIds[1]], mesh.edges[i].tag);
             }
         }
 
