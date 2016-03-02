@@ -11,6 +11,7 @@ namespace Visualization {
 
     IsoSurface::IsoSurface() {
         displayRadius = 1;
+        _useDisplayRadius = false;
     }
 
     IsoSurface::~IsoSurface() {
@@ -80,6 +81,10 @@ namespace Visualization {
 
     void IsoSurface::setDisplayRadiusOrigin(float radiusOriginX, float radiusOriginY, float radiusOriginZ) {
         radiusOrigin = Vec3F(radiusOriginX, radiusOriginY, radiusOriginZ);
+    }
+
+    void IsoSurface::useDisplayRadius(bool useRadius) {
+        _useDisplayRadius = useRadius;
     }
 
 } /* namespace Visualization */

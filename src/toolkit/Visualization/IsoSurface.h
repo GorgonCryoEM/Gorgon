@@ -28,10 +28,12 @@ namespace Visualization {
             void setDisplayRadiusOrigin(float radiusOriginX,
                                         float radiusOriginY,
                                         float radiusOriginZ);
+            void useDisplayRadius(bool useRadius);
 
         private:
             int displayRadius;
             Vec3F radiusOrigin;
+            bool _useDisplayRadius;
     };
 
 } /* namespace Visualization */

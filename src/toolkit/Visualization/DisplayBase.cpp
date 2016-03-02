@@ -15,7 +15,6 @@ namespace Visualization {
           cuttingVolume(Volume(2, 2, 2))
     {
         textureLoaded = false;
-        _useDisplayRadius = false;
         viewingType = VIEWING_TYPE_ISO_SURFACE;
         surfaceMesh = new VolumeSurfaceMeshType();
         octree = NULL;
@@ -136,10 +135,6 @@ namespace Visualization {
         maxSurfaceValue = value;
 
         load3DTexture();
-    }
-
-    void DisplayBase::useDisplayRadius(bool useRadius) {
-        _useDisplayRadius = useRadius;
     }
 
     void DisplayBase::unload() {

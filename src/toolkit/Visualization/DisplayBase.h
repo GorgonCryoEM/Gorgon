@@ -77,7 +77,6 @@ namespace Visualization {
             virtual void draw(int subSceneIndex, bool selectEnabled);
             void load(string fileName);
             void save(string fileName);
-            void useDisplayRadius(bool useRadius);
             void setViewingType(const int type);
             void setSampleInterval(const int size);
             void setSurfaceValue(const float value);
@@ -98,7 +97,6 @@ namespace Visualization {
         int sampleInterval;
         int viewingType;
         Volume cuttingVolume;
-        bool _useDisplayRadius;
 
         VolumeSurfaceMeshType * surfaceMesh;
         NonManifoldMesh * cuttingMesh;
