@@ -10,7 +10,7 @@
 namespace Visualization {
 
     IsoSurface::IsoSurface()
-            : surfaceMesh(VolumeSurfaceMeshType())
+            : surfaceMesh(TriangleMesh())
     {
         displayRadius = 1;
         _useDisplayRadius = false;

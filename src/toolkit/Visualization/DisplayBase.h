@@ -56,13 +56,10 @@ namespace Visualization {
     const int VIEWING_TYPE_ISO_SURFACE = 0;
     const int VIEWING_TYPE_CROSS_SECTION = 1;
     const int VIEWING_TYPE_SOLID = 2;
+
     #ifndef _WIN32
         typedef int PFNGLTEXIMAGE3DPROC;
     #endif
-
-    typedef Octree<Range> VolumeRendererOctreeType;
-    typedef OctreeNode<Range> VolumeRendererOctreeNodeType;
-    typedef TriangleMesh VolumeSurfaceMeshType;
 
     class DisplayBase : public Volume, public RendererBase {
         public:
