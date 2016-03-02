@@ -159,10 +159,12 @@ BOOST_PYTHON_MODULE(@current_pylib@)
   class_<NonManifoldMesh, bases<Volume> >("NonManifoldMesh", init<>())
   ;
   
+  void (MeshRenderer::*load)(string fileName) = &MeshRenderer::load;
+  
   class_< MeshRenderer, bases<Volume> >("MeshRenderer", init<>())
       .def("draw", &MeshRenderer::draw)
 //      .def("drawBoundingBox", &MeshRenderer::DrawBoundingBox)
-      .def("loadFile", &MeshRenderer::load)
+      .def("loadFile", load)
 //      .def("loadVolume", &MeshRenderer::LoadVolume)
 //      .def("saveFile", &MeshRenderer::SaveFile)
 //      .def("unload", &MeshRenderer::Unload)

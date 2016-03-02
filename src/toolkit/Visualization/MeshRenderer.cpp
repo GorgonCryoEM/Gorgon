@@ -83,7 +83,7 @@ namespace Visualization {
             }
     }
 
-    void MeshRenderer::loadVolume(const Volume & src) {
+    void MeshRenderer::load(const Volume & src) {
         mesh = NonManifoldMesh(src);
     }
 
