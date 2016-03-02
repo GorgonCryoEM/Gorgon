@@ -202,7 +202,7 @@ namespace Protein_Morph {
                 float distance_squared = d.X()*d.X() + d.Y()*d.Y() + d.Z()*d.Z();
                 if (abs(d.X()) <= SCORE_RANGE && abs(d.Y()) <= SCORE_RANGE && abs(d.Z()) <= SCORE_RANGE) { // 8x8x8 cubic search area
                     double typeCost; //TODO: If a vertex is part of both the sheet skeleton and the helix skeleton, typeCost = 0;
-                    if (skeleton.IsSurfaceVertex(i)) { //TODO: Is this the same as testing if it's in the sheet skeleton
+                    if (skeleton.isSurfaceVertex(i)) { //TODO: Is this the same as testing if it's in the sheet skeleton
                         typeCost = -1.0;
                     } else { //TODO test whether in the helix skeleton
                         typeCost = 1.0;

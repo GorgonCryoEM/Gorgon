@@ -20,7 +20,7 @@ namespace Visualization {
     }
 
     bool Solid::calculateDisplay() {
-        cuttingMesh->Clear();
+        cuttingMesh->clear();
         bool redraw = false;
         if(volData != NULL) {
             redraw = true;
@@ -45,7 +45,7 @@ namespace Visualization {
                             }
                         }
                     }
-                    tempMesh.Clear();
+                    tempMesh.clear();
                     MarchingCube(cuttingVolume, tempMesh, 0.0f, 0, 0, 0, 1);
                     cuttingMesh->mergeMesh(tempMesh);
                 }

@@ -84,8 +84,8 @@ namespace Protein_Morph {
         public:
             NonManifoldMesh();
             NonManifoldMesh(const Volume & src);
-            bool IsEdgePresent(int vertexId1, int vertexId2);
-            bool IsSurfaceVertex(int ix) const;
+            bool isEdgePresent(int vertexId1, int vertexId2);
+            bool isSurfaceVertex(int ix) const;
             int addVertex(NonManifoldMeshVertex vertex);
             int addVertex(Vec3F location);
             int addHashedVertex(Vec3F location, int hashKey);
@@ -129,7 +129,7 @@ namespace Protein_Morph {
             NonManifoldMesh smoothLaplacian(double converganceRate);
             NonManifoldMesh smoothLaplacian(double converganceRate, int iterations);
             static NonManifoldMesh loadOffFile(string fileName);
-            void Clear();
+            void clear();
 
     public:
         Dim3D<float> scale;

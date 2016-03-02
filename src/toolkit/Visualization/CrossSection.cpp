@@ -20,7 +20,7 @@ namespace Visualization {
     }
 
     bool CrossSection::calculateDisplay() {
-        cuttingMesh->Clear();
+        cuttingMesh->clear();
 
         bool redraw = false;
 

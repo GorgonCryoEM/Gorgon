@@ -151,7 +151,7 @@ void NonManifoldMesh::draw(bool drawSurfaceBorders, bool drawSurfaces,
 }
 
 
-void NonManifoldMesh::Clear() {
+void NonManifoldMesh::clear() {
     vertices.clear();
     edges.clear();
     faces.clear();
@@ -254,7 +254,7 @@ cout<<"DEBUG: Method: NonManifoldMesh::NonManifoldMesh\n\033[0m"<<endl;
 
 }
 
-bool NonManifoldMesh::IsEdgePresent(int vertexId1, int vertexId2) {
+bool NonManifoldMesh::isEdgePresent(int vertexId1, int vertexId2) {
     bool isPresent = false;
     int v1Index = getVertexIndex(vertexId1);
     int v2Index = getVertexIndex(vertexId2);
@@ -348,13 +348,13 @@ void NonManifoldMesh::addQuad(int vertexId1, int vertexId2, int vertexId3, int v
 }
 
 void NonManifoldMesh::addTriangle(int vertexId1, int vertexId2, int vertexId3, string newEdgeTag, string faceTag) {
-    if(!IsEdgePresent(vertexId1, vertexId2))
+    if(!isEdgePresent(vertexId1, vertexId2))
         addEdge(vertexId1, vertexId2, newEdgeTag);
 
-    if(!IsEdgePresent(vertexId2, vertexId3))
+    if(!isEdgePresent(vertexId2, vertexId3))
         addEdge(vertexId2, vertexId3, newEdgeTag);
 
-    if(!IsEdgePresent(vertexId3, vertexId1))
+    if(!isEdgePresent(vertexId3, vertexId1))
         addEdge(vertexId3, vertexId1, newEdgeTag);
 
     NonManifoldMeshFace face;
@@ -931,7 +931,7 @@ int NonManifoldMesh::getClosestVertexIndex(Vec3F pos) {
     return minIx;
 }
 
-bool NonManifoldMesh::IsSurfaceVertex(int ix) const {
+bool NonManifoldMesh::isSurfaceVertex(int ix) const {
     bool isSurface = false;
     NonManifoldMeshEdge edge;
 

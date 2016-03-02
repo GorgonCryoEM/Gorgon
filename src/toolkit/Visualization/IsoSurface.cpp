@@ -24,7 +24,7 @@ namespace Visualization {
         #ifndef USE_OCTREE_OPTIMIZATION
             //appTimeManager.PushCurrentTime();
             //appTimeManager.PushCurrentTime();
-            surfaceMesh.Clear();
+            surfaceMesh.clear();
             //appTimeManager.PopAndDisplayTime("Marching Cubes)  Clearing : %f seconds |");
             redraw = false;
 
@@ -52,7 +52,7 @@ namespace Visualization {
         #else
             appTimeManager.PushCurrentTime();
             appTimeManager.PushCurrentTime();
-            surfaceMesh.Clear();
+            surfaceMesh.clear();
             appTimeManager.PopAndDisplayTime("Octree)          Clearing : %f seconds |");
             marchingCubeCallCount = 0;
             redraw = false;
