@@ -49,7 +49,7 @@ namespace Visualization {
 #endif
 
         if(extension == "OFF") {
-            mesh = NonManifoldMesh::LoadOffFile(fileName);
+            mesh = NonManifoldMesh::loadOffFile(fileName);
         } else if(extension == "MRC" || extension == "ATOM") {
             Volume volume = *MRCReaderPicker::pick(fileName.c_str())->getVolume();
             #ifdef GORGON_DEBUG
@@ -74,9 +74,9 @@ namespace Visualization {
             extension = StringUtils::StringToUpper(extension);
 
             if(extension == "OFF") {
-                mesh.ToOffCells(fileName);
+                mesh.toOffCells(fileName);
             } else if(extension == "MRC") {
-                Volume volume = mesh.ToVolume();
+                Volume volume = mesh.toVolume();
                 volume.toMRCFile(fileName.c_str());
             } else {
               cout<<"Input format "<<extension<<" not supported!"<<endl;
@@ -88,7 +88,7 @@ namespace Visualization {
     }
 
     void MeshRenderer::performSmoothLaplacian(double convergenceRate, int iterations) {
-        mesh = mesh.SmoothLaplacian(convergenceRate, iterations);
+        mesh = mesh.smoothLaplacian(convergenceRate, iterations);
     }
 
     int MeshRenderer::intersectMeshAndSphere(Vec3F center, float radius) {
@@ -145,13 +145,13 @@ namespace Visualization {
             switch(subsceneIndex){
                 case 0:
                     for(unsigned int i = 0; i < mesh.faces[ix1].vertexIds.size(); i++) {
-                        position += mesh.vertices[mesh.GetVertexIndex(mesh.faces[ix0].vertexIds[i])].position;
+                        position += mesh.vertices[mesh.getVertexIndex(mesh.faces[ix0].vertexIds[i])].position;
                     }
                     position = position * (1.0 / mesh.faces[ix1].vertexIds.size());
                     break;
                 case 1:
                     for(unsigned int i = 0; i < 2; i++) {
-                        position += mesh.vertices[mesh.GetVertexIndex(mesh.edges[ix0].vertexIds[i])].position;
+                        position += mesh.vertices[mesh.getVertexIndex(mesh.edges[ix0].vertexIds[i])].position;
                     }
                     position = position * 0.5;
                     break;

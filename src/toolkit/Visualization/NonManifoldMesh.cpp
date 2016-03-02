@@ -11,14 +11,14 @@
 using namespace Protein_Morph;
 
 
-int NonManifoldMesh::AddMarchingVertex(Vec3F location, int hashKey){
-    return AddHashedVertex(location, hashKey);
+int NonManifoldMesh::addMarchingVertex(Vec3F location, int hashKey){
+    return addHashedVertex(location, hashKey);
 }
 
-unsigned long long NonManifoldMesh::AddMarchingFace(unsigned long long vertexHash0,
+unsigned long long NonManifoldMesh::addMarchingFace(unsigned long long vertexHash0,
                                                     unsigned long long vertexHash1,
                                                     unsigned long long vertexHash2) {
-    AddTriangle(vertexHash0, vertexHash1, vertexHash2);
+    addTriangle(vertexHash0, vertexHash1, vertexHash2);
 }
 
 void NonManifoldMesh::draw(bool drawSurfaceBorders, bool drawSurfaces,
@@ -40,7 +40,7 @@ void NonManifoldMesh::draw(bool drawSurfaceBorders, bool drawSurfaces,
         for(unsigned int i = 0; i < faces.size(); i++) {
             glBegin(GL_LINE_STRIP);
             for(unsigned int j = 0; j < faces[i].vertexIds.size(); j++) {
-                int k = GetVertexIndex(faces[i].vertexIds[j]);
+                int k = getVertexIndex(faces[i].vertexIds[j]);
                 float vals[3];
                 vals[0] = vertices[k].position.X();
                 vals[1] = vertices[k].position.Y();
@@ -67,11 +67,11 @@ void NonManifoldMesh::draw(bool drawSurfaceBorders, bool drawSurfaces,
             Vec3F normal;
             for(unsigned int j = 0; j < faces[i].vertexIds.size(); j++) {
                 if(smoothSurfaceNormals) {
-                    normal = GetVertexNormal(faces[i].vertexIds[j]);
+                    normal = getVertexNormal(faces[i].vertexIds[j]);
                 } else {
-                    normal = GetFaceNormal(i);
+                    normal = getFaceNormal(i);
                 }
-                int k = GetVertexIndex(faces[i].vertexIds[j]);
+                int k = getVertexIndex(faces[i].vertexIds[j]);
                 glNormal3f(normal.X(), normal.Y(), normal.Z());
                 float vals[3];
                 vals[0] = vertices[k].position.X();
@@ -104,9 +104,9 @@ void NonManifoldMesh::draw(bool drawSurfaceBorders, bool drawSurfaces,
                     glLoadName(i);
                 }
                 glBegin(GL_LINES);
-                int k = GetVertexIndex(edges[i].vertexIds[0]);
+                int k = getVertexIndex(edges[i].vertexIds[0]);
                 glVertex3f(vertices[k].position.X(), vertices[k].position.Y(), vertices[k].position.Z());
-                k = GetVertexIndex(edges[i].vertexIds[1]);
+                k = getVertexIndex(edges[i].vertexIds[1]);
                 glVertex3f(vertices[k].position.X(), vertices[k].position.Y(), vertices[k].position.Z());
                 glEnd();
             }
@@ -196,7 +196,7 @@ for(x = 0; x < src.getSizeX(); x++) {
             value = (int)round(src(index));
             if(value > 0) {
                 tempVertex.position = Vec3F(x, y, z);
-                vertexLocations[index] = AddVertex(tempVertex);
+                vertexLocations[index] = addVertex(tempVertex);
             }
         }
     }
@@ -211,7 +211,7 @@ for(x = 0; x < src.getSizeX()-1; x++) {
             for(i = 0; i < 3; i++) {
                 index2 = src.getIndex(x+edgeNeighbors[i][0], y+edgeNeighbors[i][1], z+edgeNeighbors[i][2]);
                 if((vertexLocations[index] >= 0) && (vertexLocations[index2] >= 0)) {
-                    AddEdge(vertexLocations[index], vertexLocations[index2]);
+                    addEdge(vertexLocations[index], vertexLocations[index2]);
                 }
             }
         }
@@ -238,7 +238,7 @@ for(x = 0; x < src.getSizeX()-1; x++) {
                         faceFound = faceFound && vertexLocations[index2] >= 0;
                     }
                     if(faceFound) {
-                        AddQuad(indices[0], indices[1], indices[2], indices[3]);
+                        addQuad(indices[0], indices[1], indices[2], indices[3]);
                     }
                 }
             }
@@ -246,7 +246,7 @@ for(x = 0; x < src.getSizeX()-1; x++) {
     }
 }
 delete [] vertexLocations;
-MarkFixedVertices();
+markFixedVertices();
 #ifdef GORGON_DEBUG
 cout<<"\033[33mDEBUG: END"<<endl;
 cout<<"DEBUG: Method: NonManifoldMesh::NonManifoldMesh\n\033[0m"<<endl;
@@ -256,8 +256,8 @@ cout<<"DEBUG: Method: NonManifoldMesh::NonManifoldMesh\n\033[0m"<<endl;
 
 bool NonManifoldMesh::IsEdgePresent(int vertexId1, int vertexId2) {
     bool isPresent = false;
-    int v1Index = GetVertexIndex(vertexId1);
-    int v2Index = GetVertexIndex(vertexId2);
+    int v1Index = getVertexIndex(vertexId1);
+    int v2Index = getVertexIndex(vertexId2);
     for(unsigned int i = 0; (i < vertices[v1Index].edgeIds.size()) && !isPresent; i++) {
         isPresent = ((int)edges[GetEdgeIndex(vertices[v1Index].edgeIds[i])].vertexIds[0] == v2Index) || ((int)edges[GetEdgeIndex(vertices[v1Index].edgeIds[i])].vertexIds[1] == v2Index);
     }
@@ -265,7 +265,7 @@ bool NonManifoldMesh::IsEdgePresent(int vertexId1, int vertexId2) {
     return isPresent;
 }
 
-int NonManifoldMesh::AddVertex(NonManifoldMeshVertex vertex) {
+int NonManifoldMesh::addVertex(NonManifoldMeshVertex vertex) {
     vertex.id = vertices.size();
     vertex.valid = true;
     vertices.push_back(vertex);
@@ -273,18 +273,18 @@ int NonManifoldMesh::AddVertex(NonManifoldMeshVertex vertex) {
     return vertex.id;
 }
 
-int NonManifoldMesh::AddVertex(Vec3F location) {
+int NonManifoldMesh::addVertex(Vec3F location) {
     NonManifoldMeshVertex v;
     v.position = location;
     //        v.tag = tag;
-    return AddVertex(v);
+    return addVertex(v);
 }
 
-int NonManifoldMesh::AddHashedVertex(Vec3F location, int hashKey) {
+int NonManifoldMesh::addHashedVertex(Vec3F location, int hashKey) {
     HashMapType::const_iterator pos = vertexHashMap.find(hashKey);
     int vertexId;
     if(pos == vertexHashMap.end()) {
-        vertexId = AddVertex(location);
+        vertexId = addVertex(location);
         vertexHashMap[hashKey] = vertexId;
     } else {
         vertexId = pos->second;
@@ -292,7 +292,7 @@ int NonManifoldMesh::AddHashedVertex(Vec3F location, int hashKey) {
     return vertexId;
 }
 
-int NonManifoldMesh::AddEdge(NonManifoldMeshEdge edge) {
+int NonManifoldMesh::addEdge(NonManifoldMeshEdge edge) {
     edge.id = edges.size();
     edge.valid = true;
     edges.push_back(edge);
@@ -300,7 +300,7 @@ int NonManifoldMesh::AddEdge(NonManifoldMeshEdge edge) {
     return edge.id;
 }
 
-int NonManifoldMesh::AddFace(NonManifoldMeshFace face) {
+int NonManifoldMesh::addFace(NonManifoldMeshFace face) {
     face.id = faces.size();
     face.valid = true;
     faces.push_back(face);
@@ -308,19 +308,19 @@ int NonManifoldMesh::AddFace(NonManifoldMeshFace face) {
     return face.id;
 }
 
-int NonManifoldMesh::GetVertexIndex(int vertexId) {
+int NonManifoldMesh::getVertexIndex(int vertexId) {
     return vertexId;
 }
 
-int NonManifoldMesh::GetFaceIndex(int faceId) {
+int NonManifoldMesh::getFaceIndex(int faceId) {
     return faceId;
 }
 
-int NonManifoldMesh::GetEdgeIndex(int edgeId) const {
+int NonManifoldMesh::getEdgeIndex(int edgeId) const {
     return edgeId;
 }
 
-int NonManifoldMesh::GetEdgeIndex(int vertexId1, int vertexId2) const {
+int NonManifoldMesh::getEdgeIndex(int vertexId1, int vertexId2) const {
     int edgeId = -1;
     for(int i = 0; i < vertices[vertexId1].edgeIds.size(); i++) {
         if((edges[vertices[vertexId1].edgeIds[i]].vertexIds[0] == vertexId2) ||
@@ -331,31 +331,31 @@ int NonManifoldMesh::GetEdgeIndex(int vertexId1, int vertexId2) const {
     return edgeId;
 }
 
-void NonManifoldMesh::AddEdge(int vertexId1, int vertexId2, string tag){
+void NonManifoldMesh::addEdge(int vertexId1, int vertexId2, string tag){
     NonManifoldMeshEdge edge;
     edge.tag = tag;
     edge.faceIds.clear();
     edge.vertexIds[0] = vertexId1;
     edge.vertexIds[1] = vertexId2;
-    int edgeId = AddEdge(edge);
-    vertices[GetVertexIndex(vertexId1)].edgeIds.push_back(edgeId);
-    vertices[GetVertexIndex(vertexId2)].edgeIds.push_back(edgeId);
+    int edgeId = addEdge(edge);
+    vertices[getVertexIndex(vertexId1)].edgeIds.push_back(edgeId);
+    vertices[getVertexIndex(vertexId2)].edgeIds.push_back(edgeId);
 }
 
-void NonManifoldMesh::AddQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4, string newEdgeTag, string faceTag) {
-    AddTriangle(vertexId1, vertexId2, vertexId3, newEdgeTag, faceTag);
-    AddTriangle(vertexId1, vertexId3, vertexId4, newEdgeTag, faceTag);
+void NonManifoldMesh::addQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4, string newEdgeTag, string faceTag) {
+    addTriangle(vertexId1, vertexId2, vertexId3, newEdgeTag, faceTag);
+    addTriangle(vertexId1, vertexId3, vertexId4, newEdgeTag, faceTag);
 }
 
-void NonManifoldMesh::AddTriangle(int vertexId1, int vertexId2, int vertexId3, string newEdgeTag, string faceTag) {
+void NonManifoldMesh::addTriangle(int vertexId1, int vertexId2, int vertexId3, string newEdgeTag, string faceTag) {
     if(!IsEdgePresent(vertexId1, vertexId2))
-        AddEdge(vertexId1, vertexId2, newEdgeTag);
+        addEdge(vertexId1, vertexId2, newEdgeTag);
 
     if(!IsEdgePresent(vertexId2, vertexId3))
-        AddEdge(vertexId2, vertexId3, newEdgeTag);
+        addEdge(vertexId2, vertexId3, newEdgeTag);
 
     if(!IsEdgePresent(vertexId3, vertexId1))
-        AddEdge(vertexId3, vertexId1, newEdgeTag);
+        addEdge(vertexId3, vertexId1, newEdgeTag);
 
     NonManifoldMeshFace face;
     face.tag = faceTag;
@@ -369,7 +369,7 @@ void NonManifoldMesh::AddTriangle(int vertexId1, int vertexId2, int vertexId3, s
     int i,j, edgeIndex, vertexIndex;
 
     for(i = 0; i < 3; i++) {
-        vertexIndex = GetVertexIndex(vertexIds[i]);
+        vertexIndex = getVertexIndex(vertexIds[i]);
         for (j = 0; j < (int)vertices[vertexIndex].edgeIds.size(); j++) {
             edgeIndex = GetEdgeIndex(vertices[vertexIndex].edgeIds[j]);
 
@@ -380,12 +380,12 @@ void NonManifoldMesh::AddTriangle(int vertexId1, int vertexId2, int vertexId3, s
         }
     }
 
-    int faceId = AddFace(face);
+    int faceId = addFace(face);
     for(i = 0; i < (int)face.edgeIds.size(); i++)
         edges[GetEdgeIndex(face.edgeIds[i])].faceIds.push_back(faceId);
 }
 
-void NonManifoldMesh::MarkFixedVertices() {
+void NonManifoldMesh::markFixedVertices() {
     bool sheetFound;
     bool edgeFound;
 
@@ -401,24 +401,24 @@ void NonManifoldMesh::MarkFixedVertices() {
     }
 }
 
-void NonManifoldMesh::MergeMesh(const NonManifoldMesh & src) {
+void NonManifoldMesh::mergeMesh(const NonManifoldMesh & src) {
     vector<int> indices;
     indices.clear();
 
     for(unsigned int i = 0; i < src.vertices.size(); i++)
-        indices.push_back(AddVertex(src.vertices[i]));
+        indices.push_back(addVertex(src.vertices[i]));
 
     for(unsigned int i = 0; i < src.edges.size(); i++)
-        AddEdge(indices[src.edges[i].vertexIds[0]], indices[src.edges[i].vertexIds[1]], src.edges[i].tag);
+        addEdge(indices[src.edges[i].vertexIds[0]], indices[src.edges[i].vertexIds[1]], src.edges[i].tag);
 
     for(unsigned int i = 0; i < src.faces.size(); i++) {
         if(src.faces[i].vertexIds.size() == 3)
-            AddTriangle(indices[src.faces[i].vertexIds[0]],
+            addTriangle(indices[src.faces[i].vertexIds[0]],
                     indices[src.faces[i].vertexIds[1]],
                     indices[src.faces[i].vertexIds[2]], NULL,
                     src.faces[i].tag);
         else if(src.faces[i].vertexIds.size() == 3)
-            AddQuad(indices[src.faces[i].vertexIds[0]],
+            addQuad(indices[src.faces[i].vertexIds[0]],
                     indices[src.faces[i].vertexIds[1]],
                     indices[src.faces[i].vertexIds[2]],
                     indices[src.faces[i].vertexIds[3]], NULL,
@@ -426,8 +426,8 @@ void NonManifoldMesh::MergeMesh(const NonManifoldMesh & src) {
     }
 }
 
-void NonManifoldMesh::RemoveFace(int faceId) {
-    int faceIndex = GetFaceIndex(faceId);
+void NonManifoldMesh::removeFace(int faceId) {
+    int faceIndex = getFaceIndex(faceId);
     int edgeIndex;
     faces[faceIndex].valid = false;
     faceCount--;
@@ -441,7 +441,7 @@ void NonManifoldMesh::RemoveFace(int faceId) {
     }
 }
 
-void NonManifoldMesh::RemoveEdge(int edgeId) {
+void NonManifoldMesh::removeEdge(int edgeId) {
     int edgeIndex = GetEdgeIndex(edgeId);
     int vertexIndex;
     if(edges[edgeIndex].faceIds.size() > 0) {
@@ -452,7 +452,7 @@ void NonManifoldMesh::RemoveEdge(int edgeId) {
     edgeCount--;
 
     for(int i = 0; i < 2; i++) {
-        vertexIndex = GetVertexIndex(edges[edgeIndex].vertexIds[i]);
+        vertexIndex = getVertexIndex(edges[edgeIndex].vertexIds[i]);
         for(int j = (int)vertices[vertexIndex].edgeIds.size()-1; j >= 0; j--) {
             if((int)vertices[vertexIndex].edgeIds[j] == edgeId) {
                 vertices[vertexIndex].edgeIds.erase(vertices[vertexIndex].edgeIds.begin() + j);
@@ -461,8 +461,8 @@ void NonManifoldMesh::RemoveEdge(int edgeId) {
     }
 }
 
-void NonManifoldMesh::RemoveVertex(int vertexId) {
-    int vertexIndex = GetVertexIndex(vertexId);
+void NonManifoldMesh::removeVertex(int vertexId) {
+    int vertexIndex = getVertexIndex(vertexId);
     vertices[vertexIndex].valid = false;
     vertexCount--;
 
@@ -472,7 +472,7 @@ void NonManifoldMesh::RemoveVertex(int vertexId) {
     }
 }
 
-void NonManifoldMesh::RemoveNullEntries() {
+void NonManifoldMesh::removeNullEntries() {
     for(int i = (int)vertices.size()-1; i >= 0; i--) {
         if(!vertices[i].valid)
             vertices.erase(vertices.begin() + i);
@@ -507,17 +507,17 @@ void NonManifoldMesh::RemoveNullEntries() {
             edges[i].id = newId;
 
             for(int j = 0; j < 2; j++)  {
-                for(unsigned int k = 0; k < vertices[GetVertexIndex(edges[i].vertexIds[j])].edgeIds.size(); k++) {
-                    if((int)vertices[GetVertexIndex(edges[i].vertexIds[j])].edgeIds[k] == oldId) {
-                        vertices[GetVertexIndex(edges[i].vertexIds[j])].edgeIds[k] = newId;
+                for(unsigned int k = 0; k < vertices[getVertexIndex(edges[i].vertexIds[j])].edgeIds.size(); k++) {
+                    if((int)vertices[getVertexIndex(edges[i].vertexIds[j])].edgeIds[k] == oldId) {
+                        vertices[getVertexIndex(edges[i].vertexIds[j])].edgeIds[k] = newId;
                     }
                 }
             }
 
             for(unsigned int j = 0; j < edges[i].faceIds.size(); j++)  {
-                for(unsigned int k = 0; k < faces[GetFaceIndex(edges[i].faceIds[j])].edgeIds.size(); k++) {
-                    if((int)faces[GetFaceIndex(edges[i].faceIds[j])].edgeIds[k] == oldId) {
-                        faces[GetFaceIndex(edges[i].faceIds[j])].edgeIds[k] = newId;
+                for(unsigned int k = 0; k < faces[getFaceIndex(edges[i].faceIds[j])].edgeIds.size(); k++) {
+                    if((int)faces[getFaceIndex(edges[i].faceIds[j])].edgeIds[k] == oldId) {
+                        faces[getFaceIndex(edges[i].faceIds[j])].edgeIds[k] = newId;
                     }
                 }
             }
@@ -546,8 +546,8 @@ void NonManifoldMesh::RemoveNullEntries() {
     }
 }
 
-void NonManifoldMesh::ToOffCells(string fileName) {
-    RemoveNullEntries();
+void NonManifoldMesh::toOffCells(string fileName) {
+    removeNullEntries();
     ofstream outFile(fileName.c_str());
     outFile<<"OFF\n";
     outFile<<vertices.size()
@@ -567,7 +567,7 @@ void NonManifoldMesh::ToOffCells(string fileName) {
         lastVertex = -1;
 
         for(j =0; j < (int)faces[i].vertexIds.size(); j++) {
-            outFile<<GetVertexIndex(faces[i].vertexIds[j]);
+            outFile<<getVertexIndex(faces[i].vertexIds[j]);
         }
 
         outFile<<endl;
@@ -584,8 +584,8 @@ void NonManifoldMesh::ToOffCells(string fileName) {
     outFile.close();
 }
 
-void NonManifoldMesh::ToMathematicaFile(string fileName) {
-    RemoveNullEntries();
+void NonManifoldMesh::toMathematicaFile(string fileName) {
+    removeNullEntries();
     ofstream outF(fileName.c_str());
     // Vertices
     outF<<"{\n";
@@ -644,7 +644,7 @@ void NonManifoldMesh::ToMathematicaFile(string fileName) {
     outF.close();
 }
 
-Volume NonManifoldMesh::ToVolume() {
+Volume NonManifoldMesh::toVolume() {
     double minPos[3] = {MAX_DOUBLE,MAX_DOUBLE,MAX_DOUBLE};
     double maxPos[3] = {MIN_DOUBLE, MIN_DOUBLE, MIN_DOUBLE};
     if(fromVolume) {
@@ -677,8 +677,8 @@ Volume NonManifoldMesh::ToVolume() {
     int pos[3];
 
     for(unsigned int i = 0;  i < edges.size(); i++) {
-        v1 = vertices[GetVertexIndex(edges[i].vertexIds[0])];
-        v2 = vertices[GetVertexIndex(edges[i].vertexIds[1])];
+        v1 = vertices[getVertexIndex(edges[i].vertexIds[0])];
+        v2 = vertices[getVertexIndex(edges[i].vertexIds[1])];
         vector<Vec3I> positions = Rasterizer::ScanConvertLineC8(v1.position.XInt(), v1.position.YInt(), v1.position.ZInt(), v2.position.XInt(), v2.position.YInt(), v2.position.ZInt());
         for(unsigned int j = 0; j < positions.size(); j++) {
             for(unsigned int k = 0; k < 3; k++) {
@@ -693,35 +693,35 @@ Volume NonManifoldMesh::ToVolume() {
     return vol;
 }
 
-Vec3F NonManifoldMesh::GetVertexNormal(int vertexId) {
-    int index = GetVertexIndex(vertexId);
+Vec3F NonManifoldMesh::getVertexNormal(int vertexId) {
+    int index = getVertexIndex(vertexId);
     int edgeIndex;
     Vec3F normal = Vec3F(0,0,0);
     for(unsigned int i = 0; i < vertices[index].edgeIds.size(); i++) {
         edgeIndex = GetEdgeIndex(vertices[index].edgeIds[i]);
         for(unsigned int j = 0; j < edges[edgeIndex].faceIds.size(); j++) {
-            normal += GetFaceNormal(edges[edgeIndex].faceIds[j]);
+            normal += getFaceNormal(edges[edgeIndex].faceIds[j]);
         }
     }
     normal.normalize();
     return normal;
 }
 
-Vec3F NonManifoldMesh::GetFaceNormal(int faceId) {
+Vec3F NonManifoldMesh::getFaceNormal(int faceId) {
 
     Vec3F normal = Vec3F(1,0,0);
 
-    NonManifoldMeshFace face = faces[GetFaceIndex(faceId)];
+    NonManifoldMeshFace face = faces[getFaceIndex(faceId)];
 
     if(face.vertexIds.size() >= 3) {
-        normal = (vertices[GetVertexIndex(face.vertexIds[1])].position - vertices[GetVertexIndex(face.vertexIds[0])].position) ^
-                (vertices[GetVertexIndex(face.vertexIds[2])].position - vertices[GetVertexIndex(face.vertexIds[0])].position);
+        normal = (vertices[getVertexIndex(face.vertexIds[1])].position - vertices[getVertexIndex(face.vertexIds[0])].position) ^
+                (vertices[getVertexIndex(face.vertexIds[2])].position - vertices[getVertexIndex(face.vertexIds[0])].position);
         normal.normalize();
     }
     return normal;
 }
 
-NonManifoldMesh NonManifoldMesh::SmoothLaplacian(double converganceRate) {
+NonManifoldMesh NonManifoldMesh::smoothLaplacian(double converganceRate) {
     NonManifoldMesh smoothedMesh(*this);
     int i, j, vertexIndex;
     Vec3F newPosition;
@@ -738,7 +738,7 @@ NonManifoldMesh NonManifoldMesh::SmoothLaplacian(double converganceRate) {
                         vertexIndex = 0;
                     }
 
-                    newPosition = newPosition + vertices[GetVertexIndex(edges[GetEdgeIndex(vertex.edgeIds[j])].vertexIds[vertexIndex])].position;
+                    newPosition = newPosition + vertices[getVertexIndex(edges[GetEdgeIndex(vertex.edgeIds[j])].vertexIds[vertexIndex])].position;
                 }
                 newPosition = newPosition * (1.0/vertex.edgeIds.size());
             } else {
@@ -750,18 +750,18 @@ NonManifoldMesh NonManifoldMesh::SmoothLaplacian(double converganceRate) {
     return smoothedMesh;
 }
 
-NonManifoldMesh NonManifoldMesh::SmoothLaplacian(double converganceRate, int iterations) {
+NonManifoldMesh NonManifoldMesh::smoothLaplacian(double converganceRate, int iterations) {
     NonManifoldMesh newMesh;
     NonManifoldMesh oldMesh(*this);
 
     for(int i = 0; i < iterations; i++) {
-        oldMesh = oldMesh.SmoothLaplacian(converganceRate);
+        oldMesh = oldMesh.smoothLaplacian(converganceRate);
     }
 
     return oldMesh;
 }
 
-NonManifoldMesh NonManifoldMesh::LoadOffFile(string fileName) {
+NonManifoldMesh NonManifoldMesh::loadOffFile(string fileName) {
     NonManifoldMesh mesh;
     ifstream inFile(fileName.c_str());
     string strTemp;
@@ -781,7 +781,7 @@ NonManifoldMesh NonManifoldMesh::LoadOffFile(string fileName) {
         lVertices++;
         inFile>>xPos>>yPos>>zPos;
         //printf("[%f] [%f] [%f]\n", xPos, yPos, zPos);
-        mesh.AddVertex(Vec3F(xPos, yPos, zPos));
+        mesh.addVertex(Vec3F(xPos, yPos, zPos));
         inFile>>strTemp;
     }
 
@@ -805,9 +805,9 @@ NonManifoldMesh NonManifoldMesh::LoadOffFile(string fileName) {
 
                 if((faceNodes[0] != faceNodes[1]) && (faceNodes[0] != faceNodes[2]) && (faceNodes[0] != faceNodes[3])
                         && (faceNodes[1] != faceNodes[2]) && (faceNodes[1] != faceNodes[3]) && (faceNodes[2] != faceNodes[3])) {
-                    mesh.AddQuad(faceNodes[0], faceNodes[1], faceNodes[2], faceNodes[3]);
+                    mesh.addQuad(faceNodes[0], faceNodes[1], faceNodes[2], faceNodes[3]);
                 } else {
-                    mesh.AddEdge(faceNodes[0], faceNodes[2]);
+                    mesh.addEdge(faceNodes[0], faceNodes[2]);
                 }
                 break;
             default :
@@ -817,7 +817,7 @@ NonManifoldMesh NonManifoldMesh::LoadOffFile(string fileName) {
                     inFile>>faceNodes[i];
                 }
                 for(int i = 2; i < nFaceNodes; i++) {
-                    mesh.AddTriangle(faceNodes[0], faceNodes[i-1], faceNodes[i]);
+                    mesh.addTriangle(faceNodes[0], faceNodes[i-1], faceNodes[i]);
                 }
                 break;
 
@@ -831,7 +831,7 @@ NonManifoldMesh NonManifoldMesh::LoadOffFile(string fileName) {
     return mesh;
 }
 
-vector<unsigned int> NonManifoldMesh::GetPath(unsigned int edge0Ix, unsigned int edge1Ix) {
+vector<unsigned int> NonManifoldMesh::getPath(unsigned int edge0Ix, unsigned int edge1Ix) {
     vector<unsigned int> path;
     map<unsigned int,  unsigned int> source;
 
@@ -847,7 +847,7 @@ vector<unsigned int> NonManifoldMesh::GetPath(unsigned int edge0Ix, unsigned int
         found = currentEdge == edge1Ix;
         if(!found) {
             for(unsigned int v = 0; v < 2; v++) {
-                vertexIx = GetVertexIndex(edges[currentEdge].vertexIds[v]);
+                vertexIx = getVertexIndex(edges[currentEdge].vertexIds[v]);
                 for(unsigned int e = 0; e < vertices[vertexIx].edgeIds.size(); e++) {
                     edgeIx = GetEdgeIndex(vertices[vertexIx].edgeIds[e]);
                     if(source.find(edgeIx) == source.end()) {
@@ -871,8 +871,8 @@ vector<unsigned int> NonManifoldMesh::GetPath(unsigned int edge0Ix, unsigned int
     return path;
 }
 
-vector<Vec3F> NonManifoldMesh::SampleTriangle(int faceId, double discretizationStep) {
-    int faceIndex = GetFaceIndex(faceId);
+vector<Vec3F> NonManifoldMesh::sampleTriangle(int faceId, double discretizationStep) {
+    int faceIndex = getFaceIndex(faceId);
     NonManifoldMeshFace face = faces[faceIndex];
 
     vector<Vec3F> points;
@@ -880,9 +880,9 @@ vector<Vec3F> NonManifoldMesh::SampleTriangle(int faceId, double discretizationS
         printf("ERROR: Sampling a polygon NOT a triangle!\n");
         return points;
     } else {
-        NonManifoldMeshVertex p = vertices[GetVertexIndex(face.vertexIds[0])];
-        NonManifoldMeshVertex q = vertices[GetVertexIndex(face.vertexIds[1])];
-        NonManifoldMeshVertex r = vertices[GetVertexIndex(face.vertexIds[2])];
+        NonManifoldMeshVertex p = vertices[getVertexIndex(face.vertexIds[0])];
+        NonManifoldMeshVertex q = vertices[getVertexIndex(face.vertexIds[1])];
+        NonManifoldMeshVertex r = vertices[getVertexIndex(face.vertexIds[2])];
         Vec3F v1 = q.position - p.position;
         Vec3F v2 = r.position - p.position;
         double v1Length = v1.length();
@@ -909,11 +909,11 @@ void NonManifoldMesh::setScale(Dim3D<float> val){
     scale = val;
 }
 
-void NonManifoldMesh::TranslateVertex(int vertexIx, Vec3F translateVector) {
+void NonManifoldMesh::translateVertex(int vertexIx, Vec3F translateVector) {
     vertices[vertexIx].position = vertices[vertexIx].position + translateVector;
 }
 
-int NonManifoldMesh::GetClosestVertexIndex(Vec3F pos) {
+int NonManifoldMesh::getClosestVertexIndex(Vec3F pos) {
     if(vertices.size() == 0) {
         return -1;
     }
@@ -936,13 +936,13 @@ bool NonManifoldMesh::IsSurfaceVertex(int ix) const {
     NonManifoldMeshEdge edge;
 
     for(unsigned int i = 0; i < vertices[ix].edgeIds.size(); i++) {
-        edge = edges[GetEdgeIndex(vertices[ix].edgeIds[i])];
+        edge = edges[getEdgeIndex(vertices[ix].edgeIds[i])];
         isSurface = isSurface || (edge.faceIds.size() > 0);
     }
     return isSurface;
 }
 
-vector<unsigned int> NonManifoldMesh::GetNeighboringVertexIndices(unsigned int vertexIx) {
+vector<unsigned int> NonManifoldMesh::getNeighboringVertexIndices(unsigned int vertexIx) {
     vector<unsigned int> neighbors;
     for(unsigned int i = 0; i < vertices[vertexIx].edgeIds.size(); i++) {
         if(edges[vertices[vertexIx].edgeIds[i]].vertexIds[0] == vertexIx) {

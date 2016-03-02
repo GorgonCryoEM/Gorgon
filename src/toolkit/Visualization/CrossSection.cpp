@@ -112,7 +112,7 @@ namespace Visualization {
                 if(cuttingMesh->edges[i].faceIds.size() == 1) {
 
                     for(unsigned int j = 0; j < 2; j++) {
-                        vertex = cuttingMesh->vertices[cuttingMesh->GetVertexIndex(cuttingMesh->edges[i].vertexIds[j])].position;
+                        vertex = cuttingMesh->vertices[cuttingMesh->getVertexIndex(cuttingMesh->edges[i].vertexIds[j])].position;
                         glVertex3f(vertex.X() * (float)getSizeX(), vertex.Y() * (float)getSizeY(), vertex.Z() * (float)getSizeZ());
                     }
                 }
@@ -134,7 +134,7 @@ namespace Visualization {
                 for(unsigned int i = 0; i < cuttingMesh->faces.size(); i++) {
                     glBegin(GL_POLYGON);
                     for(unsigned int j = 0; j < cuttingMesh->faces[i].vertexIds.size(); j++) {
-                        vertex = cuttingMesh->vertices[cuttingMesh->GetVertexIndex(cuttingMesh->faces[i].vertexIds[j])].position;
+                        vertex = cuttingMesh->vertices[cuttingMesh->getVertexIndex(cuttingMesh->faces[i].vertexIds[j])].position;
                         glTexCoord3d(vertex.X() * xRatio, vertex.Y()* yRatio, vertex.Z() * zRatio);
                         glVertex3f(vertex.X() * (float)getSizeX(), vertex.Y() * (float)getSizeY(), vertex.Z() * (float)getSizeZ());
                     }

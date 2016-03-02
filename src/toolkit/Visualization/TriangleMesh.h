@@ -32,20 +32,20 @@ namespace Protein_Morph {
             void Clear();
             unsigned long long AddVertex(TriangleMeshVertex vertex,
                                          unsigned long long hashKey);
-            int AddMarchingVertex(Vec3F location, int hashKey);
-            unsigned long long AddMarchingFace(unsigned long long vertexHash0,
+            int addMarchingVertex(Vec3F location, int hashKey);
+            unsigned long long addMarchingFace(unsigned long long vertexHash0,
                                        unsigned long long vertexHash1,
                                        unsigned long long vertexHash2);
-            unsigned long long AddFace(TriangleMeshFace face);
-            unsigned long long AddFace(unsigned long long vertexHash0,
+            unsigned long long addFace(TriangleMeshFace face);
+            unsigned long long addFace(unsigned long long vertexHash0,
                                        unsigned long long vertexHash1,
                                        unsigned long long vertexHash2);
 
-            Vec3F GetVertexNormal(unsigned long long vertexHash);
-            Vec3F GetFaceNormal(unsigned long long faceHash);
+            Vec3F getVertexNormal(unsigned long long vertexHash);
+            Vec3F getFaceNormal(unsigned long long faceHash);
             void draw(bool drawSurfaces, bool annotateSurfaces,
                       bool fadeExtreme, int radius, Vec3F center);
-            void SaveFile(string fileName);
+            void save(string fileName);
 
         private:
             typedef map<unsigned long long, TriangleMeshVertex > TriangleMeshVertexType;

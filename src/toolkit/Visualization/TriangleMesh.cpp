@@ -26,15 +26,15 @@ using namespace Protein_Morph;
 
 
 
-int TriangleMesh::AddMarchingVertex(Vec3F location, int hashKey){
+int TriangleMesh::addMarchingVertex(Vec3F location, int hashKey){
     return AddVertex(TriangleMeshVertex(location), hashKey);
 }
 
-unsigned long long TriangleMesh::AddMarchingFace(unsigned long long vertexHash0,
+unsigned long long TriangleMesh::addMarchingFace(unsigned long long vertexHash0,
                                                  unsigned long long vertexHash1,
                                                  unsigned long long vertexHash2)
 {
-    return AddFace(vertexHash0, vertexHash1, vertexHash2);
+    return addFace(vertexHash0, vertexHash1, vertexHash2);
 }
 
 TriangleMesh::TriangleMesh() {
@@ -57,7 +57,7 @@ unsigned long long TriangleMesh::AddVertex(TriangleMeshVertex vertex,
     return hashKey;
 }
 
-unsigned long long TriangleMesh::AddFace(TriangleMeshFace face) {
+unsigned long long TriangleMesh::addFace(TriangleMeshFace face) {
     unsigned long long faceHash = faces.size();
     faces.push_back(face);
     vertices[face.vertexHashes[0]].faceHashes.push_back(faceHash);
@@ -66,7 +66,7 @@ unsigned long long TriangleMesh::AddFace(TriangleMeshFace face) {
     return faceHash;
 }
 
-unsigned long long TriangleMesh::AddFace(unsigned long long vertexHash0,
+unsigned long long TriangleMesh::addFace(unsigned long long vertexHash0,
                                          unsigned long long vertexHash1,
                                          unsigned long long vertexHash2)
 {
@@ -74,20 +74,20 @@ unsigned long long TriangleMesh::AddFace(unsigned long long vertexHash0,
     face.vertexHashes[0] = vertexHash0;
     face.vertexHashes[1] = vertexHash1;
     face.vertexHashes[2] = vertexHash2;
-    return AddFace(face);
+    return addFace(face);
 }
 
-Vec3F TriangleMesh::GetVertexNormal(unsigned long long vertexHash) {
+Vec3F TriangleMesh::getVertexNormal(unsigned long long vertexHash) {
     Vec3F normal = Vec3F(0, 0, 0);
     for(unsigned int i = 0; i < vertices[vertexHash].faceHashes.size();
             i++) {
-        normal += GetFaceNormal(vertices[vertexHash].faceHashes[i]);
+        normal += getFaceNormal(vertices[vertexHash].faceHashes[i]);
     }
     normal.normalize();
     return normal;
 }
 
-Vec3F TriangleMesh::GetFaceNormal(unsigned long long faceHash) {
+Vec3F TriangleMesh::getFaceNormal(unsigned long long faceHash) {
     TriangleMeshFace face = faces[faceHash];
     Vec3F normal =
             (vertices[face.vertexHashes[1]].position - vertices[face.vertexHashes[0]].position) ^ (vertices[face.vertexHashes[2]].position
@@ -127,7 +127,7 @@ void TriangleMesh::draw(bool drawSurfaces,
             if(drawTriangle) {
                 for(unsigned int j = 0; j < 3; j++) {
                     int k = faces[i].vertexHashes[j];
-                    normal = GetVertexNormal(k);
+                    normal = getVertexNormal(k);
                     glNormal3f(normal.X(), normal.Y(), normal.Z());
                     glVertex3fv(vertices[k].position.getValues());
                 }
@@ -142,7 +142,7 @@ void TriangleMesh::draw(bool drawSurfaces,
     glFlush();
 }
 
-void TriangleMesh::SaveFile(string fileName) {
+void TriangleMesh::save(string fileName) {
     FILE * outFile = fopen(fileName.c_str(), "wt");
     fprintf(outFile, "OFF\n");
     fprintf(outFile, "%d %d %d\n", (int)vertices.size(), (int)faces.size(),
