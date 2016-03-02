@@ -251,7 +251,7 @@ namespace Visualization {
         return power;
     }
 
-    void MarchingCube(Volume * vol, Mesh * mesh, const float iso_level, int iX, int iY, int iZ, int iScale){
+    void MarchingCube(const Volume & vol, Mesh & mesh, const float iso_level, int iX, int iY, int iZ, int iScale){
         //        extern int aiCubeEdgeFlags[256];
         //        extern int a2iTriangleConnectionTable[256][16];
 
@@ -263,7 +263,7 @@ namespace Visualization {
 
         //Make a local copy of the values at the cube's corners
         for(int iVertex = 0; iVertex < 8; iVertex++) {
-            afCubeValue[iVertex] = vol->getVoxelData(iX + a2iVertexOffset[iVertex][0]*iScale,
+            afCubeValue[iVertex] = vol.getVoxelData(iX + a2iVertexOffset[iVertex][0]*iScale,
                     iY + a2iVertexOffset[iVertex][1]*iScale,
                     iZ + a2iVertexOffset[iVertex][2]*iScale);
         }
@@ -292,13 +292,13 @@ namespace Visualization {
             //if there is an intersection on this edge
             if(iEdgeFlags & (1<<iEdge))
             {
-                fOffset = vol->getOffset(afCubeValue[ a2iEdgeConnection[iEdge][0] ], afCubeValue[ a2iEdgeConnection[iEdge][1] ], iso_level);
+                fOffset = vol.getOffset(afCubeValue[ a2iEdgeConnection[iEdge][0] ], afCubeValue[ a2iEdgeConnection[iEdge][1] ], iso_level);
 
                 asEdgeVertex[iEdge][0] = (float)iX + ((float)a2iVertexOffset[ a2iEdgeConnection[iEdge][0] ][0] +  fOffset * (float)a2iEdgeDirection[iEdge][0]) * (float)iScale;
                 asEdgeVertex[iEdge][1] = (float)iY + ((float)a2iVertexOffset[ a2iEdgeConnection[iEdge][0] ][1] +  fOffset * (float)a2iEdgeDirection[iEdge][1]) * (float)iScale;
                 asEdgeVertex[iEdge][2] = (float)iZ + ((float)a2iVertexOffset[ a2iEdgeConnection[iEdge][0] ][2] +  fOffset * (float)a2iEdgeDirection[iEdge][2]) * (float)iScale;
 
-                vertexIds[iEdge] = mesh->AddMarchingVertex(Vec3F(asEdgeVertex[iEdge][0], asEdgeVertex[iEdge][1], asEdgeVertex[iEdge][2]), vol->getHashKey(iX, iY, iZ, iEdge, iScale));
+                vertexIds[iEdge] = mesh.AddMarchingVertex(Vec3F(asEdgeVertex[iEdge][0], asEdgeVertex[iEdge][1], asEdgeVertex[iEdge][2]), vol.getHashKey(iX, iY, iZ, iEdge, iScale));
             }
         }
 
@@ -315,7 +315,7 @@ namespace Visualization {
                 triangleVertices[iCorner] = vertexIds[iVertex];
             }
 
-            mesh->AddMarchingFace(triangleVertices[0], triangleVertices[1], triangleVertices[2]);
+            mesh.AddMarchingFace(triangleVertices[0], triangleVertices[1], triangleVertices[2]);
         }
     }
 

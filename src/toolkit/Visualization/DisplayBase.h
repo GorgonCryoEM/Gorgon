@@ -49,7 +49,7 @@ namespace Visualization {
      *
      */
     int smallest2ndPower(int value);
-    void MarchingCube(Volume * vol, Mesh * mesh,
+    void MarchingCube(const Volume & vol, Mesh & mesh,
                       const float iso_level, int iX, int iY, int iZ,
                       int iScale);
 
