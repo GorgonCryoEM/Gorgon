@@ -30,7 +30,7 @@ namespace Protein_Morph {
             ~TriangleMesh();
 
             void Clear();
-            unsigned long long AddVertex(TriangleMeshVertex vertex,
+            unsigned long long addVertex(TriangleMeshVertex vertex,
                                          unsigned long long hashKey);
             int addMarchingVertex(Vec3F location, int hashKey);
             unsigned long long addMarchingFace(unsigned long long vertexHash0,

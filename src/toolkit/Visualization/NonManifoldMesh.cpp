@@ -259,7 +259,7 @@ bool NonManifoldMesh::IsEdgePresent(int vertexId1, int vertexId2) {
     int v1Index = getVertexIndex(vertexId1);
     int v2Index = getVertexIndex(vertexId2);
     for(unsigned int i = 0; (i < vertices[v1Index].edgeIds.size()) && !isPresent; i++) {
-        isPresent = ((int)edges[GetEdgeIndex(vertices[v1Index].edgeIds[i])].vertexIds[0] == v2Index) || ((int)edges[GetEdgeIndex(vertices[v1Index].edgeIds[i])].vertexIds[1] == v2Index);
+        isPresent = ((int)edges[getEdgeIndex(vertices[v1Index].edgeIds[i])].vertexIds[0] == v2Index) || ((int)edges[getEdgeIndex(vertices[v1Index].edgeIds[i])].vertexIds[1] == v2Index);
     }
 
     return isPresent;
@@ -371,7 +371,7 @@ void NonManifoldMesh::addTriangle(int vertexId1, int vertexId2, int vertexId3, s
     for(i = 0; i < 3; i++) {
         vertexIndex = getVertexIndex(vertexIds[i]);
         for (j = 0; j < (int)vertices[vertexIndex].edgeIds.size(); j++) {
-            edgeIndex = GetEdgeIndex(vertices[vertexIndex].edgeIds[j]);
+            edgeIndex = getEdgeIndex(vertices[vertexIndex].edgeIds[j]);
 
             if( (((int)edges[edgeIndex].vertexIds[0] == vertexIds[i])   && ((int)edges[edgeIndex].vertexIds[1] == vertexIds[i+1])) ||
                     (((int)edges[edgeIndex].vertexIds[0] == vertexIds[i+1]) && ((int)edges[edgeIndex].vertexIds[1] == vertexIds[i]))) {
@@ -382,7 +382,7 @@ void NonManifoldMesh::addTriangle(int vertexId1, int vertexId2, int vertexId3, s
 
     int faceId = addFace(face);
     for(i = 0; i < (int)face.edgeIds.size(); i++)
-        edges[GetEdgeIndex(face.edgeIds[i])].faceIds.push_back(faceId);
+        edges[getEdgeIndex(face.edgeIds[i])].faceIds.push_back(faceId);
 }
 
 void NonManifoldMesh::markFixedVertices() {
@@ -394,8 +394,8 @@ void NonManifoldMesh::markFixedVertices() {
             sheetFound = false;
             edgeFound = false;
             for(unsigned int j = 0; j < vertices[i].edgeIds.size(); j++) {
-                sheetFound = sheetFound || (edges[GetEdgeIndex(vertices[i].edgeIds[j])].faceIds.size() > 0);
-                edgeFound = edgeFound || (edges[GetEdgeIndex(vertices[i].edgeIds[j])].faceIds.size() == 0);
+                sheetFound = sheetFound || (edges[getEdgeIndex(vertices[i].edgeIds[j])].faceIds.size() > 0);
+                edgeFound = edgeFound || (edges[getEdgeIndex(vertices[i].edgeIds[j])].faceIds.size() == 0);
             }
         }
     }
@@ -432,7 +432,7 @@ void NonManifoldMesh::removeFace(int faceId) {
     faces[faceIndex].valid = false;
     faceCount--;
     for(unsigned int i = 0; i < faces[faceIndex].edgeIds.size(); i++) {
-        edgeIndex = GetEdgeIndex(faces[faceIndex].edgeIds[i]);
+        edgeIndex = getEdgeIndex(faces[faceIndex].edgeIds[i]);
         for(int j = (int)edges[edgeIndex].faceIds.size()-1; j >= 0; j--) {
             if(edges[edgeIndex].faceIds[j] == faceId) {
                 edges[edgeIndex].faceIds.erase(edges[edgeIndex].faceIds.begin() + j);
@@ -442,7 +442,7 @@ void NonManifoldMesh::removeFace(int faceId) {
 }
 
 void NonManifoldMesh::removeEdge(int edgeId) {
-    int edgeIndex = GetEdgeIndex(edgeId);
+    int edgeIndex = getEdgeIndex(edgeId);
     int vertexIndex;
     if(edges[edgeIndex].faceIds.size() > 0) {
         printf("Cannot remove edgeId %i as it has face associations\n", edgeId);
@@ -486,8 +486,8 @@ void NonManifoldMesh::removeNullEntries() {
             vertices[i].id = newId;
             for(unsigned int j = 0; j < vertices[i].edgeIds.size(); j++) {
                 for(int k = 0; k < 2; k++) {
-                    if((int)edges[GetEdgeIndex(vertices[i].edgeIds[j])].vertexIds[k] == oldId) {
-                        edges[GetEdgeIndex(vertices[i].edgeIds[j])].vertexIds[k] = newId;
+                    if((int)edges[getEdgeIndex(vertices[i].edgeIds[j])].vertexIds[k] == oldId) {
+                        edges[getEdgeIndex(vertices[i].edgeIds[j])].vertexIds[k] = newId;
                     }
                 }
             }
@@ -536,9 +536,9 @@ void NonManifoldMesh::removeNullEntries() {
             newId = i;
             faces[i].id = newId;
             for(unsigned int j = 0; j < faces[i].edgeIds.size(); j++) {
-                for(unsigned int k = 0; k < edges[GetEdgeIndex(faces[i].edgeIds[j])].faceIds.size(); k++) {
-                    if((int)edges[GetEdgeIndex(faces[i].edgeIds[j])].faceIds[k] == oldId) {
-                        edges[GetEdgeIndex(faces[i].edgeIds[j])].faceIds[k] = newId;
+                for(unsigned int k = 0; k < edges[getEdgeIndex(faces[i].edgeIds[j])].faceIds.size(); k++) {
+                    if((int)edges[getEdgeIndex(faces[i].edgeIds[j])].faceIds[k] == oldId) {
+                        edges[getEdgeIndex(faces[i].edgeIds[j])].faceIds[k] = newId;
                     }
                 }
             }
@@ -698,7 +698,7 @@ Vec3F NonManifoldMesh::getVertexNormal(int vertexId) {
     int edgeIndex;
     Vec3F normal = Vec3F(0,0,0);
     for(unsigned int i = 0; i < vertices[index].edgeIds.size(); i++) {
-        edgeIndex = GetEdgeIndex(vertices[index].edgeIds[i]);
+        edgeIndex = getEdgeIndex(vertices[index].edgeIds[i]);
         for(unsigned int j = 0; j < edges[edgeIndex].faceIds.size(); j++) {
             normal += getFaceNormal(edges[edgeIndex].faceIds[j]);
         }
@@ -732,13 +732,13 @@ NonManifoldMesh NonManifoldMesh::smoothLaplacian(double converganceRate) {
             if(vertex.edgeIds.size() > 0) {
                 newPosition = Vec3F(0,0,0);
                 for(j = 0; j < (int)vertex.edgeIds.size(); j++) {
-                    if((int)edges[GetEdgeIndex(vertex.edgeIds[j])].vertexIds[0] == i) {
+                    if((int)edges[getEdgeIndex(vertex.edgeIds[j])].vertexIds[0] == i) {
                         vertexIndex = 1;
                     } else {
                         vertexIndex = 0;
                     }
 
-                    newPosition = newPosition + vertices[getVertexIndex(edges[GetEdgeIndex(vertex.edgeIds[j])].vertexIds[vertexIndex])].position;
+                    newPosition = newPosition + vertices[getVertexIndex(edges[getEdgeIndex(vertex.edgeIds[j])].vertexIds[vertexIndex])].position;
                 }
                 newPosition = newPosition * (1.0/vertex.edgeIds.size());
             } else {
@@ -849,7 +849,7 @@ vector<unsigned int> NonManifoldMesh::getPath(unsigned int edge0Ix, unsigned int
             for(unsigned int v = 0; v < 2; v++) {
                 vertexIx = getVertexIndex(edges[currentEdge].vertexIds[v]);
                 for(unsigned int e = 0; e < vertices[vertexIx].edgeIds.size(); e++) {
-                    edgeIx = GetEdgeIndex(vertices[vertexIx].edgeIds[e]);
+                    edgeIx = getEdgeIndex(vertices[vertexIx].edgeIds[e]);
                     if(source.find(edgeIx) == source.end()) {
                         source[edgeIx] = currentEdge;
                         edgeList.push(edgeIx);
