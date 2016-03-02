@@ -9,7 +9,7 @@ using namespace Foundation;
 
 namespace GraySkeletonCPP {
 
-    TimeManager appTimeManager = TimeManager();
+    static TimeManager appTimeManager = TimeManager();
 
     const int PRUNE_AMOUNT = 3;
     const int MAX_GAUSS_FILT_R = 10;
