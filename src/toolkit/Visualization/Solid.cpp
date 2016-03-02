@@ -47,7 +47,7 @@ namespace Visualization {
                     }
                     tempMesh.Clear();
                     MarchingCube(cuttingVolume, tempMesh, 0.0f, 0, 0, 0, 1);
-                    cuttingMesh->MergeMesh(&tempMesh);
+                    cuttingMesh->MergeMesh(tempMesh);
                 }
             }
         }

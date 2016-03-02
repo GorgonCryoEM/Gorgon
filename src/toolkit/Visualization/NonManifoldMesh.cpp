@@ -401,28 +401,28 @@ void NonManifoldMesh::MarkFixedVertices() {
     }
 }
 
-void NonManifoldMesh::MergeMesh(NonManifoldMesh * srcMesh) {
+void NonManifoldMesh::MergeMesh(const NonManifoldMesh & src) {
     vector<int> indices;
     indices.clear();
 
-    for(unsigned int i = 0; i < srcMesh->vertices.size(); i++)
-        indices.push_back(AddVertex(srcMesh->vertices[i]));
+    for(unsigned int i = 0; i < src.vertices.size(); i++)
+        indices.push_back(AddVertex(src.vertices[i]));
 
-    for(unsigned int i = 0; i < srcMesh->edges.size(); i++)
-        AddEdge(indices[srcMesh->edges[i].vertexIds[0]], indices[srcMesh->edges[i].vertexIds[1]], srcMesh->edges[i].tag);
+    for(unsigned int i = 0; i < src.edges.size(); i++)
+        AddEdge(indices[src.edges[i].vertexIds[0]], indices[src.edges[i].vertexIds[1]], src.edges[i].tag);
 
-    for(unsigned int i = 0; i < srcMesh->faces.size(); i++) {
-        if(srcMesh->faces[i].vertexIds.size() == 3)
-            AddTriangle(indices[srcMesh->faces[i].vertexIds[0]],
-                    indices[srcMesh->faces[i].vertexIds[1]],
-                    indices[srcMesh->faces[i].vertexIds[2]], NULL,
-                    srcMesh->faces[i].tag);
-        else if(srcMesh->faces[i].vertexIds.size() == 3)
-            AddQuad(indices[srcMesh->faces[i].vertexIds[0]],
-                    indices[srcMesh->faces[i].vertexIds[1]],
-                    indices[srcMesh->faces[i].vertexIds[2]],
-                    indices[srcMesh->faces[i].vertexIds[3]], NULL,
-                    srcMesh->faces[i].tag);
+    for(unsigned int i = 0; i < src.faces.size(); i++) {
+        if(src.faces[i].vertexIds.size() == 3)
+            AddTriangle(indices[src.faces[i].vertexIds[0]],
+                    indices[src.faces[i].vertexIds[1]],
+                    indices[src.faces[i].vertexIds[2]], NULL,
+                    src.faces[i].tag);
+        else if(src.faces[i].vertexIds.size() == 3)
+            AddQuad(indices[src.faces[i].vertexIds[0]],
+                    indices[src.faces[i].vertexIds[1]],
+                    indices[src.faces[i].vertexIds[2]],
+                    indices[src.faces[i].vertexIds[3]], NULL,
+                    src.faces[i].tag);
     }
 }
 
