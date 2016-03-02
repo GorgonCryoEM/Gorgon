@@ -5,10 +5,6 @@
 
 //#define SAVE_INTERMEDIATE_RESULTS
 
-double round(double f){
-	return (f >= 0?(int)(f + .5):(int)(f - .5));
-}
-
 using namespace Foundation;
 
 namespace GraySkeletonCPP {
