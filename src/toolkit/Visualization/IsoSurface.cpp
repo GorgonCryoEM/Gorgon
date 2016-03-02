@@ -9,14 +9,14 @@
 
 namespace Visualization {
 
-    IsoSurface::IsoSurface() {
+    IsoSurface::IsoSurface()
+            : surfaceMesh(VolumeSurfaceMeshType())
+    {
         displayRadius = 1;
         _useDisplayRadius = false;
-        surfaceMesh = new VolumeSurfaceMeshType();
     }
 
     IsoSurface::~IsoSurface() {
-        delete surfaceMesh;
     }
 
     bool IsoSurface::calculateDisplay() {
@@ -24,7 +24,7 @@ namespace Visualization {
         #ifndef USE_OCTREE_OPTIMIZATION
             //appTimeManager.PushCurrentTime();
             //appTimeManager.PushCurrentTime();
-            surfaceMesh->Clear();
+            surfaceMesh.Clear();
             //appTimeManager.PopAndDisplayTime("Marching Cubes)  Clearing : %f seconds |");
             redraw = false;
 
@@ -36,7 +36,7 @@ namespace Visualization {
                 for(int i = 0; i < maxX; i+=sampleInterval) {
                     for(int j = 0; j < maxY; j+=sampleInterval) {
                         for(int k = 0; k < maxZ; k+=sampleInterval) {
-                            MarchingCube(*this, *surfaceMesh, surfaceValue, i, j, k, sampleInterval);
+                            MarchingCube(*this, surfaceMesh, surfaceValue, i, j, k, sampleInterval);
                         }
                     }
                 }
@@ -52,7 +52,7 @@ namespace Visualization {
         #else
             appTimeManager.PushCurrentTime();
             appTimeManager.PushCurrentTime();
-            surfaceMesh->Clear();
+            surfaceMesh.Clear();
             appTimeManager.PopAndDisplayTime("Octree)          Clearing : %f seconds |");
             marchingCubeCallCount = 0;
             redraw = false;
@@ -70,10 +70,8 @@ namespace Visualization {
     }
 
     void IsoSurface::draw(int subSceneIndex, bool selectEnabled) {
-        if(subSceneIndex == 0) {
-            if(surfaceMesh != NULL)
-                surfaceMesh->draw(true, selectEnabled, _useDisplayRadius, displayRadius, radiusOrigin);
-        }
+        if(subSceneIndex == 0)
+            surfaceMesh.draw(true, selectEnabled, _useDisplayRadius, displayRadius, radiusOrigin);
     }
 
     void IsoSurface::setDisplayRadius(const int radius) {
