@@ -99,7 +99,6 @@ namespace Visualization {
 
         VolumeSurfaceMeshType * surfaceMesh;
         NonManifoldMesh * cuttingMesh;
-        VolumeRendererOctreeType * octree;
         #ifdef _WIN32
             PFNGLTEXIMAGE3DPROC glTexImage3D;
         #endif

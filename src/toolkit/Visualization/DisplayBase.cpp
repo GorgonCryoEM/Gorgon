@@ -16,7 +16,6 @@ namespace Visualization {
         textureLoaded = false;
         viewingType = VIEWING_TYPE_ISO_SURFACE;
         surfaceMesh = new VolumeSurfaceMeshType();
-        octree = NULL;
         surfaceValue = 1.5;
         sampleInterval = 1;
         cuttingMesh = new NonManifoldMesh();
@@ -29,9 +28,6 @@ namespace Visualization {
             textureLoaded = false;
         }
         delete surfaceMesh;
-        if(octree != NULL) {
-            delete octree;
-        }
         delete cuttingMesh;
     }
 
@@ -138,10 +134,6 @@ namespace Visualization {
 
     void DisplayBase::unload() {
         RendererBase::unload();
-        if(octree != NULL) {
-            delete octree;
-        }
-        octree = NULL;
         if(textureLoaded) {
             glDeleteTextures(1, &textureName);
             textureLoaded = false;
