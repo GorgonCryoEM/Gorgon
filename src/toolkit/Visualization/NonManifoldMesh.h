@@ -123,7 +123,7 @@ namespace Protein_Morph {
             vector<unsigned int> GetPath(unsigned int edge0Ix, unsigned int edge1Ix);
             vector<unsigned int> GetNeighboringVertexIndices(unsigned int vertexIx);
             vector<Vec3F> SampleTriangle(int faceId, double discretizationStep);
-            Volume * ToVolume();
+            Volume ToVolume();
             Vec3F GetVertexNormal(int vertexId);
             Vec3F GetFaceNormal(int faceId);
             NonManifoldMesh SmoothLaplacian(double converganceRate);

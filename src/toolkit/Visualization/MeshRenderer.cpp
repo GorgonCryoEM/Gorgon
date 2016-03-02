@@ -76,9 +76,8 @@ namespace Visualization {
             if(extension == "OFF") {
                 mesh.ToOffCells(fileName);
             } else if(extension == "MRC") {
-                Volume * volume = mesh.ToVolume();
-                volume->toMRCFile(fileName.c_str());
-                delete volume;
+                Volume volume = mesh.ToVolume();
+                volume.toMRCFile(fileName.c_str());
             } else {
               cout<<"Input format "<<extension<<" not supported!"<<endl;
             }

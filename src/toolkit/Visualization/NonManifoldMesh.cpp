@@ -644,7 +644,7 @@ void NonManifoldMesh::ToMathematicaFile(string fileName) {
     outF.close();
 }
 
-Volume * NonManifoldMesh::ToVolume() {
+Volume NonManifoldMesh::ToVolume() {
     double minPos[3] = {MAX_DOUBLE,MAX_DOUBLE,MAX_DOUBLE};
     double maxPos[3] = {MIN_DOUBLE, MIN_DOUBLE, MIN_DOUBLE};
     if(fromVolume) {
@@ -671,7 +671,7 @@ Volume * NonManifoldMesh::ToVolume() {
         maxPosInt[j] = (int)ceil(maxPos[j]);
     }
 
-    Volume * vol = new Volume(maxPosInt[0] - minPosInt[0]+1, maxPosInt[1] - minPosInt[1]+1, maxPosInt[2] - minPosInt[2]+1);
+    Volume vol(maxPosInt[0] - minPosInt[0]+1, maxPosInt[1] - minPosInt[1]+1, maxPosInt[2] - minPosInt[2]+1);
 
     NonManifoldMeshVertex v1,v2;
     int pos[3];
@@ -684,12 +684,12 @@ Volume * NonManifoldMesh::ToVolume() {
             for(unsigned int k = 0; k < 3; k++) {
                 pos[k] = positions[j][k] - minPosInt[k];
             }
-            (*vol)(pos[0], pos[1], pos[2]) = 1.0;
+            vol(pos[0], pos[1], pos[2]) = 1.0;
         }
     }
 
-    vol->setOrigin(origin);
-    vol->setSpacing(scale);
+    vol.setOrigin(origin);
+    vol.setSpacing(scale);
     return vol;
 }
 
