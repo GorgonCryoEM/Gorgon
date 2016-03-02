@@ -92,9 +92,11 @@ namespace Visualization {
         bool textureLoaded;
         Dim3D<int> textureSize;
         GLuint textureName;
+
         float surfaceValue;
         float maxSurfaceValue;
         int sampleInterval;
+
         int viewingType;
 
         #ifdef _WIN32
