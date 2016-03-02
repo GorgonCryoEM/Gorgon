@@ -24,6 +24,9 @@ namespace Visualization {
             void load3DTexture();
 
             void draw(int subSceneIndex, bool selectEnabled);
+
+        private:
+            Volume cuttingVolume;
     };
 
 } /* namespace Visualization */

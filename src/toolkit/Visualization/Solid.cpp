@@ -9,9 +9,9 @@
 
 namespace Visualization {
 
-    Solid::Solid() {
-        // TODO Auto-generated constructor stub
-
+    Solid::Solid()
+            : cuttingVolume(Volume(2, 2, 2))
+    {
     }
 
     Solid::~Solid() {

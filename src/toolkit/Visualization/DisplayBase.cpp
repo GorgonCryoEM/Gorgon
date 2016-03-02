@@ -11,8 +11,7 @@
 namespace Visualization {
 
     DisplayBase::DisplayBase()
-        : RendererBase(),
-          cuttingVolume(Volume(2, 2, 2))
+        : RendererBase()
     {
         textureLoaded = false;
         viewingType = VIEWING_TYPE_ISO_SURFACE;

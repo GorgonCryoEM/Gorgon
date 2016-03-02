@@ -96,7 +96,6 @@ namespace Visualization {
         float maxSurfaceValue;
         int sampleInterval;
         int viewingType;
-        Volume cuttingVolume;
 
         VolumeSurfaceMeshType * surfaceMesh;
         NonManifoldMesh * cuttingMesh;

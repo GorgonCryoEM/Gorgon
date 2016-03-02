@@ -9,10 +9,10 @@
 
 namespace Visualization {
 
-    CrossSection::CrossSection() {
-        // TODO Auto-generated constructor stub
-
-    }
+    CrossSection::CrossSection()
+                : cuttingVolume(Volume(2, 2, 2))
+{
+}
 
     CrossSection::~CrossSection() {
         // TODO Auto-generated destructor stub
