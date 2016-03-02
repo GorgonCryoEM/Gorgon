@@ -25,13 +25,13 @@ namespace GraySkeletonCPP {
            curves   (size.X() * size.Y() * size.Z(), 0),
            surfaces (size.X() * size.Y() * size.Z(), 0)
     {
-        int sizeX = getSizeX();
-        int sizeY = getSizeY();
-        int sizeZ = getSizeZ();
+        const int sX = getSizeX();
+        const int sY = getSizeY();
+        const int sZ = getSizeZ();
 
-        for(int x = 0; x < sizeX; x++) {
-            for(int y = 0; y < sizeY; y++) {
-                for(int z = 0; z < sizeZ; z++) {
+        for(int x = 0; x < sX; x++) {
+            for(int y = 0; y < sY; y++) {
+                for(int z = 0; z < sZ; z++) {
                     if((*this)(x, y, z) > 0) {
                         addVoxel(x, y, z);
                     }
