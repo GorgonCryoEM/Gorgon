@@ -136,32 +136,6 @@ namespace Visualization {
     void DisplayBase::draw(int subSceneIndex, bool selectEnabled) {
     }
 
-
-    void DisplayBase::calculateOctreeNode(VolumeRendererOctreeNodeType * node) {
-        queue<VolumeRendererOctreeNodeType *> q;
-        q.push(node);
-
-        while(!q.empty()) {
-            node = q.front();
-            q.pop();
-            if((node->tag.min <= surfaceValue) && (node->tag.max >= surfaceValue)) {
-                if((int)node->cellSize <= sampleInterval + sampleInterval) {
-                    for(int i = 0; i < 8; i++) {
-                        if(node->children[i] != NULL) {
-                            MarchingCube(this, surfaceMesh, surfaceValue, node->children[i]->pos[0], node->children[i]->pos[1], node->children[i]->pos[2], sampleInterval);
-                        }
-                    }
-                } else {
-                    for(int i = 0; i < 8; i++) {
-                        if(node->children[i] != NULL) {
-                            q.push(node->children[i]);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     bool DisplayBase::calculateDisplay() {
         return false;
     }

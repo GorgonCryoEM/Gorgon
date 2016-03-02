@@ -93,7 +93,6 @@ namespace Visualization {
     protected:
             void initializeOctree();
             void initializeOctreeTag(VolumeRendererOctreeNodeType * node);
-            void calculateOctreeNode(VolumeRendererOctreeNodeType * node);
             void MarchingCube(Volume * vol, Mesh * mesh,
                               const float iso_level, int iX, int iY, int iZ,
                               int iScale);
