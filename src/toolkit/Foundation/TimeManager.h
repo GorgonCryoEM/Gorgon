@@ -1,5 +1,12 @@
-#ifndef TOOLKIT_FOUNDATION_TIME_MANAGER_H
-#define TOOLKIT_FOUNDATION_TIME_MANAGER_H
+/*
+ * TimeManager.h
+ *
+ *      Author: shadow_walker <shadowwalkersb@gmail.com>
+ *
+ */
+
+#ifndef SRC_TOOLKIT_FOUNDATION_TIMEMANAGER_H_
+#define SRC_TOOLKIT_FOUNDATION_TIMEMANAGER_H_
 
 #include <ctime>
 #include <string>
@@ -14,67 +21,25 @@ namespace Foundation {
         double cumulatedTime;
     };
 
+    /*
+     *
+     */
     class TimeManager {
-    public:
-        TimeManager();
-        void PushCurrentTime();
-        void PopAndDisplayTime(string textFormat);
+        public:
+            TimeManager();
+            void PushCurrentTime();
+            void PopAndDisplayTime(string textFormat);
 
-        int StartStopWatch();
-        void PauseStopWatch(int id);
-        void ResumeStopWatch(int id);
-        void DisplayStopWatch(int id, string textFormat);
+            int StartStopWatch();
+            void PauseStopWatch(int id);
+            void ResumeStopWatch(int id);
+            void DisplayStopWatch(int id, string textFormat);
 
-    private:
-        vector<clock_t> times;
-        vector<stopwatch_rec> stopWatches;
+        private:
+            vector<clock_t> times;
+            vector<stopwatch_rec> stopWatches;
     };
 
-    TimeManager::TimeManager() {
-        times.clear();
-    }
+} /* namespace Foundation */
 
-    void TimeManager::PushCurrentTime() {
-        times.push_back(clock());
-    }
-
-    void TimeManager::PopAndDisplayTime(string textFormat) {
-        clock_t start = times[times.size()-1];
-        clock_t finish = clock();
-        double timeTaken = ((double) (finish - start) / (double) CLOCKS_PER_SEC);
-        printf(textFormat.c_str(), timeTaken);
-        #ifdef _WIN32
-            flushall();
-        #endif
-
-        times.pop_back();
-    }
-
-    int TimeManager::StartStopWatch() {
-        stopwatch_rec rec;
-        rec.startTime = clock();
-        rec.cumulatedTime = 0;
-        stopWatches.push_back(rec);
-        return stopWatches.size()-1;
-    }
-
-    void TimeManager::PauseStopWatch(int id) {
-        clock_t start = stopWatches[id].startTime;
-        clock_t finish = clock();
-        stopWatches[id].cumulatedTime += ((double) (finish - start) / (double) CLOCKS_PER_SEC);
-    }
-
-    void TimeManager::ResumeStopWatch(int id) {
-        stopWatches[id].startTime = clock();
-    }
-
-    void TimeManager::DisplayStopWatch(int id, string textFormat){
-        printf(textFormat.c_str(), stopWatches[id].cumulatedTime);
-        #ifdef _WIN32
-            flushall();
-        #endif
-    }
-}
-
-
-#endif
+#endif /* SRC_TOOLKIT_FOUNDATION_TIMEMANAGER_H_ */
