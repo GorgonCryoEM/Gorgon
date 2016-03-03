@@ -41,7 +41,6 @@ class SkeletonViewer(BaseViewer):
         self.visualizationOptions.ui.pushButtonModel3Color.setVisible(True)
     
     def createUI(self):
-        self.createActions()
         self.createMenus()
         self.createChildWindows()
         self.updateActionsAndMenus()
@@ -49,23 +48,6 @@ class SkeletonViewer(BaseViewer):
     def createChildWindows(self):
         self.optionsWindow = SkeletonLaplacianSmoothingForm(self.app, self, self)
         
-    def createActions(self):
-        openAct = QtGui.QAction(self.tr("S&keleton..."), self)
-        openAct.setShortcut(self.tr("Ctrl+K"))
-        openAct.setStatusTip(self.tr("Load a skeleton file"))
-        self.connect(openAct, QtCore.SIGNAL("triggered()"), self.loadData)
-        self.app.actions.addAction("load_Skeleton", openAct)
-        
-        saveAct = QtGui.QAction(self.tr("S&keleton..."), self)
-        saveAct.setStatusTip(self.tr("Save a skeleton file"))
-        self.connect(saveAct, QtCore.SIGNAL("triggered()"), self.saveData)
-        self.app.actions.addAction("save_Skeleton", saveAct)
-        
-        closeAct = QtGui.QAction(self.tr("S&keleton"), self)
-        closeAct.setStatusTip(self.tr("Close the loaded skeleton"))
-        self.connect(closeAct, QtCore.SIGNAL("triggered()"), self.unloadData)
-        self.app.actions.addAction("unload_Skeleton", closeAct)
-                                
     def createMenus(self):
         self.app.menus.addAction("file-open-skeleton", self.app.actions.getAction("load_Skeleton"), "file-open")
         self.app.menus.addAction("file-save-skeleton", self.app.actions.getAction("save_Skeleton"), "file-save")
