@@ -63,11 +63,7 @@ namespace Visualization {
         private:
             AtomMapType atoms;
 
-            //TODO: possibly implement mouse picking using ray intersection
-            vector<unsigned long long> atomHashKeys; //glLoadName(index of this vector)... used for selection
-
             vector < boost::tuple<int, int> > corrs;
-            vector<int> selectedSSEHelices;
     };
 
 } /* namespace Visualization */
