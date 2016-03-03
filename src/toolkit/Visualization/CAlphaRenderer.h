@@ -83,8 +83,13 @@ namespace Visualization {
             // Vector3Floats
             vector<Vec3F> createStrandNormals(vector<Vec3F> points, Vec3F previous, Vec3F next); // create line segment normals to be used in drawing Beta
             // strands
-            void createHelixAxesTangentsAndPoints(vector<Vec3F>& axes, vector<Vec3F>& tangents, vector<Vec3F>& interpPoints, vector<Vec3F> points,
-                Vec3F previous, Vec3F next, double HELIX_ALPHA, double HELIX_BETA, double HELIX_HERMITE_FACTOR);
+            void createHelixAxesTangentsAndPoints(vector<Vec3F>& axes,
+                                                  vector<Vec3F>& tangents,
+                                                  vector<Vec3F>& interpPoints,
+                                                  vector<Vec3F> points,
+                                                  Vec3F previous, Vec3F next,
+                                                  double HELIX_ALPHA,
+                                                  double HELIX_BETA, double HELIX_HERMITE_FACTOR);
             vector<Vec3F> interpolateLoopPoints(vector<Vec3F> points, Vec3F previous, Vec3F next, int NUM_SECTIONS); // creates interpolated points for loops
 
             void setHelixCorrs( vector < int > flatCorrespondences);
