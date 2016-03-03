@@ -1,31 +1,31 @@
 /*
- * CAlphaRenderer.cpp
+ * CAlpha.cpp
  *
  *      Author: shadow_walker <shadowwalkersb@gmail.com>
  *
  */
 
-#include "CAlphaRenderer.h"
+#include "CAlpha.h"
 #include "GraphMatch/PDBReader.h"
 #include "HermiteCurve.h"
 
 namespace Visualization {
 
-    void CAlphaRenderer::addAtom(PDBAtom atom) {
+    void CAlpha::addAtom(PDBAtom atom) {
         atoms[atom.GetHashKey()] = atom;
     }
 
-    bool CAlphaRenderer::saveSSEHunterFile(string fileName) {
+    bool CAlpha::saveSSEHunterFile(string fileName) {
         return PDBReader::WriteAtomPositions(atoms, fileName);
     }
 
-    void CAlphaRenderer::updateTotalScoreSSEHunterAtoms(float correlationCoeff, float skeletonCoeff, float geometryCoeff) {
+    void CAlpha::updateTotalScoreSSEHunterAtoms(float correlationCoeff, float skeletonCoeff, float geometryCoeff) {
         for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {
             i->second.SetTempFactor( i->second.GetTotalScore(correlationCoeff, skeletonCoeff, geometryCoeff) );
         }
     }
 
-    void CAlphaRenderer::setHelixCorrs(  vector < int > flatCorrespondences){
+    void CAlpha::setHelixCorrs(  vector < int > flatCorrespondences){
         if(flatCorrespondences.size() %2 != 0)
             return;
         else

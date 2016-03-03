@@ -1,12 +1,12 @@
 /*
- * CAlphaRenderer.h
+ * CAlpha.h
  *
  *      Author: shadow_walker <shadowwalkersb@gmail.com>
  *
  */
 
-#ifndef SRC_TOOLKIT_VISUALIZATION_CALPHARENDERER_H_
-#define SRC_TOOLKIT_VISUALIZATION_CALPHARENDERER_H_
+#ifndef SRC_TOOLKIT_VISUALIZATION_CALPHA_H_
+#define SRC_TOOLKIT_VISUALIZATION_CALPHA_H_
 
 #include "GraphMatch/PDBAtom.h"
 
@@ -17,7 +17,7 @@ namespace Visualization {
 
     typedef map<unsigned long long, PDBAtom> AtomMapType;
 
-    class CAlphaRenderer {
+    class CAlpha {
         public:
             bool saveSSEHunterFile(string fileName);
             void updateTotalScoreSSEHunterAtoms(float correlationCoeff, float skeletonCoeff, float geometryCoeff);
@@ -32,4 +32,4 @@ namespace Visualization {
 
 } /* namespace Visualization */
 
-#endif /* SRC_TOOLKIT_VISUALIZATION_CALPHARENDERER_H_ */
+#endif /* SRC_TOOLKIT_VISUALIZATION_CALPHA_H_ */
