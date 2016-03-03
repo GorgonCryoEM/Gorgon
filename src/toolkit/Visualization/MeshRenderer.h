@@ -12,7 +12,7 @@
 //#include <cstdio>
 //#include <GorgonGL.h>
 //#include <string>
-//#include <Core/volume.h>
+#include <Core/volume.h>
 #include <Readers/reader.h>
 #include <Visualization/NonManifoldMesh.h>
 #include "Display.h"
