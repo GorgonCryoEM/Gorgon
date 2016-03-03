@@ -4,7 +4,7 @@
 #include "Visualization/MeshRenderer.h"
 #include "ProteinMorph/SSEHunter.h"
 #include <MathTools/Vector3.h>
-#include "Visualization/CAlphaRenderer.h"
+#include "ProteinMorph/CAlpha.h"
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include "ProteinMorph/SSEEngine.h"
 #include "GraphMatch/PDBBond.h"
@@ -255,9 +255,9 @@ BOOST_PYTHON_MODULE(@current_pylib@)
 //  ;
 //
 //
-  class_< CAlphaRenderer>("CAlphaRenderer", init<>())
-      .def("saveSSEHunterFile", &CAlphaRenderer::saveSSEHunterFile)
-      .def("addAtom", &CAlphaRenderer::addAtom, return_value_policy<reference_existing_object>())
+  class_< CAlpha>("CAlpha", init<>())
+      .def("saveSSEHunterFile", &CAlpha::saveSSEHunterFile)
+      .def("addAtom", &CAlpha::addAtom, return_value_policy<reference_existing_object>())
   ;
   
   enum_<RadialProfileType>("RadialProfileType")
