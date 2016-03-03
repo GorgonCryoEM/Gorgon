@@ -22,7 +22,7 @@ class SkeletonViewer(BaseViewer):
         self.twoWayLighting = True
         self.lineThickness = 3
         self.renderer.setLineThickness(self.lineThickness)
-        self.createUI()
+
         self.app.viewers["skeleton"] = self;
         self.volumeViewer = self.app.viewers["volume"]
         self.initVisualizationOptions(ModelVisualizationForm(self.app, self))
