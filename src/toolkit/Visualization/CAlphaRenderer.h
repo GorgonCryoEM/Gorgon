@@ -46,7 +46,6 @@ namespace Visualization {
             PDBAtom getAtom(unsigned long long index);
             void deleteAtom(unsigned long long index);
             int getAtomCount();
-            vector<unsigned long long> GetAtomHashes();
 
             //Controlling the bond vector
             void addBond(PDBBond bond);

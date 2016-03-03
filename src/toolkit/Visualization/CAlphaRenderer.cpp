@@ -73,14 +73,6 @@ namespace Visualization {
         return &sidechainBonds[index];
     }
 
-    vector<unsigned long long> CAlphaRenderer::GetAtomHashes() {
-        vector<unsigned long long> atomHashes;
-        for (AtomMapType::iterator it = atoms.begin(); it != atoms.end(); it++) {
-            atomHashes.push_back(it->first);
-        }
-        return atomHashes;
-    }
-
     int CAlphaRenderer::getBondIndex(unsigned long long atom0, unsigned long long atom1) {
         for(unsigned int i = 0; i < bonds.size(); i++) {
             if(((bonds[i].GetAtom0Ix() == atom0) && (bonds[i].GetAtom1Ix() == atom1)) ||
