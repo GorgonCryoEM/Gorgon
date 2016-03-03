@@ -24,7 +24,7 @@ namespace Visualization {
 
     typedef map<unsigned long long, PDBAtom> AtomMapType;
 
-    class CAlphaRenderer : public Volume {
+    class CAlphaRenderer {
         public:
             bool saveSSEHunterFile(string fileName);
             void updateTotalScoreSSEHunterAtoms(float correlationCoeff, float skeletonCoeff, float geometryCoeff);

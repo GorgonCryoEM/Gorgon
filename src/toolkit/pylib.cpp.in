@@ -255,7 +255,7 @@ BOOST_PYTHON_MODULE(@current_pylib@)
 //  ;
 //
 //
-  class_< CAlphaRenderer, bases<Volume> >("CAlphaRenderer", init<>())
+  class_< CAlphaRenderer>("CAlphaRenderer", init<>())
       .def("saveSSEHunterFile", &CAlphaRenderer::saveSSEHunterFile)
       .def("addAtom", &CAlphaRenderer::addAtom, return_value_policy<reference_existing_object>())
   ;
