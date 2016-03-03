@@ -121,17 +121,6 @@ namespace Visualization {
         }
     }
 
-    void CAlphaRenderer::setFeatureVecs(vector<Vec3F> flatFeatureVecs){
-        if(flatFeatureVecs.size() %2 != 0)
-            return;
-        else
-            featureVecs.clear();
-        for(int i=0; i < flatFeatureVecs.size(); i = i+2){
-            featureVecs.push_back(boost::tuple<Vec3F, Vec3F>(flatFeatureVecs[i], flatFeatureVecs[i+1]));
-        }
-
-    }
-
     // creates a vector of Vector3Floats that represents the locations of all the PDBAtoms
     // starting with start and ending with end; it does not error check, so incorrectly
     // ordered points will break this method.  there are more efficient ways to handle this

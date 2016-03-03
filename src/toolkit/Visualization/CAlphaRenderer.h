@@ -74,7 +74,7 @@ namespace Visualization {
             vector<Vec3F> interpolateLoopPoints(vector<Vec3F> points, Vec3F previous, Vec3F next, int NUM_SECTIONS); // creates interpolated points for loops
 
             void setHelixCorrs( vector < int > flatCorrespondences);
-            void setFeatureVecs(vector<Vec3F> flatFeatureVecs);
+
         private:
             AtomMapType atoms;
 
