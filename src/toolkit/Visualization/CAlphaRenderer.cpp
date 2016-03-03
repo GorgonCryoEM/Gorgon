@@ -25,9 +25,8 @@ namespace Visualization {
         thinRibbThickness = .05;
     }
 
-    PDBAtom * CAlphaRenderer::addAtom(PDBAtom atom) {
+    void CAlphaRenderer::addAtom(PDBAtom atom) {
         atoms[atom.GetHashKey()] = atom;
-        return &atoms[atom.GetHashKey()];
     }
 
     void CAlphaRenderer::addBond(PDBBond bond) {

@@ -42,7 +42,7 @@ namespace Visualization {
             void transformAllAtomLocations(MatrixFloat transform);
 
             // Controlling the atom vector
-            PDBAtom * addAtom(PDBAtom atom);
+            void addAtom(PDBAtom atom);
             PDBAtom * getAtom(unsigned long long index);
             void deleteAtom(unsigned long long index);
             int getAtomCount();
