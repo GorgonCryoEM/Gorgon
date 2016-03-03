@@ -26,11 +26,6 @@ namespace Visualization {
 
     class CAlphaRenderer : public Volume {
         public:
-            struct Secel{
-                vector<unsigned long long> atomHashes;
-                bool selected;
-            };
-
             bool saveSSEHunterFile(string fileName);
             void updateTotalScoreSSEHunterAtoms(float correlationCoeff, float skeletonCoeff, float geometryCoeff);
             void unload();
