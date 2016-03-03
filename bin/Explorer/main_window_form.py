@@ -1,6 +1,7 @@
 from PyQt4 import QtCore, QtGui
 from camera import Camera
 from volume_viewer import VolumeViewer
+from skeleton_viewer import SkeletonViewer
 
 import sys, os
 
