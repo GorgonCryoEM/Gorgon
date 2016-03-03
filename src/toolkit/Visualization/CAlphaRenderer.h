@@ -34,7 +34,6 @@ namespace Visualization {
             CAlphaRenderer();
 
             bool saveSSEHunterFile(string fileName);
-    //          void GetSSEHunterAtoms(Volume * vol, NonManifoldMesh * skeleton, float resolution, float threshold, float correlationCoeff, float skeletonCoeff, float geometryCoeff);
             void updateTotalScoreSSEHunterAtoms(float correlationCoeff, float skeletonCoeff, float geometryCoeff);
             void unload();
             string getSupportedLoadFileFormats();
@@ -87,8 +86,6 @@ namespace Visualization {
             void createHelixAxesTangentsAndPoints(vector<Vec3F>& axes, vector<Vec3F>& tangents, vector<Vec3F>& interpPoints, vector<Vec3F> points,
                 Vec3F previous, Vec3F next, double HELIX_ALPHA, double HELIX_BETA, double HELIX_HERMITE_FACTOR);
             vector<Vec3F> interpolateLoopPoints(vector<Vec3F> points, Vec3F previous, Vec3F next, int NUM_SECTIONS); // creates interpolated points for loops
-            //vector<Vec3F> InterpolateStrandPoints(vector<Vec3F> points, Vec3F previous, Vec3F next, int NUM_SECTIONS);
-            //vector<Vec3F> InterpolateHelixPoints(vector<Vec3F> points, Vec3F previous, Vec3F next, int NUM_SECTIONS);
 
             void setHelixCorrs( vector < int > flatCorrespondences);
             void setFeatureVecs(vector<Vec3F> flatFeatureVecs);
