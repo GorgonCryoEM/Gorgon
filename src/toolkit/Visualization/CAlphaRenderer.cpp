@@ -78,50 +78,6 @@ namespace Visualization {
         sidechainBonds.push_back(bond);
     }
 
-    void CAlphaRenderer::LoadFile(string fileName) {
-        atoms.clear();
-        bonds.clear();
-        atoms = PDBReader::ReadAtomPositions(fileName);
-
-        // Keeping only C-Alpha atoms
-        vector<unsigned long long> eraseKeys;
-        eraseKeys.clear();
-
-        for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {
-            if(i->second.GetName().compare("CA") != 0) {
-                eraseKeys.push_back(i->first);
-            }
-        }
-
-        for(unsigned int i = 0; i < eraseKeys.size(); i++) {
-            atoms.erase(atoms.find(eraseKeys[i]));
-        }
-
-        eraseKeys.clear();
-
-        list<SerialAndHashType> sortedSerials;
-        SerialAndHashType elem;
-        for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {
-            elem.hashKey = i->first;
-            elem.serial = i->second.GetSerial();
-
-            sortedSerials.push_back(elem);
-        }
-        sortedSerials.sort(SerialAndHashTypePredicate());
-
-
-        list<SerialAndHashType>::iterator oldAtom = sortedSerials.begin();
-        list<SerialAndHashType>::iterator startAtom = sortedSerials.begin();
-
-        startAtom++;
-        for(list<SerialAndHashType>::iterator i = startAtom; i != sortedSerials.end(); i++) {
-            bonds.push_back(PDBBond(oldAtom->hashKey, i->hashKey, false));
-            oldAtom = i;
-        }
-        sortedSerials.clear();
-
-    }
-
     void CAlphaRenderer::LoadSSEHunterFile(string fileName) {
         atoms.clear();
         bonds.clear();
