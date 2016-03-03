@@ -15,10 +15,12 @@ class SkeletonViewer(BaseViewer):
         BaseViewer.__init__(self, main, parent)
         self.title = "Skeleton"
         self.shortTitle = "SKE"
+
+        self.renderer = MeshRenderer()
+        
         self.isClosedMesh = False
         self.twoWayLighting = True
         self.lineThickness = 3
-        self.renderer = MeshRenderer()
         self.renderer.setLineThickness(self.lineThickness)
         self.createUI()
         self.app.viewers["skeleton"] = self;
