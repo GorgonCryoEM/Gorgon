@@ -43,7 +43,7 @@ namespace Visualization {
 
             // Controlling the atom vector
             void addAtom(PDBAtom atom);
-            PDBAtom * getAtom(unsigned long long index);
+            PDBAtom getAtom(unsigned long long index);
             void deleteAtom(unsigned long long index);
             int getAtomCount();
             vector<unsigned long long> GetAtomHashes();

@@ -61,8 +61,8 @@ namespace Visualization {
     string CAlphaRenderer::getSupportedSaveFileFormats() {
         return "Atom Positions (*.atom)";
     }
-    PDBAtom * CAlphaRenderer::getAtom(unsigned long long index) {
-        return &atoms[index];
+    PDBAtom CAlphaRenderer::getAtom(unsigned long long index) {
+        return atoms[index];
     }
 
     PDBBond * CAlphaRenderer::getBond(int index) {
