@@ -83,10 +83,6 @@ namespace Visualization {
             }
     }
 
-    void MeshRenderer::load(const Volume & src) {
-        mesh = NonManifoldMesh(src);
-    }
-
     void MeshRenderer::performSmoothLaplacian(double convergenceRate, int iterations) {
         mesh = mesh.smoothLaplacian(convergenceRate, iterations);
     }
