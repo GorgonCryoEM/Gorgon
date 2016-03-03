@@ -49,8 +49,6 @@ namespace Visualization {
 
             //Controlling the bond vector
             void addBond(PDBBond bond);
-            PDBBond * getBond(int index);
-            int getBondIndex(unsigned long long atom0, unsigned long long atom1);
             void deleteBond(int index);
             int getBondCount();
 

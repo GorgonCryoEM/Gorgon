@@ -65,22 +65,8 @@ namespace Visualization {
         return atoms[index];
     }
 
-    PDBBond * CAlphaRenderer::getBond(int index) {
-        return &bonds[index];
-    }
-
     PDBBond * CAlphaRenderer::getSideChainBond(int index) {
         return &sidechainBonds[index];
-    }
-
-    int CAlphaRenderer::getBondIndex(unsigned long long atom0, unsigned long long atom1) {
-        for(unsigned int i = 0; i < bonds.size(); i++) {
-            if(((bonds[i].GetAtom0Ix() == atom0) && (bonds[i].GetAtom1Ix() == atom1)) ||
-                ((bonds[i].GetAtom0Ix() == atom1) && (bonds[i].GetAtom1Ix() == atom0))) {
-                    return i;
-            }
-        }
-        return -1;
     }
 
     int CAlphaRenderer::getSideChainBondIndex(unsigned long long atom0, unsigned long long atom1) {
