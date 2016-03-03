@@ -128,13 +128,6 @@ namespace Visualization {
         return intersectionPoints.size();
     }
 
-    string MeshRenderer::getSupportedLoadFileFormats() {
-        return "All Files (*.off *.mrc *.atom);;Volumes (*.mrc *.atom);;Meshes (*.off)";
-    }
-    string MeshRenderer::getSupportedSaveFileFormats() {
-        return "Meshes (*.off);;Volumes (*.mrc)";
-    }
-
     Vec3F MeshRenderer::get3DCoordinates(int subsceneIndex, int ix0, int ix1, int ix2, int ix3, int ix4) {
         Vec3F position = Vec3F(0, 0, 0);
         if((subsceneIndex >= 0) && (ix0 >= 0)) {

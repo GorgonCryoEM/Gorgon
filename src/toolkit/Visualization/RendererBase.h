@@ -35,8 +35,6 @@ namespace Visualization {
             virtual void selectionToggle(int subsceneIndex, bool forceTrue,
                                          int ix0, int ix1 = -1, int ix2 = -1,
                                          int ix3 = -1, int ix4 = -1);
-            virtual string getSupportedLoadFileFormats();
-            virtual string getSupportedSaveFileFormats();
             virtual Vec3F set3DCoordinates(int subsceneIndex, int ix0,
                                            int ix1 = -1, int ix2 = -1,
                                            int ix3 = -1, int ix4 = -1);

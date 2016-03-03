@@ -68,8 +68,6 @@ namespace Visualization {
 
             float getSurfaceValue() const;
             int getSampleInterval() const;
-            string getSupportedLoadFileFormats();
-            string getSupportedSaveFileFormats();
             void enableDraw(bool enable);
             virtual void draw(int subSceneIndex, bool selectEnabled);
             void load(string fileName);

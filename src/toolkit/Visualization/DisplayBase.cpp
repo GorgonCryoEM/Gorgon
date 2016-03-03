@@ -35,14 +35,6 @@ namespace Visualization {
         return sampleInterval;
     }
 
-    string DisplayBase::getSupportedLoadFileFormats() {
-        return "All Files (*.mrc *.ccp4 *.map *.raw *.pts);; Volumes (*.mrc *.ccp4 *.map *.raw);;Point Cloud (*.pts)";
-    }
-
-    string DisplayBase::getSupportedSaveFileFormats() {
-        return "Volumes (*.mrc *.ccp4 *.map *.raw);;Mathematica List (*.nb);;Bitmap Image set (*.bmp);;Structure Tensor Field (*.tns);;Surface Mesh(*.off)";
-    }
-
     void DisplayBase::enableDraw(bool enable) {
         if(drawEnabled != enable) {
             drawEnabled = enable;

@@ -35,8 +35,6 @@ namespace Visualization {
             void load(string fileName);
             void save(string fileName);
             void performSmoothLaplacian(double convergenceRate, int iterations);
-            string getSupportedLoadFileFormats();
-            string getSupportedSaveFileFormats();
             int intersectMeshAndSphere(Vec3F center, float radius);
             Vec3F getIntersectionPoint(int ix);
 

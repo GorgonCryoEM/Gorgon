@@ -92,14 +92,6 @@ void RendererBase::unload() {
     selected = false;
 }
 
-string RendererBase::getSupportedLoadFileFormats() {
-    return "All Files (*.*)";
-}
-
-string RendererBase::getSupportedSaveFileFormats() {
-    return "All Files (*.*)";
-}
-
 bool RendererBase::setCuttingPlane(float position,
                                float vecX, float vecY, float vecZ)
 {
