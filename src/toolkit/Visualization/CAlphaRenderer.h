@@ -78,17 +78,11 @@ namespace Visualization {
             vector < boost::tuple<int, int> > corrs;
             vector<int> selectedSSEHelices;
 
-            float thinRibbThickness;
-
             /* These three constants used in rendering alpha helices */
             float HELIX_ALPHA;
             float HELIX_BETA;
             float HELIX_HERMITE_FACTOR;
             float HELIX_WIDTH;
-
-            float STRAND_HERMITE_FACTOR;
-
-            float LOOP_RADIUS;
     };
 
 } /* namespace Visualization */

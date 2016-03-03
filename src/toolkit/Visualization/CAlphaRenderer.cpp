@@ -16,11 +16,6 @@ namespace Visualization {
         HELIX_ALPHA = 32.0 * PI/180.0;
         HELIX_BETA = -11.0 * PI/180.0; // these three values taken from molscript code
         HELIX_WIDTH = 4.0;
-
-        STRAND_HERMITE_FACTOR = .5;
-        LOOP_RADIUS = .25;
-
-        thinRibbThickness = .05;
     }
 
     void CAlphaRenderer::addAtom(PDBAtom atom) {
