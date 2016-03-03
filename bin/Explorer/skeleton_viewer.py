@@ -23,8 +23,6 @@ class SkeletonViewer(BaseViewer):
         self.lineThickness = 3
         self.renderer.setLineThickness(self.lineThickness)
 
-        self.app.viewers["skeleton"] = self;
-        self.volumeViewer = self.app.viewers["volume"]
         self.initVisualizationOptions(ModelVisualizationForm(self.app, self))
         self.visualizationOptions.ui.spinBoxThickness.setValue(self.lineThickness)
         self.visualizationOptions.ui.spinBoxThickness.setVisible(True)
