@@ -22,14 +22,11 @@ namespace Visualization {
             bool saveSSEHunterFile(string fileName);
             void updateTotalScoreSSEHunterAtoms(float correlationCoeff, float skeletonCoeff, float geometryCoeff);
 
-            // Controlling the atom vector
             void addAtom(PDBAtom atom);
-
             void setHelixCorrs( vector < int > flatCorrespondences);
 
         private:
             AtomMapType atoms;
-
             vector < pair<int, int> > corrs;
     };
 
