@@ -47,9 +47,6 @@ namespace Visualization {
             void deleteAtom(unsigned long long index);
             int getAtomCount();
 
-            bool cleanSecondaryStructures(); //empties the aHelices, bStrands and loops variables
-            //what should really happen is that the code should check if it is
-            //trying to reload the same one, and then if it did return false
             vector<Vec3F> createPointVector(PDBAtom first, PDBAtom last); // functionality mirrored in previously implemented method,
             // will try to refactor
             vector<Vec3F> laplacianSmoothing(vector<Vec3F> points, int steps); // applies Laplacian smoothing to a vector of
@@ -70,8 +67,6 @@ namespace Visualization {
 
             //TODO: possibly implement mouse picking using ray intersection
             vector<unsigned long long> atomHashKeys; //glLoadName(index of this vector)... used for selection
-
-            vector<Secel> aHelices;
 
             vector<int> selectedHelixIndices;
             //vector<int> selectedSecelIndices; //unsure if I can just keep track of secels as one structure or not

@@ -74,12 +74,6 @@ namespace Visualization {
         }
     }
 
-    bool CAlphaRenderer::cleanSecondaryStructures(){
-        aHelices.clear();
-
-        return true;
-    }
-
     void CAlphaRenderer::setHelixCorrs(  vector < int > flatCorrespondences){
         if(flatCorrespondences.size() %2 != 0)
             return;
