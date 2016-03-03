@@ -45,19 +45,6 @@ namespace Visualization {
             void deleteAtom(unsigned long long index);
             int getAtomCount();
 
-            vector<Vec3F> createPointVector(PDBAtom first, PDBAtom last); // functionality mirrored in previously implemented method,
-            // will try to refactor
-            vector<Vec3F> laplacianSmoothing(vector<Vec3F> points, int steps); // applies Laplacian smoothing to a vector of
-            // Vector3Floats
-            vector<Vec3F> createStrandNormals(vector<Vec3F> points, Vec3F previous, Vec3F next); // create line segment normals to be used in drawing Beta
-            // strands
-            void createHelixAxesTangentsAndPoints(vector<Vec3F>& axes,
-                                                  vector<Vec3F>& tangents,
-                                                  vector<Vec3F>& interpPoints,
-                                                  vector<Vec3F> points,
-                                                  Vec3F previous, Vec3F next,
-                                                  double HELIX_ALPHA,
-                                                  double HELIX_BETA, double HELIX_HERMITE_FACTOR);
             void setHelixCorrs( vector < int > flatCorrespondences);
 
         private:
