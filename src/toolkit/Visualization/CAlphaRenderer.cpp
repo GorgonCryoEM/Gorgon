@@ -29,10 +29,6 @@ namespace Visualization {
         atoms[atom.GetHashKey()] = atom;
     }
 
-    void CAlphaRenderer::addBond(PDBBond bond) {
-        bonds.push_back(bond);
-    }
-
     bool CAlphaRenderer::saveSSEHunterFile(string fileName) {
         return PDBReader::WriteAtomPositions(atoms, fileName);
     }
@@ -63,18 +59,6 @@ namespace Visualization {
 
     int CAlphaRenderer::getAtomCount() {
         return atoms.size();
-    }
-
-    int CAlphaRenderer::getBondCount() {
-        return bonds.size();
-    }
-
-    void CAlphaRenderer::deleteAtom(unsigned long long index) {
-        atoms.erase(atoms.find(index));
-    }
-
-    void CAlphaRenderer::deleteBond(int index) {
-        bonds.erase(bonds.begin() + index);
     }
 
     Vec3F CAlphaRenderer::get3DCoordinates(int subsceneIndex, int ix0, int ix1, int ix2, int ix3, int ix4) {

@@ -47,11 +47,6 @@ namespace Visualization {
             void deleteAtom(unsigned long long index);
             int getAtomCount();
 
-            //Controlling the bond vector
-            void addBond(PDBBond bond);
-            void deleteBond(int index);
-            int getBondCount();
-
             void setNumSegments(int segments);
             void setNumSlices(int slices);
 
