@@ -42,7 +42,6 @@ namespace Visualization {
             void addAtom(PDBAtom atom);
             PDBAtom getAtom(unsigned long long index);
             void deleteAtom(unsigned long long index);
-            int getAtomCount();
 
             void setHelixCorrs( vector < int > flatCorrespondences);
 

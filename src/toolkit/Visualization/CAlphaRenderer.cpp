@@ -41,10 +41,6 @@ namespace Visualization {
         return atoms[index];
     }
 
-    int CAlphaRenderer::getAtomCount() {
-        return atoms.size();
-    }
-
     Vec3F CAlphaRenderer::get3DCoordinates(int subsceneIndex, int ix0, int ix1, int ix2, int ix3, int ix4) {
         Vec3F position;
         switch(subsceneIndex) {
