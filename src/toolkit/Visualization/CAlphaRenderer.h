@@ -58,7 +58,6 @@ namespace Visualization {
 
             CAlphaRenderer();
 
-            void LoadSSEHunterFile(string fileName);
             bool SaveSSEHunterFile(string fileName);
     //          void GetSSEHunterAtoms(Volume * vol, NonManifoldMesh * skeleton, float resolution, float threshold, float correlationCoeff, float skeletonCoeff, float geometryCoeff);
             void UpdateTotalScoreSSEHunterAtoms(float correlationCoeff, float skeletonCoeff, float geometryCoeff);

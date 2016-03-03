@@ -78,44 +78,6 @@ namespace Visualization {
         sidechainBonds.push_back(bond);
     }
 
-    void CAlphaRenderer::LoadSSEHunterFile(string fileName) {
-        atoms.clear();
-        bonds.clear();
-        atoms = PDBReader::ReadAtomPositions(fileName);
-
-        float maxTempFactor = -10000.0f, minTempFactor = 10000.0f;
-        float tempFactor;
-
-        for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {
-            tempFactor = i->second.GetTempFactor();
-            if(tempFactor > maxTempFactor) {
-                maxTempFactor = tempFactor;
-            }
-            if(tempFactor < minTempFactor) {
-                minTempFactor = tempFactor;
-            }
-        }
-        float r, g, b;
-
-        for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {
-            i->second.SetAtomRadius(3.0);
-            tempFactor = i->second.GetTempFactor();
-            if(tempFactor < 0) {
-                tempFactor = (tempFactor / minTempFactor);
-                r = 1.0f - tempFactor;
-                g = 1.0f - tempFactor;
-                b = 1.0f;
-            } else {
-                tempFactor = (tempFactor / maxTempFactor);
-                r = 1.0f;
-                g = 1.0f - tempFactor;
-                b = 1.0f - tempFactor;
-            }
-
-            i->second.SetColor(r, g, b, 1.0f);
-        }
-
-    }
     bool CAlphaRenderer::SaveSSEHunterFile(string fileName) {
         return PDBReader::WriteAtomPositions(atoms, fileName);
     }
