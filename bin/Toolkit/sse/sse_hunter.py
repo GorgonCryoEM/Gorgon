@@ -39,10 +39,10 @@ class pySSEHunter(object):
         self.logger.debug(colored("after skeleton.getMesh(): self.skeleton.getSize(): %d" % self.skeleton.getSize(), "cyan"))
 
         '''
-        Output, CAlphaRenderer
+        Output, CAlpha
         '''
         self.output = output
-        self.calphaRenderer = CAlphaRenderer()
+        self.calpha = CAlpha()
         
         '''
         SSEHunterEngine
@@ -56,7 +56,7 @@ class pySSEHunter(object):
         self.savePseudoatoms()
 
     def savePseudoatoms(self):
-        self.calphaRenderer.saveSSEHunterFile(self.output)
+        self.calpha.saveSSEHunterFile(self.output)
     
     def run(self):
         self.logger.debug(self.volume)
@@ -74,7 +74,7 @@ class pySSEHunter(object):
         patoms = self.getScoredAtoms(correlationWeight, skeletonWeight, geometryWeight)
         
         for pseudoatom in patoms:
-            self.calphaRenderer.addAtom(pseudoatom)
+            self.calpha.addAtom(pseudoatom)
 
     def getScoredAtoms(self, correlationWeight, skeletonWeight, geometryWeight):
         self.createPseudoAtoms()
