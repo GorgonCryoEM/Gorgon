@@ -12,7 +12,7 @@ class MainWindowForm(QtGui.QMainWindow):
         super(MainWindowForm, self).__init__()
 
         self.volumeViewer = VolumeViewer(self)
-        self.skeletonViewer = VolumeViewer(self)
+        self.skeletonViewer = SkeletonViewer(self)
 
         self.mainCamera = Camera([self.volumeViewer, self.skeletonViewer], self)
         self.setCentralWidget(self.mainCamera)
