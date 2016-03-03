@@ -37,9 +37,6 @@ namespace Visualization {
     string CAlphaRenderer::getSupportedSaveFileFormats() {
         return "Atom Positions (*.atom)";
     }
-    PDBAtom CAlphaRenderer::getAtom(unsigned long long index) {
-        return atoms[index];
-    }
 
     Vec3F CAlphaRenderer::get3DCoordinates(int subsceneIndex, int ix0, int ix1, int ix2, int ix3, int ix4) {
         Vec3F position;
