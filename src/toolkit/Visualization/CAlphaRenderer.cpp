@@ -11,13 +11,6 @@
 
 namespace Visualization {
 
-    CAlphaRenderer::CAlphaRenderer() {
-        HELIX_HERMITE_FACTOR = 4.7;
-        HELIX_ALPHA = 32.0 * PI/180.0;
-        HELIX_BETA = -11.0 * PI/180.0; // these three values taken from molscript code
-        HELIX_WIDTH = 4.0;
-    }
-
     void CAlphaRenderer::addAtom(PDBAtom atom) {
         atoms[atom.GetHashKey()] = atom;
     }

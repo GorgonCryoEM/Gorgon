@@ -31,8 +31,6 @@ namespace Visualization {
                 bool selected;
             };
 
-            CAlphaRenderer();
-
             bool saveSSEHunterFile(string fileName);
             void updateTotalScoreSSEHunterAtoms(float correlationCoeff, float skeletonCoeff, float geometryCoeff);
             void unload();
@@ -70,12 +68,6 @@ namespace Visualization {
 
             vector < boost::tuple<int, int> > corrs;
             vector<int> selectedSSEHelices;
-
-            /* These three constants used in rendering alpha helices */
-            float HELIX_ALPHA;
-            float HELIX_BETA;
-            float HELIX_HERMITE_FACTOR;
-            float HELIX_WIDTH;
     };
 
 } /* namespace Visualization */
