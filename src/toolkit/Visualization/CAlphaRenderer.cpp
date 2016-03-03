@@ -61,12 +61,6 @@ namespace Visualization {
         return position;
     }
 
-    void CAlphaRenderer::transformAllAtomLocations(MatrixFloat transform) {
-        for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {
-            i->second.Transform(transform);
-        }
-    }
-
     void CAlphaRenderer::setHelixCorrs(  vector < int > flatCorrespondences){
         if(flatCorrespondences.size() %2 != 0)
             return;
