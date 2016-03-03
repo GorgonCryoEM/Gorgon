@@ -23,17 +23,6 @@ using namespace SkeletonMaker;
 namespace Visualization {
 
     typedef map<unsigned long long, PDBAtom> AtomMapType;
-    struct SerialAndHashType {
-        unsigned int serial;
-        unsigned long long hashKey;
-    };
-
-    class SerialAndHashTypePredicate {
-    public:
-        bool operator() (const SerialAndHashType& lhs, const SerialAndHashType& rhs) {
-            return lhs.serial < rhs.serial;
-        }
-    };
 
     /**
     Begin Hermite Curve code, to be moved into another file after testing
