@@ -47,9 +47,6 @@ namespace Visualization {
             void deleteAtom(unsigned long long index);
             int getAtomCount();
 
-            void setNumSegments(int segments);
-            void setNumSlices(int slices);
-
             bool cleanSecondaryStructures(); //empties the aHelices, bStrands and loops variables
             //what should really happen is that the code should check if it is
             //trying to reload the same one, and then if it did return false
@@ -66,8 +63,6 @@ namespace Visualization {
                                                   Vec3F previous, Vec3F next,
                                                   double HELIX_ALPHA,
                                                   double HELIX_BETA, double HELIX_HERMITE_FACTOR);
-            vector<Vec3F> interpolateLoopPoints(vector<Vec3F> points, Vec3F previous, Vec3F next, int NUM_SECTIONS); // creates interpolated points for loops
-
             void setHelixCorrs( vector < int > flatCorrespondences);
 
         private:
@@ -76,25 +71,14 @@ namespace Visualization {
             //TODO: possibly implement mouse picking using ray intersection
             vector<unsigned long long> atomHashKeys; //glLoadName(index of this vector)... used for selection
 
-            vector<PDBBond> bonds;
-            vector<PDBBond> sidechainBonds;
-
             vector<Secel> aHelices;
-            vector<Secel> bStrands;
-            vector<Secel> loops;
 
             vector<int> selectedHelixIndices;
             //vector<int> selectedSecelIndices; //unsure if I can just keep track of secels as one structure or not
-            vector<int> selectedStrandIndices;
-            vector<int> selectedLoopIndices;
             vector < boost::tuple<int, int> > corrs;
             vector<int> selectedSSEHelices;
-            vector< boost::tuple<Vec3F, Vec3F> > featureVecs;
 
             float thinRibbThickness;
-
-            int NUM_SEGMENTS;
-            int NUM_SLICES;
 
             /* These three constants used in rendering alpha helices */
             float HELIX_ALPHA;

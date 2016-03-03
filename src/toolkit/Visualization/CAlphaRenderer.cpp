@@ -12,8 +12,6 @@
 namespace Visualization {
 
     CAlphaRenderer::CAlphaRenderer() {
-        NUM_SEGMENTS = 10;
-        NUM_SLICES = 10;
         HELIX_HERMITE_FACTOR = 4.7;
         HELIX_ALPHA = 32.0 * PI/180.0;
         HELIX_BETA = -11.0 * PI/180.0; // these three values taken from molscript code
@@ -42,8 +40,6 @@ namespace Visualization {
 
     void CAlphaRenderer::unload() {
         atoms.clear();
-        bonds.clear();
-        sidechainBonds.clear();
     }
 
     string CAlphaRenderer::getSupportedLoadFileFormats() {
@@ -70,11 +66,6 @@ namespace Visualization {
                     position = a->GetPosition();
                 }
                 break;
-            case(1):
-                if((ix0 >= 0) && (ix0 <= (int)bonds.size())) {
-                    position = (atoms[bonds[ix0].GetAtom0Ix()].GetPosition() + atoms[bonds[ix0].GetAtom1Ix()].GetPosition()) * 0.5;
-                }
-                break;
             default:
                 position = Vec3F(0,0,0);
                 break;
@@ -90,8 +81,7 @@ namespace Visualization {
 
     bool CAlphaRenderer::cleanSecondaryStructures(){
         aHelices.clear();
-        bStrands.clear();
-        loops.clear();
+
         return true;
     }
 
@@ -227,52 +217,5 @@ namespace Visualization {
         }
     }
 
-    vector<Vec3F> CAlphaRenderer::interpolateLoopPoints(std::vector<Vec3F> points, Vec3F previous, Vec3F next, int NUM_SECTIONS){
-        HermiteCurve curve;
-        Vec3F m0, m1;
-        vector<Vec3F> pointstemp(points);
-        bool LAPLACIAN_SMOOTHING = true;
-        int SMOOTHING_STEPS = 1;
-        double HERMITE_FACTOR = 0.5;
-        int LOOP_SLICES = 10;
-        if(LAPLACIAN_SMOOTHING){
-            pointstemp = laplacianSmoothing(points, SMOOTHING_STEPS);
-        }
-
-        vector<Vec3F> interpolatedPoints((pointstemp.size()-1)*(NUM_SEGMENTS));
-
-        for(unsigned int i = 0; i < points.size()-1; ++i){
-            if(i == 0){
-                m0 = pointstemp[i+1] - previous;
-            } else {
-                m0 = pointstemp[i+1] - pointstemp[i-1];
-                m0 = m0*HERMITE_FACTOR;
-            }
-
-            if(i + 2 > pointstemp.size() - 1){
-                m1 = next - pointstemp[i];
-            } else {
-                m1 = pointstemp[i+2] - pointstemp[i];
-                m1 = m1*HERMITE_FACTOR;
-            }
-
-            curve.setCurve(pointstemp[i], pointstemp[i+1], m0, m1);
-            interpolatedPoints[i*(NUM_SEGMENTS)] = pointstemp[i];
-            for (int sect = 1; sect < NUM_SEGMENTS; ++sect){
-                double tsect = ((double)sect)/((double)NUM_SEGMENTS);
-                interpolatedPoints[i*(NUM_SEGMENTS) + sect] = curve.getPos(tsect);
-            }
-        }
-        interpolatedPoints[interpolatedPoints.size()-1] = points[points.size() -1];
-        return interpolatedPoints;
-    }
-
-    void CAlphaRenderer::setNumSegments(int segments){
-        NUM_SEGMENTS = segments;
-    }
-
-    void CAlphaRenderer::setNumSlices(int slices){
-        NUM_SLICES = slices;
-    }
 
 } /* namespace Visualization */
