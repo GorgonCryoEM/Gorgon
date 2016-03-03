@@ -28,15 +28,15 @@ class pySSEHunter(object):
         self.logger.debug(self.volume)
         self.logger.debug("self.volume.getSize(): %d" % self.volume.getSize())
         self.logger.debug(self.skeleton)
-        self.logger.debug("after MeshRenderer(): self.skeleton.getSize(): %d" % self.skeleton.getSize())
+#         self.logger.debug("after MeshRenderer(): self.skeleton.getSize(): %d" % self.skeleton.getSize())
         
         self.skeleton.loadFile(skeleton)
         self.logger.debug(self.skeleton)
-        self.logger.debug(colored("after loadFile(skeleton): self.skeleton.getSize(): %d" % self.skeleton.getSize(), "yellow"))
+#         self.logger.debug(colored("after loadFile(skeleton): self.skeleton.getSize(): %d" % self.skeleton.getSize(), "yellow"))
 
         self.skeleton = self.skeleton.getMesh()
         self.logger.debug(self.skeleton)
-        self.logger.debug(colored("after skeleton.getMesh(): self.skeleton.getSize(): %d" % self.skeleton.getSize(), "cyan"))
+#         self.logger.debug(colored("after skeleton.getMesh(): self.skeleton.getSize(): %d" % self.skeleton.getSize(), "cyan"))
 
         '''
         Output, CAlpha
