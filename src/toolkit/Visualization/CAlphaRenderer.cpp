@@ -31,7 +31,7 @@ namespace Visualization {
         else
             corrs.clear();
         for(int i=0; i < flatCorrespondences.size(); i = i+2){
-            corrs.push_back(boost::tuple<int, int>(flatCorrespondences[i], flatCorrespondences[i+1]));
+            corrs.push_back(make_pair(flatCorrespondences[i], flatCorrespondences[i+1]));
         }
     }
 

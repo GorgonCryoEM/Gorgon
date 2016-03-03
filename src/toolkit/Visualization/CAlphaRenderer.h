@@ -15,8 +15,6 @@
 #include <string>
 #include <map>
 
-#include <boost/tuple/tuple.hpp>
-
 using namespace SkeletonMaker;
 
 
@@ -37,7 +35,7 @@ namespace Visualization {
         private:
             AtomMapType atoms;
 
-            vector < boost::tuple<int, int> > corrs;
+            vector < pair<int, int> > corrs;
     };
 
 } /* namespace Visualization */
