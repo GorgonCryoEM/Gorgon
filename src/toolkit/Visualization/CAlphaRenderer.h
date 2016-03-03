@@ -52,13 +52,6 @@ namespace Visualization {
             void deleteBond(int index);
             int getBondCount();
 
-            //Controlling the bond vector
-            void addSideChainBond(PDBBond bond);
-            PDBBond * getSideChainBond(int index);
-            int getSideChainBondIndex(unsigned long long atom0, unsigned long long atom1);
-            void deleteSideChainBond(int index);
-            int getSideChainBondCount();
-
             void setNumSegments(int segments);
             void setNumSlices(int slices);
 

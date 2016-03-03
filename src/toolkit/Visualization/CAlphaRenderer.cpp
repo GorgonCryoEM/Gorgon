@@ -33,10 +33,6 @@ namespace Visualization {
         bonds.push_back(bond);
     }
 
-    void CAlphaRenderer::addSideChainBond(PDBBond bond) {
-        sidechainBonds.push_back(bond);
-    }
-
     bool CAlphaRenderer::saveSSEHunterFile(string fileName) {
         return PDBReader::WriteAtomPositions(atoms, fileName);
     }
@@ -65,20 +61,6 @@ namespace Visualization {
         return atoms[index];
     }
 
-    PDBBond * CAlphaRenderer::getSideChainBond(int index) {
-        return &sidechainBonds[index];
-    }
-
-    int CAlphaRenderer::getSideChainBondIndex(unsigned long long atom0, unsigned long long atom1) {
-        for(unsigned int i = 0; i < sidechainBonds.size(); i++) {
-            if(((sidechainBonds[i].GetAtom0Ix() == atom0) && (sidechainBonds[i].GetAtom1Ix() == atom1)) ||
-                ((sidechainBonds[i].GetAtom0Ix() == atom1) && (sidechainBonds[i].GetAtom1Ix() == atom0))) {
-                    return i;
-            }
-        }
-        return -1;
-    }
-
     int CAlphaRenderer::getAtomCount() {
         return atoms.size();
     }
@@ -87,20 +69,12 @@ namespace Visualization {
         return bonds.size();
     }
 
-    int CAlphaRenderer::getSideChainBondCount() {
-        return sidechainBonds.size();
-    }
-
     void CAlphaRenderer::deleteAtom(unsigned long long index) {
         atoms.erase(atoms.find(index));
     }
 
     void CAlphaRenderer::deleteBond(int index) {
         bonds.erase(bonds.begin() + index);
-    }
-
-    void CAlphaRenderer::deleteSideChainBond(int index) {
-        sidechainBonds.erase(sidechainBonds.begin() + index);
     }
 
     Vec3F CAlphaRenderer::get3DCoordinates(int subsceneIndex, int ix0, int ix1, int ix2, int ix3, int ix4) {
