@@ -7,11 +7,11 @@
 #include "Matcher2Helix.h"
 #include "ProteinMorph/SecStruct.h"
 #include "Shape.h"
-//#include <Core/volume.h>
+#include <Core/volume.h>
 //#include <MathTools/Vector3.h>
 //#include <Core/volume.h>
 //using namespace std;
-//using namespace SkeletonMaker;
+using namespace SkeletonMaker;
 
 namespace GraphMatch {
 
