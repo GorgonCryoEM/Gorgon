@@ -65,16 +65,16 @@ namespace Visualization {
         thinRibbThickness = .05;
     }
 
-    PDBAtom * CAlphaRenderer::AddAtom(PDBAtom atom) {
+    PDBAtom * CAlphaRenderer::addAtom(PDBAtom atom) {
         atoms[atom.GetHashKey()] = atom;
         return &atoms[atom.GetHashKey()];
     }
 
-    void CAlphaRenderer::AddBond(PDBBond bond) {
+    void CAlphaRenderer::addBond(PDBBond bond) {
         bonds.push_back(bond);
     }
 
-    void CAlphaRenderer::AddSideChainBond(PDBBond bond) {
+    void CAlphaRenderer::addSideChainBond(PDBBond bond) {
         sidechainBonds.push_back(bond);
     }
 
@@ -82,35 +82,35 @@ namespace Visualization {
         return PDBReader::WriteAtomPositions(atoms, fileName);
     }
 
-    void CAlphaRenderer::UpdateTotalScoreSSEHunterAtoms(float correlationCoeff, float skeletonCoeff, float geometryCoeff) {
+    void CAlphaRenderer::updateTotalScoreSSEHunterAtoms(float correlationCoeff, float skeletonCoeff, float geometryCoeff) {
         for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {
             i->second.SetTempFactor( i->second.GetTotalScore(correlationCoeff, skeletonCoeff, geometryCoeff) );
         }
     }
 
 
-    void CAlphaRenderer::Unload() {
+    void CAlphaRenderer::unload() {
         atoms.clear();
         bonds.clear();
         sidechainBonds.clear();
     }
 
-    string CAlphaRenderer::GetSupportedLoadFileFormats() {
+    string CAlphaRenderer::getSupportedLoadFileFormats() {
         return "Atom Positions (*.pdb)";
     }
 
-    string CAlphaRenderer::GetSupportedSaveFileFormats() {
+    string CAlphaRenderer::getSupportedSaveFileFormats() {
         return "Atom Positions (*.atom)";
     }
-    PDBAtom * CAlphaRenderer::GetAtom(unsigned long long index) {
+    PDBAtom * CAlphaRenderer::getAtom(unsigned long long index) {
         return &atoms[index];
     }
 
-    PDBBond * CAlphaRenderer::GetBond(int index) {
+    PDBBond * CAlphaRenderer::getBond(int index) {
         return &bonds[index];
     }
 
-    PDBBond * CAlphaRenderer::GetSideChainBond(int index) {
+    PDBBond * CAlphaRenderer::getSideChainBond(int index) {
         return &sidechainBonds[index];
     }
 
@@ -122,7 +122,7 @@ namespace Visualization {
         return atomHashes;
     }
 
-    int CAlphaRenderer::GetBondIndex(unsigned long long atom0, unsigned long long atom1) {
+    int CAlphaRenderer::getBondIndex(unsigned long long atom0, unsigned long long atom1) {
         for(unsigned int i = 0; i < bonds.size(); i++) {
             if(((bonds[i].GetAtom0Ix() == atom0) && (bonds[i].GetAtom1Ix() == atom1)) ||
                 ((bonds[i].GetAtom0Ix() == atom1) && (bonds[i].GetAtom1Ix() == atom0))) {
@@ -132,7 +132,7 @@ namespace Visualization {
         return -1;
     }
 
-    int CAlphaRenderer::GetSideChainBondIndex(unsigned long long atom0, unsigned long long atom1) {
+    int CAlphaRenderer::getSideChainBondIndex(unsigned long long atom0, unsigned long long atom1) {
         for(unsigned int i = 0; i < sidechainBonds.size(); i++) {
             if(((sidechainBonds[i].GetAtom0Ix() == atom0) && (sidechainBonds[i].GetAtom1Ix() == atom1)) ||
                 ((sidechainBonds[i].GetAtom0Ix() == atom1) && (sidechainBonds[i].GetAtom1Ix() == atom0))) {
@@ -142,31 +142,31 @@ namespace Visualization {
         return -1;
     }
 
-    int CAlphaRenderer::GetAtomCount() {
+    int CAlphaRenderer::getAtomCount() {
         return atoms.size();
     }
 
-    int CAlphaRenderer::GetBondCount() {
+    int CAlphaRenderer::getBondCount() {
         return bonds.size();
     }
 
-    int CAlphaRenderer::GetSideChainBondCount() {
+    int CAlphaRenderer::getSideChainBondCount() {
         return sidechainBonds.size();
     }
 
-    void CAlphaRenderer::DeleteAtom(unsigned long long index) {
+    void CAlphaRenderer::deleteAtom(unsigned long long index) {
         atoms.erase(atoms.find(index));
     }
 
-    void CAlphaRenderer::DeleteBond(int index) {
+    void CAlphaRenderer::deleteBond(int index) {
         bonds.erase(bonds.begin() + index);
     }
 
-    void CAlphaRenderer::DeleteSideChainBond(int index) {
+    void CAlphaRenderer::deleteSideChainBond(int index) {
         sidechainBonds.erase(sidechainBonds.begin() + index);
     }
 
-    Vec3F CAlphaRenderer::Get3DCoordinates(int subsceneIndex, int ix0, int ix1, int ix2, int ix3, int ix4) {
+    Vec3F CAlphaRenderer::get3DCoordinates(int subsceneIndex, int ix0, int ix1, int ix2, int ix3, int ix4) {
         Vec3F position;
         switch(subsceneIndex) {
             case(0):
@@ -187,47 +187,47 @@ namespace Visualization {
         return position;
     }
 
-    void CAlphaRenderer::TransformAllAtomLocations(MatrixFloat transform) {
+    void CAlphaRenderer::transformAllAtomLocations(MatrixFloat transform) {
         for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {
             i->second.Transform(transform);
         }
     }
 
-    int CAlphaRenderer::StartHelix() {
+    int CAlphaRenderer::startHelix() {
         aHelices.push_back(Secel());
         return aHelices.size() - 1;
     }
 
-    void CAlphaRenderer::AddHelixElement(int index, unsigned long long hashKey){
+    void CAlphaRenderer::addHelixElement(int index, unsigned long long hashKey){
         aHelices[index].atomHashes.push_back(hashKey);
     }
 
-    int CAlphaRenderer::StartStrand() {
+    int CAlphaRenderer::startStrand() {
         bStrands.push_back(Secel());
         return bStrands.size() - 1;
     }
 
-    void CAlphaRenderer::AddStrandElement(int index, unsigned long long hashKey){
+    void CAlphaRenderer::addStrandElement(int index, unsigned long long hashKey){
         bStrands[index].atomHashes.push_back(hashKey);
     }
 
-    int CAlphaRenderer::StartLoop() {
+    int CAlphaRenderer::startLoop() {
         loops.push_back(Secel());
         return loops.size() - 1;
     }
 
-    void CAlphaRenderer::AddLoopElement(int index, unsigned long long hashKey){
+    void CAlphaRenderer::addLoopElement(int index, unsigned long long hashKey){
         loops[index].atomHashes.push_back(hashKey);
     }
 
-    bool CAlphaRenderer::CleanSecondaryStructures(){
+    bool CAlphaRenderer::cleanSecondaryStructures(){
         aHelices.clear();
         bStrands.clear();
         loops.clear();
         return true;
     }
 
-    void CAlphaRenderer::SetHelixCorrs(  vector < int > flatCorrespondences){
+    void CAlphaRenderer::setHelixCorrs(  vector < int > flatCorrespondences){
         if(flatCorrespondences.size() %2 != 0)
             return;
         else
@@ -237,7 +237,7 @@ namespace Visualization {
         }
     }
 
-    void CAlphaRenderer::SetFeatureVecs(vector<Vec3F> flatFeatureVecs){
+    void CAlphaRenderer::setFeatureVecs(vector<Vec3F> flatFeatureVecs){
         if(flatFeatureVecs.size() %2 != 0)
             return;
         else
@@ -252,7 +252,7 @@ namespace Visualization {
     // starting with start and ending with end; it does not error check, so incorrectly
     // ordered points will break this method.  there are more efficient ways to handle this
     // functionality, but this seems simple and flexible enough
-    vector<Vec3F> CAlphaRenderer::CreatePointVector(PDBAtom start, PDBAtom end){
+    vector<Vec3F> CAlphaRenderer::createPointVector(PDBAtom start, PDBAtom end){
         vector<Vec3F> points;
 
         PDBAtom current = start;
@@ -271,7 +271,7 @@ namespace Visualization {
     // implementation of Laplacian smoothing for a vector of Vector3Floats (treats them like points)
     // creating copies of "points" twice seems unnecessary, but I am unsure about the performance cost,
     // so I am leaving it for simplicity of implementation
-    vector<Vec3F> CAlphaRenderer::LaplacianSmoothing(vector<Vec3F> points, int steps){
+    vector<Vec3F> CAlphaRenderer::laplacianSmoothing(vector<Vec3F> points, int steps){
         vector<Vec3F> pointsTemp(points);
         vector<Vec3F> smoothedPoints(points);
 
@@ -286,7 +286,7 @@ namespace Visualization {
     }
 
     // unsure of what behavior should be if points.size() < 3; in molscript the strand is skipped in this case
-    vector<Vec3F> CAlphaRenderer::CreateStrandNormals(vector<Vec3F> points, Vec3F previous, Vec3F next){
+    vector<Vec3F> CAlphaRenderer::createStrandNormals(vector<Vec3F> points, Vec3F previous, Vec3F next){
         vector<Vec3F> normals(points);
         int ptsSize = points.size();
 
@@ -341,7 +341,7 @@ namespace Visualization {
         return smoothedNormals;
     }
 
-    void CAlphaRenderer::CreateHelixAxesTangentsAndPoints(vector<Vec3F>& axes, vector<Vec3F>& tangents, vector<Vec3F>& interpPoints, std::vector<Vec3F> points, Vec3F previous, Vec3F next, double HELIX_ALPHA, double HELIX_BETA, double HELIX_HERMITE_FACTOR){
+    void CAlphaRenderer::createHelixAxesTangentsAndPoints(vector<Vec3F>& axes, vector<Vec3F>& tangents, vector<Vec3F>& interpPoints, std::vector<Vec3F> points, Vec3F previous, Vec3F next, double HELIX_ALPHA, double HELIX_BETA, double HELIX_HERMITE_FACTOR){
         if(points.size() > 2){
 
             for(int i = 0; i < points.size() - 1; ++i){
@@ -370,7 +370,7 @@ namespace Visualization {
         }
     }
 
-    vector<Vec3F> CAlphaRenderer::InterpolateLoopPoints(std::vector<Vec3F> points, Vec3F previous, Vec3F next, int NUM_SECTIONS){
+    vector<Vec3F> CAlphaRenderer::interpolateLoopPoints(std::vector<Vec3F> points, Vec3F previous, Vec3F next, int NUM_SECTIONS){
         HermiteCurve curve;
         Vec3F m0, m1;
         vector<Vec3F> pointstemp(points);
@@ -379,7 +379,7 @@ namespace Visualization {
         double HERMITE_FACTOR = 0.5;
         int LOOP_SLICES = 10;
         if(LAPLACIAN_SMOOTHING){
-            pointstemp = LaplacianSmoothing(points, SMOOTHING_STEPS);
+            pointstemp = laplacianSmoothing(points, SMOOTHING_STEPS);
         }
 
         vector<Vec3F> interpolatedPoints((pointstemp.size()-1)*(NUM_SEGMENTS));
@@ -410,11 +410,11 @@ namespace Visualization {
         return interpolatedPoints;
     }
 
-    void CAlphaRenderer::SetNumSegments(int segments){
+    void CAlphaRenderer::setNumSegments(int segments){
         NUM_SEGMENTS = segments;
     }
 
-    void CAlphaRenderer::SetNumSlices(int slices){
+    void CAlphaRenderer::setNumSlices(int slices){
         NUM_SLICES = slices;
     }
 
