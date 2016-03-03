@@ -40,29 +40,6 @@ class SkeletonViewer(BaseViewer):
         self.visualizationOptions.ui.checkBoxModel3Visible.setVisible(True)
         self.visualizationOptions.ui.pushButtonModel3Color.setVisible(True)
     
-    def createUI(self):
-        self.createChildWindows()
-        self.updateActionsAndMenus()
-                  
-    def createChildWindows(self):
-        self.optionsWindow = SkeletonLaplacianSmoothingForm(self.app, self, self)
-        
-    def updateActionsAndMenus(self):
-        if(self.viewerAutonomous):
-            self.app.actions.getAction("load_Skeleton").setEnabled(True)
-            self.app.actions.getAction("save_Skeleton").setEnabled(self.loaded)
-            self.app.actions.getAction("unload_Skeleton").setEnabled(self.loaded)
-            self.app.menus.getMenu("actions-skeleton").setEnabled(True)
-        
-    def updateViewerAutonomy(self, autonomous):
-        if(not autonomous):
-            self.app.actions.getAction("load_Skeleton").setEnabled(autonomous)
-            self.app.actions.getAction("save_Skeleton").setEnabled(autonomous)
-            self.app.actions.getAction("unload_Skeleton").setEnabled(autonomous)
-            self.app.menus.getMenu("actions-skeleton").setEnabled(autonomous)
-        else:
-            self.updateActionsAndMenus()
-                   
     def loadVolume(self, volume):
         if(self.loaded):
             self.unloadData
