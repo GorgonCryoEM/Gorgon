@@ -15,10 +15,6 @@ class SkeletonViewer(BaseViewer):
         BaseViewer.__init__(self, main, parent)
         self.title = "Skeleton"
         self.shortTitle = "SKE"
-        self.app.themes.addDefaultRGB("Skeleton:Model:0", 180, 0, 0, 255)
-        self.app.themes.addDefaultRGB("Skeleton:Model:1", 200, 150, 0, 255)
-        self.app.themes.addDefaultRGB("Skeleton:Model:2", 0, 0, 0, 255)
-        self.app.themes.addDefaultRGB("Skeleton:BoundingBox", 255, 255, 255, 255)
         self.isClosedMesh = False
         self.twoWayLighting = True
         self.lineThickness = 3
