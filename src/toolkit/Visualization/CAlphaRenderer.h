@@ -29,9 +29,6 @@ namespace Visualization {
             bool saveSSEHunterFile(string fileName);
             void updateTotalScoreSSEHunterAtoms(float correlationCoeff, float skeletonCoeff, float geometryCoeff);
             void unload();
-            string getSupportedLoadFileFormats();
-            string getSupportedSaveFileFormats();
-            Vec3F get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
 
             // Controlling the atom vector
             void addAtom(PDBAtom atom);
