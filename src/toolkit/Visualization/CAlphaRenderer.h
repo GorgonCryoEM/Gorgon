@@ -68,8 +68,6 @@ namespace Visualization {
             //TODO: possibly implement mouse picking using ray intersection
             vector<unsigned long long> atomHashKeys; //glLoadName(index of this vector)... used for selection
 
-            vector<int> selectedHelixIndices;
-            //vector<int> selectedSecelIndices; //unsure if I can just keep track of secels as one structure or not
             vector < boost::tuple<int, int> > corrs;
             vector<int> selectedSSEHelices;
 
