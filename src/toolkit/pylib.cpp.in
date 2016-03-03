@@ -161,7 +161,7 @@ BOOST_PYTHON_MODULE(@current_pylib@)
   
   void (MeshRenderer::*load)(string fileName) = &MeshRenderer::load;
   
-  class_< MeshRenderer, bases<Volume> >("MeshRenderer", init<>())
+  class_< MeshRenderer >("MeshRenderer", init<>())
       .def("draw", &MeshRenderer::draw)
 //      .def("drawBoundingBox", &MeshRenderer::DrawBoundingBox)
       .def("loadFile", load)
