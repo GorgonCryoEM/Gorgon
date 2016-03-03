@@ -104,33 +104,6 @@ namespace Visualization {
         }
     }
 
-    int CAlphaRenderer::startHelix() {
-        aHelices.push_back(Secel());
-        return aHelices.size() - 1;
-    }
-
-    void CAlphaRenderer::addHelixElement(int index, unsigned long long hashKey){
-        aHelices[index].atomHashes.push_back(hashKey);
-    }
-
-    int CAlphaRenderer::startStrand() {
-        bStrands.push_back(Secel());
-        return bStrands.size() - 1;
-    }
-
-    void CAlphaRenderer::addStrandElement(int index, unsigned long long hashKey){
-        bStrands[index].atomHashes.push_back(hashKey);
-    }
-
-    int CAlphaRenderer::startLoop() {
-        loops.push_back(Secel());
-        return loops.size() - 1;
-    }
-
-    void CAlphaRenderer::addLoopElement(int index, unsigned long long hashKey){
-        loops[index].atomHashes.push_back(hashKey);
-    }
-
     bool CAlphaRenderer::cleanSecondaryStructures(){
         aHelices.clear();
         bStrands.clear();

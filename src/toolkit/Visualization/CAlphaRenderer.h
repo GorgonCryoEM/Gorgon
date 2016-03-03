@@ -55,15 +55,6 @@ namespace Visualization {
             void setNumSegments(int segments);
             void setNumSlices(int slices);
 
-            int startHelix(); //StartHelix creates a new helix element in aHelices and returns its index
-            void addHelixElement(int, unsigned long long); //adds a helix element to the helix indexed at param 1
-
-            int startStrand(); //StartStrand creates a new strand element in bStrands and returns its index
-            void addStrandElement(int, unsigned long long); //adds a strand element to the strand indexed at param 1
-
-            int startLoop(); //StartLoop creates a new strand element in loops and returns its index
-            void addLoopElement(int, unsigned long long); //adds a loop element to the loop indexed at param 1
-
             bool cleanSecondaryStructures(); //empties the aHelices, bStrands and loops variables
             //what should really happen is that the code should check if it is
             //trying to reload the same one, and then if it did return false
