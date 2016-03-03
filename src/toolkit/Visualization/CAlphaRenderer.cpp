@@ -25,11 +25,6 @@ namespace Visualization {
         }
     }
 
-
-    void CAlphaRenderer::unload() {
-        atoms.clear();
-    }
-
     void CAlphaRenderer::setHelixCorrs(  vector < int > flatCorrespondences){
         if(flatCorrespondences.size() %2 != 0)
             return;

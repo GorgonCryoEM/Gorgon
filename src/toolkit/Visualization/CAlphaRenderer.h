@@ -28,7 +28,6 @@ namespace Visualization {
         public:
             bool saveSSEHunterFile(string fileName);
             void updateTotalScoreSSEHunterAtoms(float correlationCoeff, float skeletonCoeff, float geometryCoeff);
-            void unload();
 
             // Controlling the atom vector
             void addAtom(PDBAtom atom);
