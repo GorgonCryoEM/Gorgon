@@ -24,20 +24,6 @@ namespace Visualization {
 
     typedef map<unsigned long long, PDBAtom> AtomMapType;
 
-    /**
-    Begin Hermite Curve code, to be moved into another file after testing
-    -this code based on molscript's hermite_curve.c file, and produced with the help
-    of wikipedia's article on the cubic hermite spline
-    */
-    class HermiteCurve{
-    public:
-        Vec3F p0, p1, m0, m1;
-
-        void setCurve(Vec3F pstart, Vec3F pend, Vec3F tstart, Vec3F tend);
-        Vec3F getPos(double t);
-        Vec3F getTangent(double t);
-    };
-
     class CAlphaRenderer : public Volume {
         public:
             struct Secel{
