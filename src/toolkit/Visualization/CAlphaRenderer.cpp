@@ -78,7 +78,7 @@ namespace Visualization {
         sidechainBonds.push_back(bond);
     }
 
-    bool CAlphaRenderer::SaveSSEHunterFile(string fileName) {
+    bool CAlphaRenderer::saveSSEHunterFile(string fileName) {
         return PDBReader::WriteAtomPositions(atoms, fileName);
     }
 
