@@ -47,9 +47,6 @@ namespace GraySkeletonCPP {
                                                     {0,0,0,SURFACE_TYPE_YZ},  {0,0,0,SURFACE_TYPE_XZ},  {0,-1,0,SURFACE_TYPE_YZ},  {-1,0,0,SURFACE_TYPE_XZ},
                                                     {0,0,-1,SURFACE_TYPE_YZ}, {0,0,-1,SURFACE_TYPE_XZ}, {0,-1,-1,SURFACE_TYPE_YZ}, {-1,0,-1,SURFACE_TYPE_XZ}};
 
-//    class Vec3I;
-//    class Vec3D;
-
     class DiscreteMesh : public Volume {
         public:
             DiscreteMesh(int sX, int sY, int sZ);
