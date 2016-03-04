@@ -60,7 +60,7 @@ namespace GraySkeletonCPP {
             bool isCurvePresent        (int x, int y, int z, unsigned char direction);
             bool isCurvePresent(Vec3I p1, Vec3I p2);
             bool isSurfacePresent      (int x, int y, int z, unsigned char direction);
-            bool FollowCurve           (int & x, int & y, int & z);
+            bool followCurve           (int & x, int & y, int & z);
             int getCurveNeighbors      (int x, int y, int z, vector<Vec3I> & neighbors);
             int getCurveNeighborsCount (int x, int y, int z);
             int getSurfaceNeighbors    (int x, int y, int z, vector<int> & neighbors);

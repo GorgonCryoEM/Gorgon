@@ -101,7 +101,7 @@ namespace GraySkeletonCPP {
         return ((surfaces[getIndex(x, y, z)] & direction) == direction);
     }
 
-    bool DiscreteMesh::FollowCurve(int & x, int & y, int & z) {
+    bool DiscreteMesh::followCurve(int & x, int & y, int & z) {
         vector<Vec3I> neighbors(6);
         int count = getCurveNeighbors(x, y, z, neighbors);
         if(count==1) {
