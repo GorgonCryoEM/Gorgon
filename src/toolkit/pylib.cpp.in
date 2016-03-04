@@ -51,6 +51,7 @@ BOOST_PYTHON_MODULE(@current_pylib@)
 //
 
     void (Volume::*setSpacing)(float, float, float) = &Volume::setSpacing;
+    void (Volume::*setOrigin)(float, float, float) = &Volume::setOrigin;
   class_<Volume>("Volume", init<>())
       .def("getOriginX", &Volume::getOriginX)
       .def("getOriginY", &Volume::getOriginY)
@@ -61,6 +62,7 @@ BOOST_PYTHON_MODULE(@current_pylib@)
       .def("getSize", &Volume::getSize)
       .def("getSize", &Volume::cmp)
       .def("setSpacing", setSpacing)
+      .def("setOrigin", setOrigin)
       .def("getSpacingX", &Volume::getSpacingX)
       .def("getSpacingY", &Volume::getSpacingY)
       .def("getSpacingZ", &Volume::getSpacingZ)
@@ -161,7 +163,7 @@ BOOST_PYTHON_MODULE(@current_pylib@)
   
   void (MeshRenderer::*load)(string fileName) = &MeshRenderer::load;
   
-  class_< MeshRenderer >("MeshRenderer", init<>())
+  class_< MeshRenderer, bases<Volume> >("MeshRenderer", init<>())
       .def("draw", &MeshRenderer::draw)
 //      .def("drawBoundingBox", &MeshRenderer::DrawBoundingBox)
       .def("loadFile", load)

@@ -1,6 +1,7 @@
 from PyQt4 import QtCore, QtGui
 from camera import Camera
 from volume_viewer import VolumeViewer
+from skeleton_viewer import SkeletonViewer
 
 import sys, os
 
@@ -11,8 +12,9 @@ class MainWindowForm(QtGui.QMainWindow):
         super(MainWindowForm, self).__init__()
 
         self.volumeViewer = VolumeViewer(self)
+        self.skeletonViewer = SkeletonViewer(self)
 
-        self.mainCamera = Camera([self.volumeViewer], self)
+        self.mainCamera = Camera([self.volumeViewer, self.skeletonViewer], self)
         self.setCentralWidget(self.mainCamera)
                 
         self.statusBar().showMessage(self.tr("Gorgon: Protein Visualization Suite"))

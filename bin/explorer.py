@@ -47,6 +47,7 @@ def main():
     window.show()
     window.raise_()
     window.volumeViewer.load(args.volume)
+    window.skeletonViewer.load(args.skeleton)
     
     sys.exit(app.exec_())
 

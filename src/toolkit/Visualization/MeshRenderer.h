@@ -12,7 +12,7 @@
 //#include <cstdio>
 //#include <GorgonGL.h>
 //#include <string>
-//#include <Core/volume.h>
+#include <Core/volume.h>
 #include <Readers/reader.h>
 #include <Visualization/NonManifoldMesh.h>
 #include "Display.h"
@@ -28,7 +28,7 @@ namespace Visualization {
     /*
      *
      */
-    class MeshRenderer {
+    class MeshRenderer : public Volume, public RendererBase {
         public:
             NonManifoldMesh getMesh();
             Vec3F get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
