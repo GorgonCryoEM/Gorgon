@@ -709,8 +709,9 @@ namespace GraySkeletonCPP {
             }
         }
 
+        bool surfaceFound = true;
         for(int i = 0; i < 12; i++) {
-            bool surfaceFound = true;
+            surfaceFound = true;
             for(int e = 0; e < 3; e++) {
                 surfaceFound = surfaceFound
                         && (points[VOLUME_NEIGHBOR_FACES[i][e][0] + 1][VOLUME_NEIGHBOR_FACES[i][e][1] + 1][VOLUME_NEIGHBOR_FACES[i][e][2] + 1] > 0);
