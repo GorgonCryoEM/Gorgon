@@ -31,8 +31,11 @@ namespace GraySkeletonCPP {
     const unsigned char CURVE_TYPE_XPOS = 1;
     const unsigned char CURVE_TYPE_YPOS = 2;
     const unsigned char CURVE_TYPE_ZPOS = 4;
-    const unsigned char CURVE_TYPES[2][2][2] = {{{0,CURVE_TYPE_ZPOS},{CURVE_TYPE_YPOS,0}}, {{CURVE_TYPE_XPOS,0}, {0,0}}};
+    const unsigned char CURVE_TYPES[2][2][2] = {{{0,CURVE_TYPE_ZPOS}, {CURVE_TYPE_YPOS,0}},
+                                                {{CURVE_TYPE_XPOS,0}, {0,0}}
+    };
     const unsigned char CURVE_TYPES_3[3]     = {CURVE_TYPE_XPOS, CURVE_TYPE_YPOS, CURVE_TYPE_ZPOS};
+
     const int VOLUME_NEIGHBOR_CURVES_6[6][7] = {{0,0,0,CURVE_TYPE_XPOS,1,0,0}, {-1,0,0,CURVE_TYPE_XPOS,-1,0,0},
                                                 {0,0,0,CURVE_TYPE_YPOS,0,1,0}, {0,-1,0,CURVE_TYPE_YPOS,0,-1,0},
                                                 {0,0,0,CURVE_TYPE_ZPOS,0,0,1}, {0,0,-1,CURVE_TYPE_ZPOS,0,0,-1}};
