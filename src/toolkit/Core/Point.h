@@ -14,24 +14,42 @@ namespace Core {
      *
      */
     template <class T>
-    class Point {
-        public:
+    struct Point {
+            Point();
             Point(int ii, int jj, int kk, T v=T());
             virtual ~Point();
 
-        private:
+            void operator=(T r) {
+                val = r;
+            }
+
             int i, j, k;
             T val;
-
-            friend bool operator<(const Point<T> & l, const Point<T> & r) {
-                return l.val < r.val;
-            }
     };
+
+    template<class T>
+    bool operator<(const Point<T> & l, const Point<T> & r) {
+        return l.val < r.val;
+    }
+
+    template<class T>
+    bool operator<(const Point<T> & l, const T & r) {
+        return l.val < r;
+    }
+
+    template<class T>
+    bool operator<(const T & l, const Point<T> & r) {
+        return l < r.val;
+    }
 
     template<class T>
     inline Point<T>::Point(int ii, int jj, int kk, T v)
             : i(ii), j(jj), k(kk), val(v)
     {}
+
+    template<class T>
+    inline Point<T>::Point() {
+    }
 
     template<class T>
     inline Point<T>::~Point() {
