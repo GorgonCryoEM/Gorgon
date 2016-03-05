@@ -178,21 +178,27 @@ double Volume::getMax() const {
     return *(max_element(data.begin(), data.end()));
 }
 
-Point<double> Volume::getMaxValuePosition() {
-    Point<double> p;
-
-    p.val = (*this)(0, 0, 0);
+double Volume::getMaxValuePosition(int& maxX, int& maxY, int& maxZ) {
+    double maxVal = (*this)(0, 0, 0);
+    maxX = 0;
+    maxY = 0;
+    maxZ = 0;
+    double data;
 
     for(int x = 0; x < getSizeX(); x++) {
         for(int y = 0; y < getSizeY(); y++) {
             for(int z = 0; z < getSizeZ(); z++) {
-                double data = (*this)(x, y, z);
-                if(p < data)
-                    p = Point<double>(x, y, z, data);
+                data = (*this)(x, y, z);
+                if(data > maxVal) {
+                    maxVal = data;
+                    maxX = x;
+                    maxY = y;
+                    maxZ = z;
+                }
             }
         }
     }
-    return p;
+    return maxVal;
 }
 
 int Volume::getNumNeighbor6(int ox, int oy, int oz) {
