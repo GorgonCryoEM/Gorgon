@@ -622,8 +622,8 @@ namespace GraySkeletonCPP {
 
         for(int i = 0; i < 26; i++) {
             value = range(2 + VOLUME_NEIGHBORS_26[i][0],
-                    2 + VOLUME_NEIGHBORS_26[i][1],
-                    2 + VOLUME_NEIGHBORS_26[i][2]);
+                          2 + VOLUME_NEIGHBORS_26[i][1],
+                          2 + VOLUME_NEIGHBORS_26[i][2]);
             if(value <= range(2, 2, 2))
                 thresholds.push_back(value);
         }
