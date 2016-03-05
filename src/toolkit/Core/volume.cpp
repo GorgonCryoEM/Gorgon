@@ -670,8 +670,7 @@ void Volume::curveSkeleton(const Volume & grayvol, float lowthr, float highthr,
     List* queue2 = new List();
     List* queue3 = new List();
     List* queue4 = new List();
-    PriorityQueue < gridPoint > queue(
-            MAX_QUEUELEN);
+    PriorityQueue < gridPoint > queue(MAX_QUEUELEN);
 
     for(i = 0; i < getSizeX(); i++)
         for(j = 0; j < getSizeY(); j++)
