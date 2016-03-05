@@ -32,6 +32,7 @@
 //#include <MathTools/MathLib.h>
 ////#include <Foundation/Octree.h>
 ////#include <queue>
+#include "Point.h"
 //
 //using namespace GraySkeletonCPP;
 ////using namespace Protein_Morph;
@@ -43,6 +44,7 @@
 ////using namespace std;
 using namespace MathTools;
 using namespace Visualization;
+using namespace Core;
 
 namespace SkeletonMaker {
 
@@ -120,7 +122,7 @@ inline ostream & operator<<(ostream & out, const gridPoint & obj){
         void applyMask(const Volume & mask, double maskValue, bool keepMaskValue);
         double getMin() const;
         double getMax() const;
-        double getMaxValuePosition(int& maxX, int& maxY, int& maxZ);
+        Point<double> getMaxValuePosition();
 
         float getMean(); // Returns the mean value of all the voxels
         float getStdDev(); // Returns the population standard deviation of the values at all the voxels

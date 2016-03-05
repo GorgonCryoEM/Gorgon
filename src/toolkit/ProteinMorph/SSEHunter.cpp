@@ -26,11 +26,13 @@ namespace Protein_Morph {
         Vec3F rangemax = resolution/spacing;
         Vec3I m;
 
-        int &mX = m[0];
-        int &mY = m[1];
-        int &mZ = m[2];
+        Point<double> point = tempVol.getMaxValuePosition();
 
-        double maxVal = tempVol.getMaxValuePosition(mX, mY, mZ);
+        m[0] = point.i;
+        m[1] = point.j;
+        m[2] = point.k;
+
+        double maxVal = point.val;
 
         PDBAtom atom;
         for(int i = 1; maxVal >= threshold; i++) {
@@ -51,9 +53,9 @@ namespace Protein_Morph {
             atom.SetElement("S_00");
             atom.SetCharge("0");
             patoms.push_back(atom);
-            atomVolumePositions.push_back(Vec3I(mX, mY, mZ));
-            UpdateMap(tempVol, Vec3I(mX, mY, mZ), rangemin, rangemax);
-            maxVal = tempVol.getMaxValuePosition(mX, mY, mZ);
+            atomVolumePositions.push_back(m);
+            UpdateMap(tempVol, m, rangemin, rangemax);
+            maxVal = tempVol.getMaxValuePosition().val;
         }
     }
 
