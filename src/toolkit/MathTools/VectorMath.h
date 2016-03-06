@@ -223,13 +223,6 @@ namespace GraphMatch {
             return *this;
         }
 
-        // pre-multiply column vector by a 3x3 matrix
-        Vector3<double> operator*(const Vector3<double>& v) const {
-            return Vector3<double>((*this)(0,0) * v[0] + (*this)(0,1) * v[1] + (*this)(0,2) * v[2],
-                           (*this)(1,0) * v[0] + (*this)(1,1) * v[1] + (*this)(1,2) * v[2],
-                           (*this)(2,0) * v[0] + (*this)(2,1) * v[1] + (*this)(2,2) * v[2]);
-        }
-
         // pre-multiply column point by a 3x3 matrix
         Vec3D operator*(const Vec3D& p) const {
             return Vec3D((*this)(0,0) * p[0] + (*this)(0,1) * p[1] + (*this)(0,2) * p[2],
@@ -318,13 +311,6 @@ namespace GraphMatch {
     private:
         double mat[9];
     };
-
-    // post-multiply row vector by a 3x3 matrix
-    inline Vector3<double> operator*(const Vector3<double>& v, const Matrix3& m) {
-        return Vector3<double>(m(0,0) * v[0] + m(1,0) * v[1] + m(2,0) * v[2],
-                       m(0,1) * v[0] + m(1,1) * v[1] + m(2,1) * v[2],
-                       m(0,2) * v[0] + m(1,2) * v[1] + m(2,2) * v[2]);
-    }
 
     // post-multiply row point by a 3x3 matrix
     inline Vec3D operator*(const Vec3D& p, const Matrix3& m) {
@@ -535,12 +521,6 @@ namespace GraphMatch {
             return matRet;
         }
 
-        Vector3<double> operator*(const Vector3<double>& v) const {
-            return Vector3<double>((*this)(0,0) * v[0] + (*this)(0,1) * v[1] + (*this)(0,2) * v[2],
-                           (*this)(1,0) * v[0] + (*this)(1,1) * v[1] + (*this)(1,2) * v[2],
-                           (*this)(2,0) * v[0] + (*this)(2,1) * v[1] + (*this)(2,2) * v[2]);
-        }
-
          Vec3D operator*(const Vec3D& p) const {
             const Vec3D pt((*this)(0,0) * p[0] + (*this)(0,1) * p[1] + (*this)(0,2) * p[2] + (*this)(0,3),
                             (*this)(1,0) * p[0] + (*this)(1,1) * p[1] + (*this)(1,2) * p[2] + (*this)(1,3),
@@ -603,13 +583,6 @@ namespace GraphMatch {
             return Matrix4(Vector4(1, 0, 0, p[0]),
                            Vector4(0, 1, 0, p[1]),
                            Vector4(0, 0, 1, p[2]),
-                           Vector4(0, 0, 0, 1));
-        }
-
-        static Matrix4 translation(const Vector3<double>& v) {
-            return Matrix4(Vector4(1, 0, 0, v[0]),
-                           Vector4(0, 1, 0, v[1]),
-                           Vector4(0, 0, 1, v[2]),
                            Vector4(0, 0, 0, 1));
         }
 
