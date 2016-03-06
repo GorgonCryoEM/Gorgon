@@ -167,10 +167,10 @@ inline ostream & operator<<(ostream & out, const gridPoint & obj){
         virtual void load(string fileName);
         virtual void save(string fileName);
         Volume * PerformBinarySkeletonizationJu2007(double threshold, int minCurveSize, int minSurfaceSize);
-            Volume * PerformGrayscaleSkeletonizationAbeysinghe2008(
-                    double startDensity, int stepCount, int minCurveSize,
-                    int minSurfaceSize, int curveRadius, int surfaceRadius,
-                    int skeletonSmoothenRadius);
+        Volume * PerformGrayscaleSkeletonizationAbeysinghe2008(
+                double startDensity, int stepCount, int minCurveSize,
+                int minSurfaceSize, int curveRadius, int surfaceRadius,
+                int skeletonSmoothenRadius);
 
         void buildHistogram(int binCount);
         int getHistogramBinValue(int binIx);
