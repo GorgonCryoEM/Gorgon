@@ -442,7 +442,6 @@ int Volume::components6(int vox[3][3][3]) {
     int tot = 0;
     int queue[27][3];
     int vis[3][3][3];
-    int head = 0, tail = 1;
 
     for(int i = 0; i < 3; i++)
         for(int j = 0; j < 3; j++)
@@ -464,6 +463,8 @@ int Volume::components6(int vox[3][3][3]) {
     // printf("total: %d\n", tot) ;
 
     int ct = 1;
+    int head = 0, tail = 1;
+
     while(head != tail) {
         int x = queue[head][0];
         int y = queue[head][1];
