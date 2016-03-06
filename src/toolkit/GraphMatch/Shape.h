@@ -154,7 +154,7 @@ namespace GraphMatch {
         // find min distance from point p to any triangle in the polygon
         for(unsigned int i = 0; i < polygonPoints.size(); i++) {
             pt = (Vec3D)polygonPoints[i];
-            d = pt.distanceTo(P);
+            d = (pt - P).length();
             dmin = min(d, dmin);
         }
         return dmin;
@@ -348,8 +348,8 @@ namespace GraphMatch {
             cout << "in first loop" << endl;
             for(int j = i+1; j < (int)polygonPoints.size(); j++) {
                 cout << "in second loop" << endl;
-                if(polygonPoints[i].distanceTo(polygonPoints[j]) > length){
-                    length = polygonPoints[i].distanceTo(polygonPoints[j]);
+                if((polygonPoints[i] - polygonPoints[j]).length() > length){
+                    length = (polygonPoints[i] - polygonPoints[j]).length();
                     result.clear();
                     result.push_back(polygonPoints[i]);
                     result.push_back(polygonPoints[i]);
