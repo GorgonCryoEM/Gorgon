@@ -28,6 +28,8 @@ using namespace Visualization;
 namespace SkeletonMaker {
 
     const int neighbor6[6][3]={{0,0,1},{0,0,-1},{0,1,0},{0,-1,0},{1,0,0},{-1,0,0}} ;
+    const vector<Vec3I> vneighbor6(neighbor6, neighbor6+6);
+
     const int neighbor4[4][2]={{0,1},{0,-1},{1,0},{-1,0}} ;
     const int neighbor64[6][4][3] = {
         {{0,1,0},{0,-1,0},{1,0,0},{-1,0,0}},
