@@ -440,7 +440,7 @@ int Volume::getNumPotComplex2(int ox, int oy, int oz) {
 int Volume::components6(int vox[3][3][3]) {
     // Stupid flood fill
     int tot = 0;
-    int queue[27][3];
+    Vec3I queue[27];
     int vis[3][3][3];
 
     for(int i = 0; i < 3; i++)
@@ -449,9 +449,7 @@ int Volume::components6(int vox[3][3][3]) {
                 vis[i][j][k] = 0;
                 if(vox[i][j][k]) {
                     if(tot == 0) {
-                        queue[0][0] = i;
-                        queue[0][1] = j;
-                        queue[0][2] = k;
+                        queue[0] = Vec3I(i, j, k);
                         vis[i][j][k] = 1;
                     }
                     tot++;
@@ -466,20 +464,20 @@ int Volume::components6(int vox[3][3][3]) {
     int head = 0, tail = 1;
 
     while(head != tail) {
-        int x = queue[head][0];
-        int y = queue[head][1];
-        int z = queue[head][2];
+        Vec3I xyz = queue[head];
+
         head++;
 
         for(int i = 0; i < 6; i++) {
-            int nx = x + neighbor6[i][0];
-            int ny = y + neighbor6[i][1];
-            int nz = z + neighbor6[i][2];
-            if(nx >= 0 && nx < 3 && ny >= 0 && ny < 3 && nz >= 0 && nz < 3) {
+            Vec3I n = xyz + vneighbor6[i];
+
+            int nx = n[0];
+            int ny = n[1];
+            int nz = n[2];
+
+            if(n > Vec3I(-1,-1,-1) && n < Vec3I(3,3,3)) {
                 if(vox[nx][ny][nz] && !vis[nx][ny][nz]) {
-                    queue[tail][0] = nx;
-                    queue[tail][1] = ny;
-                    queue[tail][2] = nz;
+                    queue[tail] = n;
                     tail++;
                     vis[nx][ny][nz] = 1;
                     ct++;
