@@ -7,40 +7,21 @@
 
 #include "VolumeData.h"
 #include "Foundation/List.h"
-//#include "ThinningTemplate.h"
-////#include <cstdio>
-////#include <cstdlib>
-////#include <cmath>
 #include "Foundation/PriorityQueue.h"
-////#include <vector>
 #include <MathTools/Vector3.h>
-//#include <MathTools/MathLib.h>
-//
-////---- VolumeRenderer.h -----------
-////#include <iostream>
-//#include <string>
-////#include <GorgonGL.h>
-////#include <GraphMatch/VectorMath.h>
 #include "GlobalConstants.h"
+//#include "ThinningTemplate.h"
+//#include <MathTools/MathLib.h>
+//#include <GorgonGL.h>
 //#include <Core/GlobalDefinitions.h>
 //#include <SkeletonMaker/VolumeSkeletonizer.h>
 //#include <GraySkeletonCPP/VolumeFormatConverter.h>
-////#include "MeshRenderer.h"
-////#include <ProteinMorph/NonManifoldMesh.h>
-////#include <ProteinMorph/TriangleMesh.h>
-////#include <MathTools/Vector3.h>
-//#include <MathTools/MathLib.h>
-////#include <Foundation/Octree.h>
-////#include <queue>
-//
+//#include "MeshRenderer.h"
+//#include <ProteinMorph/NonManifoldMesh.h>
+//#include <ProteinMorph/TriangleMesh.h>
+//#include <Foundation/Octree.h>
+
 //using namespace GraySkeletonCPP;
-////using namespace Protein_Morph;
-////using namespace MathTools;
-////using namespace GraphMatch;
-//
-////---- VolumeRenderer.h -----------
-//
-////using namespace std;
 using namespace MathTools;
 using namespace Visualization;
 
