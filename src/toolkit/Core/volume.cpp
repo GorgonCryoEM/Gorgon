@@ -202,12 +202,13 @@ double Volume::getMaxValuePosition(int& maxX, int& maxY, int& maxZ) {
 }
 
 int Volume::getNumNeighbor6(int ox, int oy, int oz) {
+    Vec3I o(ox, oy, oz);
+
     int rvalue = 0;
     for(int i = 0; i < 6; i++) {
-        int nx = ox + neighbor6[i][0];
-        int ny = oy + neighbor6[i][1];
-        int nz = oz + neighbor6[i][2];
-        if((*this)(nx, ny, nz) >= 0) {
+        Vec3I p = o + vneighbor6[i];
+
+        if((*this)(p) >= 0) {
             rvalue++;
         }
     }
