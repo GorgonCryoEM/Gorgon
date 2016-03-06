@@ -372,10 +372,9 @@ int Volume::isSimple(int ox, int oy, int oz) {
     // int flag = 0 ;
     double vox[3][3][3];
 
-    int i, j, k;
-    for(i = -1; i < 2; i++)
-        for(j = -1; j < 2; j++)
-            for(k = -1; k < 2; k++) {
+    for(int i = -1; i < 2; i++)
+        for(int j = -1; j < 2; j++)
+            for(int k = -1; k < 2; k++) {
                 double tval = (*this)(ox + i, oy + j, oz + k);
                 vox[i + 1][j + 1][k + 1] = tval;
             }
@@ -444,10 +443,10 @@ int Volume::components6(int vox[3][3][3]) {
     int queue[27][3];
     int vis[3][3][3];
     int head = 0, tail = 1;
-    int i, j, k;
-    for(i = 0; i < 3; i++)
-        for(j = 0; j < 3; j++)
-            for(k = 0; k < 3; k++) {
+
+    for(int i = 0; i < 3; i++)
+        for(int j = 0; j < 3; j++)
+            for(int k = 0; k < 3; k++) {
                 vis[i][j][k] = 0;
                 if(vox[i][j][k]) {
                     if(tot == 0) {
@@ -575,16 +574,15 @@ int Volume::countExt(double vox[3][3][3]) {
 }
 
 int Volume::countInt(double vox[3][3][3]) {
-    int i, j, k;
     int tvox[3][3][3]={0};
 
-    for(i = 0; i < 6; i++) {
+    for(int i = 0; i < 6; i++) {
         int nx = 1 + neighbor6[i][0];
         int ny = 1 + neighbor6[i][1];
         int nz = 1 + neighbor6[i][2];
         if(vox[nx][ny][nz] >= 0) {
             tvox[nx][ny][nz] = 1;
-            for(j = 0; j < 4; j++) {
+            for(int j = 0; j < 4; j++) {
                 int nnx = neighbor64[i][j][0] + nx;
                 int nny = neighbor64[i][j][1] + ny;
                 int nnz = neighbor64[i][j][2] + nz;
