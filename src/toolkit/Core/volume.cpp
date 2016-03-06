@@ -440,7 +440,7 @@ int Volume::getNumPotComplex2(int ox, int oy, int oz) {
 int Volume::components6(int vox[3][3][3]) {
     // Stupid flood fill
     int tot = 0;
-    Vec3I queue[27];
+    Vec3I que[27];
     int vis[3][3][3];
 
     for(int i = 0; i < 3; i++)
@@ -449,7 +449,7 @@ int Volume::components6(int vox[3][3][3]) {
                 vis[i][j][k] = 0;
                 if(vox[i][j][k]) {
                     if(tot == 0) {
-                        queue[0] = Vec3I(i, j, k);
+                        que[0] = Vec3I(i, j, k);
                         vis[i][j][k] = 1;
                     }
                     tot++;
@@ -464,7 +464,7 @@ int Volume::components6(int vox[3][3][3]) {
     int head = 0, tail = 1;
 
     while(head != tail) {
-        Vec3I xyz = queue[head];
+        Vec3I xyz = que[head];
 
         head++;
 
@@ -477,7 +477,7 @@ int Volume::components6(int vox[3][3][3]) {
 
             if(n > Vec3I(-1,-1,-1) && n < Vec3I(3,3,3)) {
                 if(vox[nx][ny][nz] && !vis[nx][ny][nz]) {
-                    queue[tail] = n;
+                    que[tail] = n;
                     tail++;
                     vis[nx][ny][nz] = 1;
                     ct++;
