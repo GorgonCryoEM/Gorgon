@@ -121,6 +121,7 @@ inline ostream & operator<<(ostream & out, const gridPoint & obj){
         int isPiercable      (int ox, int oy, int oz);
         int getNumPotComplex (int ox, int oy, int oz);
         int getNumPotComplex2(int ox, int oy, int oz);
+        int components (int vox[3][3][3], const vector<Vec3I> neighbors);
         int components6 (int vox[3][3][3]);
         int components26(int vox[3][3][3]);
         int countExt( double vox[3][3][3]);

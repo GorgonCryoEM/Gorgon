@@ -2,10 +2,12 @@
 #define TOOLKIT_GRAYSKELETONCPP_GLOBAL_DEFINITIONS_H
 
 #include <Foundation/TimeManager.h>
+#include <MathTools/Vector3.h>
 
 //#define SAVE_INTERMEDIATE_RESULTS
 
 using namespace Foundation;
+using namespace GraphMatch;
 
 namespace GraySkeletonCPP {
 
@@ -51,6 +53,8 @@ namespace GraySkeletonCPP {
         {-1,-1,-1}, {-1,-1,0}, {-1,-1,1}, {-1,0,-1}, {-1,0,0}, {-1,0,1}, {-1,1,-1},	{-1,1,0}, {-1,1,1},
         {0,-1,-1},  {0,-1,0},  {0,-1,1},  {0,0,-1},            {0,0,1},  {0,1,-1},  {0,1,0},  {0,1,1},
         {1,-1,-1},  {1,-1,0},  {1,-1,1},  {1,0,-1},  {1,0,0},  {1,0,1},  {1,1,-1},  {1,1,0},  {1,1,1}};
+
+    const vector<Vec3I> vneighbor26(VOLUME_NEIGHBORS_26, VOLUME_NEIGHBORS_26+26);
 
     const int VOLUME_NEIGHBORS_26_INVERSE_INDEX[26]   ={25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14,
         13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0};

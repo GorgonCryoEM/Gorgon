@@ -437,8 +437,7 @@ int Volume::getNumPotComplex2(int ox, int oy, int oz) {
     return getNumPotComplex(ox, oy, oz);
 }
 
-int Volume::components6(int vox[3][3][3]) {
-    // Stupid flood fill
+int Volume::components(int vox[3][3][3], const vector<Vec3I> neighbors) {
     int tot = 0;
     queue<Vec3I> q;
     int vis[3][3][3];
@@ -466,8 +465,8 @@ int Volume::components6(int vox[3][3][3]) {
         Vec3I xyz = q.front();
         q.pop();
 
-        for(int i = 0; i < 6; i++) {
-            Vec3I n = xyz + vneighbor6[i];
+        for(int i = 0; i < neighbors.size(); i++) {
+            Vec3I n = xyz + neighbors[i];
 
             int nx = n[0];
             int ny = n[1];
@@ -491,59 +490,12 @@ int Volume::components6(int vox[3][3][3]) {
     }
 
 }
+
+int Volume::components6(int vox[3][3][3]) {
+    return components(vox, vneighbor6);
+}
 int Volume::components26(int vox[3][3][3]) {
-    // Stupid flood fill
-    int tot = 0;
-    queue<Vec3I> q;
-    int vis[3][3][3];
-
-    for(int i = 0; i < 3; i++)
-        for(int j = 0; j < 3; j++)
-            for(int k = 0; k < 3; k++) {
-                vis[i][j][k] = 0;
-                if(vox[i][j][k]) {
-                    if(tot == 0) {
-                        q.push(Vec3I(i,j,k));
-                        vis[i][j][k] = 1;
-                    }
-                    tot++;
-                }
-            }
-    if(tot == 0) {
-        return 0;
-    }
-
-    int ct = 1;
-    while(!q.empty()) {
-        Vec3I xyz = q.front();
-        q.pop();
-
-        for(int i = -1; i < 2; i++)
-            for(int j = -1; j < 2; j++)
-                for(int k = -1; k < 2; k++) {
-                    Vec3I n = xyz + Vec3I(i,j,k);
-
-                    int nx = n[0];
-                    int ny = n[1];
-                    int nz = n[2];
-
-                    if(n > Vec3I(-1,-1,-1) && n < Vec3I(3,3,3)) {
-                        if(vox[nx][ny][nz] && !vis[nx][ny][nz]) {
-                            q.push(n);
-                            vis[nx][ny][nz] = 1;
-                            ct++;
-                        }
-                    }
-                }
-    }
-
-    if(ct == tot) {
-        return 1;
-    }
-    else {
-        return 2;
-    }
-
+    return components(vox, vneighbor26);
 }
 
 int Volume::countExt(double vox[3][3][3]) {
