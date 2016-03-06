@@ -231,8 +231,8 @@ namespace GraphMatch {
         }
 
         // pre-multiply column point by a 3x3 matrix
-        Point3 operator*(const Point3& p) const {
-            return Point3((*this)(0,0) * p[0] + (*this)(0,1) * p[1] + (*this)(0,2) * p[2],
+        Vec3D operator*(const Vec3D& p) const {
+            return Vec3D((*this)(0,0) * p[0] + (*this)(0,1) * p[1] + (*this)(0,2) * p[2],
                           (*this)(1,0) * p[0] + (*this)(1,1) * p[1] + (*this)(1,2) * p[2],
                           (*this)(2,0) * p[0] + (*this)(2,1) * p[1] + (*this)(2,2) * p[2]);
         }
@@ -327,8 +327,8 @@ namespace GraphMatch {
     }
 
     // post-multiply row point by a 3x3 matrix
-    inline Point3 operator*(const Point3& p, const Matrix3& m) {
-        return Point3(m(0,0) * p[0] + m(1,0) * p[1] + m(2,0) * p[2],
+    inline Vec3D operator*(const Vec3D& p, const Matrix3& m) {
+        return Vec3D(m(0,0) * p[0] + m(1,0) * p[1] + m(2,0) * p[2],
                       m(0,1) * p[0] + m(1,1) * p[1] + m(2,1) * p[2],
                       m(0,2) * p[0] + m(1,2) * p[1] + m(2,2) * p[2]);
     }
@@ -541,13 +541,13 @@ namespace GraphMatch {
                            (*this)(2,0) * v[0] + (*this)(2,1) * v[1] + (*this)(2,2) * v[2]);
         }
 
-         Point3 operator*(const Point3& p) const {
-            const Point3 pt((*this)(0,0) * p[0] + (*this)(0,1) * p[1] + (*this)(0,2) * p[2] + (*this)(0,3),
+         Vec3D operator*(const Vec3D& p) const {
+            const Vec3D pt((*this)(0,0) * p[0] + (*this)(0,1) * p[1] + (*this)(0,2) * p[2] + (*this)(0,3),
                             (*this)(1,0) * p[0] + (*this)(1,1) * p[1] + (*this)(1,2) * p[2] + (*this)(1,3),
                             (*this)(2,0) * p[0] + (*this)(2,1) * p[1] + (*this)(2,2) * p[2] + (*this)(2,3));
             const double w = (*this)(3,0) * p[0] + (*this)(3,1) * p[1] + (*this)(3,2) * p[2] + (*this)(3,3);
             assert( isZero( w ) == false );
-            return Point3( pt[0] / w, pt[1] / w, pt[2] / w );
+            return Vec3D( pt[0] / w, pt[1] / w, pt[2] / w );
         }
 
         Vector4 operator*(const Vector4& v) const {
@@ -599,7 +599,7 @@ namespace GraphMatch {
                            Vector4(0, 0, 0, 1));
         }
 
-        static Matrix4 translation(const Point3& p) {
+        static Matrix4 translation(const Vec3D& p) {
             return Matrix4(Vector4(1, 0, 0, p[0]),
                            Vector4(0, 1, 0, p[1]),
                            Vector4(0, 0, 1, p[2]),

@@ -135,7 +135,7 @@ namespace GraphMatch {
 
 #endif // INCLUDE_SHEETS
 
-        Point3 point, pointScaled;
+        Vec3D point, pointScaled;
 
 
 
@@ -657,7 +657,7 @@ namespace GraphMatch {
                 } else if(token == TOKEN_VRML_POINT) {
                     fin>>token;
                     while (fin>>x>>y>>z) {
-                        shape->polygonPoints.push_back(Point3(x, y, z));
+                        shape->polygonPoints.push_back(Vec3D(x, y, z));
                     }
                     lastSheet = true;
                 // adds new polygons built from list of polygonPoints to shape
@@ -698,7 +698,7 @@ namespace GraphMatch {
                 if(token == TOKEN_VRML_TRANSLATION) {
                     fin>>x>>y>>z;
                     //shape->Translate(Vector3(x, y, z));
-                    shape->SetCenter(Point3(x, y, z));
+                    shape->SetCenter(Vec3D(x, y, z));
                 } else if(token == TOKEN_VRML_ROTATION) {
                     fin>>x>>y>>z>>a;
                     shape->Rotate(Vector3<double>(x, y, z), a);
@@ -770,7 +770,7 @@ namespace GraphMatch {
         oldStack.push_back(startPoint);
 
         Point3Pair * currentPoint; //CurrentPoint
-        Point3 cPt, nPt;
+        Vec3D cPt, nPt;
         int x, y, z, xx, yy, zz;
 
         // helper array for finding one of 26 neighbors of a voxel.
@@ -821,7 +821,7 @@ namespace GraphMatch {
             newStack.clear();
             for(int i = 0; i < (int)oldStack.size(); i++) {
                 currentPoint = oldStack[i];
-                cPt = Point3(currentPoint->x * vol->getSpacingX(), currentPoint->y * vol->getSpacingY(), currentPoint->z * vol->getSpacingZ());
+                cPt = Vec3D(currentPoint->x * vol->getSpacingX(), currentPoint->y * vol->getSpacingY(), currentPoint->z * vol->getSpacingZ());
                 expand = true;
                 xx = currentPoint->x;
                 yy = currentPoint->y;
@@ -899,7 +899,7 @@ namespace GraphMatch {
                         y = currentPoint->y+d[j][1];
                         z = currentPoint->z+d[j][2];
                         // scale coords to volume space
-                        nPt = Point3(x * vol->getSpacingX(), y * vol->getSpacingY(), z * vol->getSpacingZ());
+                        nPt = Vec3D(x * vol->getSpacingX(), y * vol->getSpacingY(), z * vol->getSpacingZ());
 
                         // if neighbor point is inside the volume
                         if((x >= 0) && (x < vol->getSizeX()) && (y >=0) && (y < vol->getSizeY()) && (z >= 0) && (z < vol->getSizeZ())) {
@@ -1115,7 +1115,7 @@ namespace GraphMatch {
             // for each voxel along the path found above
             for(int i = 1; i < (int)graph->paths[startIx][endIx].size()-1; i++) {
                 Vec3I currentPos = graph->paths[startIx][endIx][i];
-                Point3 pt = Point3(currentPos.X(), currentPos.Y(), currentPos.Z());
+                Vec3D pt = Vec3D(currentPos.X(), currentPos.Y(), currentPos.Z());
                 // if this voxel is inside either the start helix or the end helix for this path
                 if(graph->skeletonHelixes[(int)startIx/2]->IsInsideShape(pt) ||
                         graph->skeletonHelixes[(int)endIx/2]->IsInsideShape(pt)) {

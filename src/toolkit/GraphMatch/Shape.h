@@ -23,23 +23,23 @@ namespace GraphMatch {
         Shape();
         bool IsHelix();
         bool IsSheet();
-        bool IsInsideShape(Point3 p);
+        bool IsInsideShape(Vec3D p);
         bool IsInsideShape(Vec3F p);
-        double MinimumDistanceToPoint(Point3 P);
+        double MinimumDistanceToPoint(Vec3D P);
         double GetHeight();
         double GetRadius();
         double GetCornerCellsMaxLength();
-        vector<Point3> GetMaxLengthCorners();
+        vector<Vec3D> GetMaxLengthCorners();
         int GetLocationInVector(vector<Point3Pair> v, Point3Pair point);
         int getType();
         Matrix4 GetRotationMatrix();
         Matrix4 GetWorldToObjectMatrix();
-        Point3 GetCenter();
+        Vec3D GetCenter();
         void AddInternalCell(Point3Pair point);
         void FindCornerCellsInHelix();
         void Rotate(Vector3<double> axis, double angle);
         void Translate(Vector3<double> translationVector);
-        void SetCenter(Point3 center);
+        void SetCenter(Vec3D center);
         void SetCenter(Vec3F center);
         void SetHeight(double height);
         void SetRadius(double radius);
@@ -48,13 +48,13 @@ namespace GraphMatch {
         static void WriteToFile(vector<Shape*> & helices, FILE * fileName);
 
 
-        Point3 GetWorldCoordinates(Point3 point);
+        Vec3D GetWorldCoordinates(Vec3D point);
         Point3Pair GetCornerCell(int node);
         Vec3F GetCornerCell2(int node);
         Vec3F GetCornerCell3(int node);
     private:
-        bool IsInsideCylinder(Point3 point);
-        bool IsInsidePolygon(Point3 point);
+        bool IsInsideCylinder(Vec3D point);
+        bool IsInsidePolygon(Vec3D point);
         void Scale(double x, double y, double z);
         void UpdateWorldToObjectMatrix();
 
@@ -63,7 +63,7 @@ namespace GraphMatch {
         float length;
         vector<Point3Pair> internalCells;
         vector<Point3Pair> cornerCells;
-        vector<Point3> polygonPoints;
+        vector<Vec3D> polygonPoints;
         vector<Polygon> polygons;
         Vec3F internalToRealScale;
         Vec3F internalToRealOrigin;
@@ -71,7 +71,7 @@ namespace GraphMatch {
     private:
         Matrix4 worldToObject;
         Matrix4 objectToWorld;
-        Point3	centerPoint;
+        Vec3D	centerPoint;
         double  radius;
         double  height;
         Matrix4 rotationMatrix;
@@ -93,8 +93,8 @@ namespace GraphMatch {
         return (shapeType != GRAPHEDGE_HELIX);
     }
 
-    bool Shape::IsInsideShape(Point3 point) {
-        Point3 newPoint = Point3(point[0], point[1], point[2]);
+    bool Shape::IsInsideShape(Vec3D point) {
+        Vec3D newPoint = Vec3D(point[0], point[1], point[2]);
         if(shapeType == GRAPHEDGE_HELIX) {
             return IsInsideCylinder(newPoint);
         } else {
@@ -103,12 +103,12 @@ namespace GraphMatch {
     }
 
     bool Shape::IsInsideShape(Vec3F p) {
-        return IsInsideShape(Point3(p.X(), p.Y(), p.Z()));
+        return IsInsideShape(Vec3D(p.X(), p.Y(), p.Z()));
     }
 
-    bool Shape::IsInsidePolygon(Point3 p) {
+    bool Shape::IsInsidePolygon(Vec3D p) {
         Polygon poly;
-        Point3 a,b,c,q;
+        Vec3D a,b,c,q;
         double l1, l2;
         Vector3<double> n;
         double d;
@@ -117,9 +117,9 @@ namespace GraphMatch {
         for(unsigned int i = 0; i < polygons.size(); i++) {
             poly = (Polygon)polygons[i];
             // read triangle vertices
-            a = (Point3)polygonPoints[poly.pointIndex1];
-            b = (Point3)polygonPoints[poly.pointIndex2];
-            c = (Point3)polygonPoints[poly.pointIndex3];
+            a = (Vec3D)polygonPoints[poly.pointIndex1];
+            b = (Vec3D)polygonPoints[poly.pointIndex2];
+            c = (Vec3D)polygonPoints[poly.pointIndex3];
             // find surface normal
             n = ((b-a)^(c-a)) / ((b-a)^(c-a)).length();
             // measure distance from point p to triangle
@@ -146,21 +146,21 @@ namespace GraphMatch {
     }
 
     // returns the minimum distance between a point p and a Shape
-    double Shape::MinimumDistanceToPoint(Point3 P) {
-        Point3 pt;
+    double Shape::MinimumDistanceToPoint(Vec3D P) {
+        Vec3D pt;
         double d;
         double dmin = MAXDOUBLE;
 
         // find min distance from point p to any triangle in the polygon
         for(unsigned int i = 0; i < polygonPoints.size(); i++) {
-            pt = (Point3)polygonPoints[i];
+            pt = (Vec3D)polygonPoints[i];
             d = pt.distanceTo(P);
             dmin = min(d, dmin);
         }
         return dmin;
     }
 
-    bool Shape::IsInsideCylinder(Point3 point) {
+    bool Shape::IsInsideCylinder(Vec3D point) {
         point = objectToWorld * point;
         return ((point[0]*point[0] + point[2]*point[2] <= 0.25) && (abs(point[1]) <= 0.5));
     }
@@ -193,11 +193,11 @@ namespace GraphMatch {
     Matrix4 Shape::GetWorldToObjectMatrix() {
         return worldToObject;
     }
-    Point3 Shape::GetCenter() {
+    Vec3D Shape::GetCenter() {
         return centerPoint;
     }
 
-    Point3 Shape::GetWorldCoordinates(Point3 point) {
+    Vec3D Shape::GetWorldCoordinates(Vec3D point) {
         return worldToObject * point;
     }
 
@@ -217,12 +217,12 @@ namespace GraphMatch {
     }
 
     Vec3F Shape::GetCornerCell3(int node) {
-        Point3 pt;
+        Vec3D pt;
 
         if(node == 1) {
-            pt = GetWorldCoordinates(Point3(0, -0.5, 0));
+            pt = GetWorldCoordinates(Vec3D(0, -0.5, 0));
         } else {
-            pt = GetWorldCoordinates(Point3(0, 0.5, 0));
+            pt = GetWorldCoordinates(Vec3D(0, 0.5, 0));
         }
         return Vec3F((float)pt[0], (float)pt[1], (float)pt[2]);
 
@@ -340,10 +340,10 @@ namespace GraphMatch {
         return length;
     }
 
-    vector<Point3> Shape::GetMaxLengthCorners() {
+    vector<Vec3D> Shape::GetMaxLengthCorners() {
         cout << "getting max length corners " <<  (int)polygonPoints.size() << endl;
         double length = 0.0;
-        vector<Point3> result;
+        vector<Vec3D> result;
         for(int i = 0; i < (int)polygonPoints.size() - 1; i++) {
             cout << "in first loop" << endl;
             for(int j = i+1; j < (int)polygonPoints.size(); j++) {
@@ -371,13 +371,13 @@ namespace GraphMatch {
         UpdateWorldToObjectMatrix();
     }
 
-    void Shape::SetCenter(Point3 center) {
+    void Shape::SetCenter(Vec3D center) {
         this->centerPoint = center;
         UpdateWorldToObjectMatrix();
     }
 
     void Shape::SetCenter(Vec3F center) {
-        SetCenter(Point3(center.X(), center.Y(), center.Z()));
+        SetCenter(Vec3D(center.X(), center.Y(), center.Z()));
     }
 
     void Shape::SetHeight(double height) {
@@ -393,7 +393,7 @@ namespace GraphMatch {
 
     void Shape::UpdateWorldToObjectMatrix() {
         worldToObject = Matrix4::translation(centerPoint) * rotationMatrix * Matrix4::scaling(radius*2, height, radius*2);
-        objectToWorld = Matrix4::scaling(1.0/(radius*2.0), 1.0/height, 1.0/(radius*2.0)) * inverseRotationMatrix * Matrix4::translation(Point3(-centerPoint[0], -centerPoint[1], -centerPoint[2]));
+        objectToWorld = Matrix4::scaling(1.0/(radius*2.0), 1.0/height, 1.0/(radius*2.0)) * inverseRotationMatrix * Matrix4::translation(Vec3D(-centerPoint[0], -centerPoint[1], -centerPoint[2]));
     }
 
     void Shape::GetRotationAxisAndAngle(Vec3F &axis, double &angle) {
@@ -476,7 +476,7 @@ namespace GraphMatch {
         Vec3F dir = p1-p2;
         Vec3F yaxis = Vec3F(0, 1, 0);
 
-        newHelix->SetCenter(Point3(center.X(), center.Y(), center.Z()));
+        newHelix->SetCenter(Vec3D(center.X(), center.Y(), center.Z()));
         newHelix->SetRadius(radius);
         newHelix->SetHeight(dir.length());
         Vec3F axis = dir^yaxis;
@@ -488,7 +488,7 @@ namespace GraphMatch {
     }
 
     void Shape::WriteToFile(vector<Shape*> & helices, FILE * fout) {
-        Point3 center;
+        Vec3D center;
         Vec3F start, end, axis;
         double angle;
         float helixLength;
