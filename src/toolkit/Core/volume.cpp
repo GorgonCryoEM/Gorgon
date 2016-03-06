@@ -471,7 +471,7 @@ int Volume::components6(int vox[3][3][3]) {
         int z = queue[head][2];
         head++;
 
-        for(i = 0; i < 6; i++) {
+        for(int i = 0; i < 6; i++) {
             int nx = x + neighbor6[i][0];
             int ny = y + neighbor6[i][1];
             int nz = z + neighbor6[i][2];
