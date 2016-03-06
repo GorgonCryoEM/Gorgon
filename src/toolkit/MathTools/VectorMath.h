@@ -775,22 +775,22 @@ namespace GraphMatch {
     }
 
     // Class used to store stack points..
-    class Point3Int {
+    class Point3Pair {
     public:
         int x, y, z, node;
         float distance;
-        Point3Int(int x, int y, int z, float distance) {
+        Point3Pair(int x, int y, int z, float distance) {
             this->x = x;
             this->y = y;
             this->z = z;
             this->distance = distance;
             this->node = 0;
         }
-        bool operator==(Point3Int &other) {
+        bool operator==(Point3Pair &other) {
             return ((this->x == other.x) && (this->y == other.y) && (this->z == other.z));
         }
 
-        static double EuclideanDistance(Point3Int p1, Point3Int p2) {
+        static double EuclideanDistance(Point3Pair p1, Point3Pair p2) {
             return sqrt(pow((double)(p1.x - p2.x), 2) + pow((double)(p1.y - p2.y), 2) + pow((double)(p1.z - p2.z), 2));
         }
     };

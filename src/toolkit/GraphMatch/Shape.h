@@ -30,12 +30,12 @@ namespace GraphMatch {
         double GetRadius();
         double GetCornerCellsMaxLength();
         vector<Point3> GetMaxLengthCorners();
-        int GetLocationInVector(vector<Point3Int> v, Point3Int point);
+        int GetLocationInVector(vector<Point3Pair> v, Point3Pair point);
         int getType();
         Matrix4 GetRotationMatrix();
         Matrix4 GetWorldToObjectMatrix();
         Point3 GetCenter();
-        void AddInternalCell(Point3Int point);
+        void AddInternalCell(Point3Pair point);
         void FindCornerCellsInHelix();
         void Rotate(Vector3<double> axis, double angle);
         void Translate(Vector3<double> translationVector);
@@ -49,7 +49,7 @@ namespace GraphMatch {
 
 
         Point3 GetWorldCoordinates(Point3 point);
-        Point3Int GetCornerCell(int node);
+        Point3Pair GetCornerCell(int node);
         Vec3F GetCornerCell2(int node);
         Vec3F GetCornerCell3(int node);
     private:
@@ -61,8 +61,8 @@ namespace GraphMatch {
     public:
         int shapeType;
         float length;
-        vector<Point3Int> internalCells;
-        vector<Point3Int> cornerCells;
+        vector<Point3Pair> internalCells;
+        vector<Point3Pair> cornerCells;
         vector<Point3> polygonPoints;
         vector<Polygon> polygons;
         Vec3F internalToRealScale;
@@ -173,7 +173,7 @@ namespace GraphMatch {
         return radius;
     }
 
-    int Shape::GetLocationInVector(vector<Point3Int> v, Point3Int point) {
+    int Shape::GetLocationInVector(vector<Point3Pair> v, Point3Pair point) {
         int loc = -1;
         for(unsigned int i = 0; (i < v.size() && loc < 0); i++) {
             if(v[i] == point) {
@@ -201,18 +201,18 @@ namespace GraphMatch {
         return worldToObject * point;
     }
 
-    Point3Int Shape::GetCornerCell(int node) {
+    Point3Pair Shape::GetCornerCell(int node) {
         for(unsigned int i = 0; i < cornerCells.size(); i++) {
             if(cornerCells[i].node == node) {
                 return cornerCells[i];
             }
         }
         printf("Error <Shape, GetCornerCell>: Corner cell %d not found\n", node);
-        return Point3Int(0,0,0,0);
+        return Point3Pair(0,0,0,0);
     }
 
     Vec3F Shape::GetCornerCell2(int node) {
-        Point3Int cell = GetCornerCell(node);
+        Point3Pair cell = GetCornerCell(node);
         return Vec3F((float)cell.x, (float)cell.y, (float)cell.z);
     }
 
@@ -229,7 +229,7 @@ namespace GraphMatch {
     }
 
 
-    void Shape::AddInternalCell(Point3Int point) {
+    void Shape::AddInternalCell(Point3Pair point) {
         internalCells.push_back(point);
     }
 
@@ -253,7 +253,7 @@ namespace GraphMatch {
             insideCounter = 0;
             // count the number of neighbor cells inside the helix
             for(int j = 0; j < 6; j++) {
-                if(GetLocationInVector(internalCells, Point3Int(internalCells[i].x + d[j][0], internalCells[i].y + d[j][1], internalCells[i].z + d[j][2], 0)) >= 0) {
+                if(GetLocationInVector(internalCells, Point3Pair(internalCells[i].x + d[j][0], internalCells[i].y + d[j][1], internalCells[i].z + d[j][2], 0)) >= 0) {
                     insideCounter++;
                 }
             }
@@ -273,7 +273,7 @@ namespace GraphMatch {
 
         for(int i = 0; i < (int)cornerCells.size() - 1; i++){
             for(unsigned int j = i+1; j < cornerCells.size(); j++) {
-                dist1 = Point3Int::EuclideanDistance(cornerCells[i], cornerCells[j]);
+                dist1 = Point3Pair::EuclideanDistance(cornerCells[i], cornerCells[j]);
                 if(maxDistance < dist1) {
                     corner1 = i;
                     corner2 = j;
@@ -307,8 +307,8 @@ namespace GraphMatch {
         cornerCells[corner2].node = 2;
 
         for(unsigned int i = 0; i < cornerCells.size(); i++) {
-            dist1 = Point3Int::EuclideanDistance(cornerCells[corner1], cornerCells[i]);
-            dist2 = Point3Int::EuclideanDistance(cornerCells[corner2], cornerCells[i]);
+            dist1 = Point3Pair::EuclideanDistance(cornerCells[corner1], cornerCells[i]);
+            dist2 = Point3Pair::EuclideanDistance(cornerCells[corner2], cornerCells[i]);
             if((dist1 > BORDER_MARGIN_THRESHOLD) && (dist2 > BORDER_MARGIN_THRESHOLD)) {
                 cornerCells[i].node = 0;
             } else if(dist1 < dist2) {
@@ -334,7 +334,7 @@ namespace GraphMatch {
         double length = 0;
         for(int i = 0; i < (int)cornerCells.size() - 1; i++) {
             for(int j = i+1; j < (int)cornerCells.size(); j++) {
-                length = max(length, Point3Int::EuclideanDistance(cornerCells[i], cornerCells[j]));
+                length = max(length, Point3Pair::EuclideanDistance(cornerCells[i], cornerCells[j]));
             }
         }
         return length;

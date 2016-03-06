@@ -20,7 +20,7 @@ namespace GraphMatch {
             static int GetGraphIndex(vector<Shape*> & helixes, int helixNum,
                                      int cornerNum);
             static int GetGraphIndex(vector<Shape*> & helixes, int helixNum,
-                                     Point3Int * point);
+                                     Point3Pair * point);
             static Graph * ReadFile(string volumeFile, string helixFile,
                                     string sseFile, string sheetFile);
             static Volume* getSheetsNoThreshold(Volume * vol, int minSize);
@@ -63,13 +63,13 @@ namespace GraphMatch {
     }
 
     // returns the graph node index for the corner of helix/sheet helixNum nearest to point point.
-    int SkeletonReader::GetGraphIndex(vector<Shape*> & helixes, int helixNum, Point3Int * point) {
+    int SkeletonReader::GetGraphIndex(vector<Shape*> & helixes, int helixNum, Point3Pair * point) {
         int node = 1;
         double minDistance = MAXINT;
         double dist;
         // find nearest corner to the input point. node = 1 or 2 for a helix.
         for(int i = 0; i < (int)helixes[helixNum]->cornerCells.size(); i++) {
-            dist = Point3Int::EuclideanDistance(helixes[helixNum]->cornerCells[i], *point);
+            dist = Point3Pair::EuclideanDistance(helixes[helixNum]->cornerCells[i], *point);
             if(dist < minDistance) {
                 node = helixes[helixNum]->cornerCells[i].node;
                 minDistance = dist;
@@ -157,7 +157,7 @@ namespace GraphMatch {
                                 paintedVol(x, y, z) = (float)i+1;
                                 // add this point as as internal cell of the helix
                                 inHelix = true;
-                                helixes[i]->AddInternalCell(Point3Int(x, y, z, 0));
+                                helixes[i]->AddInternalCell(Point3Pair(x, y, z, 0));
                             }
                         }
                     }
@@ -273,7 +273,7 @@ namespace GraphMatch {
                             // associate this voxel with this sheet
                             paintedVol(x, y, z) = sseSheetNum+1;
                             // add this point as as internal cell of the helix
-                            helixes[sseSheetNum]->AddInternalCell(Point3Int(x, y, z, 0));
+                            helixes[sseSheetNum]->AddInternalCell(Point3Pair(x, y, z, 0));
                         }
                     }
                 }
@@ -751,8 +751,8 @@ namespace GraphMatch {
     // all other helices/sheets by flooding outward along the skeleton volume
     // stores the resulting loops in the graph object using graph->SetCost and graph->SetType
     void SkeletonReader::FindSizes(int startHelix, int startCell, vector<Shape*> & helixList, Volume * vol, Volume * coloredVol, Graph * graph) {
-        vector<Point3Int *> oldStack;
-        vector<Point3Int *> newStack;
+        vector<Point3Pair *> oldStack;
+        vector<Point3Pair *> newStack;
         int currentHelix;
 
         // create arrays to store paint color (paintVol) and a path direction indicator (backVol) for each voxel in maskVol
@@ -764,12 +764,12 @@ namespace GraphMatch {
         int newIx;
 
         // calculate starting point, in unscaled voxel coords
-        Point3Int * startPoint = new Point3Int(helixList[startHelix]->cornerCells[startCell].x, helixList[startHelix]->cornerCells[startCell].y, helixList[startHelix]->cornerCells[startCell].z, 0);
+        Point3Pair * startPoint = new Point3Pair(helixList[startHelix]->cornerCells[startCell].x, helixList[startHelix]->cornerCells[startCell].y, helixList[startHelix]->cornerCells[startCell].z, 0);
 
         // add to list of voxels to be explored
         oldStack.push_back(startPoint);
 
-        Point3Int * currentPoint; //CurrentPoint
+        Point3Pair * currentPoint; //CurrentPoint
         Point3 cPt, nPt;
         int x, y, z, xx, yy, zz;
 
@@ -912,7 +912,7 @@ namespace GraphMatch {
                                 (round((*coloredVol)(x, y, z)) - 1 != startHelix)) {
                                 // add this point to newStack with distance = | cPt - nPt |
                                 // the distance is the length of the vector from the cPt voxel to this neighbor nPt
-                                newStack.push_back(new Point3Int(x, y, z, currentPoint->distance + (float)(cPt - nPt).length()));
+                                newStack.push_back(new Point3Pair(x, y, z, currentPoint->distance + (float)(cPt - nPt).length()));
                                 // mark this point as visited
                                 (*visited)(x, y, z) = 1.0;
                                 // Look up array index in backVol
@@ -937,7 +937,7 @@ namespace GraphMatch {
     void SkeletonReader::FindPaths(Graph * graph) {
         vector<Vec3I> endPoints;
         vector< vector<Vec3I> > nodes;
-        Point3Int pt = Point3Int(0,0,0,0);
+        Point3Pair pt = Point3Pair(0,0,0,0);
         vector<Vec3I> node;
 
 #ifdef VERBOSE

@@ -98,19 +98,19 @@ namespace GraphMatch {
                                  int endCorner, const Volume & skeletonVol,
                                  Volume & newVol)
     {
-        vector<Point3Int *> oldStack;
-        vector<Point3Int *> newStack;
+        vector<Point3Pair *> oldStack;
+        vector<Point3Pair *> newStack;
 
-        Point3Int tempCell = Point3Int(1,1,1,0);
+        Point3Pair tempCell = Point3Pair(1,1,1,0);
 
         for(unsigned int i = 0; i < graph->skeletonHelixes[startHelix]->cornerCells.size(); i++) {
             tempCell = graph->skeletonHelixes[startHelix]->cornerCells[i];
             if(tempCell.node == startCorner) {
-                oldStack.push_back(new Point3Int(tempCell.x, tempCell.y, tempCell.z, 1));
+                oldStack.push_back(new Point3Pair(tempCell.x, tempCell.y, tempCell.z, 1));
             }
         }
 
-        Point3Int * currentPoint; //CurrentPoint
+        Point3Pair * currentPoint; //CurrentPoint
         int x, y, z, xx = 0, yy = 0, zz = 0;
         int d[6][3];
         d[0][0] = 0;		d[0][1] = 0;		d[0][2] = -1;
@@ -125,14 +125,14 @@ namespace GraphMatch {
             if(((i != endHelix) && (i != startHelix))) {
             //if(i != endHelix) {
                 for(unsigned int j = 0; j < graph->skeletonHelixes[i]->internalCells.size(); j++) {
-                    Point3Int cell = graph->skeletonHelixes[i]->internalCells[j];
+                    Point3Pair cell = graph->skeletonHelixes[i]->internalCells[j];
                     visited(cell.x, cell.y, cell.z) = 100000;
                 }
             }
 
 
             for(unsigned int j = 0; j < graph->skeletonHelixes[i]->cornerCells.size(); j++) {
-                Point3Int cell = graph->skeletonHelixes[i]->cornerCells[j];
+                Point3Pair cell = graph->skeletonHelixes[i]->cornerCells[j];
                 if(((i==startHelix) && (cell.node == startCorner))  || ((i==endHelix) && (cell.node == endCorner))) {
                     visited(cell.x, cell.y, cell.z) = 0;
                 }
@@ -169,7 +169,7 @@ namespace GraphMatch {
                         z = currentPoint->z+d[j][2];
                         if((x >= 0) && (x < skeletonVol.getSizeX()) && (y >=0) && (y < skeletonVol.getSizeY()) && (z >= 0) && (z < skeletonVol.getSizeZ())) {
                             if((visited(x, y, z) <= 0.001) && (skeletonVol(x, y, z) > 0.001)) {
-                                Point3Int * newPoint = new Point3Int(x, y, z, currentPoint->distance + 1);
+                                Point3Pair * newPoint = new Point3Pair(x, y, z, currentPoint->distance + 1);
 
 
                                 newStack.push_back(newPoint);
