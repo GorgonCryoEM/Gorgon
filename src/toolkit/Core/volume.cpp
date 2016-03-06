@@ -441,6 +441,7 @@ int Volume::components6(int vox[3][3][3]) {
     // Stupid flood fill
     int tot = 0;
     Vec3I que[27];
+    queue<Vec3I> q;
     int vis[3][3][3];
 
     for(int i = 0; i < 3; i++)
@@ -450,6 +451,7 @@ int Volume::components6(int vox[3][3][3]) {
                 if(vox[i][j][k]) {
                     if(tot == 0) {
                         que[0] = Vec3I(i, j, k);
+                        q.push(Vec3I(i, j, k));
                         vis[i][j][k] = 1;
                     }
                     tot++;
@@ -468,6 +470,9 @@ int Volume::components6(int vox[3][3][3]) {
 
         head++;
 
+        Vec3I xyzq = q.front();
+        q.pop();
+
         for(int i = 0; i < 6; i++) {
             Vec3I n = xyz + vneighbor6[i];
 
@@ -479,6 +484,7 @@ int Volume::components6(int vox[3][3][3]) {
                 if(vox[nx][ny][nz] && !vis[nx][ny][nz]) {
                     que[tail] = n;
                     tail++;
+                    q.push(n);
                     vis[nx][ny][nz] = 1;
                     ct++;
                 }
