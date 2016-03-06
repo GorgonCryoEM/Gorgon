@@ -813,7 +813,7 @@ void Volume::curveSkeleton(const Volume & grayvol, float lowthr, float highthr,
         for(j = 0; j < getSizeY(); j++)
             for(k = 0; k < getSizeZ(); k++) {
                 if((*this)(i, j, k) == 0 && isPiercable(i, j, k)) //hasCompleteSheet(i,j,k) == 1) //
-                           {
+                {
                     queue2->prepend(i, j, k);
                 }
             }
