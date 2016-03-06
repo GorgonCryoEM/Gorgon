@@ -8,6 +8,10 @@
 #ifndef SRC_TOOLKIT_MATHTOOLS_POINT3_H_
 #define SRC_TOOLKIT_MATHTOOLS_POINT3_H_
 
+#include "Vector3.h"
+
+using namespace GraphMatch;
+
 namespace MathTools {
 
     /*

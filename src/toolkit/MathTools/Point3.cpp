@@ -87,7 +87,7 @@ namespace MathTools {
         return x != p.x || y != p.y || z != p.z;
     }
 
-    bool Point3::approxEqual( const Point3 &p, double eps = 1e-12 ) const {
+    bool Point3::approxEqual( const Point3 &p, double eps) const {
         return isZero( x - p.x, eps ) && isZero( y - p.y, eps ) && isZero( z - p.z, eps );
     }
 
