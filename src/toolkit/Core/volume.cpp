@@ -575,13 +575,7 @@ int Volume::countExt(double vox[3][3][3]) {
 
 int Volume::countInt(double vox[3][3][3]) {
     int i, j, k;
-    int tvox[3][3][3];
-
-    for(i = 0; i < 3; i++)
-        for(j = 0; j < 3; j++)
-            for(k = 0; k < 3; k++) {
-                tvox[i][j][k] = 0;
-            }
+    int tvox[3][3][3]={0};
 
     for(i = 0; i < 6; i++) {
         int nx = 1 + neighbor6[i][0];
