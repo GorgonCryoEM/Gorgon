@@ -3,7 +3,6 @@
 
 #include "MathTools/VectorMath.h"
 //#include <vector>
-#include <MathTools/Point3.h>
 //#include <MathTools/MathLib.h>
 #include "Core/GlobalConstants.h"
 
