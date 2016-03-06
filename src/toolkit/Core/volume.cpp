@@ -494,19 +494,16 @@ int Volume::components6(int vox[3][3][3]) {
 int Volume::components26(int vox[3][3][3]) {
     // Stupid flood fill
     int tot = 0;
-    int queue[27][3];
+    queue<Vec3I> q;
     int vis[3][3][3];
-    int head = 0, tail = 1;
-    int i, j, k;
-    for(i = 0; i < 3; i++)
-        for(j = 0; j < 3; j++)
-            for(k = 0; k < 3; k++) {
+
+    for(int i = 0; i < 3; i++)
+        for(int j = 0; j < 3; j++)
+            for(int k = 0; k < 3; k++) {
                 vis[i][j][k] = 0;
                 if(vox[i][j][k]) {
                     if(tot == 0) {
-                        queue[0][0] = i;
-                        queue[0][1] = j;
-                        queue[0][2] = k;
+                        q.push(Vec3I(i,j,k));
                         vis[i][j][k] = 1;
                     }
                     tot++;
@@ -517,25 +514,22 @@ int Volume::components26(int vox[3][3][3]) {
     }
 
     int ct = 1;
-    while(head != tail) {
-        int x = queue[head][0];
-        int y = queue[head][1];
-        int z = queue[head][2];
-        head++;
+    while(!q.empty()) {
+        Vec3I xyz = q.front();
+        q.pop();
 
-        for(i = -1; i < 2; i++)
-            for(j = -1; j < 2; j++)
-                for(k = -1; k < 2; k++) {
-                    int nx = x + i;
-                    int ny = y + j;
-                    int nz = z + k;
-                    if(nx >= 0 && nx < 3 && ny >= 0 && ny < 3 && nz >= 0
-                       && nz < 3) {
+        for(int i = -1; i < 2; i++)
+            for(int j = -1; j < 2; j++)
+                for(int k = -1; k < 2; k++) {
+                    Vec3I n = xyz + Vec3I(i,j,k);
+
+                    int nx = n[0];
+                    int ny = n[1];
+                    int nz = n[2];
+
+                    if(n > Vec3I(-1,-1,-1) && n < Vec3I(3,3,3)) {
                         if(vox[nx][ny][nz] && !vis[nx][ny][nz]) {
-                            queue[tail][0] = nx;
-                            queue[tail][1] = ny;
-                            queue[tail][2] = nz;
-                            tail++;
+                            q.push(n);
                             vis[nx][ny][nz] = 1;
                             ct++;
                         }
