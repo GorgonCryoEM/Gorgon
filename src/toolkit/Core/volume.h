@@ -67,24 +67,6 @@ namespace SkeletonMaker {
 
     const int edgeFaces[6][4] = {{1,3,5,7},{0,2,4,6},{2,3,9,11},{0,1,8,10},{6,7,10,11},{4,5,8,9}} ;
 
-    struct gridPoint {
-        int x, y, z;
-
-        gridPoint(){}
-        gridPoint(int xx, int yy, int zz)
-                : x(xx), y(yy), z(zz)
-        {}
-    };
-
-inline ostream & operator<<(ostream & out, const gridPoint & obj){
-        return out
-                <<"{"
-                <<obj.x<<", "
-                <<obj.y<<", "
-                <<obj.z
-                <<"}";
-    }
-
     class Volume : public VolumeData {
     public:
         Volume();
