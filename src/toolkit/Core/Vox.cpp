@@ -9,13 +9,10 @@
 
 namespace Core {
 
-    Vox::Vox() {
-        // TODO Auto-generated constructor stub
+    Vox::Vox()
+        : vox(3, vector<vector<double> >(3, vector<double>(3)))
+    {}
 
-    }
-
-    Vox::~Vox() {
-        // TODO Auto-generated destructor stub
-    }
+    Vox::~Vox() {}
 
 } /* namespace Core */

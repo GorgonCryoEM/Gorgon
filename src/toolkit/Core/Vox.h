@@ -8,6 +8,10 @@
 #ifndef SRC_TOOLKIT_CORE_VOX_H_
 #define SRC_TOOLKIT_CORE_VOX_H_
 
+#include <vector>
+
+using namespace std;
+
 namespace Core {
 
     /*
@@ -17,6 +21,9 @@ namespace Core {
         public:
             Vox();
             virtual ~Vox();
+
+        private:
+            vector<vector<vector<double> > > vox;
     };
 
 } /* namespace Core */
