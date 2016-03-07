@@ -379,7 +379,7 @@ int Volume::id3=0;
                     vox[i + 1][j + 1][k + 1] = tval;
                 }
 
-        if(countInt(vox) == 1 && countExt(vox) == 1) {
+        if(countInt(vox) == 1 && countNeg(vox) == 1) {
             return 1;
         }
         else {
@@ -400,7 +400,7 @@ int Volume::isPiercable(int ox, int oy, int oz) {
                 vox[i + 1][j + 1][k + 1] = tval;
             }
 
-    if(countInt(vox) == 1 && countExt(vox) != 1) {
+    if(countInt(vox) == 1 && countNeg(vox) != 1) {
         return 1;
     }
     else {
@@ -498,8 +498,8 @@ int Volume::components26(int vox[3][3][3]) {
     return components(vox, vneighbor26);
 }
 
-int Volume::countExt(double vox[3][3][3]) {
-    int tvox[3][3][3];
+int Volume::countNeg(double vox[3][3][3]) {
+    int tvox[3][3][3]={0};
 
     for(int i = 0; i < 3; i++)
         for(int j = 0; j < 3; j++)

@@ -124,7 +124,7 @@ inline ostream & operator<<(ostream & out, const gridPoint & obj){
         int components (int vox[3][3][3], const vector<Vec3I> neighbors);
         int components6 (int vox[3][3][3]);
         int components26(int vox[3][3][3]);
-        int countExt( double vox[3][3][3]);
+        int countNeg( double vox[3][3][3]);
         int countInt( double vox[3][3][3]);
         int countIntEuler( int ox, int oy, int oz );
         void curveSkeleton( const Volume & grayvol, float lowthr, float highthr, const Volume & svol );
