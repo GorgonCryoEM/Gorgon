@@ -3,13 +3,15 @@
 #include <Core/GlobalDefinitions.h>
 #include <SkeletonMaker/Skeletonizer.h>
 #include <Readers/reader.h>
+#include "Vox.h"
 
 #include <fstream>
 #include <iomanip>
 
-using namespace SkeletonMaker;
+//using namespace SkeletonMaker;
 using namespace Foundation;
 using namespace GraySkeletonCPP;
+using namespace Core;
 
 #ifdef GORGON_DEBUG
 int Volume::id0=0;
@@ -18,373 +20,373 @@ int Volume::id3=0;
 #endif
 
 //    ---------------------
+namespace SkeletonMaker {
+    Volume * Volume::getVolume() {
+        return dynamic_cast<Volume *>(this);
+    }
 
-Volume * Volume::getVolume() {
-    return dynamic_cast<Volume *>(this);
-}
+    void Volume::setVolume(Volume *vol) {
+        *this = *vol;
+    }
+    //-----------------------------------
 
-void Volume::setVolume(Volume *vol) {
-    *this = *vol;
-}
-//-----------------------------------
-
-Volume::Volume(const Volume& obj)
-        : VolumeData(static_cast<VolumeData>(obj)), histogram(obj.histogram), volData(
-                  dynamic_cast<VolumeData *>(this))
-{
+    Volume::Volume(const Volume& obj)
+    : VolumeData(static_cast<VolumeData>(obj)), histogram(obj.histogram), volData(
+            dynamic_cast<VolumeData *>(this))
+    {
 #ifdef GORGON_DEBUG
-    cout<<"\033[32mDEBUG: File:   volume.cpp"<<endl;
-    cout<<"DEBUG: Method: Volume::Volume(const Volume&)\033[0m"<<endl;
-    cout<<"Id1: "<<id1<<endl;
-    id1++;
+        cout<<"\033[32mDEBUG: File:   volume.cpp"<<endl;
+        cout<<"DEBUG: Method: Volume::Volume(const Volume&)\033[0m"<<endl;
+        cout<<"Id1: "<<id1<<endl;
+        id1++;
 
-    cout<<"\033[35mobj.size: "<<obj.getSize()<<endl;
-    cout<<"this->size: "<<this->getSize()<<"\033[0m"<<endl;
+        cout<<"\033[35mobj.size: "<<obj.getSize()<<endl;
+        cout<<"this->size: "<<this->getSize()<<"\033[0m"<<endl;
 #endif
 
-}
+    }
 
-Volume::Volume()
-        : VolumeData(), volData(getVolumeData())
-{
+    Volume::Volume()
+    : VolumeData(), volData(getVolumeData())
+    {
 #ifdef GORGON_DEBUG
-    cout<<"\033[32mDEBUG: File:   volume.h"<<endl;
-    cout<<"DEBUG: Method: Volume::Volume()\033[0m"<<endl;
-    cout<<"Id0: "<<id0<<endl;
-    id0++;
+        cout<<"\033[32mDEBUG: File:   volume.h"<<endl;
+        cout<<"DEBUG: Method: Volume::Volume()\033[0m"<<endl;
+        cout<<"Id0: "<<id0<<endl;
+        id0++;
 #endif
-}
+    }
 
-Volume::Volume(int x, int y, int z, float val)
-        : VolumeData(x, y, z, val), volData(getVolumeData())
-{
+    Volume::Volume(int x, int y, int z, float val)
+    : VolumeData(x, y, z, val), volData(getVolumeData())
+    {
 #ifdef GORGON_DEBUG
-    cout<<"\033[32mDEBUG: File:   volume.cpp"<<endl;
-    cout<<"DEBUG: Method: Volume::Volume(int, int, int, float)\033[0m"<<endl;
-    cout<<"Id3: "<<id3<<endl;
-    id3++;
+        cout<<"\033[32mDEBUG: File:   volume.cpp"<<endl;
+        cout<<"DEBUG: Method: Volume::Volume(int, int, int, float)\033[0m"<<endl;
+        cout<<"Id3: "<<id3<<endl;
+        id3++;
 #endif
 
-}
+    }
 
-Volume::~Volume() {
-}
+    Volume::~Volume() {
+    }
 
-VolumeData * Volume::getVolumeData() {
-    return dynamic_cast<VolumeData *>(this);
-}
+    VolumeData * Volume::getVolumeData() {
+        return dynamic_cast<VolumeData *>(this);
+    }
 
-float Volume::getOffset(float fValue1, float fValue2, float fValueDesired) const {
-    double fDelta = fValue2 - fValue1;
-    if(fDelta == 0.0) {
+    float Volume::getOffset(float fValue1, float fValue2, float fValueDesired) const {
+        double fDelta = fValue2 - fValue1;
+        if(fDelta == 0.0) {
             return 0.5;
+        }
+        return (fValueDesired - fValue1)/fDelta;
     }
-    return (fValueDesired - fValue1)/fDelta;
-}
 
-float Volume::getVoxelData(int x, int y, int z) const {
-    if((x < 0) || (x > getSizeX()-1) || (y < 0) || (y > getSizeY()-1) || (z < 0) || (z > getSizeZ()-1)) {
-        return 0.0f;
-    } else {
-        return (*this)(x, y, z);
-    }
-}
-
-float Volume::getVoxelData(float x, float y, float z) const {
-    int f[3] = {(int)x, (int)y, (int)z};
-    int c[3] = {f[0]+1, f[1]+1, f[2]+1};
-    float d[3] = {x - f[0], y - f[1], z - f[2]};
-
-    float i1 = getVoxelData(f[0], f[1], f[2]) * (1.0 - d[2]) + getVoxelData(f[0], f[1], c[2]) * d[2];
-    float i2 = getVoxelData(f[0], c[1], f[2]) * (1.0 - d[2]) + getVoxelData(f[0], c[1], c[2]) * d[2];
-    float j1 = getVoxelData(c[0], f[1], f[2]) * (1.0 - d[2]) + getVoxelData(c[0], f[1], c[2]) * d[2];
-    float j2 = getVoxelData(c[0], c[1], f[2]) * (1.0 - d[2]) + getVoxelData(c[0], c[1], c[2]) * d[2];
-
-    float w1 = i1 * (1.0 - d[1]) + i2 * d[1];
-    float w2 = j1 * (1.0 - d[1]) + j2 * d[1];
-
-    return w1 * (1.0 - d[0]) + w2 * d[0];
-}
-
-int Volume::getHashKey(int x, int y, int z, int edge, int iScale) const {
-
-    x += a2iEdgeHash[edge][1]*iScale;
-    y += a2iEdgeHash[edge][2]*iScale;
-    z += a2iEdgeHash[edge][3]*iScale;
-
-    edge = a2iEdgeHash[edge][0];
-    return x * getSizeY() * getSizeZ() * 3 + y * getSizeZ() * 3 + z * 3 + edge;
-}
-
-int Volume::getNonZeroVoxelCount() {
-    int count = 0;
-    for(int x = 0; x < getSizeX(); x++) {
-        for(int y = 0; y < getSizeY(); y++) {
-            for(int z = 0; z < getSizeZ(); z++) {
-                if((*this)(x, y, z) > 0.0) {
-                    count++;
-                }
-            }
+    float Volume::getVoxelData(int x, int y, int z) const {
+        if((x < 0) || (x > getSizeX()-1) || (y < 0) || (y > getSizeY()-1) || (z < 0) || (z > getSizeZ()-1)) {
+            return 0.0f;
+        } else {
+            return (*this)(x, y, z);
         }
     }
-    return count;
-}
-void Volume::print() {
-    for(int x = 0; x < getSizeX(); x++) {
-        printf("{ ");
-        for(int y = 0; y < getSizeY(); y++) {
-            printf("{ ");
-            for(int z = 0; z < getSizeZ(); z++) {
-                printf("%f, ", (*this)(x, y, z));
-            }
-            printf("} ");
-        }
-        printf("} ");
-    }
-    printf("\n");
-}
 
-void Volume::subtract(const Volume & vol) {
-    int i, j, k;
-    for(i = 0; i < getSizeX(); i++)
-        for(j = 0; j < getSizeY(); j++)
-            for(k = 0; k < getSizeZ(); k++) {
-                if((*this)(i, j, k) > 0) {
-                    if(vol(i, j, k) > 0) {
-                        (*this)(i, j, k) = 0.0;
+    float Volume::getVoxelData(float x, float y, float z) const {
+        int f[3] = {(int)x, (int)y, (int)z};
+        int c[3] = {f[0]+1, f[1]+1, f[2]+1};
+        float d[3] = {x - f[0], y - f[1], z - f[2]};
+
+        float i1 = getVoxelData(f[0], f[1], f[2]) * (1.0 - d[2]) + getVoxelData(f[0], f[1], c[2]) * d[2];
+        float i2 = getVoxelData(f[0], c[1], f[2]) * (1.0 - d[2]) + getVoxelData(f[0], c[1], c[2]) * d[2];
+        float j1 = getVoxelData(c[0], f[1], f[2]) * (1.0 - d[2]) + getVoxelData(c[0], f[1], c[2]) * d[2];
+        float j2 = getVoxelData(c[0], c[1], f[2]) * (1.0 - d[2]) + getVoxelData(c[0], c[1], c[2]) * d[2];
+
+        float w1 = i1 * (1.0 - d[1]) + i2 * d[1];
+        float w2 = j1 * (1.0 - d[1]) + j2 * d[1];
+
+        return w1 * (1.0 - d[0]) + w2 * d[0];
+    }
+
+    int Volume::getHashKey(int x, int y, int z, int edge, int iScale) const {
+
+        x += a2iEdgeHash[edge][1]*iScale;
+        y += a2iEdgeHash[edge][2]*iScale;
+        z += a2iEdgeHash[edge][3]*iScale;
+
+        edge = a2iEdgeHash[edge][0];
+        return x * getSizeY() * getSizeZ() * 3 + y * getSizeZ() * 3 + z * 3 + edge;
+    }
+
+    int Volume::getNonZeroVoxelCount() {
+        int count = 0;
+        for(int x = 0; x < getSizeX(); x++) {
+            for(int y = 0; y < getSizeY(); y++) {
+                for(int z = 0; z < getSizeZ(); z++) {
+                    if((*this)(x, y, z) > 0.0) {
+                        count++;
                     }
                 }
             }
+        }
+        return count;
+    }
+    void Volume::print() {
+        for(int x = 0; x < getSizeX(); x++) {
+            printf("{ ");
+            for(int y = 0; y < getSizeY(); y++) {
+                printf("{ ");
+                for(int z = 0; z < getSizeZ(); z++) {
+                    printf("%f, ", (*this)(x, y, z));
+                }
+                printf("} ");
+            }
+            printf("} ");
+        }
+        printf("\n");
+    }
 
-}
+    void Volume::subtract(const Volume & vol) {
+        int i, j, k;
+        for(i = 0; i < getSizeX(); i++)
+            for(j = 0; j < getSizeY(); j++)
+                for(k = 0; k < getSizeZ(); k++) {
+                    if((*this)(i, j, k) > 0) {
+                        if(vol(i, j, k) > 0) {
+                            (*this)(i, j, k) = 0.0;
+                        }
+                    }
+                }
 
-void Volume::applyMask(const Volume & mask, double maskValue, bool keepMaskValue) {
-    for(int x = 0; x < mask.getSizeX(); x++) {
-        for(int y = 0; y < mask.getSizeY(); y++) {
-            for(int z = 0; z < mask.getSizeZ(); z++) {
-                if( ( (mask(x, y, z) == maskValue) && !keepMaskValue) || ( (mask(x, y, z) != maskValue) && keepMaskValue)) {
-                    (*this)(x, y, z) = 0;
+    }
+
+    void Volume::applyMask(const Volume & mask, double maskValue, bool keepMaskValue) {
+        for(int x = 0; x < mask.getSizeX(); x++) {
+            for(int y = 0; y < mask.getSizeY(); y++) {
+                for(int z = 0; z < mask.getSizeZ(); z++) {
+                    if( ( (mask(x, y, z) == maskValue) && !keepMaskValue) || ( (mask(x, y, z) != maskValue) && keepMaskValue)) {
+                        (*this)(x, y, z) = 0;
+                    }
                 }
             }
         }
     }
-}
 
-double Volume::getMin() const {
-    return *(min_element(data.begin(), data.end()));
-}
+    double Volume::getMin() const {
+        return *(min_element(data.begin(), data.end()));
+    }
 
-double Volume::getMax() const {
-    return *(max_element(data.begin(), data.end()));
-}
+    double Volume::getMax() const {
+        return *(max_element(data.begin(), data.end()));
+    }
 
-double Volume::getMaxValuePosition(int& maxX, int& maxY, int& maxZ) {
-    double maxVal = (*this)(0, 0, 0);
-    maxX = 0;
-    maxY = 0;
-    maxZ = 0;
-    double data;
+    double Volume::getMaxValuePosition(int& maxX, int& maxY, int& maxZ) {
+        double maxVal = (*this)(0, 0, 0);
+        maxX = 0;
+        maxY = 0;
+        maxZ = 0;
+        double data;
 
-    for(int x = 0; x < getSizeX(); x++) {
-        for(int y = 0; y < getSizeY(); y++) {
-            for(int z = 0; z < getSizeZ(); z++) {
-                data = (*this)(x, y, z);
-                if(data > maxVal) {
-                    maxVal = data;
-                    maxX = x;
-                    maxY = y;
-                    maxZ = z;
+        for(int x = 0; x < getSizeX(); x++) {
+            for(int y = 0; y < getSizeY(); y++) {
+                for(int z = 0; z < getSizeZ(); z++) {
+                    data = (*this)(x, y, z);
+                    if(data > maxVal) {
+                        maxVal = data;
+                        maxX = x;
+                        maxY = y;
+                        maxZ = z;
+                    }
                 }
             }
         }
+        return maxVal;
     }
-    return maxVal;
-}
 
-int Volume::getNumNeighbor6(int ox, int oy, int oz) {
-    Vec3I o(ox, oy, oz);
+    int Volume::getNumNeighbor6(int ox, int oy, int oz) {
+        Vec3I o(ox, oy, oz);
 
-    int rvalue = 0;
-    for(int i = 0; i < 6; i++) {
-        Vec3I p = o + vneighbor6[i];
+        int rvalue = 0;
+        for(int i = 0; i < 6; i++) {
+            Vec3I p = o + vneighbor6[i];
 
-        if((*this)(p) >= 0) {
-            rvalue++;
+            if((*this)(p) >= 0) {
+                rvalue++;
+            }
         }
+
+        return rvalue;
     }
 
-    return rvalue;
-}
+    int Volume::isInternal2(int ox, int oy, int oz) {
+        // assuming it's -1/0 volume
+        int i, j, k;
 
-int Volume::isInternal2(int ox, int oy, int oz) {
-    // assuming it's -1/0 volume
-    int i, j, k;
-
-    for(i = -1; i < 2; i++)
-        for(j = -1; j < 2; j++)
-            for(k = -1; k < 2; k++) {
-                if((*this)(ox + i, oy + j, oz + k) < 0) {
-                    return 0;
+        for(i = -1; i < 2; i++)
+            for(j = -1; j < 2; j++)
+                for(k = -1; k < 2; k++) {
+                    if((*this)(ox + i, oy + j, oz + k) < 0) {
+                        return 0;
+                    }
                 }
-            }
 
-    return 1;
-}
+        return 1;
+    }
 
-int Volume::hasCell(int ox, int oy, int oz) {
-    for(int i = 0; i < 2; i++)
-        for(int j = 0; j < 2; j++)
-            for(int k = 0; k < 2; k++) {
-                if((*this)(ox + i, oy + j, oz + k) < 0) {
-                    return 0;
+    int Volume::hasCell(int ox, int oy, int oz) {
+        for(int i = 0; i < 2; i++)
+            for(int j = 0; j < 2; j++)
+                for(int k = 0; k < 2; k++) {
+                    if((*this)(ox + i, oy + j, oz + k) < 0) {
+                        return 0;
+                    }
                 }
-            }
-    return 1;
-}
+        return 1;
+    }
 
-Volume * Volume::markCellFace() {
-    int i, j, k;
-    Volume* fvol = new Volume(getSizeX(), getSizeY(), getSizeZ());
+    Volume * Volume::markCellFace() {
+        int i, j, k;
+        Volume* fvol = new Volume(getSizeX(), getSizeY(), getSizeZ());
 
-    //return fvol ;
+        //return fvol ;
 
-    for(i = 0; i < getSizeX(); i++)
-        for(j = 0; j < getSizeY(); j++)
-            for(k = 0; k < getSizeZ(); k++) {
-                if((*this)(i, j, k) >= 0) {
-                    if(hasCell(i, j, k)) {
-                        for(int m = 0; m < 6; m++) {
-                            int nx = i + neighbor6[m][0];
-                            int ny = j + neighbor6[m][1];
-                            int nz = k + neighbor6[m][2];
-                            if(!hasCell(nx, ny, nz)) {
-                                (*fvol)(i, j, k) = (double) (1 << m);
-                                break;
+        for(i = 0; i < getSizeX(); i++)
+            for(j = 0; j < getSizeY(); j++)
+                for(k = 0; k < getSizeZ(); k++) {
+                    if((*this)(i, j, k) >= 0) {
+                        if(hasCell(i, j, k)) {
+                            for(int m = 0; m < 6; m++) {
+                                int nx = i + neighbor6[m][0];
+                                int ny = j + neighbor6[m][1];
+                                int nz = k + neighbor6[m][2];
+                                if(!hasCell(nx, ny, nz)) {
+                                    (*fvol)(i, j, k) = (double) (1 << m);
+                                    break;
+                                }
                             }
                         }
                     }
                 }
-            }
 
-    return fvol;
-}
-
-int Volume::hasCompleteSheet(int ox, int oy, int oz) {
-    // Returns 1 if it lies in the middle of a sheet
-    int temp = countIntEuler(ox, oy, oz);
-    if(temp > 0) {
-        return 1;
+        return fvol;
     }
-    else {
+
+    int Volume::hasCompleteSheet(int ox, int oy, int oz) {
+        // Returns 1 if it lies in the middle of a sheet
+        int temp = countIntEuler(ox, oy, oz);
+        if(temp > 0) {
+            return 1;
+        }
+        else {
+            return 0;
+        }
+    }
+
+    int Volume::hasCompleteHelix(int ox, int oy, int oz) {
+        // Returns 1 if it has a complete helix
+        int i;
+        int c1 = 0;
+        int nx, ny, nz;
+        int j;
+
+        for(i = 0; i < 6; i++) {
+            nx = ox + neighbor6[i][0];
+            ny = oy + neighbor6[i][1];
+            nz = oz + neighbor6[i][2];
+            if((*this)(nx, ny, nz) >= 0) {
+                c1++;
+                j = i;
+            }
+        }
+
+        if(c1 > 1) // || c1 == 0 )
+        {
+            return 1;
+        }
         return 0;
     }
-}
 
-int Volume::hasCompleteHelix(int ox, int oy, int oz) {
-    // Returns 1 if it has a complete helix
-    int i;
-    int c1 = 0;
-    int nx, ny, nz;
-    int j;
+    int Volume::isHelixEnd(int ox, int oy, int oz) {
+        int c1 = 0, c2 = 0;
+        int nx, ny, nz;
 
-    for(i = 0; i < 6; i++) {
-        nx = ox + neighbor6[i][0];
-        ny = oy + neighbor6[i][1];
-        nz = oz + neighbor6[i][2];
-        if((*this)(nx, ny, nz) >= 0) {
-            c1++;
-            j = i;
-        }
-    }
+        for(int i = 0; i < 6; i++) {
+            nx = ox + neighbor6[i][0];
+            ny = oy + neighbor6[i][1];
+            nz = oz + neighbor6[i][2];
 
-    if(c1 > 1) // || c1 == 0 )
-    {
-        return 1;
-    }
-    return 0;
-}
+            double val = (*this)(nx, ny, nz);
 
-int Volume::isHelixEnd(int ox, int oy, int oz) {
-    int c1 = 0, c2 = 0;
-    int nx, ny, nz;
-
-    for(int i = 0; i < 6; i++) {
-        nx = ox + neighbor6[i][0];
-        ny = oy + neighbor6[i][1];
-        nz = oz + neighbor6[i][2];
-
-        double val = (*this)(nx, ny, nz);
-
-        if(val >= 0) {
-            c1++;
-            if(getNumNeighbor6(nx, ny, nz) < 6) {
-                c2++;
+            if(val >= 0) {
+                c1++;
+                if(getNumNeighbor6(nx, ny, nz) < 6) {
+                    c2++;
+                }
             }
         }
-    }
 
-    if(c1 == 1 && c2 == 1) {
-        return 1;
-    }
-
-    return 0;
-}
-
-int Volume::isFeatureFace(int ox, int oy, int oz) {
-    int i, j;
-    int nx, ny, nz;
-
-    int faces = 12;
-    for(i = 0; i < 12; i++) {
-        int ct = 0;
-        for(j = 0; j < 4; j++) {
-            nx = ox + sheetNeighbor[i][j][0];
-            ny = oy + sheetNeighbor[i][j][1];
-            nz = oz + sheetNeighbor[i][j][2];
-
-            if((*this)(nx, ny, nz) < 0) {
-                ct = -1;
-                break;
-            }
-            else if(getNumNeighbor6(nx, ny, nz) == 6) {
-                ct = -1;
-                break;
-            }
+        if(c1 == 1 && c2 == 1) {
+            return 1;
         }
-        if(ct == -1 || ct >= 1) {
-            faces--;
-        }
-    }
 
-    if(faces > 0) {
-        return 1;
-    }
-    return 0;
-
-}
-
-int Volume::isSheetEnd(int ox, int oy, int oz) {
-    return ( (hasCompleteSheet(ox, oy, oz) == 0) && isFeatureFace(ox, oy, oz));
-}
-
-int Volume::isSimple(int ox, int oy, int oz) {
-    /* Test if this is a simple voxel */
-    // int flag = 0 ;
-    double vox[3][3][3];
-
-    for(int i = -1; i < 2; i++)
-        for(int j = -1; j < 2; j++)
-            for(int k = -1; k < 2; k++) {
-                double tval = (*this)(ox + i, oy + j, oz + k);
-                vox[i + 1][j + 1][k + 1] = tval;
-            }
-
-    if(countInt(vox) == 1 && countExt(vox) == 1) {
-        return 1;
-    }
-    else {
         return 0;
     }
+
+    int Volume::isFeatureFace(int ox, int oy, int oz) {
+        int i, j;
+        int nx, ny, nz;
+
+        int faces = 12;
+        for(i = 0; i < 12; i++) {
+            int ct = 0;
+            for(j = 0; j < 4; j++) {
+                nx = ox + sheetNeighbor[i][j][0];
+                ny = oy + sheetNeighbor[i][j][1];
+                nz = oz + sheetNeighbor[i][j][2];
+
+                if((*this)(nx, ny, nz) < 0) {
+                    ct = -1;
+                    break;
+                }
+                else if(getNumNeighbor6(nx, ny, nz) == 6) {
+                    ct = -1;
+                    break;
+                }
+            }
+            if(ct == -1 || ct >= 1) {
+                faces--;
+            }
+        }
+
+        if(faces > 0) {
+            return 1;
+        }
+        return 0;
+
+    }
+
+    int Volume::isSheetEnd(int ox, int oy, int oz) {
+        return ( (hasCompleteSheet(ox, oy, oz) == 0) && isFeatureFace(ox, oy, oz));
+    }
+
+    int Volume::isSimple(int ox, int oy, int oz) {
+        /* Test if this is a simple voxel */
+        // int flag = 0 ;
+        double vox[3][3][3];
+
+        for(int i = -1; i < 2; i++)
+            for(int j = -1; j < 2; j++)
+                for(int k = -1; k < 2; k++) {
+                    double tval = (*this)(ox + i, oy + j, oz + k);
+                    vox[i + 1][j + 1][k + 1] = tval;
+                }
+
+        if(countInt(vox) == 1 && countExt(vox) == 1) {
+            return 1;
+        }
+        else {
+            return 0;
+        }
 }
 
 int Volume::isPiercable(int ox, int oy, int oz) {
@@ -2905,4 +2907,5 @@ void Volume::buildHistogram(int binCount) {
 int Volume::getHistogramBinValue(int binIx) {
     return histogram[binIx];
 
+}
 }
