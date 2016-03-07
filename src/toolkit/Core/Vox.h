@@ -10,7 +10,10 @@
 
 #include <vector>
 
+#include "volume.h"
+
 using namespace std;
+using namespace SkeletonMaker;
 
 namespace Core {
 
@@ -19,11 +22,12 @@ namespace Core {
      */
     class Vox {
         public:
-            Vox();
+            Vox(const Volume & v);
             virtual ~Vox();
 
         private:
             vector<vector<vector<double> > > vox;
+            const Volume & vol;
     };
 
 } /* namespace Core */
