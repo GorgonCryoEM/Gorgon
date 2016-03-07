@@ -598,7 +598,7 @@ int Volume::countIntEuler(int ox, int oy, int oz) {
  *  Assuming the current volume has already been thresholded to 0/1
  */
 void Volume::curveSkeleton(const Volume & grayvol, float lowthr, float highthr,
-                           const Volume & svol)
+                           const Volume & src)
 {
     int i, j, k;
     // First, threshold the volume
@@ -624,7 +624,7 @@ void Volume::curveSkeleton(const Volume & grayvol, float lowthr, float highthr,
             for(k = 0; k < getSizeZ(); k++) {
                 if((*this)(i, j, k) >= 0) {
                     double v = grayvol(i, j, k);
-                    if(svol(i, j, k) > 0
+                    if(src(i, j, k) > 0
                        || v <= lowthr || v > highthr) {
                         (*this)(i, j, k) = MAX_ERODE;
                     }
@@ -852,7 +852,7 @@ void Volume::curveSkeleton(const Volume & grayvol, float lowthr, float highthr,
 }
 
 // Compute curve skeleton
-void Volume::curveSkeleton(float thr, const Volume & svol) {
+void Volume::curveSkeleton(float thr, const Volume & src) {
     int i, j, k;
     // First, threshold the volume
 #ifdef VERBOSE
@@ -877,7 +877,7 @@ void Volume::curveSkeleton(float thr, const Volume & svol) {
         for(j = 0; j < getSizeY(); j++)
             for(k = 0; k < getSizeZ(); k++) {
                 if((*this)(i, j, k) >= 0) {
-                    if(svol(i, j, k) > 0) {
+                    if(src(i, j, k) > 0) {
                         (*this)(i, j, k) = MAX_ERODE;
                     }
                     else {
@@ -1068,7 +1068,7 @@ void Volume::curveSkeleton(float thr, const Volume & svol) {
 }
 
 // Compute curve skeleton in 2D
-void Volume::curveSkeleton2D(float thr, const Volume & svol) {
+void Volume::curveSkeleton2D(float thr, const Volume & src) {
     int i, j, k;
     // First, threshold the volume
 #ifdef VERBOSE
@@ -1093,7 +1093,7 @@ void Volume::curveSkeleton2D(float thr, const Volume & svol) {
         for(j = 0; j < getSizeY(); j++)
             for(k = 0; k < getSizeZ(); k++) {
                 if((*this)(i, j, k) >= 0) {
-                    if(svol(i, j, k) > 0) {
+                    if(src(i, j, k) > 0) {
                         (*this)(i, j, k) = MAX_ERODE;
                     }
                     else {
@@ -1287,7 +1287,7 @@ void Volume::curveSkeleton2D(float thr, const Volume & svol) {
  *  Assuming the current volume has already been thresholded to 0/1
  */
 void Volume::pointSkeleton(const Volume & grayvol, float lowthr, float highthr,
-                           const Volume & svol, const Volume & hvol)
+                           const Volume & src, const Volume & hvol)
 {
     int i, j, k;
     // First, threshold the volume
@@ -1314,7 +1314,7 @@ void Volume::pointSkeleton(const Volume & grayvol, float lowthr, float highthr,
                 if((*this)(i, j, k) >= 0) {
                     float v = (float)grayvol(i, j, k);
                     if(v <= lowthr || v > highthr
-                       || svol(i, j, k) > 0
+                       || src(i, j, k) > 0
                        || hvol(i, j, k) > 0) {
                         (*this)(i, j, k) = MAX_ERODE;
                     }
@@ -1516,7 +1516,7 @@ void Volume::pointSkeleton(const Volume & grayvol, float lowthr, float highthr,
 }
 
 // Compute minimal skeleton
-void Volume::skeleton(float thr, const Volume & svol, const Volume & hvol) {
+void Volume::skeleton(float thr, const Volume & src, const Volume & hvol) {
     int i, j, k;
     // First, threshold the volume
 #ifdef VERBOSE
@@ -1540,7 +1540,7 @@ void Volume::skeleton(float thr, const Volume & svol, const Volume & hvol) {
         for(j = 0; j < getSizeY(); j++)
             for(k = 0; k < getSizeZ(); k++) {
                 if((*this)(i, j, k) >= 0) {
-                    if(svol(i, j, k) > 0 || hvol(i, j, k)
+                    if(src(i, j, k) > 0 || hvol(i, j, k)
                             > 0) {
                         (*this)(i, j, k) = MAX_ERODE;
                     }

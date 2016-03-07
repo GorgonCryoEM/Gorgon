@@ -109,12 +109,12 @@ namespace SkeletonMaker {
         int countNeg( double vox[3][3][3]);
         int countInt( double vox[3][3][3]);
         int countIntEuler( int ox, int oy, int oz );
-        void curveSkeleton( const Volume & grayvol, float lowthr, float highthr, const Volume & svol );
-        void curveSkeleton  (float thr, const Volume & svol);
-        void curveSkeleton2D(float thr, const Volume & svol);
+        void curveSkeleton( const Volume & grayvol, float lowthr, float highthr, const Volume & src);
+        void curveSkeleton  (float thr, const Volume & src);
+        void curveSkeleton2D(float thr, const Volume & src);
         void pointSkeleton(const Volume & grayvol, float lowthr, float highthr,
-                           const Volume & svol, const Volume & hvol);
-        void skeleton( float thr, const Volume & svol, const Volume & hvol );
+                           const Volume & src, const Volume & hvol);
+        void skeleton( float thr, const Volume & src, const Volume & hvol );
         void erodeHelix( int disthr );
         int erodeSheet( int disthr );
         void surfaceSkeleton( const Volume & grayvol, float lowthr, float highthr );
