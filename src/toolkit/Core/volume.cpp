@@ -3,7 +3,6 @@
 #include <Core/GlobalDefinitions.h>
 #include <SkeletonMaker/Skeletonizer.h>
 #include <Readers/reader.h>
-#include "Vox.h"
 
 #include <fstream>
 #include <iomanip>
@@ -11,7 +10,6 @@
 //using namespace SkeletonMaker;
 using namespace Foundation;
 using namespace GraySkeletonCPP;
-using namespace Core;
 
 #ifdef GORGON_DEBUG
 int Volume::id0=0;
