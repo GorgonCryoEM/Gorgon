@@ -11,14 +11,14 @@
 using namespace Foundation;
 using namespace GraySkeletonCPP;
 
+namespace SkeletonMaker {
+
 #ifdef GORGON_DEBUG
 int Volume::id0=0;
 int Volume::id1=0;
 int Volume::id3=0;
 #endif
-
 //    ---------------------
-namespace SkeletonMaker {
     Volume * Volume::getVolume() {
         return dynamic_cast<Volume *>(this);
     }
