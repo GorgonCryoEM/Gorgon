@@ -440,12 +440,11 @@ int Volume::getNumPotComplex2(int ox, int oy, int oz) {
 int Volume::components(int vox[3][3][3], const vector<Vec3I> neighbors) {
     int tot = 0;
     queue<Vec3I> q;
-    int vis[3][3][3];
+    int vis[3][3][3]={0};
 
     for(int i = 0; i < 3; i++)
         for(int j = 0; j < 3; j++)
             for(int k = 0; k < 3; k++) {
-                vis[i][j][k] = 0;
                 if(vox[i][j][k]) {
                     if(tot == 0) {
                         q.push(Vec3I(i, j, k));
@@ -538,14 +537,13 @@ int Volume::countIntEuler(int ox, int oy, int oz) {
     int nv = 0, ne = 0, nc = 0;
 
     int i, j, k;
-    int tvox[3][3][3];
+    int tvox[3][3][3]={0};
     double vox[3][3][3];
 
     for(i = 0; i < 3; i++)
         for(j = 0; j < 3; j++)
             for(k = 0; k < 3; k++) {
                 vox[i][j][k] = (*this)(ox - 1 + i, oy - 1 + j, oz - 1 + k);
-                tvox[i][j][k] = 0;
             }
 
     for(i = 0; i < 6; i++) {
