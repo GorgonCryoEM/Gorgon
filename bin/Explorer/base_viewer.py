@@ -59,22 +59,22 @@ class BaseViewer(QtOpenGL.QGLWidget):
 				[0.0, 0.0, 0.0, 1.0]
 				]
     
-    def setScale(self, scaleX, scaleY, scaleZ):
-        self.setScaleNoEmit(scaleX, scaleY, scaleZ)
+    def setScale(self, x, y, z):
+        self.setScaleNoEmit(x, y, z)
         self.app.mainCamera.updateGL()
 
-    def setScaleNoEmit(self, scaleX, scaleY, scaleZ):
-        self.renderer.setSpacing(scaleX, scaleY, scaleZ)
+    def setScaleNoEmit(self, x, y, z):
+        self.renderer.setSpacing(x, y, z)
         
-    def setLocation(self, locationX, locationY, locationZ):
-        self.setLocationNoEmit(locationX, locationY, locationZ)
+    def setLocation(self, x, y, z):
+        self.setLocationNoEmit(x, y, z)
         self.app.mainCamera.updateGL()
         
-    def setLocationNoEmit(self, locationX, locationY, locationZ):
-        self.renderer.setOrigin(locationX, locationY, locationZ)
-        self.visualizationOptions.ui.doubleSpinBoxLocationX.setValue(locationX)
-        self.visualizationOptions.ui.doubleSpinBoxLocationY.setValue(locationY)
-        self.visualizationOptions.ui.doubleSpinBoxLocationZ.setValue(locationZ)
+    def setLocationNoEmit(self, x, y, z):
+        self.renderer.setOrigin(x, y, z)
+        self.visualizationOptions.ui.doubleSpinBoxLocationX.setValue(x)
+        self.visualizationOptions.ui.doubleSpinBoxLocationY.setValue(y)
+        self.visualizationOptions.ui.doubleSpinBoxLocationZ.setValue(z)
                         
     def setRotation(self, axis, angle):
         glMatrixMode(GL_MODELVIEW)
