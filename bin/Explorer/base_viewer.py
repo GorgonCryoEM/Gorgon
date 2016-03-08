@@ -20,15 +20,15 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.fileName = "";
         self.sceneIndex = -1;
         self.loaded = False
-        self.selectEnabled = False
-        self.mouseMoveEnabled = False
-        self.mouseMoveEnabledRay = False
+        self.selectEnabled = True
+        self.mouseMoveEnabled = True
+        self.mouseMoveEnabledRay = True
         self.isClosedMesh = True
         self.viewerAutonomous = True
         self.displayStyle = self.DisplayStyleSmooth;
         self.modelVisible = True
-        self.model2Visible = False
-        self.model3Visible = False
+        self.model2Visible = True
+        self.model3Visible = True
         self.rotation = self.identityMatrix()
         self.connect(self, QtCore.SIGNAL("modelChanged()"), self.modelChanged)
         self.connect(self, QtCore.SIGNAL("modelLoaded()"), self.modelChanged)
@@ -38,7 +38,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.showBox = False
         self.twoWayLighting = False
         
-        self.multipleSelection = False
+        self.multipleSelection = True
         self.modelColor = QtGui.QColor(180, 180, 180, 150)
         
     def initVisualizationOptions(self, visualizationForm):
