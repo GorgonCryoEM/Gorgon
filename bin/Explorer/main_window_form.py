@@ -13,8 +13,9 @@ class MainWindowForm(QtGui.QMainWindow):
 
         self.volumeViewer = VolumeViewer(self)
         self.skeletonViewer = SkeletonViewer(self)
+        self.volumeViewer1 = VolumeViewer(self)
 
-        self.mainCamera = Camera([self.volumeViewer, self.skeletonViewer], self)
+        self.mainCamera = Camera([self.volumeViewer, self.skeletonViewer, self.volumeViewer1], self)
         self.setCentralWidget(self.mainCamera)
                 
         self.statusBar().showMessage(self.tr("Gorgon: Protein Visualization Suite"))

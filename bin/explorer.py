@@ -54,6 +54,7 @@ def main():
     window.show()
     window.volumeViewer.load(args.volume)
     window.skeletonViewer.load(args.skeleton)
+    window.volumeViewer1.load("vp6-96o.mrc")
     
     window.raise_()
     window1.raise_()
