@@ -39,7 +39,7 @@ namespace Visualization {
                                            int ix1 = -1, int ix2 = -1,
                                            int ix3 = -1, int ix4 = -1);
             virtual bool setCuttingPlane(float position, float vecX, float vecY, float vecZ);
-            void static drawSphere(Vec3F center, float radius);
+            void drawSphere(Vec3F center, float radius);
             void static drawCylinder(Vec3F pt1, Vec3F pt2,
                                      float radius, int slices = 10, int stacks = 10);
             void static drawLine(Vec3F pt1, Vec3F pt2);
