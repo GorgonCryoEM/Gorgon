@@ -46,6 +46,8 @@ namespace Visualization {
             virtual void setObjectSpecificColoring(bool objectSpecific);
             virtual void updateBoundingBox();
 
+            void clearOtherHighlights();
+
             float getMin(int dimension);
             float getMax(int dimension);
 

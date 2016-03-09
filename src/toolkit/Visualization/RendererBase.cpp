@@ -141,3 +141,5 @@ void RendererBase::drawLine(Vec3F pt1, Vec3F pt2) {
     glEnd();
 }
 
+void Visualization::RendererBase::clearOtherHighlights() {
+}
