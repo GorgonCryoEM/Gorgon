@@ -21,6 +21,9 @@ class Sphere(BaseViewer):
         
         self.renderer = Display()
         self.s = RendererBase()
+#         self.color = QtGui.QColorDialog().getColor()
+        self.color = QtGui.QColor(120, 18, 80, 150)
         
     def draw(self):
+        self.setMaterials(self.color)
         self.s.drawSphere(Vec3(30., 10., 10.), 10.)
