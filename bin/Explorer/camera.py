@@ -442,10 +442,10 @@ class Camera(QtOpenGL.QGLWidget):
         
         # auto rotate if ctrl + alt pressed
         if(self.mouseLeftPressed) and (event.modifiers() & QtCore.Qt.CTRL) and (event.modifiers() & QtCore.Qt.ALT):
-            for i in range(1000):
+            for i in range(100):
                 self.setEyeRotation(-dx/10.0, dy/10.0, 0)
                 self.updateGL()
-                time.sleep(0.01)
+#                 time.sleep(0.01)
             
         if(self.mouseTrackingEnabledRay):
             ray = self.getMouseRay(event.x(), event.y())
