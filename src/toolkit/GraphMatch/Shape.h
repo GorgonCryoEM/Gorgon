@@ -22,6 +22,7 @@ namespace GraphMatch {
     class Shape {
     public:
         Shape();
+        bool GetSelected();
         bool IsHelix();
         bool IsSheet();
         bool IsInsideShape(Vec3D p);
@@ -42,11 +43,14 @@ namespace GraphMatch {
         void Translate(Vector3<double> translationVector);
         void SetCenter(Vec3D center);
         void SetCenter(Vec3F center);
+        void SetColor(float r, float g, float b, float a);
         void SetHeight(double height);
         void SetRadius(double radius);
         void GetRotationAxisAndAngle(Vec3F &axis, double &angle);
         static Shape * CreateHelix(Vec3F p1, Vec3F p2, float radius);
         static void WriteToFile(vector<Shape*> & helices, FILE * fileName);
+        void GetColor(float & r, float & g, float & b, float & a);
+        void SetSelected(bool selected);
 
 
         Vec3D GetWorldCoordinates(Vec3D point);
@@ -77,6 +81,11 @@ namespace GraphMatch {
         double  height;
         Matrix4 rotationMatrix;
         Matrix4 inverseRotationMatrix;
+        float colorR;
+        float colorG;
+        float colorB;
+        float colorA;
+        bool selected;
     };
 
     inline Shape::Shape() {
@@ -84,6 +93,17 @@ namespace GraphMatch {
         objectToWorld = Matrix4::identity();
         rotationMatrix = Matrix4::identity();
         inverseRotationMatrix = Matrix4::identity();
+        internalCells.clear();
+        colorR = 0.0f;
+        colorG = 1.0f;
+        colorB = 0.0f;
+        colorA = 1.0f;
+        selected = false;
+
+    }
+
+    bool GeometricShape::GetSelected() {
+        return selected;
     }
 
     inline bool Shape::IsHelix() {
@@ -373,6 +393,13 @@ namespace GraphMatch {
     }
 
     inline void Shape::SetCenter(Vec3D center) {
+    void GeometricShape::SetColor(float r, float g, float b, float a) {
+        colorR = r;
+        colorG = g;
+        colorB = b;
+        colorA = a;
+    }
+
         this->centerPoint = center;
         UpdateWorldToObjectMatrix();
     }
@@ -395,6 +422,14 @@ namespace GraphMatch {
     inline void Shape::UpdateWorldToObjectMatrix() {
         worldToObject = Matrix4::translation(centerPoint) * rotationMatrix * Matrix4::scaling(radius*2, height, radius*2);
         objectToWorld = Matrix4::scaling(1.0/(radius*2.0), 1.0/height, 1.0/(radius*2.0)) * inverseRotationMatrix * Matrix4::translation(Vec3D(-centerPoint[0], -centerPoint[1], -centerPoint[2]));
+    void GeometricShape::GetColor(float & r, float & g, float & b, float & a) {
+        r = colorR;
+        g = colorG;
+        b = colorB;
+        a = colorA;
+    }
+    void GeometricShape::SetSelected(bool selected) {
+        this->selected = selected;
     }
 
     inline void Shape::GetRotationAxisAndAngle(Vec3F &axis, double &angle) {
