@@ -43,11 +43,11 @@ def main():
         
     window = MainWindowForm('2.2.3')
     
-    window1 = MainWindowForm('2.2.4')
-    window1.move(500,50)
-    window1.resize(600, 600)
-    window1.show()
-    window1.volumeViewer.load("vp6-96o.mrc")
+#     window1 = MainWindowForm('2.2.4')
+#     window1.move(500,50)
+#     window1.resize(600, 600)
+#     window1.show()
+#     window1.volumeViewer.load("vp6-96o.mrc")
 #     window1.skeletonViewer.load(args.skeleton)
 
     window.resize(800, 600)
@@ -57,7 +57,7 @@ def main():
     window.volumeViewer1.load("vp6-96o.mrc")
     
     window.raise_()
-    window1.raise_()
+#     window1.raise_()
     
     sys.exit(app.exec_())
 

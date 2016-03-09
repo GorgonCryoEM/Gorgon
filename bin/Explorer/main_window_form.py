@@ -16,8 +16,11 @@ class MainWindowForm(QtGui.QMainWindow):
         self.skeletonViewer = SkeletonViewer(self)
         self.volumeViewer1 = VolumeViewer(self)
         self.sphere = Sphere(self)
+        
+        scenes = [self.volumeViewer, self.skeletonViewer, self.volumeViewer1, self.sphere]
+#         scenes = [self.volumeViewer1, self.sphere]
 
-        self.mainCamera = Camera([self.volumeViewer, self.skeletonViewer, self.volumeViewer1, self.sphere], self)
+        self.mainCamera = Camera(scenes, self)
         self.setCentralWidget(self.mainCamera)
         
         self.dockWidgets = []
