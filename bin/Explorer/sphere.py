@@ -18,6 +18,7 @@ class Sphere(BaseViewer):
     
     def __init__(self, main, parent=None):
         super(Sphere, self).__init__(main, parent)
+        self.title = "Sphere"
         
         self.renderer = Display()
         self.s = RendererBase()
