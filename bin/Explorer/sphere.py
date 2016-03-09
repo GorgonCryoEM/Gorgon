@@ -23,4 +23,4 @@ class Sphere(BaseViewer):
         self.s = RendererBase()
         
     def draw(self):
-        self.s.drawSphere(Vec3(10., 10., 10.), 20.)
+        self.s.drawSphere(Vec3(30., 10., 10.), 10.)
