@@ -35,4 +35,7 @@ class Sphere(BaseViewer):
     def performElementSelection(self, hitStack):
         print "In: performElementSelection"
         
-        self.color = QtGui.QColorDialog().getColor()
+        color = QtGui.QColorDialog.getColor(self.color, self, '', QtGui.QColorDialog.ShowAlphaChannel)
+        
+        if color.isValid():
+            self.color = color
