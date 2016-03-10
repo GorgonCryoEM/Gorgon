@@ -279,7 +279,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
         glPopMatrix()
         
     def load(self, fileName):
-        self.setCursor(QtCore.Qt.WaitCursor)
         try:
             self.renderer.loadFile(str(fileName))
             print self.renderer.getSize()
@@ -293,8 +292,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
             QtGui.QMessageBox.critical(self, "Unable to load data file", "The file might be corrupt, or the format may not be supported.", "Ok")
 
             self.loaded = False
-        
-        self.setCursor(QtCore.Qt.ArrowCursor)
         
     def save(self,fileName):
         self.setCursor(QtCore.Qt.WaitCursor)
@@ -449,9 +446,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
         
     def emitModelLoaded(self):
         self.emit(QtCore.SIGNAL("modelLoaded()"))
-
-    def emitModelUnloaded(self):
-        self.emit(QtCore.SIGNAL("modelUnloaded()"))
         
     def emitModelChanged(self):
         self.emit(QtCore.SIGNAL("modelChanged()"))
