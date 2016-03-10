@@ -17,6 +17,8 @@ class MainWindowForm(QtGui.QMainWindow):
 
         self.mainCamera = Camera([self.volumeViewer, self.skeletonViewer, self.volumeViewer1], self)
         self.setCentralWidget(self.mainCamera)
+        
+        self.dockWidgets = []
                 
         self.statusBar().showMessage(self.tr("Gorgon: Protein Visualization Suite"))
         self.setWindowTitle(self.tr("Gorgon Explorer - v" + version))
