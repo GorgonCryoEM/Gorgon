@@ -66,15 +66,12 @@ class BaseViewer(QtOpenGL.QGLWidget):
     def setScaleNoEmit(self, x, y, z):
         self.renderer.setSpacing(x, y, z)
         
+    def setLocationV(self, v):
+        self.setLocation(v[0], v[1], v[2])
+
     def setLocation(self, x, y, z):
-        self.setLocationNoEmit(x, y, z)
-        self.app.mainCamera.updateGL()
-        
-    def setLocationNoEmit(self, x, y, z):
         self.renderer.setOrigin(x, y, z)
-        self.visualizationOptions.ui.doubleSpinBoxLocationX.setValue(x)
-        self.visualizationOptions.ui.doubleSpinBoxLocationY.setValue(y)
-        self.visualizationOptions.ui.doubleSpinBoxLocationZ.setValue(z)
+        self.app.mainCamera.updateGL()
                         
     def setRotation(self, axis, angle):
         glMatrixMode(GL_MODELVIEW)
