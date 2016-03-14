@@ -361,6 +361,7 @@ BOOST_PYTHON_MODULE(@current_pylib@)
 //        .def("__getitem__", &Vector3<float>::operator[], boost::python::arg( "index" ),
 //        boost::python::return_internal_reference<>() )
         .def(self * float())
+        .def(self / float())
         .def(self + self)
         .def(self - self)
         .def(self ^ self)
