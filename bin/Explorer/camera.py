@@ -103,12 +103,8 @@ class Camera(QtOpenGL.QGLWidget):
             self.emitCameraChanged()
         
     def setEyeRotation(self, yaw, pitch, roll):
-        newLook = (self.eye + self.right*yaw - self.center).normalize()
+        newLook = (self.eye + self.up*pitch + self.right*yaw - self.center).normalize()
         d = (self.eye - self.center).length()
-        newEye = self.center + newLook*d
-        
-        newLook = (newEye+self.up*pitch - self.center).normalize()
-        d = (newEye - self.center).length()
         newEye = self.center + newLook*d
         
         self.setEye(newEye)
