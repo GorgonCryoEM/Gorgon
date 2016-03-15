@@ -388,24 +388,31 @@ class Camera(QtOpenGL.QGLWidget):
         self.setMouseTracking(self.mouseTrackingEnabled or self.mouseTrackingEnabledRay)
         self.updateGL()
      
+    def moveConstant(self):
+        return (self.eye - self.center).length() #* abs(tan(pi * self.eyeZoom))
+
     def moveSelectedScene(self, dx, dy):
-        newDx = (self.eye - self.center).length() * abs(tan(pi * self.eyeZoom)) * dx / float(self.width())
-        newDy = (self.eye - self.center).length() * abs(tan(pi * self.eyeZoom)) * dy / float(self.height())
-        moveDirection = self.up*(-newDy) + self.right*newDx
-        dirVec = Vec3(moveDirection)
-        for s in self.scene:
-            if(s.renderer.selectionMove(dirVec)):
-                s.emitModelChanged()
+        newDx = self.moveConstant() * dx / float(self.width())
+        newDy = self.moveConstant() * dy / float(self.height())
+        dirVec = self.up*(-newDy) + self.right*newDx
+        
+        s = self.scene[self.selectedScene]
+        s.selectionMove(dirVec)
+        s.emitModelChanged()
+#         for s in self.scene:
+# #             print "  scene: ", s
+#             s.selectionMove(dirVec)
+#             s.emitModelChanged()
 
     def rotateSelectedScene(self, dx, dy):
-        newDx = (self.eye - self.center).length() * abs(tan(pi * self.eyeZoom)) * dx / float(self.width())
-        newDy = (self.eye - self.center).length() * abs(tan(pi * self.eyeZoom)) * dy / float(self.height())
+        newDx = self.moveConstant() * dx / float(self.width())
+        newDy = self.moveConstant() * dy / float(self.height())
 
         moveLength    = self.up*(-newDy) + self.right*newDx
-        moveDirection = moveLength.normalize()
-        rotationAxis  = moveDirection^self.look
+        dirVec = moveLength.normalize()
+
+        rotationAxis3D  = dirVec^self.look
         
-        rotationAxis3D = Vec3(rotationAxis)
         centerOfMass   = Vec3(0,0,0)
         
         totalCount = 0
@@ -479,8 +486,8 @@ class Camera(QtOpenGL.QGLWidget):
             if event.modifiers() & QtCore.Qt.CTRL:                 # Translating the selection
                 self.moveSelectedScene(dx, dy)
             else:                                                   # Translating the scene
-                newDx = (self.eye - self.center).length() * abs(tan(pi * self.eyeZoom)) * dx / float(self.width())
-                newDy = (self.eye - self.center).length() * abs(tan(pi * self.eyeZoom)) * dy / float(self.height())
+                newDx = self.moveConstant() * dx / float(self.width())
+                newDy = self.moveConstant() * dy / float(self.height())
                 translation = self.up*newDy + self.right*(-newDx);
                 newEye = self.eye + translation;
                 newCenter = self.center + translation;
