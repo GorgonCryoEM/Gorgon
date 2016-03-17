@@ -333,6 +333,9 @@ class Camera(QtOpenGL.QGLWidget):
         if(sceneId >= 0):
             self.scene[sceneId].processMouseMove(minNames, event)
        
+    def setGluPerspective(self):
+        gluPerspective(180 * self.eyeZoom, self.aspectRatio, self.near, self.far)
+
     def pickObject(self, x, y):
         viewport = list(glGetIntegerv(GL_VIEWPORT))
         glSelectBuffer(10000)
@@ -343,7 +346,7 @@ class Camera(QtOpenGL.QGLWidget):
         glPushMatrix()
         glLoadIdentity()
         gluPickMatrix(x, viewport[3]-y, 5, 5, viewport)
-        gluPerspective(180 * self.eyeZoom, self.aspectRatio, self.near, self.far)
+        self.setGluPerspective()
         self.drawScene()
         glMatrixMode(GL_PROJECTION)
         glPopMatrix()
@@ -376,7 +379,7 @@ class Camera(QtOpenGL.QGLWidget):
     def setGlProjection(self):
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
-        gluPerspective(180 * self.eyeZoom, self.aspectRatio, self.near, self.far)
+        self.setGluPerspective()
         #glOrtho(-200 * self.eyeZoom, 200 * self.eyeZoom, -200 * self.eyeZoom, 200 * self.eyeZoom, self.near, self.far)
         glMatrixMode(GL_MODELVIEW)
     
