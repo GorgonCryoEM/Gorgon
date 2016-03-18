@@ -392,9 +392,7 @@ class Camera(QtOpenGL.QGLWidget):
         return (self.eye - self.center).length() #* abs(tan(pi * self.eyeZoom))
 
     def moveSelectedScene(self, dx, dy):
-        newDx = self.moveConstant() * dx / float(self.width())
-        newDy = self.moveConstant() * dy / float(self.height())
-        dirVec = self.up*(-newDy) + self.right*newDx
+        dirVec = self.mouseVec(dx, dy)
         
         s = self.scene[self.selectedScene]
         s.selectionMove(dirVec)
@@ -405,10 +403,7 @@ class Camera(QtOpenGL.QGLWidget):
 #             s.emitModelChanged()
 
     def rotateSelectedScene(self, dx, dy):
-        newDx = self.moveConstant() * dx / float(self.width())
-        newDy = self.moveConstant() * dy / float(self.height())
-
-        moveLength    = self.up*(-newDy) + self.right*newDx
+        moveLength    = self.mouseVec(dx, dy)
         dirVec = moveLength.normalize()
 
         rotationAxis3D  = dirVec^self.look
@@ -460,6 +455,11 @@ class Camera(QtOpenGL.QGLWidget):
                 if(s.mouseMoveEnabledRay):
                     s.processMouseClickRay(ray, 0.1, self.eye, event)
 
+    def mouseVec(self, dx, dy):
+        newDx = self.moveConstant() * dx / float(self.width())
+        newDy = self.moveConstant() * dy / float(self.height())
+        return self.up*(-newDy) + self.right*newDx;
+
     def mouseMoveEvent(self, event):
         if(self.mouseTrackingEnabledRay):
             ray = self.getMouseRay(event.x(), event.y())
@@ -486,9 +486,7 @@ class Camera(QtOpenGL.QGLWidget):
             if event.modifiers() & QtCore.Qt.CTRL:                 # Translating the selection
                 self.moveSelectedScene(dx, dy)
             else:                                                   # Translating the scene
-                newDx = self.moveConstant() * dx / float(self.width())
-                newDy = self.moveConstant() * dy / float(self.height())
-                translation = self.up*newDy + self.right*(-newDx);
+                translation = self.mouseVec(-dx, -dy)
                 newEye = self.eye + translation;
                 newCenter = self.center + translation;
                 self.setEye(newEye)
