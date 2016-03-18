@@ -196,14 +196,14 @@ class BaseViewer(QtOpenGL.QGLWidget):
         
     def getCenterAndDistance(self):
         scale    = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
-        location = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]
-        minPos = Vec3([(self.renderer.getMin(i)*scale[i] + location[i]) for i in range(3)])
-        maxPos = Vec3([(self.renderer.getMax(i)*scale[i] + location[i]) for i in range(3)])
-        distance = (minPos - maxPos).length()
+        loc = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]
+        min = Vec3([(self.renderer.getMin(i)*scale[i] + loc[i]) for i in range(3)])
+        max = Vec3([(self.renderer.getMax(i)*scale[i] + loc[i]) for i in range(3)])
+        dist = (min - max).length()
 
-        center = (minPos + maxPos)*0.5
+        center = (min + max)*0.5
 
-        return (center, distance)
+        return (center, dist)
 
     def initializeGLDisplayType(self):
         glPushAttrib(GL_LIGHTING_BIT | GL_ENABLE_BIT)
