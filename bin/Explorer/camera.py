@@ -335,6 +335,7 @@ class Camera(QtOpenGL.QGLWidget):
        
     def setGluPerspective(self):
         gluPerspective(180 * self.eyeZoom, self.aspectRatio, self.near, self.far)
+        #glOrtho(-200 * self.eyeZoom, 200 * self.eyeZoom, -200 * self.eyeZoom, 200 * self.eyeZoom, self.near, self.far)
 
     def pickObject(self, x, y):
         viewport = list(glGetIntegerv(GL_VIEWPORT))
@@ -380,7 +381,6 @@ class Camera(QtOpenGL.QGLWidget):
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
         self.setGluPerspective()
-        #glOrtho(-200 * self.eyeZoom, 200 * self.eyeZoom, -200 * self.eyeZoom, 200 * self.eyeZoom, self.near, self.far)
         glMatrixMode(GL_MODELVIEW)
     
     def refreshMouseTracking(self):
