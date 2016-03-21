@@ -57,7 +57,7 @@ class Camera(QtOpenGL.QGLWidget):
         for s in self.scene:
             s.visualizationUpdated.connect(self.updateGL)
             self.connect(s, QtCore.SIGNAL("viewerSetCenterLocal(float, float, float, float)"), self.sceneSetCenterLocal)
-            self.connect(s, QtCore.SIGNAL("viewerSetCenter(float, float, float, float)"), self.sceneSetCenter)
+            self.connect(s, QtCore.SIGNAL("viewerSetCenter(float, float, float)"), self.sceneSetCenter)
             self.connect(s, QtCore.SIGNAL("modelChanged()"), self.modelChanged)
             self.connect(s, QtCore.SIGNAL("modelLoaded()"), self.modelChanged)
             self.connect(s, QtCore.SIGNAL("modelUnloaded()"), self.modelChanged)
@@ -119,7 +119,7 @@ class Camera(QtOpenGL.QGLWidget):
             if(s.setCenter(self.center)):
                 s.emitModelChanged()
                  
-    def sceneSetCenter(self, cX, cY, cZ, d):
+    def sceneSetCenter(self, cX, cY, cZ):
         sceneMin = Vec3(cX, cY, cZ)
         sceneMax = Vec3(cX, cY, cZ)
         for s in self.scene:
@@ -479,7 +479,8 @@ class Camera(QtOpenGL.QGLWidget):
         eyeDist = (self.eye - self.center).length()
         for s in self.scene:
             if(s.loaded):
-                (center, dist) = s.getCenterAndDistance()
+                center = s.getCenter()
+                dist   = s.getDistance()
                 modelDist = (self.center - center).length()
                 mins.append(eyeDist - modelDist - dist/2.0)
                 maxs.append(eyeDist + modelDist + dist/2.0)

@@ -189,13 +189,15 @@ class BaseViewer(BaseDockWidget):
         
         return minPos, maxPos
         
-    def getCenterAndDistance(self):
+    def getCenter(self):
         min, max = self.getMinMax()
-        dist = (min - max).length()
 
-        center = (min + max)*0.5
+        return (min + max)*0.5
 
-        return center, dist
+    def getDistance(self):
+        min, max = self.getMinMax()
+
+        return (min - max).length()
 
     def initializeGLDisplayType(self):
         glPushAttrib(GL_LIGHTING_BIT | GL_ENABLE_BIT)
@@ -382,9 +384,10 @@ class BaseViewer(BaseDockWidget):
         self.emit(QtCore.SIGNAL("modelVisualizationChanged()"))
     
     def emitViewerSetCenterLocal(self):
-        (center, distance) = self.getCenterAndDistance()
+        center   = self.getCenter()
+        distance = self.getDistance()
         self.emit(QtCore.SIGNAL("viewerSetCenterLocal(float, float, float, float)"), center[0], center[1], center[2], distance)
     
     def emitViewerSetCenter(self):
-        (center, distance) = self.getCenterAndDistance()
-        self.emit(QtCore.SIGNAL("viewerSetCenter(float, float, float, float)"), center[0], center[1], center[2], distance)
+        center = self.getCenter()
+        self.emit(QtCore.SIGNAL("viewerSetCenter(float, float, float)"), center[0], center[1], center[2])
