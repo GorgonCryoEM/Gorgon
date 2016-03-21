@@ -17,3 +17,9 @@ class Shape(BaseViewer):
         
         self.renderer = Display()
         self.s = RendererBase()
+
+    def setColor(self, r, g, b, a):
+        self.color = QtGui.QColor(r, g, b, a)
+
+    def setLoc(self, x, y, z):
+        self.loc = Vec3(x, y, z)
