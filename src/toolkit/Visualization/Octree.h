@@ -47,6 +47,14 @@ namespace Foundation {
              max = ::max(max, val);
          }
 
+         float getMin() {
+             return min;
+         }
+
+         float getMax() {
+             return max;
+         }
+
         float min;
         float max;
     };

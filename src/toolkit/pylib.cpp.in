@@ -10,6 +10,7 @@
 #include "GraphMatch/PDBBond.h"
 #include "Readers/SEQReader.h"
 #include "Visualization/Display.h"
+#include "Visualization/Octree.h"
 
 using namespace SkeletonMaker;
 using namespace Protein_Morph;
@@ -512,6 +513,13 @@ BOOST_PYTHON_MODULE(@current_pylib@)
         .def("setAtom0Ix", &PDBBond::SetAtom0Ix)
         .def("setAtom1Ix", &PDBBond::SetAtom1Ix)
         .def("setSelected", &PDBBond::SetSelected)
+    ;
+
+    class_<Range>("Range", init<>())
+        .def("getMin", &Range::getMin)
+        .def("getMax", &Range::getMax)
+        .def("setMin", &Range::setMin)
+        .def("setMax", &Range::setMax)
     ;
 
 }
