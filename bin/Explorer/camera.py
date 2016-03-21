@@ -123,7 +123,7 @@ class Camera(QtOpenGL.QGLWidget):
         minmax=[MinMax(), MinMax(), MinMax()]
         for s in self.scene:
             if s.loaded:
-                (minPos, maxPos) = s.getMinMax()
+                minPos, maxPos = s.getMinMax()
                 for i in range(3):
                     minmax[i].setMin(minPos[i])
                     minmax[i].setMax(maxPos[i])
