@@ -187,23 +187,21 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.viewerAutonomous = value;
         self.updateViewerAutonomy(value)
     
-    def getBoundingBox(self):
+    def getMinMax(self):
         scale    = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
         location = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]
         minPos = Vec3([(self.renderer.getMin(i)*scale[i] + location[i]) for i in range(3)])
         maxPos = Vec3([(self.renderer.getMax(i)*scale[i] + location[i]) for i in range(3)])
-        return (minPos, maxPos)
+        
+        return minPos, maxPos
         
     def getCenterAndDistance(self):
-        scale    = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
-        loc = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]
-        min = Vec3([(self.renderer.getMin(i)*scale[i] + loc[i]) for i in range(3)])
-        max = Vec3([(self.renderer.getMax(i)*scale[i] + loc[i]) for i in range(3)])
+        min, max = self.getMinMax()
         dist = (min - max).length()
 
         center = (min + max)*0.5
 
-        return (center, dist)
+        return center, dist
 
     def initializeGLDisplayType(self):
         glPushAttrib(GL_LIGHTING_BIT | GL_ENABLE_BIT)
@@ -257,7 +255,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
         glDepthMask(GL_TRUE);
         
         if(self.loaded and self.showBox):
-            self.setMaterials(self.getBoundingBoxColor())
+            self.setMaterials(self.getMinMaxColor())
             self.renderer.drawBoundingBox()
         
         self.emitDrawingModel()
