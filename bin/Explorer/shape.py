@@ -16,3 +16,4 @@ class Shape(BaseViewer):
         super(Shape, self).__init__(main)
         
         self.renderer = Display()
+        self.s = RendererBase()
