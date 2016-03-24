@@ -8,9 +8,6 @@ class BaseDockWidget(QtGui.QWidget):
         self.app = main
         self.defaultArea = defaultArea
                 
-        self.createDock(title, allowedAreas)
-
-    def createDock(self, title, allowedAreas):
         self.dock = QtGui.QDockWidget(self.tr(title), self.app)
         self.dock.setAllowedAreas(allowedAreas)
         self.dock.setWidget(self)
