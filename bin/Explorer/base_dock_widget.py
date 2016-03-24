@@ -27,6 +27,3 @@ class BaseDockWidget(QtGui.QWidget):
     
     def bringToFront(self):
         self.dock.raise_()
-    
-    def show(self):
-        QtGui.QWidget.show(self)
