@@ -11,10 +11,6 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
         BaseDockWidget.__init__(self,
                                 main,
                                 "&Volume - Surface Editor",
-                                "Modify the volume surface",
-                                "show_VolumeSurfaceEditor",
-                                "window-VolumeSurfaceEditor",
-                                "window",
                                 QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea,
                                 QtCore.Qt.BottomDockWidgetArea,
                                 parent)

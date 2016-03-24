@@ -3,7 +3,7 @@ from PyQt4 import QtCore, QtGui
 
 class BaseDockWidget(QtGui.QWidget):
 
-    def __init__(self, main, title, hint, actionName, menuName, parentMenuName, allowedAreas, defaultArea, parent=None):
+    def __init__(self, main, title, allowedAreas, defaultArea, parent=None):
         QtGui.QWidget.__init__(self, parent)
         self.app = main
         self.defaultArea = defaultArea

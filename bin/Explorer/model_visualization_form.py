@@ -12,10 +12,6 @@ class ModelVisualizationForm(BaseDockWidget):
         BaseDockWidget.__init__(self,
                                 main,
                                 self.title,
-                                "Load the " + self.viewer.title + " visualization options",
-                                "show_" + self.viewer.title + "Visualization",
-                                "window-" + self.viewer.title + "VisualizationOptions",
-                                "window",
                                 QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea,
                                 QtCore.Qt.RightDockWidgetArea,
                                 parent)
