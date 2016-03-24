@@ -19,12 +19,9 @@ class VolumeViewer(BaseViewer):
 
         self.renderer = Display()
         self.loaded = False
-        self.createUI()
+        self.surfaceEditor = VolumeSurfaceEditorForm(self.app, self)
         self.initVisualizationOptions(ModelVisualizationForm(self.app, self))
                       
-    def createUI(self):
-        self.surfaceEditor = VolumeSurfaceEditorForm(self.app, self)
-    
     def setCenter(self, center):
         coords = self.worldToObjectCoordinates(center)
         [x, y, z] = [coords.x(), coords.y(), coords.z()]
