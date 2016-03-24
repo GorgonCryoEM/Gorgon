@@ -1,5 +1,4 @@
 from PyQt4 import QtCore, QtGui
-from base_dock import BaseDock
 
 
 class BaseDockWidget(QtGui.QWidget):
@@ -12,7 +11,7 @@ class BaseDockWidget(QtGui.QWidget):
         self.createDock(title, allowedAreas)
 
     def createDock(self, title, allowedAreas):
-        self.dock = BaseDock(self.tr(title), self.app)
+        self.dock = QtGui.QDockWidget(self.tr(title), self.app)
         self.dock.setAllowedAreas(allowedAreas)
         self.dock.setWidget(self)
         self.dock.close()
