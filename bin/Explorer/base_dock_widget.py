@@ -3,8 +3,8 @@ from PyQt4 import QtCore, QtGui
 
 class BaseDockWidget(QtGui.QWidget):
 
-    def __init__(self, main, title, allowedAreas, defaultArea, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+    def __init__(self, main, title, allowedAreas, defaultArea):
+        QtGui.QWidget.__init__(self)
         self.app = main
         self.defaultArea = defaultArea
                 

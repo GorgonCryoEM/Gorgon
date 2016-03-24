@@ -7,13 +7,12 @@ from base_dock_widget import BaseDockWidget
 class VolumeSurfaceEditorForm(BaseDockWidget):
     ViewingTypeIsoSurface, ViewingTypeCrossSection, ViewingTypeSolid = range(3)
     
-    def __init__(self, main, volumeViewer, parent=None):
+    def __init__(self, main, volumeViewer):
         BaseDockWidget.__init__(self,
                                 main,
                                 "&Volume - Surface Editor",
                                 QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea,
-                                QtCore.Qt.BottomDockWidgetArea,
-                                parent)
+                                QtCore.Qt.BottomDockWidgetArea)
         self.app = main
         self.viewer = volumeViewer
         self.connect(self.viewer, QtCore.SIGNAL("modelLoadedPreDraw()"), self.modelLoadedPreDraw)

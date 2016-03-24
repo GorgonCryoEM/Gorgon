@@ -5,7 +5,7 @@ from base_dock_widget import BaseDockWidget
 
 class ModelVisualizationForm(BaseDockWidget):
 
-    def __init__(self, main, viewer, parent=None):
+    def __init__(self, main, viewer):
         self.app = main
         self.viewer = viewer
         self.title = viewer.title + " Visualization Options"
@@ -13,8 +13,7 @@ class ModelVisualizationForm(BaseDockWidget):
                                 main,
                                 self.title,
                                 QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea,
-                                QtCore.Qt.RightDockWidgetArea,
-                                parent)
+                                QtCore.Qt.RightDockWidgetArea)
 
         self.connect(self.viewer, QtCore.SIGNAL("modelLoaded()"), self.modelLoaded)
         self.connect(self.viewer, QtCore.SIGNAL("modelChanged()"), self.modelChanged)
