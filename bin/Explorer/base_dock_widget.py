@@ -15,7 +15,6 @@ class BaseDockWidget(QtGui.QWidget):
         self.dock.setAllowedAreas(allowedAreas)
         self.dock.setWidget(self)
         self.dock.close()
-        self.dock.visibilityChanged.connect(self.dockVisibilityChanged)
    
     def loadWidget(self):
         self.showWidget(True)
@@ -26,9 +25,6 @@ class BaseDockWidget(QtGui.QWidget):
             self.dock.show()
             self.bringToFront()
     
-    def dockVisibilityChanged(self, visible):
-        pass
-        
     def bringToFront(self):
         self.dock.raise_()
     
