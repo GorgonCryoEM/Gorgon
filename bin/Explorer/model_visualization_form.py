@@ -11,6 +11,7 @@ class ModelVisualizationForm(BaseDockWidget):
         self.title = viewer.title + " Visualization Options"
         BaseDockWidget.__init__(self,
                                 main,
+                                self,
                                 self.title,
                                 QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea,
                                 QtCore.Qt.RightDockWidgetArea)
