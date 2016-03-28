@@ -8,7 +8,7 @@ class BaseDockWidget(QtGui.QWidget):
         self.defaultArea = defaultArea
                 
         QtGui.QWidget.__init__(self)
-        self.dock = QtGui.QDockWidget(self.tr(title), self.app)
+        self.dock = QtGui.QDockWidget(title, self.app)
         self.dock.setAllowedAreas(allowedAreas)
         self.dock.setWidget(self)
         self.dock.close()
