@@ -20,7 +20,4 @@ class BaseDockWidget(QtGui.QWidget):
         if(show):
             self.app.addDockWidget(self.defaultArea, self.dock)
             self.dock.show()
-            self.bringToFront()
-    
-    def bringToFront(self):
-        self.dock.raise_()
+            self.dock.raise_()
