@@ -20,10 +20,6 @@ class ModelVisualizationForm(BaseDockWidget):
         self.connect(self.viewer, QtCore.SIGNAL("modelChanged()"), self.modelChanged)
         self.setWindowTitle(self.title)
         
-        self.createUI()
-        self.updateFromViewer()
-
-    def createUI(self):
         self.ui = Ui_DialogModelVisualization()
         self.ui.setupUi(self)
         self.ui.spinBoxThickness.setVisible(False)
@@ -44,6 +40,7 @@ class ModelVisualizationForm(BaseDockWidget):
         self.connect(self.ui.doubleSpinBoxLocationY, QtCore.SIGNAL("editingFinished ()"), self.locationChanged)
         self.connect(self.ui.doubleSpinBoxLocationZ, QtCore.SIGNAL("editingFinished ()"), self.locationChanged)
         self.connect(self.ui.spinBoxThickness, QtCore.SIGNAL("editingFinished ()"), self.thicknessChanged)
+        self.updateFromViewer()
                                                  
     def updateFromViewer(self):
         self.ui.pushButtonModelColor.setColor(self.viewer.getModelColor())
