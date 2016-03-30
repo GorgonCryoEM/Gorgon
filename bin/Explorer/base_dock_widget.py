@@ -9,3 +9,6 @@ class BaseDockWidget(QtGui.QWidget):
         self.dock.setAllowedAreas(allowedAreas)
         self.dock.setWidget(parent)
         main.addDockWidget(defaultArea, self.dock)
+        
+    def toggleViewAction(self):
+        return self.dock.toggleViewAction()
