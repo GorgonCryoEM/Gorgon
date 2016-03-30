@@ -10,5 +10,9 @@ class BaseDockWidget(QtGui.QWidget):
         self.dock.setWidget(parent)
         main.addDockWidget(defaultArea, self.dock)
         
+        dockVisible = self.toggleViewAction()
+
+        main.docksMenu.addAction(dockVisible)
+
     def toggleViewAction(self):
         return self.dock.toggleViewAction()

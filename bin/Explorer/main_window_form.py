@@ -9,6 +9,9 @@ class MainWindowForm(QtGui.QMainWindow):
 
     def __init__(self, version):
         super(MainWindowForm, self).__init__()
+        
+        self.menubar = self.menuBar()
+        self.docksMenu = self.menubar.addMenu('&Docks')
 
         self.scene = Scene(self)
         scenes = self.scene.getShapes()
