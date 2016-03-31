@@ -2,12 +2,17 @@ from .libs import Vec3
 from line import Line
 from line0 import Line0
 from dot import Dot
+from volume_viewer import VolumeViewer
 
 
 class Scene:
 
     def __init__(self):
-        self.shapes = []
+        
+        self.volumeViewer = VolumeViewer()
+        self.volumeViewer.load("vp6-96o.mrc")
+
+        self.shapes = [self.volumeViewer]
         
         self.linecom = Line0(Vec3(100,100,100))
         self.linecom.setColor(40, 70, 50, 150)
