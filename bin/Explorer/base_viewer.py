@@ -24,7 +24,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.mouseMoveEnabled = True
         self.mouseMoveEnabledRay = True
         self.isClosedMesh = True
-        self.viewerAutonomous = True
 #         self.displayStyle = self.DisplayStyleSmooth
         self.displayStyle = self.DisplayStyleWireframe
         self.modelVisible = True
