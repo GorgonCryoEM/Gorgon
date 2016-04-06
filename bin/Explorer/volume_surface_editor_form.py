@@ -29,5 +29,5 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
         self.viewer.renderer.setSampleInterval(1)
         self.viewer.renderer.setSurfaceValue(defaultDensity)
         self.viewer.renderer.setDisplayRadius(maxRadius)
-        self.show(True)
+        self.show()
         self.viewer.renderer.enableDraw(True)

@@ -12,8 +12,7 @@ class BaseDockWidget(QtGui.QWidget):
         self.dock.setAllowedAreas(allowedAreas)
         self.dock.setWidget(self)
    
-    def show(self, show):
-        if(show):
-            self.app.addDockWidget(self.defaultArea, self.dock)
-            self.dock.show()
-            self.dock.raise_()
+    def show(self):
+        self.app.addDockWidget(self.defaultArea, self.dock)
+        self.dock.show()
+        self.dock.raise_()
