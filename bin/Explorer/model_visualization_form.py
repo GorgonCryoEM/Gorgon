@@ -16,8 +16,8 @@ class ModelVisualizationForm(BaseDockWidget):
                                 QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea,
                                 QtCore.Qt.RightDockWidgetArea)
 
-        self.connect(self.viewer, QtCore.SIGNAL("modelLoaded()"), self.modelLoaded)
-        self.connect(self.viewer, QtCore.SIGNAL("modelChanged()"), self.modelChanged)
+        self.connect(self.viewer, QtCore.SIGNAL("modelLoaded()"), self.updateFromViewer)
+        self.connect(self.viewer, QtCore.SIGNAL("modelChanged()"), self.updateFromViewer)
         self.setWindowTitle(self.title)
         
         self.ui = Ui_DialogModelVisualization()
