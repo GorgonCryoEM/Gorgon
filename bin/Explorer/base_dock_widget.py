@@ -13,9 +13,6 @@ class BaseDockWidget(QtGui.QWidget):
         self.dock.setWidget(self)
         self.dock.close()
    
-    def loadWidget(self):
-        self.showWidget(True)
-
     def showWidget(self, show):
         if(show):
             self.app.addDockWidget(self.defaultArea, self.dock)
