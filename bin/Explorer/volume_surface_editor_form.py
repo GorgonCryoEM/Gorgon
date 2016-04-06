@@ -1,7 +1,6 @@
 from PyQt4 import QtCore, QtGui
 from ui_dialog_volume_surface_editor import Ui_DialogVolumeSurfaceEditor
 from base_dock_widget import BaseDockWidget
-from histogram_slider_widget import HistogramSliderWidget
 # import threading
 
 
@@ -33,12 +32,6 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
         self.ui.labelIsoLevelMax.setVisible(False)
         self.ui.doubleSpinBoxDensityMax.setVisible(False)
         
-        self.ui.histogram.setSliderType(HistogramSliderWidget.HistogramSliderTypeValue)
-        
-        self.connect(self.ui.histogram,QtCore.SIGNAL("lowerValueChanged(float)"),self.isoValueIndicatorChanged)
-        self.connect(self.ui.histogram,QtCore.SIGNAL("higherValueChanged(float)"),self.isoValueMaxIndicatorChanged)
-        self.connect(self.ui.histogram, QtCore.SIGNAL("widgetResized()"), self.histogramResized)
-        
         self.connect(self.ui.comboBoxSamplingInterval, QtCore.SIGNAL("currentIndexChanged(int)"), self.samplingChanged)
         self.connect(self.ui.radioButtonIsoSurface, QtCore.SIGNAL("toggled(bool)"), self.setViewingType)
         self.connect(self.ui.radioButtonCrossSection, QtCore.SIGNAL("toggled(bool)"), self.setViewingType)
@@ -54,7 +47,6 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
                 self.viewer.renderer.setViewingType(self.ViewingTypeIsoSurface)
                 self.viewer.visualizationOptions.ui.radioButtonFlat.setEnabled(True)
                 self.viewer.visualizationOptions.ui.radioButtonWireframe.setEnabled(True)
-                self.ui.histogram.setSliderType(HistogramSliderWidget.HistogramSliderTypeValue)
 
             elif self.ui.radioButtonCrossSection.isChecked():
                 self.ui.labelIsoLevel.setText("Minimum Density:");
@@ -62,7 +54,6 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
                 self.viewer.visualizationOptions.ui.radioButtonFlat.setEnabled(False)
                 self.viewer.visualizationOptions.ui.radioButtonWireframe.setEnabled(False)
                 self.viewer.visualizationOptions.ui.radioButtonSmooth.setChecked(True)
-                self.ui.histogram.setSliderType(HistogramSliderWidget.HistogramSliderTypeRange)
 
             elif self.ui.radioButtonSolid.isChecked():
                 self.ui.labelIsoLevel.setText("Minimum Density:");
@@ -71,7 +62,6 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
                 self.viewer.visualizationOptions.ui.radioButtonFlat.setEnabled(False)
                 self.viewer.visualizationOptions.ui.radioButtonWireframe.setEnabled(False)
                 self.viewer.visualizationOptions.ui.radioButtonSmooth.setChecked(True)
-                self.ui.histogram.setSliderType(HistogramSliderWidget.HistogramSliderTypeRange)
                 
             print "setViewingType", QtCore.QThread.currentThreadId()
             self.viewer.emitModelChanged()
@@ -80,7 +70,6 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
         self.viewer.renderer.enableDraw(False)
         maxDensity = self.viewer.renderer.getMaxDensity()
         minDensity = self.viewer.renderer.getMinDensity()
-        self.populateHistogram()
         self.ui.doubleSpinBoxDensity.setMinimum(minDensity)
         self.ui.doubleSpinBoxDensity.setMaximum(maxDensity)
         self.ui.doubleSpinBoxDensityMax.setMinimum(minDensity)
@@ -89,8 +78,8 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
             defaultDensity = (minDensity + maxDensity) / 2
         else:
             defaultDensity = minDensity
-        self.ui.histogram.setLowerValue(defaultDensity)
-        self.ui.histogram.setHigherValue(maxDensity)
+        defaultDensity = (minDensity + maxDensity) / 2
+
         maxRadius = int(max(self.viewer.renderer.getMax(0)/2, self.viewer.renderer.getMax(1)/2, self.viewer.renderer.getMax(2)/2));
         self.ui.spinBoxDisplayRadius.setMaximum(maxRadius)
         self.ui.spinBoxDisplayRadius.setValue(maxRadius)
@@ -102,26 +91,10 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
         self.showWidget(True)
         self.viewer.renderer.enableDraw(True)
         
-    def populateHistogram(self):
-        binCount = self.ui.histogram.width() - 2*self.ui.histogram.verticalBorderSize
-        self.ui.histogram.setBinCount(binCount)
-        self.ui.histogram.setUseLogScale(True)
-        volume = self.viewer.renderer.getVolume()
-        volume.buildHistogram(binCount)
-        histogramData = []
-        self.ui.histogram.clearData()
-        for i in range(binCount):
-            histogramData.append(volume.getHistogramBinValue(i))
-        self.ui.histogram.setHistogram(histogramData, volume.getMinDensity(), volume.getMaxDensity())
-        
-    def histogramResized(self):
-        self.populateHistogram()
-        
     def modelUnloaded(self):
         self.viewer.renderer.enableDraw(False)
         self.displayAct.setEnabled(False)
         self.showWidget(False)
-        self.ui.histogram.clearData()
         
     def createActions(self):
         self.displayAct.setEnabled(False)
@@ -142,11 +115,9 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
                             
     def manualValueChanged(self):
         newValue = self.ui.doubleSpinBoxDensity.value()
-        self.ui.histogram.setLowerValue(newValue)
         
     def manualValueMaxChanged(self):
         newValue = self.ui.doubleSpinBoxDensityMax.value()
-        self.ui.histogram.setHigherValue(newValue)
                     
     def isoValueChanged(self, newLevel):
         #threading.Thread(target = self.updateIsoValue, args=(newLevel,)).start()
