@@ -28,8 +28,6 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
         self.ui = Ui_DialogVolumeSurfaceEditor()
         self.ui.setupUi(self)
  
-        self.ui.labelIsoLevelMax.setVisible(False)
-        
         self.connect(self.ui.radioButtonIsoSurface, QtCore.SIGNAL("toggled(bool)"), self.setViewingType)
         self.connect(self.ui.radioButtonCrossSection, QtCore.SIGNAL("toggled(bool)"), self.setViewingType)
         self.connect(self.ui.radioButtonSolid, QtCore.SIGNAL("toggled(bool)"), self.setViewingType)
@@ -37,20 +35,17 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
     def setViewingType(self, toggled):
         if(toggled):
             if(self.ui.radioButtonIsoSurface.isChecked()):
-                self.ui.labelIsoLevel.setText("Density Threshold:");
                 self.viewer.renderer.setViewingType(self.ViewingTypeIsoSurface)
                 self.viewer.visualizationOptions.ui.radioButtonFlat.setEnabled(True)
                 self.viewer.visualizationOptions.ui.radioButtonWireframe.setEnabled(True)
 
             elif self.ui.radioButtonCrossSection.isChecked():
-                self.ui.labelIsoLevel.setText("Minimum Density:");
                 self.viewer.renderer.setViewingType(self.ViewingTypeCrossSection)
                 self.viewer.visualizationOptions.ui.radioButtonFlat.setEnabled(False)
                 self.viewer.visualizationOptions.ui.radioButtonWireframe.setEnabled(False)
                 self.viewer.visualizationOptions.ui.radioButtonSmooth.setChecked(True)
 
             elif self.ui.radioButtonSolid.isChecked():
-                self.ui.labelIsoLevel.setText("Minimum Density:");
                 self.viewer.renderer.setViewingType(self.ViewingTypeSolid)
                 
                 self.viewer.visualizationOptions.ui.radioButtonFlat.setEnabled(False)
