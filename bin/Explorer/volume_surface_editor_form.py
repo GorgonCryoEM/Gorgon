@@ -38,7 +38,6 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
         self.connect(self.ui.radioButtonSolid, QtCore.SIGNAL("toggled(bool)"), self.setViewingType)
         self.connect(self.ui.doubleSpinBoxDensity, QtCore.SIGNAL("editingFinished ()"), self.manualValueChanged)
         self.connect(self.ui.doubleSpinBoxDensityMax, QtCore.SIGNAL("editingFinished ()"), self.manualValueMaxChanged)
-        self.connect(self.ui.checkBoxUseRadius, QtCore.SIGNAL("toggled(bool)"), self.displayRadiusEnabled)
         
     def setViewingType(self, toggled):
         if(toggled):
@@ -81,8 +80,6 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
         defaultDensity = (minDensity + maxDensity) / 2
 
         maxRadius = int(max(self.viewer.renderer.getMax(0)/2, self.viewer.renderer.getMax(1)/2, self.viewer.renderer.getMax(2)/2));
-        self.ui.spinBoxDisplayRadius.setMaximum(maxRadius)
-        self.ui.spinBoxDisplayRadius.setValue(maxRadius)
         self.viewer.renderer.setSampleInterval(self.getSamplingValue())
         self.viewer.renderer.setSurfaceValue(defaultDensity)
         self.viewer.renderer.setDisplayRadius(maxRadius)
@@ -144,14 +141,5 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
     
     def samplingChanged(self, ix):
         self.viewer.renderer.setSampleInterval(self.getSamplingValue())
-        self.viewer.emitModelChanged()
-        
-    def displayRadiusChanged(self, newRadius):
-        newRadius = int(round(newRadius))
-        self.viewer.renderer.setDisplayRadius(newRadius)
-        self.viewer.emitModelChanged()
-        
-    def displayRadiusEnabled(self, enabled):
-        self.viewer.renderer.useDisplayRadius(enabled)
         self.viewer.emitModelChanged()
         

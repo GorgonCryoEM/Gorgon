@@ -29,4 +29,4 @@ class VolumeViewer(BaseViewer):
         coords = self.worldToObjectCoordinates(center)
         [x, y, z] = [coords.x(), coords.y(), coords.z()]
         self.renderer.setDisplayRadiusOrigin(x, y, z)
-        return self.surfaceEditor.ui.checkBoxUseRadius.isChecked()
+        return True
