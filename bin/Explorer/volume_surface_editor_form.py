@@ -32,7 +32,6 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
         self.ui.labelIsoLevelMax.setVisible(False)
         self.ui.doubleSpinBoxDensityMax.setVisible(False)
         
-        self.connect(self.ui.comboBoxSamplingInterval, QtCore.SIGNAL("currentIndexChanged(int)"), self.samplingChanged)
         self.connect(self.ui.radioButtonIsoSurface, QtCore.SIGNAL("toggled(bool)"), self.setViewingType)
         self.connect(self.ui.radioButtonCrossSection, QtCore.SIGNAL("toggled(bool)"), self.setViewingType)
         self.connect(self.ui.radioButtonSolid, QtCore.SIGNAL("toggled(bool)"), self.setViewingType)
@@ -80,7 +79,7 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
         defaultDensity = (minDensity + maxDensity) / 2
 
         maxRadius = int(max(self.viewer.renderer.getMax(0)/2, self.viewer.renderer.getMax(1)/2, self.viewer.renderer.getMax(2)/2));
-        self.viewer.renderer.setSampleInterval(self.getSamplingValue())
+        self.viewer.renderer.setSampleInterval(1)
         self.viewer.renderer.setSurfaceValue(defaultDensity)
         self.viewer.renderer.setDisplayRadius(maxRadius)
         self.displayAct.setChecked(True)
@@ -134,12 +133,5 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
         self.setCursor(QtCore.Qt.BusyCursor)
         self.viewer.renderer.setMaxSurfaceValue(newLevel)
         self.setCursor(QtCore.Qt.ArrowCursor)
-        self.viewer.emitModelChanged()
-    
-    def getSamplingValue(self):
-        return int(self.ui.comboBoxSamplingInterval.itemText(self.ui.comboBoxSamplingInterval.currentIndex()))
-    
-    def samplingChanged(self, ix):
-        self.viewer.renderer.setSampleInterval(self.getSamplingValue())
         self.viewer.emitModelChanged()
         
