@@ -79,7 +79,6 @@ class ModelVisualizationForm(BaseDockWidget):
             
     def modelLoaded(self):
         self.updateFromViewer()
-        self.show()
     
     def modelChanged(self):
         self.updateFromViewer()
