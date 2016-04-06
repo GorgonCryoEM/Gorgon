@@ -21,7 +21,6 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
         self.app = main
         self.viewer = volumeViewer
         self.connect(self.viewer, QtCore.SIGNAL("modelLoadedPreDraw()"), self.modelLoadedPreDraw)
-        self.connect(self.viewer, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)
         self.createUI()
         self.createActions()
 
@@ -86,11 +85,6 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
         self.displayAct.setEnabled(True)
         self.showWidget(True)
         self.viewer.renderer.enableDraw(True)
-        
-    def modelUnloaded(self):
-        self.viewer.renderer.enableDraw(False)
-        self.displayAct.setEnabled(False)
-        self.showWidget(False)
         
     def createActions(self):
         self.displayAct.setEnabled(False)
