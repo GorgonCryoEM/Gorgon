@@ -17,6 +17,7 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
         self.app = main
         self.viewer = volumeViewer
         self.connect(self.viewer, QtCore.SIGNAL("modelLoadedPreDraw()"), self.modelLoadedPreDraw)
+        
         self.ui = Ui_DialogVolumeSurfaceEditor()
         self.ui.setupUi(self)
  
