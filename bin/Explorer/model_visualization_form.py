@@ -77,12 +77,6 @@ class ModelVisualizationForm(BaseDockWidget):
         else:
             self.ui.labelModelName.setText("")
             
-    def modelLoaded(self):
-        self.updateFromViewer()
-    
-    def modelChanged(self):
-        self.updateFromViewer()
-    
     def setBoundingBoxColor(self):
         self.viewer.setBoundingBoxColor(self.ui.pushButtonBoundingBoxColor.color())
         
