@@ -26,7 +26,6 @@ class ModelVisualizationForm(BaseDockWidget):
         self.setWindowTitle(self.title)
         
         self.createUI()
-        self.createActions()
         self.updateFromViewer()
 
     def createUI(self):
@@ -95,12 +94,7 @@ class ModelVisualizationForm(BaseDockWidget):
         else:
             self.ui.labelModelName.setText("")
             
-    def createActions(self):
-        self.visualizerAct = self.displayAct
-        self.visualizerAct.setEnabled(False)
-             
     def modelLoaded(self):
-        self.visualizerAct.setEnabled(True)
         self.updateFromViewer()
         self.showWidget(True)
     
@@ -108,7 +102,6 @@ class ModelVisualizationForm(BaseDockWidget):
         self.updateFromViewer()
     
     def modelUnloaded(self):
-        self.visualizerAct.setEnabled(False)
         self.showWidget(False)
 
     def setBoundingBoxColor(self):
