@@ -30,6 +30,11 @@ class MainWindowForm(QtGui.QMainWindow):
         pathname = os.path.abspath(os.path.dirname(sys.argv[0]))
         self.setWindowIcon(QtGui.QIcon(pathname + '/gorgon.ico'))
         
+    def load(self):
+        self.volumeViewer.load("densityMap.mrc")
+        self.volumeViewer1.load("vp6-96o.mrc")
+        self.skeletonViewer.load("densityMap-skeleton.mrc")
+
     def addDockWidget (self, area, dockwidget):
         QtGui.QMainWindow.addDockWidget(self, area, dockwidget)
         dockwidget.area = area
