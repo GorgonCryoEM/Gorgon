@@ -29,13 +29,10 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
         self.ui.setupUi(self)
  
         self.ui.labelIsoLevelMax.setVisible(False)
-        self.ui.doubleSpinBoxDensityMax.setVisible(False)
         
         self.connect(self.ui.radioButtonIsoSurface, QtCore.SIGNAL("toggled(bool)"), self.setViewingType)
         self.connect(self.ui.radioButtonCrossSection, QtCore.SIGNAL("toggled(bool)"), self.setViewingType)
         self.connect(self.ui.radioButtonSolid, QtCore.SIGNAL("toggled(bool)"), self.setViewingType)
-        self.connect(self.ui.doubleSpinBoxDensity, QtCore.SIGNAL("editingFinished ()"), self.manualValueChanged)
-        self.connect(self.ui.doubleSpinBoxDensityMax, QtCore.SIGNAL("editingFinished ()"), self.manualValueMaxChanged)
         
     def setViewingType(self, toggled):
         if(toggled):
@@ -67,10 +64,6 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
         self.viewer.renderer.enableDraw(False)
         maxDensity = self.viewer.renderer.getMaxDensity()
         minDensity = self.viewer.renderer.getMinDensity()
-        self.ui.doubleSpinBoxDensity.setMinimum(minDensity)
-        self.ui.doubleSpinBoxDensity.setMaximum(maxDensity)
-        self.ui.doubleSpinBoxDensityMax.setMinimum(minDensity)
-        self.ui.doubleSpinBoxDensityMax.setMaximum(maxDensity)
         if(self.ui.radioButtonIsoSurface.isChecked()):
             defaultDensity = (minDensity + maxDensity) / 2
         else:
@@ -89,26 +82,6 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
     def createActions(self):
         self.displayAct.setEnabled(False)
     
-    def isoValueIndicatorChanged(self, newValue):
-        self.ui.doubleSpinBoxDensity.setValue(float(newValue))
-        
-        maxValue = float(max(newValue, self.ui.doubleSpinBoxDensityMax.value()));
-        if(self.ui.doubleSpinBoxDensityMax.value() != maxValue):
-            self.ui.doubleSpinBoxDensityMax.setValue(maxValue)
-        
-    def isoValueMaxIndicatorChanged(self, newValue):
-        self.ui.doubleSpinBoxDensityMax.setValue(float(newValue))
-        
-        minValue = float(min(newValue, self.ui.doubleSpinBoxDensity.value()));
-        if(self.ui.doubleSpinBoxDensity.value() != minValue):
-            self.ui.doubleSpinBoxDensity.setValue(minValue)
-                            
-    def manualValueChanged(self):
-        newValue = self.ui.doubleSpinBoxDensity.value()
-        
-    def manualValueMaxChanged(self):
-        newValue = self.ui.doubleSpinBoxDensityMax.value()
-                    
     def isoValueChanged(self, newLevel):
         #threading.Thread(target = self.updateIsoValue, args=(newLevel,)).start()
         self.updateIsoValue(newLevel)
