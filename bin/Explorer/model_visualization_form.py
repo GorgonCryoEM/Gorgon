@@ -17,7 +17,6 @@ class ModelVisualizationForm(BaseDockWidget):
 
         self.connect(self.viewer, QtCore.SIGNAL("modelLoaded()"), self.modelLoaded)
         self.connect(self.viewer, QtCore.SIGNAL("modelChanged()"), self.modelChanged)
-        self.connect(self.viewer, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)
         self.setWindowTitle(self.title)
         
         self.createUI()
@@ -84,9 +83,6 @@ class ModelVisualizationForm(BaseDockWidget):
     def modelChanged(self):
         self.updateFromViewer()
     
-    def modelUnloaded(self):
-        self.showWidget(False)
-
     def setBoundingBoxColor(self):
         self.viewer.setBoundingBoxColor(self.ui.pushButtonBoundingBoxColor.color())
         
