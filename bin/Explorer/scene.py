@@ -3,16 +3,20 @@ from .libs import Vec3
 # from line0 import Line0
 # from dot import Dot
 from volume_viewer import VolumeViewer
+from skeleton_viewer import SkeletonViewer
+from sphere import Sphere
 
 
 class Scene:
 
-    def __init__(self):
+    def __init__(self, parent):
         
-        self.volumeViewer = VolumeViewer()
-        self.volumeViewer.load("vp6-96o.mrc")
-
-        self.shapes = [self.volumeViewer]
+        self.volumeViewer = VolumeViewer(parent)
+        self.skeletonViewer = SkeletonViewer(parent)
+        self.volumeViewer1 = VolumeViewer(parent)
+        self.sphere = Sphere(parent)
+        
+        self.shapes = [self.volumeViewer, self.skeletonViewer, self.volumeViewer1, self.sphere]
         
 #         self.linecom = Line0(Vec3(100,100,100))
 #         self.linecom.setColor(40, 70, 50, 150)
@@ -31,3 +35,8 @@ class Scene:
 
     def getShapes(self):
         return self.shapes
+
+    def load(self):
+        self.volumeViewer.load("densityMap.mrc")
+        self.volumeViewer1.load("vp6-96o.mrc")
+        self.skeletonViewer.load("densityMap-skeleton.mrc")

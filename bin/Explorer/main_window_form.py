@@ -1,8 +1,6 @@
 from PyQt4 import QtCore, QtGui
 from camera import Camera
-from volume_viewer import VolumeViewer
-from skeleton_viewer import SkeletonViewer
-from sphere import Sphere
+from scene import Scene
 
 import sys, os
 
@@ -12,13 +10,8 @@ class MainWindowForm(QtGui.QMainWindow):
     def __init__(self, version):
         super(MainWindowForm, self).__init__()
 
-        self.volumeViewer = VolumeViewer(self)
-        self.skeletonViewer = SkeletonViewer(self)
-        self.volumeViewer1 = VolumeViewer(self)
-        self.sphere = Sphere(self)
-        
-        scenes = [self.volumeViewer, self.skeletonViewer, self.volumeViewer1, self.sphere]
-#         scenes = [self.volumeViewer1, self.sphere]
+        self.scene = Scene(self)
+        scenes = self.scene.getShapes()
 
         self.mainCamera = Camera(scenes, self)
         self.setCentralWidget(self.mainCamera)
@@ -31,9 +24,7 @@ class MainWindowForm(QtGui.QMainWindow):
         self.setWindowIcon(QtGui.QIcon(pathname + '/gorgon.ico'))
         
     def load(self):
-        self.volumeViewer.load("densityMap.mrc")
-        self.volumeViewer1.load("vp6-96o.mrc")
-        self.skeletonViewer.load("densityMap-skeleton.mrc")
+        self.scene.load()
 
     def addDockWidget (self, area, dockwidget):
         QtGui.QMainWindow.addDockWidget(self, area, dockwidget)
