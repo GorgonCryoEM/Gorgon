@@ -33,7 +33,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.connect(self, QtCore.SIGNAL("modelUnloaded()"), self.modelChanged)
 
         self.glList =  GLuint()
-        self.showBox = False
         self.twoWayLighting = False
         
         self.multipleSelection = True
@@ -97,13 +96,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
         scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
         return Vec3([worldCoords[i] / scale[i] for i in range(3)])
         
-    def setBoundingBox(self, visible):
-        self.showBox = visible
-        self.repaintCamera()
-
-    def getBoundingBoxColor(self):
-        return QtGui.QColor(255, 255, 255, 255)
-
     def repaintCamera(self):
         self.app.mainCamera.updateGL()
         
@@ -228,10 +220,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
         glPushAttrib(GL_DEPTH_BUFFER_BIT | GL_LIGHTING_BIT | GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT)
         glEnable(GL_DEPTH_TEST);
         glDepthMask(GL_TRUE);
-        
-        if(self.loaded and self.showBox):
-            self.setMaterials(self.getBoundingBoxColor())
-            self.renderer.drawBoundingBox()
         
         self.emitDrawingModel()
         
