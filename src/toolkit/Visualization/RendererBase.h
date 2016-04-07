@@ -30,10 +30,6 @@ namespace Visualization {
             virtual int selectionObjectCount();
             virtual Vec3F selectionCenterOfMass();
             virtual bool selectionMove(Vec3F moveDirection);
-            virtual bool selectionClear();
-            virtual void selectionToggle(int subsceneIndex, bool forceTrue,
-                                         int ix0, int ix1 = -1, int ix2 = -1,
-                                         int ix3 = -1, int ix4 = -1);
             virtual Vec3F set3DCoordinates(int subsceneIndex, int ix0,
                                            int ix1 = -1, int ix2 = -1,
                                            int ix3 = -1, int ix4 = -1);
@@ -48,7 +44,6 @@ namespace Visualization {
         protected:
             Vec3F minPts;
             Vec3F maxPts;
-            bool selected;
     };
 }
 

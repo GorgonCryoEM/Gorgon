@@ -11,7 +11,6 @@
 using namespace Visualization;
 
 RendererBase::RendererBase() {
-    selected = false;
 }
 
 RendererBase::~RendererBase() {
@@ -42,22 +41,6 @@ bool RendererBase::selectionMove(Vec3F moveDirection) {
     return false;
 }
 
-bool RendererBase::selectionClear() {
-    if(selected) {
-        selected = false;
-        return true;
-    } else {
-        return false;
-    }
-
-}
-
-void RendererBase::selectionToggle(int subsceneIndex, bool forceTrue,
-                               int ix0, int ix1, int ix2, int ix3, int ix4)
-{
-    selected = true;
-}
-
 Vec3F RendererBase::set3DCoordinates(int subsceneIndex,
                                  int ix0, int ix1, int ix2, int ix3, int ix4)
 {
@@ -65,7 +48,6 @@ Vec3F RendererBase::set3DCoordinates(int subsceneIndex,
 }
 
 void RendererBase::unload() {
-    selected = false;
 }
 
 void RendererBase::drawSphere(Vec3F center, float radius) {
