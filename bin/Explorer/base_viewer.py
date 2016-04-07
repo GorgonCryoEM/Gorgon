@@ -230,7 +230,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
         glDepthMask(GL_TRUE);
         
         if(self.loaded and self.showBox):
-            self.setMaterials(self.getMinMaxColor())
+            self.setMaterials(self.getBoundingBoxColor())
             self.renderer.drawBoundingBox()
         
         self.emitDrawingModel()
