@@ -314,15 +314,15 @@ class BaseViewer(QtOpenGL.QGLWidget):
             glNewList(list, GL_COMPILE)
             self.glLists.append(list)
 
-            if(colors[i].alpha() < 255):
+            if(colors[0].alpha() < 255):
                 glDepthFunc(GL_LESS)
                 glColorMask(False, False, False, False)
-                self.renderer.draw(i, False)
+                self.renderer.draw(0, False)
                 glDepthFunc(GL_LEQUAL)
                 glColorMask(True, True, True, True)
-                self.renderer.draw(i, self.selectEnabled or self.mouseMoveEnabled)
+                self.renderer.draw(0, self.selectEnabled or self.mouseMoveEnabled)
             else:
-                self.renderer.draw(i, self.selectEnabled or self.mouseMoveEnabled)
+                self.renderer.draw(0, self.selectEnabled or self.mouseMoveEnabled)
             glEndList()
                                     
         glPopAttrib()
