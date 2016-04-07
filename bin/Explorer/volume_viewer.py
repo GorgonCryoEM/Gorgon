@@ -21,9 +21,3 @@ class VolumeViewer(BaseViewer):
         self.loaded = False
         self.surfaceEditor = VolumeSurfaceEditorForm(self.app, self)
         self.initVisualizationOptions(ModelVisualizationForm(self.app, self))
-                      
-    def setCenter(self, center):
-        coords = self.worldToObjectCoordinates(center)
-        [x, y, z] = [coords.x(), coords.y(), coords.z()]
-        self.renderer.setDisplayRadiusOrigin(x, y, z)
-        return True
