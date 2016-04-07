@@ -47,9 +47,6 @@ Vec3F RendererBase::set3DCoordinates(int subsceneIndex,
     return Vec3F(0, 0, 0);
 }
 
-void RendererBase::unload() {
-}
-
 void RendererBase::drawSphere(Vec3F center, float radius) {
     glPushMatrix();
     glTranslatef(center.X(), center.Y(), center.Z());

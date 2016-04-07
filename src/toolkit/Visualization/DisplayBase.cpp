@@ -121,7 +121,6 @@ namespace Visualization {
     }
 
     void DisplayBase::unload() {
-        RendererBase::unload();
         if(textureLoaded) {
             glDeleteTextures(1, &textureName);
             textureLoaded = false;
