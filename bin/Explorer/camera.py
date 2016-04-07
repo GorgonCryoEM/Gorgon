@@ -17,7 +17,6 @@ class Camera(QtOpenGL.QGLWidget):
         self.app = main
 
         self.near = 0
-        self.cuttingPlane = 0.0
         self.scene = scene
         self.mouseTrackingEnabled    = True
         self.mouseTrackingEnabledRay = True
@@ -75,7 +74,6 @@ class Camera(QtOpenGL.QGLWidget):
                 self.look  = Vec3(0,1,0)
                 self.right = Vec3(1,0,0)
                 self.up    = Vec3(0,0,1)
-            self.setRendererCuttingPlanes()
             self.emitCameraChanged()
     
     def setCenter(self, v):
@@ -87,7 +85,6 @@ class Camera(QtOpenGL.QGLWidget):
             except:
                 self.look  = Vec3(0,1,0)
                 self.right = Vec3(1,0,0)
-            self.setRendererCuttingPlanes()
             self.setRendererCenter()
             self.emitCameraChanged()
         
@@ -99,7 +96,6 @@ class Camera(QtOpenGL.QGLWidget):
                 self.up    = (self.right^self.look).normalize()
             except:
                 self.right = Vec3(1,0,0)
-            self.setRendererCuttingPlanes()
             self.emitCameraChanged()
         
     def setEyeRotation(self, yaw, pitch, roll):
@@ -151,7 +147,6 @@ class Camera(QtOpenGL.QGLWidget):
         self.setEye(Vec3(self.center[0], self.center[1], self.center[2] - distance))
         self.setUp(Vec3(0, -1, 0))
         centerDistance = (self.eye - self.center).length()
-        self.setCuttingPlane(0.0)
         self.modelChanged()
          
         self.updateGL()
@@ -162,7 +157,6 @@ class Camera(QtOpenGL.QGLWidget):
         self.setEye(Vec3(self.center[0], self.center[1], self.center[2] - distance))
         self.setUp(Vec3(0, -1, 0))
         centerDistance = (self.eye - self.center).length()
-        self.setCuttingPlane(0.0)
         self.modelChanged()
          
         self.updateGL()
@@ -489,9 +483,7 @@ class Camera(QtOpenGL.QGLWidget):
         if(event.delta() != 0):
             direction = event.delta()/abs(event.delta())
             self.processMouseWheel(direction, event)
-            if(event.modifiers() & QtCore.Qt.ALT):                 # Setting the cutting plane
-                self.setCuttingPlane(self.cuttingPlane + direction * 0.01)
-            elif (not (event.modifiers() & QtCore.Qt.ALT) and not (event.modifiers() & QtCore.Qt.CTRL)):     # Zoom in / out
+            if(not (event.modifiers() & QtCore.Qt.ALT) and not (event.modifiers() & QtCore.Qt.CTRL)):     # Zoom in / out
                 self.setNearFarZoom(self.near, self.far, self.eyeZoom + direction * 10.0/360.0)
             self.updateGL()
         
