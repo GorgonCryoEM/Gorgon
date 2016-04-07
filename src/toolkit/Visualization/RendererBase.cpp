@@ -12,7 +12,6 @@ using namespace Visualization;
 
 RendererBase::RendererBase() {
     selected = false;
-    isObjectSpecificColoring = false;
 }
 
 RendererBase::~RendererBase() {
@@ -24,10 +23,6 @@ float RendererBase::getMin(int dimension) {
 
 float RendererBase::getMax(int dimension) {
     return maxPts[dimension];
-}
-
-void RendererBase::setObjectSpecificColoring(bool objectSpecific) {
-    isObjectSpecificColoring = objectSpecific;
 }
 
 void RendererBase::drawBoundingBox() {
