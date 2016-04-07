@@ -11,7 +11,8 @@
 #include <map>
 //#include <vector>
 //#include <string>
-#include "OpenGLUtils.h"
+//#include "OpenGLUtils.h"
+#include "GorgonGL.h"
 #include "TriangleMeshFace.h"
 #include "TriangleMeshVertex.h"
 
@@ -19,7 +20,7 @@
 #include "MathTools/Vector3.h"
 
 using namespace std;
-using namespace Foundation;
+//using namespace Foundation;
 using namespace Core;
 using namespace MathTools;
 using namespace Protein_Morph;
@@ -107,8 +108,6 @@ void TriangleMesh::draw(bool drawSurfaces,
             glPushName(0);
             glPushName(0);
         }
-        float r, g, b, a;
-        OpenGLUtils::GetColor(r, g, b, a);
         for(unsigned int i = 0; i < faces.size(); i++) {
             if(annotateSurfaces) {
                 glLoadName(i);

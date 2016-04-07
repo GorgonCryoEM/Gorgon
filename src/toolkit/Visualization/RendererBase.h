@@ -9,14 +9,14 @@
 #define SRC_TOOLKIT_VISUALIZATION_RENDERERBASE_H_
 
 //#include <string>
-//#include <GorgonGL.h>
-#include "OpenGLUtils.h"
+#include "GorgonGL.h"
+//#include "OpenGLUtils.h"
 //#include <MathTools/Vector3D.h>
 #include "MathTools/Dim3D.h"
 
 //using namespace std;
 //using namespace wustl_mm::MathTools;
-using namespace Foundation;
+//using namespace Foundation;
 
 namespace Visualization {
     class RendererBase {
