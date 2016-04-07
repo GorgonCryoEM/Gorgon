@@ -55,7 +55,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
     
     def setScale(self, x, y, z):
         self.setScaleNoEmit(x, y, z)
-        self.app.mainCamera.updateGL()
+        self.repaintCamera()
 
     def setScaleNoEmit(self, x, y, z):
         self.renderer.setSpacing(x, y, z)
@@ -65,7 +65,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
 
     def setLocation(self, x, y, z):
         self.renderer.setOrigin(x, y, z)
-        self.app.mainCamera.updateGL()
+        self.repaintCamera()
                         
     def setRotation(self, axis, angle):
         glMatrixMode(GL_MODELVIEW)
@@ -102,8 +102,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
         
     def setBoundingBox(self, visible):
         self.showBox = visible
-        if(hasattr(self.app, "mainCamera")):
-            self.app.mainCamera.updateGL()
+        self.repaintCamera()
 
     def getBoundingBoxColor(self):
         return QtGui.QColor(255, 255, 255, 255)
