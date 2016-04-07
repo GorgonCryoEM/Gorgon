@@ -13,7 +13,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
     DisplayStyleWireframe, DisplayStyleFlat, DisplayStyleSmooth = range(3)
     
     def __init__(self, main, parent=None):
-        QtOpenGL.QGLWidget.__init__(self, parent)
+        super(BaseViewer, self).__init__(parent)
         self.app = main
         self.title = "Untitled"
         self.shortTitle = "UNT"

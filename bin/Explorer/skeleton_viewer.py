@@ -12,7 +12,7 @@ from OpenGL.GLUT import *
 class SkeletonViewer(BaseViewer):
 
     def __init__(self, main, parent=None):
-        BaseViewer.__init__(self, main, parent)
+        super(SkeletonViewer, self).__init__(main, parent)
         self.title = "Skeleton"
         self.shortTitle = "SKE"
 
