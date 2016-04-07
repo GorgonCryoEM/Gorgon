@@ -32,7 +32,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.connect(self, QtCore.SIGNAL("modelLoaded()"), self.modelChanged)
         self.connect(self, QtCore.SIGNAL("modelUnloaded()"), self.modelChanged)
 
-        self.glLists = []
+        self.glList =  GLuint()
         self.showBox = False
         self.twoWayLighting = False
         
@@ -247,7 +247,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
         if(self.loaded and self.modelVisible):
             self.setMaterials(self.getModelColor())
             self.initializeGLDisplayType()
-            glCallList(self.glLists[0])
+            glCallList(self.glList)
             self.unInitializeGLDisplayType();
 
         glPopAttrib()
@@ -288,18 +288,15 @@ class BaseViewer(QtOpenGL.QGLWidget):
         pass
     
     def modelChanged(self):
-        for list in self.glLists:
-            glDeleteLists(list,1)
-        self.glLists = []
+        glDeleteLists(self.glList,1)
             
         glPushAttrib(GL_LIGHTING_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT)
                          
         self.extraDrawingRoutines()
         
         if(self.loaded):
-            list = glGenLists(1)
-            glNewList(list, GL_COMPILE)
-            self.glLists.append(list)
+            self.glList = glGenLists(1)
+            glNewList(self.glList, GL_COMPILE)
 
             if(self.getModelColor().alpha() < 255):
                 glDepthFunc(GL_LESS)
