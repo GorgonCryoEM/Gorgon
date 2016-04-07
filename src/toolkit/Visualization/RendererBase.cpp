@@ -25,25 +25,6 @@ float RendererBase::getMax(int dimension) {
     return maxPts[dimension];
 }
 
-void RendererBase::drawBoundingBox() {
-    glPushAttrib(GL_LIGHTING_BIT | GL_ENABLE_BIT);
-    glDisable (GL_LIGHTING);
-    glPushMatrix();
-    glTranslatef(minPts[0] + (maxPts[0] - minPts[0]) / 2.0,
-                 minPts[1] + (maxPts[1] - minPts[1]) / 2.0,
-                 minPts[2] + (maxPts[2] - minPts[2]) / 2.0);
-    glScalef(maxPts[0] - minPts[0], maxPts[1] - minPts[1],
-             maxPts[2] - minPts[2]);
-    glutWireCube(1.0);
-    glPopMatrix();
-    glPopAttrib();
-}
-
-void RendererBase::updateBoundingBox() {
-    minPts = -0.5;
-    maxPts = 0.5;
-}
-
 bool RendererBase::selectionRotate(Vec3F centerOfMass, Vec3F rotationAxis, float angle) {
     return false;
 }
