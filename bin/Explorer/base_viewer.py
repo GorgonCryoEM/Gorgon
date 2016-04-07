@@ -113,8 +113,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
         return QtGui.QColor(255, 255, 255, 255)
 
     def repaintCamera(self):
-        if(hasattr(self.app, "mainCamera")):
-            self.app.mainCamera.updateGL()
+        self.app.mainCamera.updateGL()
         
     def setDisplayStyle(self, style):
         self.displayStyle = style
