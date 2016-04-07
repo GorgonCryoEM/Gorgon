@@ -26,7 +26,6 @@ namespace Visualization {
             virtual bool selectionRotate(Vec3F centerOfMass,
                                          Vec3F rotationAxis,
                                          float angle);
-            virtual int selectionObjectCount();
             virtual Vec3F selectionCenterOfMass();
             virtual bool selectionMove(Vec3F moveDirection);
             virtual Vec3F set3DCoordinates(int subsceneIndex, int ix0,

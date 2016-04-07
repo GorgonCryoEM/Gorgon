@@ -28,10 +28,6 @@ bool RendererBase::selectionRotate(Vec3F centerOfMass, Vec3F rotationAxis, float
     return false;
 }
 
-int RendererBase::selectionObjectCount() {
-    return 0;
-}
-
 Vec3F RendererBase::selectionCenterOfMass() {
     return (maxPts - minPts) / 2.0;
 }
