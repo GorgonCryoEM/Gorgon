@@ -300,10 +300,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
         else:
             raise Exception("Unable to call renderer.get3DCoordinates method due as there are too many levels in the hit stack")
         
-    def clearSelection(self):
-        if self.renderer.selectionClear():
-            self.emitModelChanged()
-        
     def performElementSelection(self, hitStack):
         #Override this method to enable mouse selection functionality
         pass
@@ -323,11 +319,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
             self.performElementSelection(hitStack)
             if len(hitStack) == 0:
                 hitStack.append(-1)
-            if(len(hitStack) <= 6):
-                #On a 64 bit system, hitStack[0] is of type numpy.int32 rather than int (which is 64 bit)
-                self.renderer.selectionToggle(int(hitStack[0]), forceTrue, hits[0], hits[1], hits[2], hits[3], hits[4])
-            else:
-                raise Exception("Unable to call renderer.select method due as there are too many levels in the hit stack")
             self.emitModelChanged()
             self.emitElementClicked(hitStack, event)
             self.emitElementSelected(hitStack, event)
