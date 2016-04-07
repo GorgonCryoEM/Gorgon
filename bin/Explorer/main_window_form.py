@@ -48,8 +48,7 @@ class MainWindowForm(QtGui.QMainWindow):
 #         else:
 #             event.ignore()
 
-    def dockLocationChanged(self, widget):
-        def dockLocationChanged_widget(area):
-            widget.area = area
-        return dockLocationChanged_widget
-
+#     def dockLocationChanged(self, widget):
+#         def dockLocationChanged_widget(area):
+#             widget.area = area
+#         return dockLocationChanged_widget
