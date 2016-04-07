@@ -252,13 +252,11 @@ class BaseViewer(QtOpenGL.QGLWidget):
     
     def unload(self):
         self.fileName = ""
-        self.renderer.unload()
         self.loaded = False
         self.dirty = False
         self.renderer.setOrigin(0,0,0)
         self.renderer.setSpacing(1, 1, 1)
         self.rotation = self.identityMatrix()
-        self.emitModelUnloaded()
         
     def extraDrawingRoutines(self):
         pass
