@@ -310,21 +310,20 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.extraDrawingRoutines()
         
         if(self.loaded):
-            for i in range(1):
-                list = glGenLists(1)
-                glNewList(list, GL_COMPILE)
-                self.glLists.append(list)
+            list = glGenLists(1)
+            glNewList(list, GL_COMPILE)
+            self.glLists.append(list)
 
-                if(colors[i].alpha() < 255):
-                    glDepthFunc(GL_LESS)
-                    glColorMask(False, False, False, False)
-                    self.renderer.draw(i, False)
-                    glDepthFunc(GL_LEQUAL)
-                    glColorMask(True, True, True, True)
-                    self.renderer.draw(i, self.selectEnabled or self.mouseMoveEnabled)
-                else:
-                    self.renderer.draw(i, self.selectEnabled or self.mouseMoveEnabled)
-                glEndList()
+            if(colors[i].alpha() < 255):
+                glDepthFunc(GL_LESS)
+                glColorMask(False, False, False, False)
+                self.renderer.draw(i, False)
+                glDepthFunc(GL_LEQUAL)
+                glColorMask(True, True, True, True)
+                self.renderer.draw(i, self.selectEnabled or self.mouseMoveEnabled)
+            else:
+                self.renderer.draw(i, self.selectEnabled or self.mouseMoveEnabled)
+            glEndList()
                                     
         glPopAttrib()
 
