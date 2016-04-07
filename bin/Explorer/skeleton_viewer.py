@@ -28,15 +28,7 @@ class SkeletonViewer(BaseViewer):
         self.visualizationOptions.ui.spinBoxThickness.setVisible(True)
         self.visualizationOptions.ui.labelThickness.setVisible(True)
 
-        self.model2Visible = True
-        self.model3Visible = True
         self.visualizationOptions.ui.checkBoxModelVisible.setText("Show curves colored:")
-        self.visualizationOptions.ui.checkBoxModel2Visible.setText("Show surfaces colored:")
-        self.visualizationOptions.ui.checkBoxModel2Visible.setVisible(True)
-        self.visualizationOptions.ui.pushButtonModel2Color.setVisible(True)
-        self.visualizationOptions.ui.checkBoxModel3Visible.setText("Show surface borders:")
-        self.visualizationOptions.ui.checkBoxModel3Visible.setVisible(True)
-        self.visualizationOptions.ui.pushButtonModel3Color.setVisible(True)
     
     def loadVolume(self, volume):
         if(self.loaded):
