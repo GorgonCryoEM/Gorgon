@@ -37,12 +37,6 @@ bool RendererBase::selectionMove(Vec3F moveDirection) {
     return false;
 }
 
-Vec3F RendererBase::set3DCoordinates(int subsceneIndex,
-                                 int ix0, int ix1, int ix2, int ix3, int ix4)
-{
-    return Vec3F(0, 0, 0);
-}
-
 void RendererBase::drawSphere(Vec3F center, float radius) {
     glPushMatrix();
     glTranslatef(center.X(), center.Y(), center.Z());

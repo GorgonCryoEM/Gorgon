@@ -28,9 +28,6 @@ namespace Visualization {
                                          float angle);
             virtual Vec3F selectionCenterOfMass();
             virtual bool selectionMove(Vec3F moveDirection);
-            virtual Vec3F set3DCoordinates(int subsceneIndex, int ix0,
-                                           int ix1 = -1, int ix2 = -1,
-                                           int ix3 = -1, int ix4 = -1);
             void drawSphere(Vec3F center, float radius);
             void static drawCylinder(Vec3F pt1, Vec3F pt2,
                                      float radius, int slices = 10, int stacks = 10);
