@@ -310,7 +310,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.extraDrawingRoutines()
         
         if(self.loaded):
-            for i in range(3):
+            for i in range(1):
                 list = glGenLists(1)
                 glNewList(list, GL_COMPILE)
                 self.glLists.append(list)
