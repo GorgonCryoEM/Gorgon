@@ -26,9 +26,6 @@ namespace Protein_Morph {
 
     class TriangleMesh : public Mesh {
         public:
-            TriangleMesh();
-            ~TriangleMesh();
-
             void clear();
             int addMarchingVertex(Vec3F location, int hashKey);
             unsigned long long addMarchingFace(unsigned long long vertexHash0,

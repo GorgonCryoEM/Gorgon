@@ -38,14 +38,6 @@ unsigned long long TriangleMesh::addMarchingFace(unsigned long long vertexHash0,
     return addFace(vertexHash0, vertexHash1, vertexHash2);
 }
 
-TriangleMesh::TriangleMesh() {
-    clear();
-}
-
-TriangleMesh::~TriangleMesh() {
-    clear();
-}
-
 void TriangleMesh::clear() {
     vertices.clear();
     faces.clear();
