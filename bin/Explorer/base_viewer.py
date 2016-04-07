@@ -54,11 +54,8 @@ class BaseViewer(QtOpenGL.QGLWidget):
 				]
     
     def setScale(self, x, y, z):
-        self.setScaleNoEmit(x, y, z)
-        self.repaintCamera()
-
-    def setScaleNoEmit(self, x, y, z):
         self.renderer.setSpacing(x, y, z)
+        self.repaintCamera()
         
     def setLocationV(self, v):
         self.setLocation(v[0], v[1], v[2])
@@ -251,7 +248,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
         try:
             self.renderer.loadFile(str(fileName))
             print self.renderer.getSize()
-            self.setScaleNoEmit(self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ())
+            self.setScale(self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ())
             self.loaded = True
             self.dirty = False
             self.emitModelLoadedPreDraw()
