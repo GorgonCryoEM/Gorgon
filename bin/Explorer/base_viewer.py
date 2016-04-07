@@ -27,8 +27,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
 #         self.displayStyle = self.DisplayStyleSmooth
         self.displayStyle = self.DisplayStyleWireframe
         self.modelVisible = True
-        self.model2Visible = True
-        self.model3Visible = True
         self.rotation = self.identityMatrix()
         self.connect(self, QtCore.SIGNAL("modelChanged()"), self.modelChanged)
         self.connect(self, QtCore.SIGNAL("modelLoaded()"), self.modelChanged)
@@ -126,23 +124,9 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.modelVisible = visible
         self.repaintCamera()
 
-    def setModel2Visibility(self, visible):
-        self.model2Visible = visible
-        self.repaintCamera()
-        
-    def setModel3Visibility(self, visible):
-        self.model3Visible = visible
-        self.repaintCamera()
-        
     def getModelColor(self):
         return self.modelColor
 
-    def getModel2Color(self):
-        return QtGui.QColor(180, 180, 180, 150)
-    
-    def getModel3Color(self):
-        return QtGui.QColor(180, 180, 180, 150)
-    
     def setMaterials(self, color):
         glColor4f(color.redF(), color.greenF(), color.blueF(), color.alphaF())
         diffuseMaterial = [color.redF(), color.greenF(), color.blueF(), color.alphaF()]
