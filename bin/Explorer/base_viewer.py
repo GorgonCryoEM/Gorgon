@@ -292,10 +292,10 @@ class BaseViewer(QtOpenGL.QGLWidget):
         pass
     
     def getDrawColors(self):
-        return [self.getModelColor(),  self.getModel2Color(), self.getModel3Color()]
+        return [self.getModelColor()]
     
     def getDrawVisibility(self):
-        return [self.modelVisible, self.model2Visible, self.model3Visible]
+        return [self.modelVisible]
         
     def modelChanged(self):
         for list in self.glLists:
