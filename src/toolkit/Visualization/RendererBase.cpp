@@ -104,6 +104,3 @@ void RendererBase::drawLine(Vec3F pt1, Vec3F pt2) {
     glVertex3f(pt2.X(), pt2.Y(), pt2.Z());
     glEnd();
 }
-
-void Visualization::RendererBase::clearOtherHighlights() {
-}

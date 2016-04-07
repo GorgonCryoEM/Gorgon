@@ -42,8 +42,6 @@ namespace Visualization {
                                      float radius, int slices = 10, int stacks = 10);
             void static drawLine(Vec3F pt1, Vec3F pt2);
 
-            void clearOtherHighlights();
-
             float getMin(int dimension);
             float getMax(int dimension);
 
