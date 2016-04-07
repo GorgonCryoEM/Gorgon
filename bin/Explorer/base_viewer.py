@@ -247,10 +247,10 @@ class BaseViewer(QtOpenGL.QGLWidget):
         visibility = self.getDrawVisibility()
         colors     = self.getDrawColors()
                 
-        if(self.loaded and visibility[i]):
-            self.setMaterials(colors[i])
+        if(self.loaded and visibility[0]):
+            self.setMaterials(colors[0])
             self.initializeGLDisplayType()
-            glCallList(self.glLists[i])
+            glCallList(self.glLists[0])
             self.unInitializeGLDisplayType();
 
         glPopAttrib()
