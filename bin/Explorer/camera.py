@@ -123,17 +123,6 @@ class Camera(QtOpenGL.QGLWidget):
             self.setGlProjection()
             self.emitCameraChanged()
     
-    def setCuttingPlane(self, cuttingPlane):
-        newCuttingPlane = min(max(cuttingPlane, -1.0), 1.0)
-        if(self.cuttingPlane != newCuttingPlane):
-            self.cuttingPlane = newCuttingPlane
-            self.setRendererCuttingPlanes()
-    
-    def setRendererCuttingPlanes(self):
-        for s in self.scene:
-            if(s.renderer.setCuttingPlane(self.cuttingPlane, self.look[0], self.look[1], self.look[2])):
-                s.emitModelChanged()
-                
     def setRendererCenter(self):
         for s in self.scene:
             if(s.setCenter(self.center)):
