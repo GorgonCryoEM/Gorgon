@@ -245,10 +245,9 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.emitDrawingModel()
         
         visibility = self.getDrawVisibility()
-        colors     = self.getDrawColors()
                 
         if(self.loaded and visibility[0]):
-            self.setMaterials(colors[0])
+            self.setMaterials(self.getModelColor())
             self.initializeGLDisplayType()
             glCallList(self.glLists[0])
             self.unInitializeGLDisplayType();
@@ -290,9 +289,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
     def extraDrawingRoutines(self):
         pass
     
-    def getDrawColors(self):
-        return [self.getModelColor()]
-    
     def getDrawVisibility(self):
         return [self.modelVisible]
         
@@ -302,7 +298,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.glLists = []
             
         visibility = self.getDrawVisibility()
-        colors = self.getDrawColors()
         
         glPushAttrib(GL_LIGHTING_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT)
                          
@@ -313,7 +308,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
             glNewList(list, GL_COMPILE)
             self.glLists.append(list)
 
-            if(colors[0].alpha() < 255):
+            if(self.getModelColor().alpha() < 255):
                 glDepthFunc(GL_LESS)
                 glColorMask(False, False, False, False)
                 self.renderer.draw(0, False)
