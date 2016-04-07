@@ -29,11 +29,3 @@ class SkeletonViewer(BaseViewer):
         self.visualizationOptions.ui.labelThickness.setVisible(True)
 
         self.visualizationOptions.ui.checkBoxModelVisible.setText("Show curves colored:")
-    
-    def loadVolume(self, volume):
-        if(self.loaded):
-            self.unloadData
-        self.renderer.loadVolume(volume)
-        self.loaded = True
-        self.emitModelLoaded()
-        self.emitViewerSetCenter()
