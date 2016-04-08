@@ -125,8 +125,8 @@ class Camera(QtOpenGL.QGLWidget):
                 s.emitModelChanged()
                  
     def sceneSetCenter(self, cX, cY, cZ, d):
-        sceneMin = [cX, cY, cZ]
-        sceneMax = [cX, cY, cZ]
+        sceneMin = Vec3(cX, cY, cZ)
+        sceneMax = Vec3(cX, cY, cZ)
         for s in self.scene:
             if s.loaded:
                 (minPos, maxPos) = s.getMinMax()
@@ -135,9 +135,6 @@ class Camera(QtOpenGL.QGLWidget):
                         sceneMin[i] = minPos[i]
                     if maxPos[i] > sceneMax[i]:
                         sceneMax[i] = maxPos[i]
-        
-        sceneMin = Vec3(sceneMin)
-        sceneMax = Vec3(sceneMax)
         
         distance = (sceneMin - sceneMax).length()
         center   = (sceneMin + sceneMax)*0.5
