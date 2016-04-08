@@ -104,9 +104,7 @@ void TriangleMesh::draw(bool drawSurfaces,
             if(fadeExtreme) {
                 for(unsigned int j = 0; j < 3; j++) {
                     int k = faces[i][j];
-                    drawTriangle =
-                            drawTriangle && ( (vertices[k].position - center).length()
-                                    <= radius);
+                    drawTriangle = drawTriangle && (vertices[k].position - center).length() <= radius;
                 }
             }
             if(drawTriangle) {
@@ -130,23 +128,20 @@ void TriangleMesh::draw(bool drawSurfaces,
 void TriangleMesh::save(string fileName) {
     FILE * outFile = fopen(fileName.c_str(), "wt");
     fprintf(outFile, "OFF\n");
-    fprintf(outFile, "%d %d %d\n", (int)vertices.size(), (int)faces.size(),
-            0);
+    fprintf(outFile, "%d %d %d\n", (int)vertices.size(), (int)faces.size(), 0);
 
     map<unsigned long long, int> indexedVertices;
     vector<Vec3F> vertexList;
 
     int index = 0;
-    for(TriangleMeshVertexType::iterator i = vertices.begin();
-            i != vertices.end(); i++) {
+    for(TriangleMeshVertexType::iterator i = vertices.begin(); i != vertices.end(); ++i) {
         vertexList.push_back(i->second.position);
         indexedVertices[i->first] = index;
         index++;
     }
 
     for(int i = 0; i < index; i++) {
-        fprintf(outFile, "%f %f %f \n", vertexList[i].X(),
-                vertexList[i].Y(), vertexList[i].Z());
+        fprintf(outFile, "%f %f %f \n", vertexList[i].X(), vertexList[i].Y(), vertexList[i].Z());
     }
 
     for(unsigned int i = 0; i < faces.size(); i++) {
