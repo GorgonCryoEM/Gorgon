@@ -271,7 +271,7 @@ int NonManifoldMesh::addVertex(NonManifoldMeshVertex vertex) {
 int NonManifoldMesh::addVertex(Vec3F location) {
     NonManifoldMeshVertex v;
     v.position = location;
-    //        v.tag = tag;
+
     return addVertex(v);
 }
 
