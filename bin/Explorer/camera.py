@@ -231,11 +231,11 @@ class Camera(QtOpenGL.QGLWidget):
         for s in self.scene:
             s.processMouseWheel(direction, e)
      
-    def processMouseDown(self, mouseHits, e):
+    def processMouseDown(self, hits, e):
         globalMinDepth = self.far + 1
         minNames = list()
         sceneId = -1
-        for hit_record in mouseHits:
+        for hit_record in hits:
             minDepth, maxDepth, names = hit_record
             names = list(names)
             if(globalMinDepth > minDepth):
@@ -246,13 +246,13 @@ class Camera(QtOpenGL.QGLWidget):
             minNames.pop(0)
         self.selectedScene = sceneId;
             
-    def processMouseClick(self, mouseHits, e, leftPressed, midPressed, rightPressed):
-        self.emitMouseClickedRaw(mouseHits, e)
+    def processMouseClick(self, hits, e, left, mid, right):
+        self.emitMouseClickedRaw(hits, e)
 
         globalMinDepth = self.far + 1
         minNames = list()
         sceneId = -1
-        for hit_record in mouseHits:
+        for hit_record in hits:
             minDepth, maxDepth, names = hit_record
             names = list(names)
             if(self.scene[names[0]].selectEnabled and globalMinDepth > minDepth):
@@ -262,7 +262,7 @@ class Camera(QtOpenGL.QGLWidget):
             sceneId = minNames[0]
             minNames.pop(0)
             
-        if (leftPressed):
+        if (left):
             if (e.modifiers() & QtCore.Qt.CTRL):        # Multiple selection mode
                 if (sceneId >= 0):
                     self.scene[sceneId].processMouseClick(minNames, e, False)
@@ -274,17 +274,17 @@ class Camera(QtOpenGL.QGLWidget):
                     if (i == sceneId):
                         self.scene[sceneId].processMouseClick(minNames, e, True)
                         
-        elif (rightPressed):                                # Focusing on current point
+        elif (right):                                # Focusing on current point
             if(sceneId >= 0):
                 self.scene[sceneId].emitElementClicked(minNames, e)
             
-    def processMouseMove(self, mouseHits, e):
-        self.emitMouseMovedRaw(mouseHits, e)
+    def processMouseMove(self, hits, e):
+        self.emitMouseMovedRaw(hits, e)
                           
         globalMinDepth = self.far + 1
         minNames = list()
         sceneId = -1
-        for hit_record in mouseHits:
+        for hit_record in hits:
             minDepth, maxDepth, names = hit_record
             names = list(names)
             if(self.scene[names[0]].mouseMoveEnabled and globalMinDepth > minDepth):
@@ -316,8 +316,8 @@ class Camera(QtOpenGL.QGLWidget):
         glPopMatrix()
         glFlush()
 
-        mouseHits = glRenderMode(GL_RENDER)
-        return mouseHits
+        hits = glRenderMode(GL_RENDER)
+        return hits
 
     def getMouseRay(self, x, y):
         glMatrixMode(GL_MODELVIEW)
@@ -484,8 +484,8 @@ class Camera(QtOpenGL.QGLWidget):
         self.setNearFarZoom(minDist, maxDist, self.eyeZoom)
         self.updateGL()
         
-    def emitMouseMovedRaw(self, mouseHits, event):
-        self.emit(QtCore.SIGNAL("mouseMovedRAW(PyQt_PyObject, QMouseEvent)"), mouseHits, event)
+    def emitMouseMovedRaw(self, hits, event):
+        self.emit(QtCore.SIGNAL("mouseMovedRAW(PyQt_PyObject, QMouseEvent)"), hits, event)
 
-    def emitMouseClickedRaw(self, mouseHits, event):
-        self.emit(QtCore.SIGNAL("mouseClickedRAW(PyQt_PyObject, QMouseEvent)"), mouseHits, event)
+    def emitMouseClickedRaw(self, hits, event):
+        self.emit(QtCore.SIGNAL("mouseClickedRAW(PyQt_PyObject, QMouseEvent)"), hits, event)
