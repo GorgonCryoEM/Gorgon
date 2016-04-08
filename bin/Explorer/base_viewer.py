@@ -41,10 +41,10 @@ class BaseViewer(QtOpenGL.QGLWidget):
     def initVisualizationOptions(self, visualizationForm):
         self.visualizationOptions = visualizationForm
     
-    def getModelColor(self):
+    def getColor(self):
         return self.color
 
-    def setModelColor(self, color):
+    def setColor(self, color):
         self.color = color
         self.repaintCamera()
 
@@ -221,7 +221,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.emitDrawingModel()
         
         if(self.loaded and self.modelVisible):
-            self.setMaterials(self.getModelColor())
+            self.setMaterials(self.getColor())
             self.initializeGLDisplayType()
             glCallList(self.glList)
             self.unInitializeGLDisplayType();
@@ -272,7 +272,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
             self.glList = glGenLists(1)
             glNewList(self.glList, GL_COMPILE)
 
-            if(self.getModelColor().alpha() < 255):
+            if(self.getColor().alpha() < 255):
                 glDepthFunc(GL_LESS)
                 glColorMask(False, False, False, False)
                 self.renderer.draw(0, False)

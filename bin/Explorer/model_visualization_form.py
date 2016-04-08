@@ -44,7 +44,7 @@ class ModelVisualizationForm(BaseDockWidget):
         self.updateFromViewer()
                                                  
     def updateFromViewer(self):
-        self.ui.pushButtonModelColor.setColor(self.viewer.getModelColor())
+        self.ui.pushButtonModelColor.setColor(self.viewer.getColor())
         self.ui.checkBoxModelVisible.setChecked(self.viewer.modelVisible)
          
         if(self.viewer.displayStyle == self.viewer.DisplayStyleWireframe):
@@ -74,7 +74,7 @@ class ModelVisualizationForm(BaseDockWidget):
             self.ui.labelModelName.setText("")
             
     def setModelColor(self):
-        self.viewer.setModelColor(self.ui.pushButtonModelColor.color())
+        self.viewer.setColor(self.ui.pushButtonModelColor.color())
     
     def setDisplayStyle(self, dummy):
         if(self.ui.radioButtonWireframe.isChecked()):
