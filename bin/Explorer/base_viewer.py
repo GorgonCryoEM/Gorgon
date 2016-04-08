@@ -304,11 +304,11 @@ class BaseViewer(QtOpenGL.QGLWidget):
         #Override this method to enable mouse selection functionality
         pass
             
-    def processMouseWheel(self, amount, event):
+    def processMouseWheel(self, amount, e):
         #Override this method to enable mouse wheel functionality
         pass
                                 
-    def processMouseClick(self, hitStack, event, forceTrue):
+    def processMouseClick(self, hitStack, e, forceTrue):
         print self.title, ": ", hitStack
         hits = [-1,-1,-1,-1,-1]
         self.multipleSelection = not forceTrue
@@ -320,17 +320,17 @@ class BaseViewer(QtOpenGL.QGLWidget):
             if len(hitStack) == 0:
                 hitStack.append(-1)
             self.emitModelChanged()
-            self.emitElementClicked(hitStack, event)
-            self.emitElementSelected(hitStack, event)
+            self.emitElementClicked(hitStack, e)
+            self.emitElementSelected(hitStack, e)
 
-    def processMouseClickRay(self, ray, rayWidth, eye, event):
-        self.emitMouseClickRay(ray, rayWidth, eye, event)
+    def processMouseClickRay(self, ray, rayWidth, eye, e):
+        self.emitMouseClickRay(ray, rayWidth, eye, e)
 
-    def processMouseMove(self, hitStack, event):
-        self.emitElementMouseOver(hitStack, event)
+    def processMouseMove(self, hitStack, e):
+        self.emitElementMouseOver(hitStack, e)
         
-    def processMouseMoveRay(self, ray, rayWidth, eye, event):
-        self.emitMouseOverRay(ray, rayWidth, eye, event)
+    def processMouseMoveRay(self, ray, rayWidth, eye, e):
+        self.emitMouseOverRay(ray, rayWidth, eye, e)
 
     def setCenter(self, center):
         return False
@@ -338,35 +338,35 @@ class BaseViewer(QtOpenGL.QGLWidget):
     def emitThicknessChanged(self, value):
         self.emit(QtCore.SIGNAL("thicknessChanged(int)"), value);
 
-    def emitMouseClickRay(self, ray, rayWidth, eye, event):
-        self.emit(QtCore.SIGNAL("mouseClickRay(PyQt_PyObject, float, PyQt_PyObject, QMouseEvent)"), ray, rayWidth, eye, event);
+    def emitMouseClickRay(self, ray, rayWidth, eye, e):
+        self.emit(QtCore.SIGNAL("mouseClickRay(PyQt_PyObject, float, PyQt_PyObject, QMouseEvent)"), ray, rayWidth, eye, e);
 
-    def emitMouseOverRay(self, ray, rayWidth, eye, event):
-        self.emit(QtCore.SIGNAL("mouseOverRay(PyQt_PyObject, float, PyQt_PyObject, QMouseEvent)"), ray, rayWidth, eye, event);
+    def emitMouseOverRay(self, ray, rayWidth, eye, e):
+        self.emit(QtCore.SIGNAL("mouseOverRay(PyQt_PyObject, float, PyQt_PyObject, QMouseEvent)"), ray, rayWidth, eye, e);
 
-    def emitElementClicked(self, hitStack, event):
+    def emitElementClicked(self, hitStack, e):
         hits = [-1,-1,-1,-1,-1,-1]
         for i in range(6):
                 if(len(hitStack) > i):
                     hits[i] = hitStack[i]
-        self.emit(QtCore.SIGNAL("elementClicked (int, int, int, int, int, int, QMouseEvent)"), hits[0], hits[1], hits[2], hits[3], hits[4], hits[5], event)
+        self.emit(QtCore.SIGNAL("elementClicked (int, int, int, int, int, int, QMouseEvent)"), hits[0], hits[1], hits[2], hits[3], hits[4], hits[5], e)
 
-    def emitElementSelected(self, hitStack, event):
+    def emitElementSelected(self, hitStack, e):
         hits = [-1,-1,-1,-1,-1,-1]
         for i in range(6):
                 if(len(hitStack) > i):
                     hits[i] = hitStack[i]
-        self.emit(QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), hits[0], hits[1], hits[2], hits[3], hits[4], hits[5], event)
+        self.emit(QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), hits[0], hits[1], hits[2], hits[3], hits[4], hits[5], e)
         
     def emitMouseTrackingChanged(self):
         self.emit(QtCore.SIGNAL("mouseTrackingChanged ()"))
         
-    def emitElementMouseOver(self, hitStack, event):
+    def emitElementMouseOver(self, hitStack, e):
         hits = [-1,-1,-1,-1,-1,-1]
         for i in range(6):
                 if(len(hitStack) > i):
                     hits[i] = hitStack[i]
-        self.emit(QtCore.SIGNAL("elementMouseOver (int, int, int, int, int, int, QMouseEvent)"), hits[0], hits[1], hits[2], hits[3], hits[4], hits[5], event)
+        self.emit(QtCore.SIGNAL("elementMouseOver (int, int, int, int, int, int, QMouseEvent)"), hits[0], hits[1], hits[2], hits[3], hits[4], hits[5], e)
 
     def emitModelLoadedPreDraw(self):
         self.emit(QtCore.SIGNAL("modelLoadedPreDraw()"))
