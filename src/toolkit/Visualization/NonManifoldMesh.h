@@ -115,7 +115,6 @@ namespace Protein_Morph {
                          string newEdgeTag = "", string faceTag ="");
             void addTriangle(TriangleMeshFace vertexId,
                              string newEdgeTag = "", string faceTag = "");
-            void markFixedVertices();
             void mergeMesh(const NonManifoldMesh & srcMesh);
             void removeFace(int faceId);
             void removeEdge(int edgeId);

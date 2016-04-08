@@ -240,7 +240,6 @@ namespace Protein_Morph {
             }
         }
 
-        markFixedVertices();
     #ifdef GORGON_DEBUG
     cout<<"\033[33mDEBUG: END"<<endl;
     cout<<"DEBUG: Method: NonManifoldMesh::NonManifoldMesh\n\033[0m"<<endl;
@@ -384,22 +383,6 @@ namespace Protein_Morph {
         int faceId = addFace(face);
         for(i = 0; i < (int)face.edgeIds.size(); i++)
             edges[getEdgeIndex(face.edgeIds[i])].faceIds.push_back(faceId);
-    }
-
-    void NonManifoldMesh::markFixedVertices() {
-        bool sheetFound;
-        bool edgeFound;
-
-        for(unsigned int i = 0; i < vertices.size(); i++) {
-            if(vertices[i].valid) {
-                sheetFound = false;
-                edgeFound = false;
-                for(unsigned int j = 0; j < vertices[i].edgeIds.size(); j++) {
-                    sheetFound = sheetFound || (edges[getEdgeIndex(vertices[i].edgeIds[j])].faceIds.size() > 0);
-                    edgeFound = edgeFound || (edges[getEdgeIndex(vertices[i].edgeIds[j])].faceIds.size() == 0);
-                }
-            }
-        }
     }
 
     void NonManifoldMesh::mergeMesh(const NonManifoldMesh & src) {
