@@ -24,7 +24,6 @@ namespace Protein_Morph {
         public:
             Vec3F position;
             vector<unsigned long long> faceHashes;
-            bool tag;
     };
 
     inline TriangleMeshVertex::TriangleMeshVertex() {

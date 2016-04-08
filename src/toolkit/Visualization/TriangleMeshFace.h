@@ -15,7 +15,6 @@ namespace Protein_Morph {
     class TriangleMeshFace {
         public:
             unsigned long long vertexHashes[3];
-            bool tag;
     };
 }
 
