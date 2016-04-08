@@ -227,11 +227,11 @@ class Camera(QtOpenGL.QGLWidget):
             glPopName()
         glPopMatrix()
         
-    def processMouseWheel(self, direction, event):
+    def processMouseWheel(self, direction, e):
         for s in self.scene:
-            s.processMouseWheel(direction, event)
+            s.processMouseWheel(direction, e)
      
-    def processMouseDown(self, mouseHits, event):
+    def processMouseDown(self, mouseHits, e):
         globalMinDepth = self.far + 1
         minNames = list()
         sceneId = -1
@@ -246,8 +246,8 @@ class Camera(QtOpenGL.QGLWidget):
             minNames.pop(0)
         self.selectedScene = sceneId;
             
-    def processMouseClick(self, mouseHits, event, leftPressed, midPressed, rightPressed):
-        self.emitMouseClickedRaw(mouseHits, event)
+    def processMouseClick(self, mouseHits, e, leftPressed, midPressed, rightPressed):
+        self.emitMouseClickedRaw(mouseHits, e)
 
         globalMinDepth = self.far + 1
         minNames = list()
@@ -263,23 +263,23 @@ class Camera(QtOpenGL.QGLWidget):
             minNames.pop(0)
             
         if (leftPressed):
-            if (event.modifiers() & QtCore.Qt.CTRL):        # Multiple selection mode
+            if (e.modifiers() & QtCore.Qt.CTRL):        # Multiple selection mode
                 if (sceneId >= 0):
-                    self.scene[sceneId].processMouseClick(minNames, event, False)
+                    self.scene[sceneId].processMouseClick(minNames, e, False)
             else:                                           # Single selection mode
                 for i in range(len(self.scene)):
                     self.scene[i].emitModelChanged()
                 
                 for i in range(len(self.scene)):
                     if (i == sceneId):
-                        self.scene[sceneId].processMouseClick(minNames, event, True)
+                        self.scene[sceneId].processMouseClick(minNames, e, True)
                         
         elif (rightPressed):                                # Focusing on current point
             if(sceneId >= 0):
-                self.scene[sceneId].emitElementClicked(minNames, event)
+                self.scene[sceneId].emitElementClicked(minNames, e)
             
-    def processMouseMove(self, mouseHits, event):
-        self.emitMouseMovedRaw(mouseHits, event)
+    def processMouseMove(self, mouseHits, e):
+        self.emitMouseMovedRaw(mouseHits, e)
                           
         globalMinDepth = self.far + 1
         minNames = list()
@@ -294,7 +294,7 @@ class Camera(QtOpenGL.QGLWidget):
             sceneId = minNames[0];
             minNames.pop(0)
         if(sceneId >= 0):
-            self.scene[sceneId].processMouseMove(minNames, event)
+            self.scene[sceneId].processMouseMove(minNames, e)
        
     def setGluPerspective(self):
         gluPerspective(180 * self.eyeZoom, self.aspectRatio, self.near, self.far)
@@ -334,10 +334,10 @@ class Camera(QtOpenGL.QGLWidget):
         glPopMatrix()
         return Vec3(p2) - self.eye
                 
-    def resizeGL(self, width, height):
-        if(height > 0):
-            self.aspectRatio = width/(1.0*height)
-            glViewport(0,0, width, height)
+    def resizeGL(self, w, h):
+        if(h > 0):
+            self.aspectRatio = w/(1.0*h)
+            glViewport(0,0, w, h)
             self.setGlProjection()
 
     def setGlProjection(self):
@@ -392,65 +392,65 @@ class Camera(QtOpenGL.QGLWidget):
             if(s.renderer.selectionRotate(selectionCOM, selectionAxis, moveLength.length())):
                 s.emitModelChanged()
                      
-    def mousePressEvent(self, event):
-        self.mouseDownPoint    = QtCore.QPoint(event.pos())
-        self.mouseMovePoint    = QtCore.QPoint(event.pos())
-        self.mouseLeftPressed  = (event.buttons() & QtCore.Qt.LeftButton)
-        self.mouseMidPressed   = (event.buttons() & QtCore.Qt.MidButton)
-        self.mouseRightPressed = (event.buttons() & QtCore.Qt.RightButton)
-        self.processMouseDown(self.pickObject(self.mouseDownPoint.x(), self.mouseDownPoint.y()), event)
+    def mousePressEvent(self, e):
+        self.mouseDownPoint    = QtCore.QPoint(e.pos())
+        self.mouseMovePoint    = QtCore.QPoint(e.pos())
+        self.mouseLeftPressed  = (e.buttons() & QtCore.Qt.LeftButton)
+        self.mouseMidPressed   = (e.buttons() & QtCore.Qt.MidButton)
+        self.mouseRightPressed = (e.buttons() & QtCore.Qt.RightButton)
+        self.processMouseDown(self.pickObject(self.mouseDownPoint.x(), self.mouseDownPoint.y()), e)
         
-    def mouseReleaseEvent(self, event):
-        self.mouseUpPoint = QtCore.QPoint(event.pos())
+    def mouseReleaseEvent(self, e):
+        self.mouseUpPoint = QtCore.QPoint(e.pos())
         #Enter selection mode only if we didnt move the mouse much.. (If the mouse was moved, then we assume a camera motion instead of a selection
         dx = self.mouseUpPoint.x() - self.mouseDownPoint.x()
         dy = self.mouseUpPoint.y() - self.mouseDownPoint.y()
              
         if (pow(self.mouseDownPoint.x() - self.mouseUpPoint.x(), 2) + pow(self.mouseDownPoint.y() - self.mouseUpPoint.y(), 2) <= 2):
-            self.processMouseClick(self.pickObject(self.mouseUpPoint.x(), self.mouseUpPoint.y()), event, self.mouseLeftPressed, self.mouseMidPressed, self.mouseRightPressed)
+            self.processMouseClick(self.pickObject(self.mouseUpPoint.x(), self.mouseUpPoint.y()), e, self.mouseLeftPressed, self.mouseMidPressed, self.mouseRightPressed)
         
         # auto rotate if ctrl + alt pressed
-        if(self.mouseLeftPressed) and (event.modifiers() & QtCore.Qt.CTRL) and (event.modifiers() & QtCore.Qt.ALT):
+        if(self.mouseLeftPressed) and (e.modifiers() & QtCore.Qt.CTRL) and (e.modifiers() & QtCore.Qt.ALT):
             for i in range(100):
                 self.setEyeRotation(-dx/10.0, dy/10.0, 0)
                 self.updateGL()
 #                 time.sleep(0.01)
             
         if(self.mouseTrackingEnabledRay):
-            ray = self.getMouseRay(event.x(), event.y())
+            ray = self.getMouseRay(e.x(), e.y())
             for s in self.scene:
                 if(s.mouseMoveEnabledRay):
-                    s.processMouseClickRay(ray, 0.1, self.eye, event)
+                    s.processMouseClickRay(ray, 0.1, self.eye, e)
 
     def mouseVec(self, dx, dy):
         newDx = self.moveConstant() * dx / float(self.width())
         newDy = self.moveConstant() * dy / float(self.height())
         return self.up*(-newDy) + self.right*newDx;
 
-    def mouseMoveEvent(self, event):
+    def mouseMoveEvent(self, e):
         if(self.mouseTrackingEnabledRay):
-            ray = self.getMouseRay(event.x(), event.y())
+            ray = self.getMouseRay(e.x(), e.y())
             for s in self.scene:
                 if(s.mouseMoveEnabledRay):
-                    s.processMouseMoveRay(ray, 0.1, self.eye, event)
+                    s.processMouseMoveRay(ray, 0.1, self.eye, e)
                        
         if(self.mouseTrackingEnabled):
-            self.processMouseMove(self.pickObject(event.x(), event.y()), event)
+            self.processMouseMove(self.pickObject(e.x(), e.y()), e)
 
-        dx = event.x() - self.mouseMovePoint.x()
-        dy = event.y() - self.mouseMovePoint.y()
+        dx = e.x() - self.mouseMovePoint.x()
+        dy = e.y() - self.mouseMovePoint.y()
                         
         if (self.mouseLeftPressed):
-            if (event.buttons() & QtCore.Qt.RightButton):           # Rolling the scene
+            if (e.buttons() & QtCore.Qt.RightButton):           # Rolling the scene
                 self.setEyeRotation(0, 0, dx)
             else:
-                if event.modifiers() & QtCore.Qt.CTRL:           # Rotating the selection
+                if e.modifiers() & QtCore.Qt.CTRL:           # Rotating the selection
                     self.rotateSelectedScene(dx, dy)
                 else:                                               # Rotating the scene
                     self.setEyeRotation(-dx, dy, 0)
             
         elif (self.mouseRightPressed):
-            if event.modifiers() & QtCore.Qt.CTRL:                 # Translating the selection
+            if e.modifiers() & QtCore.Qt.CTRL:                 # Translating the selection
                 self.moveSelectedScene(dx, dy)
             else:                                                   # Translating the scene
                 translation = self.mouseVec(-dx, -dy)
@@ -459,15 +459,15 @@ class Camera(QtOpenGL.QGLWidget):
                 self.setEye(newEye)
                 self.setCenter(newCenter)
                 
-        self.mouseMovePoint = QtCore.QPoint(event.pos())
+        self.mouseMovePoint = QtCore.QPoint(e.pos())
 
         self.updateGL()
     
-    def wheelEvent(self, event):
-        if(event.delta() != 0):
-            direction = event.delta()/abs(event.delta())
-            self.processMouseWheel(direction, event)
-            if(not (event.modifiers() & QtCore.Qt.ALT) and not (event.modifiers() & QtCore.Qt.CTRL)):     # Zoom in / out
+    def wheelEvent(self, e):
+        if(e.delta() != 0):
+            direction = e.delta()/abs(e.delta())
+            self.processMouseWheel(direction, e)
+            if(not (e.modifiers() & QtCore.Qt.ALT) and not (e.modifiers() & QtCore.Qt.CTRL)):     # Zoom in / out
                 self.setNearFarZoom(self.near, self.far, self.eyeZoom + direction * 10.0/360.0)
             self.updateGL()
         
