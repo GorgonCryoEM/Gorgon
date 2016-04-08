@@ -227,9 +227,9 @@ class Camera(QtOpenGL.QGLWidget):
             glPopName()
         glPopMatrix()
         
-    def processMouseWheel(self, direction, e):
+    def processMouseWheel(self, dir, e):
         for s in self.scene:
-            s.processMouseWheel(direction, e)
+            s.processMouseWheel(dir, e)
      
     def processMouseDown(self, hits, e):
         globalMinDepth = self.far + 1
@@ -465,10 +465,10 @@ class Camera(QtOpenGL.QGLWidget):
     
     def wheelEvent(self, e):
         if(e.delta() != 0):
-            direction = e.delta()/abs(e.delta())
-            self.processMouseWheel(direction, e)
+            dir = e.delta()/abs(e.delta())
+            self.processMouseWheel(dir, e)
             if(not (e.modifiers() & QtCore.Qt.ALT) and not (e.modifiers() & QtCore.Qt.CTRL)):     # Zoom in / out
-                self.setNearFarZoom(self.near, self.far, self.eyeZoom + direction * 10.0/360.0)
+                self.setNearFarZoom(self.near, self.far, self.eyeZoom + dir * 10.0/360.0)
             self.updateGL()
         
     def modelChanged(self):
