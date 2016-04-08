@@ -349,7 +349,7 @@ BOOST_PYTHON_MODULE(@current_pylib@)
   Vector3<float> (Vector3<float>::*normalize)() = &Vector3<float>::normalize;
   
   const float & (Vector3<float>::*vecgetitem)(int) const = &Vector3<float>::operator[];
-        float & (Vector3<float>::*vecsetitem)(int)       = &Vector3<float>::operator[];
+//        float & (Vector3<float>::*vecsetitem)(int)       = &Vector3<float>::operator[];
 
   class_<Vector3<float> >("Vec3F", init<float, float, float>())
         .def("x", X, return_value_policy<copy_const_reference>())
@@ -361,7 +361,7 @@ BOOST_PYTHON_MODULE(@current_pylib@)
         .def("normalize", normalize, return_value_policy<return_by_value>())
         .def("Print", &Vector3<float>::print)
         .def("__getitem__", vecgetitem, return_value_policy<copy_const_reference>())
-        .def("__setitem__", vecsetitem, with_custodian_and_ward<1,2>())
+        .def("__setitem__", &Vector3<float>::set)
 //        .def("__getitem__", &Vector3<float>::operator[], boost::python::arg( "index" ),
 //        boost::python::return_internal_reference<>() )
         .def(self * float())

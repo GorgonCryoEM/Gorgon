@@ -38,6 +38,7 @@ namespace GraphMatch {
 
             const T &operator[](int n) const;
             T &operator[](int n);
+            void set(int n, T val);
             T length() const;
             T lengthSquared() const;
 
@@ -198,6 +199,11 @@ namespace GraphMatch {
     template <class T>
     inline T& Vector3<T>::operator[](int n) {
         return (&x)[n];
+    }
+
+    template <class T>
+    inline void Vector3<T>::set(int n, T val) {
+            (*this)[n] = val;
     }
 
     template <class T>
