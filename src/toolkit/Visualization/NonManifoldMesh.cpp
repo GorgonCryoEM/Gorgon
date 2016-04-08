@@ -159,8 +159,7 @@ void NonManifoldMesh::clear() {
 
 
 NonManifoldMesh::NonManifoldMesh()
-: scale(1,1,1),
-  fromVolume(false)
+        : scale(1, 1, 1), fromVolume(false)
 {
     setOrigin(0,0,0);
 }
@@ -173,76 +172,76 @@ cout<<"DEBUG: Args: Volume*\033[0m"<<endl;
 cout<<"src.getSize(): "<<src.getSize()<<endl;
 #endif
 
-int x, y, z, i, j, index, index2;
-int * vertexLocations = new int[src.getSize()];
-int value;
-fromVolume = true;
-size = src.getSizeObj();
-setOrigin(src.getOriginX(), src.getOriginY(), src.getOriginZ());
-setScale(src.getSpacingX(), src.getSpacingY(), src.getSpacingZ());
+    int x, y, z, i, j, index, index2;
+    int * vertexLocations = new int[src.getSize()];
+    int value;
+    fromVolume = true;
+    size = src.getSizeObj();
+    setOrigin(src.getOriginX(), src.getOriginY(), src.getOriginZ());
+    setScale(src.getSpacingX(), src.getSpacingY(), src.getSpacingZ());
 
 // Adding vertices
-NonManifoldMeshVertex tempVertex;
-tempVertex.edgeIds.clear();
-for(x = 0; x < src.getSizeX(); x++) {
-    for(y = 0; y < src.getSizeY(); y++) {
-        for(z = 0; z < src.getSizeZ(); z++) {
-            index = src.getIndex(x, y, z);
-            vertexLocations[index] = -1;
-            value = (int)round(src(index));
-            if(value > 0) {
-                tempVertex.position = Vec3F(x, y, z);
-                vertexLocations[index] = addVertex(tempVertex);
-            }
-        }
-    }
-}
-
-//Adding edges
-int edgeNeighbors[3][3] = {{1,0,0}, {0,1,0}, {0,0,1}};
-for(x = 0; x < src.getSizeX()-1; x++) {
-    for(y = 0; y < src.getSizeY()-1; y++) {
-        for(z = 0; z < src.getSizeZ()-1; z++) {
-            index = src.getIndex(x, y, z);
-            for(i = 0; i < 3; i++) {
-                index2 = src.getIndex(x+edgeNeighbors[i][0], y+edgeNeighbors[i][1], z+edgeNeighbors[i][2]);
-                if((vertexLocations[index] >= 0) && (vertexLocations[index2] >= 0)) {
-                    addEdge(vertexLocations[index], vertexLocations[index2]);
+    NonManifoldMeshVertex tempVertex;
+    tempVertex.edgeIds.clear();
+    for(x = 0; x < src.getSizeX(); x++) {
+        for(y = 0; y < src.getSizeY(); y++) {
+            for(z = 0; z < src.getSizeZ(); z++) {
+                index = src.getIndex(x, y, z);
+                vertexLocations[index] = -1;
+                value = (int)round(src(index));
+                if(value > 0) {
+                    tempVertex.position = Vec3F(x, y, z);
+                    vertexLocations[index] = addVertex(tempVertex);
                 }
             }
         }
     }
-}
 
-//Adding Faces
-int faceNeighbors[3][3][3] = {  {{1,0,0}, {1,0,1}, {0,0,1}},
-                                {{1,0,0}, {1,1,0}, {0,1,0}},
-                                {{0,1,0}, {0,1,1}, {0,0,1}}};
-int indices[4];
-bool faceFound;
-for(x = 0; x < src.getSizeX()-1; x++) {
-    for(y = 0; y < src.getSizeY()-1; y++) {
-        for(z = 0; z < src.getSizeZ()-1; z++) {
-            index = src.getIndex(x, y, z);
-            if(vertexLocations[index] >= 0) {
+    //Adding edges
+    int edgeNeighbors[3][3] = {{1,0,0}, {0,1,0}, {0,0,1}};
+    for(x = 0; x < src.getSizeX()-1; x++) {
+        for(y = 0; y < src.getSizeY()-1; y++) {
+            for(z = 0; z < src.getSizeZ()-1; z++) {
+                index = src.getIndex(x, y, z);
                 for(i = 0; i < 3; i++) {
-                    faceFound = true;
-                    indices[0] = vertexLocations[index];
-                    for(j = 0; j < 3; j++) {
-                        index2 = src.getIndex(x+faceNeighbors[i][j][0], y+faceNeighbors[i][j][1], z+faceNeighbors[i][j][2]);
-                        indices[j+1] = vertexLocations[index2];
-                        faceFound = faceFound && vertexLocations[index2] >= 0;
-                    }
-                    if(faceFound) {
-                        addQuad(indices[0], indices[1], indices[2], indices[3]);
+                    index2 = src.getIndex(x+edgeNeighbors[i][0], y+edgeNeighbors[i][1], z+edgeNeighbors[i][2]);
+                    if((vertexLocations[index] >= 0) && (vertexLocations[index2] >= 0)) {
+                        addEdge(vertexLocations[index], vertexLocations[index2]);
                     }
                 }
             }
         }
     }
-}
-delete [] vertexLocations;
-markFixedVertices();
+
+    //Adding Faces
+    int faceNeighbors[3][3][3] = {  {{1,0,0}, {1,0,1}, {0,0,1}},
+                                    {{1,0,0}, {1,1,0}, {0,1,0}},
+                                    {{0,1,0}, {0,1,1}, {0,0,1}}};
+    int indices[4];
+    bool faceFound;
+    for(x = 0; x < src.getSizeX()-1; x++) {
+        for(y = 0; y < src.getSizeY()-1; y++) {
+            for(z = 0; z < src.getSizeZ()-1; z++) {
+                index = src.getIndex(x, y, z);
+                if(vertexLocations[index] >= 0) {
+                    for(i = 0; i < 3; i++) {
+                        faceFound = true;
+                        indices[0] = vertexLocations[index];
+                        for(j = 0; j < 3; j++) {
+                            index2 = src.getIndex(x+faceNeighbors[i][j][0], y+faceNeighbors[i][j][1], z+faceNeighbors[i][j][2]);
+                            indices[j+1] = vertexLocations[index2];
+                            faceFound = faceFound && vertexLocations[index2] >= 0;
+                        }
+                        if(faceFound) {
+                            addQuad(indices[0], indices[1], indices[2], indices[3]);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    delete [] vertexLocations;
+    markFixedVertices();
 #ifdef GORGON_DEBUG
 cout<<"\033[33mDEBUG: END"<<endl;
 cout<<"DEBUG: Method: NonManifoldMesh::NonManifoldMesh\n\033[0m"<<endl;
@@ -552,15 +551,15 @@ void NonManifoldMesh::toOffCells(string fileName) {
     ofstream outFile(fileName.c_str());
     outFile<<"OFF\n";
     outFile<<vertices.size()
-                       <<" "<<faces.size() + edges.size()
-                       <<" 0"
-                       <<endl;
+           <<" "<<faces.size() + edges.size()
+           <<" 0"
+           <<endl;
     int i,j;
     for(i = 0; i < (int)vertices.size(); i++) {
         outFile<<" "<<origin.X() + scale.X() * vertices[i].position.X()
-                           <<" "<<origin.Y() + scale.Y() * vertices[i].position.Y()
-                           <<" "<<origin.Z() + scale.Z() * vertices[i].position.Z()
-                           <<endl;
+               <<" "<<origin.Y() + scale.Y() * vertices[i].position.Y()
+               <<" "<<origin.Z() + scale.Z() * vertices[i].position.Z()
+               <<endl;
     }
     int lastVertex;
     for(i = 0; i < (int)faces.size(); i++) {
@@ -576,11 +575,11 @@ void NonManifoldMesh::toOffCells(string fileName) {
 
     for(i = 0; i < (int)edges.size(); i++) {
         outFile<<"4"
-                <<" "<<edges[i].vertexIds[0]
-                                          <<" "<<edges[i].vertexIds[0]
-                                                                    <<" "<<edges[i].vertexIds[1]
-                                                                                              <<" "<<edges[i].vertexIds[1]
-                                                                                                                        <<endl;
+               <<" "<<edges[i].vertexIds[0]
+               <<" "<<edges[i].vertexIds[0]
+               <<" "<<edges[i].vertexIds[1]
+               <<" "<<edges[i].vertexIds[1]
+               <<endl;
     }
     outFile.close();
 }
