@@ -47,7 +47,7 @@ namespace Protein_Morph {
             void save(string fileName);
 
         private:
-            typedef map<unsigned long long, TriangleMeshVertex > TriangleMeshVertexType;
+            typedef map<unsigned long long, TriangleMeshVertex> TriangleMeshVertexType;
 
             TriangleMeshVertexType vertices;
             vector<TriangleMeshFace> faces;

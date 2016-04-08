@@ -72,8 +72,7 @@ unsigned long long TriangleMesh::addFace(unsigned long long vertexHash0,
 
 Vec3F TriangleMesh::getVertexNormal(unsigned long long vertexHash) {
     Vec3F normal = Vec3F(0, 0, 0);
-    for(unsigned int i = 0; i < vertices[vertexHash].faceHashes.size();
-            i++) {
+    for(unsigned int i = 0; i < vertices[vertexHash].faceHashes.size(); i++) {
         normal += getFaceNormal(vertices[vertexHash].faceHashes[i]);
     }
     normal.normalize();
@@ -105,7 +104,6 @@ void TriangleMesh::draw(bool drawSurfaces,
                 glLoadName(i);
             }
             glBegin (GL_POLYGON);
-            Vec3F normal;
             bool drawTriangle = true;
             if(fadeExtreme) {
                 for(unsigned int j = 0; j < 3; j++) {
@@ -118,7 +116,7 @@ void TriangleMesh::draw(bool drawSurfaces,
             if(drawTriangle) {
                 for(unsigned int j = 0; j < 3; j++) {
                     int k = faces[i].vertexHashes[j];
-                    normal = getVertexNormal(k);
+                    Vec3F normal = getVertexNormal(k);
                     glNormal3f(normal.X(), normal.Y(), normal.Z());
                     glVertex3fv(vertices[k].position.getValues());
                 }
@@ -140,7 +138,7 @@ void TriangleMesh::save(string fileName) {
             0);
 
     map<unsigned long long, int> indexedVertices;
-    vector < Vec3F > vertexList;
+    vector<Vec3F> vertexList;
 
     int index = 0;
     for(TriangleMeshVertexType::iterator i = vertices.begin();
