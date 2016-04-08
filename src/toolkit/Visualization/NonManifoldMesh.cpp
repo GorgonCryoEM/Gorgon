@@ -62,8 +62,8 @@ void NonManifoldMesh::draw(bool drawSurfaceBorders, bool drawSurfaces,
                 glLoadName(i);
             }
             glBegin(GL_POLYGON);
-            Vec3F normal;
             for(unsigned int j = 0; j < faces[i].vertexIds.size(); j++) {
+                Vec3F normal;
                 if(smoothSurfaceNormals) {
                     normal = getVertexNormal(faces[i].vertexIds[j]);
                 } else {
