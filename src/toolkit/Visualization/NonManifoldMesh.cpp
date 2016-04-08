@@ -172,7 +172,7 @@ namespace Protein_Morph {
     #endif
 
         int x, y, z, i, j, index, index2;
-        int * vertexLocations = new int[src.getSize()];
+        int vertexLocations[src.getSize()];
         int value;
         fromVolume = true;
         size = src.getSizeObj();
@@ -239,7 +239,7 @@ namespace Protein_Morph {
                 }
             }
         }
-        delete [] vertexLocations;
+
         markFixedVertices();
     #ifdef GORGON_DEBUG
     cout<<"\033[33mDEBUG: END"<<endl;
