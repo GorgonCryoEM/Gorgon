@@ -25,8 +25,6 @@ using namespace GraphMatch;
 
 namespace Protein_Morph {
 
-    typedef Vector3<unsigned long long> TriangleMeshFace;
-
     class TriangleMesh : public Mesh {
         public:
             void clear();

@@ -17,6 +17,8 @@ namespace Core {
     /*
      *
      */
+    typedef Vector3<unsigned long long> TriangleMeshFace;
+
     class Mesh {
         public:
 //            Mesh();
