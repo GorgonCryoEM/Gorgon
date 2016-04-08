@@ -108,7 +108,6 @@ class Camera(QtOpenGL.QGLWidget):
     def setNearFarZoom(self, near, far, zoom):
         if((self.eyeZoom != zoom) or (self.near != near) or (self.far != far)):
             self.eyeZoom = min(max(zoom, 0.0001), 0.9999);
-            nearChanged = (self.near != near)
             self.near = max(min(near, far), 0.1)
             self.far = max(self.near + 1.0, far)
             glFogf(GL_FOG_START, self.near)
