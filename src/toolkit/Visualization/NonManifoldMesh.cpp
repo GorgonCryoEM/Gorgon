@@ -731,7 +731,6 @@ namespace Protein_Morph {
     }
 
     NonManifoldMesh NonManifoldMesh::loadOffFile(string fileName) {
-        NonManifoldMesh mesh;
         ifstream inFile(fileName.c_str());
         string strTemp;
         int nVertices, nEdges, nFaces;
@@ -741,11 +740,9 @@ namespace Protein_Morph {
         inFile>>nVertices>>nFaces>>nEdges;
         //printf("[%d] [%d] [%d]\n", nVertices, nFaces, nEdges);
 
-        float xPos, yPos, zPos;
-        int lVertices = 0;
-        int lFaces = 0;
-        for(int i=0; i < nVertices; i++) {
-            lVertices++;
+        NonManifoldMesh mesh;
+        for(int i=0, lVertices=0; i < nVertices; i++, lVertices++) {
+            float xPos, yPos, zPos;
             inFile>>xPos>>yPos>>zPos;
             //printf("[%f] [%f] [%f]\n", xPos, yPos, zPos);
             mesh.addVertex(Vec3F(xPos, yPos, zPos));
@@ -754,7 +751,7 @@ namespace Protein_Morph {
 
 
         int faceNodes[100], nFaceNodes;
-        lFaces = 0;
+        int lFaces = 0;
         for(int i=0; i < nFaces; i++) {
             inFile>>nFaceNodes;
             //printf("[%d]\n", nFaceNodes);
@@ -881,10 +878,10 @@ namespace Protein_Morph {
             return -1;
         }
 
-        double distance, minDistance = (pos - vertices[0].position).length();
+        double minDistance = (pos - vertices[0].position).length();
         int minIx = 0;
         for(unsigned int i = 0; i < vertices.size(); i++) {
-            distance = (pos - vertices[i].position).length();
+            double distance = (pos - vertices[i].position).length();
             if(distance < minDistance) {
                 minDistance = distance;
                 minIx = i;
