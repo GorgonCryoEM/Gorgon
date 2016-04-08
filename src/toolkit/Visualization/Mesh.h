@@ -14,9 +14,6 @@ using namespace GraphMatch;
 
 namespace Core {
 
-    /*
-     *
-     */
     typedef Vector3<unsigned long long> TriangleMeshFace;
 
     class Mesh {
