@@ -138,19 +138,17 @@ class Camera(QtOpenGL.QGLWidget):
         
         distance = (sceneMin - sceneMax).length()
         center   = (sceneMin + sceneMax)*0.5
-                     
+        
+        self.sceneSetCenterCommon(center, distance)
+    
+    def sceneSetCenterLocal(self, centerX, centerY, centerZ, distance):
+        center = Vec3(centerX, centerY, centerZ)
+        self.sceneSetCenterCommon(center, distance)
+        
+    def sceneSetCenterCommon(self, center, distance):
         self.setCenter(center)
         self.setEye(Vec3(self.center[0], self.center[1], self.center[2] - distance))
         self.setUp(Vec3(0, -1, 0))
-
-        self.modelChanged()
-    
-    def sceneSetCenterLocal(self, centerX, centerY, centerZ, distance):
-        
-        self.setCenter(Vec3(centerX, centerY, centerZ))
-        self.setEye(Vec3(self.center[0], self.center[1], self.center[2] - distance))
-        self.setUp(Vec3(0, -1, 0))
-
         self.modelChanged()
      
     def minimumSizeHint(self):
