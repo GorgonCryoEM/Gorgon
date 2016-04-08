@@ -623,7 +623,7 @@ namespace Protein_Morph {
     }
 
     Volume NonManifoldMesh::toVolume() {
-        double minPos[3] = {MAX_DOUBLE,MAX_DOUBLE,MAX_DOUBLE};
+        double minPos[3] = {MAX_DOUBLE, MAX_DOUBLE, MAX_DOUBLE};
         double maxPos[3] = {MIN_DOUBLE, MIN_DOUBLE, MIN_DOUBLE};
         if(fromVolume) {
             minPos[0] = 0;
@@ -679,10 +679,8 @@ namespace Protein_Morph {
     }
 
     Vec3F NonManifoldMesh::getFaceNormal(int faceId) {
-
-        Vec3F normal(1,0,0);
-
         NonManifoldMeshFace face = faces[getFaceIndex(faceId)];
+        Vec3F normal(1,0,0);
 
         if(face.vertexIds.size() >= 3) {
             normal = (vertices[getVertexIndex(face.vertexIds[1])].position - vertices[getVertexIndex(face.vertexIds[0])].position) ^
