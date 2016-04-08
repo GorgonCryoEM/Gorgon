@@ -15,6 +15,8 @@ class SkeletonViewer(BaseViewer):
         super(SkeletonViewer, self).__init__(main, parent)
         self.title = "Skeleton"
         self.shortTitle = "SKE"
+        
+        self.modelColor = QtGui.QColor(200, 50, 50, 150)
 
         self.renderer = MeshRenderer()
         
