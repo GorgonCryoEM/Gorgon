@@ -13,11 +13,8 @@
 //#include <string>
 //#include "OpenGLUtils.h"
 #include "GorgonGL.h"
-#include "TriangleMeshFace.h"
-#include "TriangleMeshVertex.h"
 
 #include "Mesh.h"
-#include "MathTools/Vector3.h"
 
 using namespace std;
 //using namespace Foundation;
@@ -53,9 +50,9 @@ unsigned long long TriangleMesh::addVertex(TriangleMeshVertex vertex,
 unsigned long long TriangleMesh::addFace(TriangleMeshFace face) {
     unsigned long long faceHash = faces.size();
     faces.push_back(face);
-    vertices[face.vertexHashes[0]].faceHashes.push_back(faceHash);
-    vertices[face.vertexHashes[1]].faceHashes.push_back(faceHash);
-    vertices[face.vertexHashes[2]].faceHashes.push_back(faceHash);
+    vertices[face[0]].faceHashes.push_back(faceHash);
+    vertices[face[1]].faceHashes.push_back(faceHash);
+    vertices[face[2]].faceHashes.push_back(faceHash);
     return faceHash;
 }
 
@@ -64,9 +61,9 @@ unsigned long long TriangleMesh::addFace(unsigned long long vertexHash0,
                                          unsigned long long vertexHash2)
 {
     TriangleMeshFace face;
-    face.vertexHashes[0] = vertexHash0;
-    face.vertexHashes[1] = vertexHash1;
-    face.vertexHashes[2] = vertexHash2;
+    face[0] = vertexHash0;
+    face[1] = vertexHash1;
+    face[2] = vertexHash2;
     return addFace(face);
 }
 
@@ -82,8 +79,7 @@ Vec3F TriangleMesh::getVertexNormal(unsigned long long vertexHash) {
 Vec3F TriangleMesh::getFaceNormal(unsigned long long faceHash) {
     TriangleMeshFace face = faces[faceHash];
     Vec3F normal =
-            (vertices[face.vertexHashes[1]].position - vertices[face.vertexHashes[0]].position) ^ (vertices[face.vertexHashes[2]].position
-                    - vertices[face.vertexHashes[0]].position);
+            (vertices[face[1]].position - vertices[face[0]].position) ^ (vertices[face[2]].position - vertices[face[0]].position);
 
     normal.normalize();
     return normal;
@@ -107,7 +103,7 @@ void TriangleMesh::draw(bool drawSurfaces,
             bool drawTriangle = true;
             if(fadeExtreme) {
                 for(unsigned int j = 0; j < 3; j++) {
-                    int k = faces[i].vertexHashes[j];
+                    int k = faces[i][j];
                     drawTriangle =
                             drawTriangle && ( (vertices[k].position - center).length()
                                     <= radius);
@@ -115,7 +111,7 @@ void TriangleMesh::draw(bool drawSurfaces,
             }
             if(drawTriangle) {
                 for(unsigned int j = 0; j < 3; j++) {
-                    int k = faces[i].vertexHashes[j];
+                    int k = faces[i][j];
                     Vec3F normal = getVertexNormal(k);
                     glNormal3f(normal.X(), normal.Y(), normal.Z());
                     glVertex3fv(vertices[k].position.getValues());
@@ -155,9 +151,9 @@ void TriangleMesh::save(string fileName) {
 
     for(unsigned int i = 0; i < faces.size(); i++) {
         fprintf(outFile, "3 %d %d %d\n",
-                indexedVertices[faces[i].vertexHashes[2]],
-                indexedVertices[faces[i].vertexHashes[1]],
-                indexedVertices[faces[i].vertexHashes[0]]);
+                indexedVertices[faces[i][2]],
+                indexedVertices[faces[i][1]],
+                indexedVertices[faces[i][0]]);
     }
     fclose(outFile);
 }

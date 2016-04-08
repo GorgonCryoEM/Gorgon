@@ -13,7 +13,7 @@
 //#include <vector>
 //#include <string>
 //#include "OpenGLUtils.h"
-#include "TriangleMeshFace.h"
+#include "MathTools/Vector3.h"
 #include "TriangleMeshVertex.h"
 //
 #include "Mesh.h"
@@ -21,8 +21,11 @@
 using namespace std;
 //using namespace Foundation;
 using namespace Core;
+using namespace GraphMatch;
 
 namespace Protein_Morph {
+
+    typedef Vector3<unsigned long long> TriangleMeshFace;
 
     class TriangleMesh : public Mesh {
         public:
