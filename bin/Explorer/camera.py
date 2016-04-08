@@ -74,7 +74,6 @@ class Camera(QtOpenGL.QGLWidget):
                 self.look  = Vec3(0,1,0)
                 self.right = Vec3(1,0,0)
                 self.up    = Vec3(0,0,1)
-            self.emitCameraChanged()
     
     def setCenter(self, v):
         if(self.center != v):
@@ -86,7 +85,6 @@ class Camera(QtOpenGL.QGLWidget):
                 self.look  = Vec3(0,1,0)
                 self.right = Vec3(1,0,0)
             self.setRendererCenter()
-            self.emitCameraChanged()
         
     def setUp(self, v):
         if(self.up != v.normalize()):
@@ -96,7 +94,6 @@ class Camera(QtOpenGL.QGLWidget):
                 self.up    = (self.right^self.look).normalize()
             except:
                 self.right = Vec3(1,0,0)
-            self.emitCameraChanged()
         
     def setEyeRotation(self, yaw, pitch, roll):
         newLook = (self.eye + self.up*pitch + self.right*yaw - self.center).normalize()
@@ -117,7 +114,6 @@ class Camera(QtOpenGL.QGLWidget):
             glFogf(GL_FOG_START, self.near)
             glFogf(GL_FOG_END, self.far)
             self.setGlProjection()
-            self.emitCameraChanged()
     
     def setRendererCenter(self):
         for s in self.scene:
@@ -488,9 +484,6 @@ class Camera(QtOpenGL.QGLWidget):
         self.setNearFarZoom(minDist, maxDist, self.eyeZoom)
         self.updateGL()
         
-    def emitCameraChanged(self):
-        self.emit(QtCore.SIGNAL("cameraChanged()"))
-            
     def emitMouseMovedRaw(self, mouseHits, event):
         self.emit(QtCore.SIGNAL("mouseMovedRAW(PyQt_PyObject, QMouseEvent)"), mouseHits, event)
 
