@@ -39,4 +39,4 @@ class Scene:
     def load(self):
         self.volumeViewer.load("densityMap.mrc")
         self.volumeViewer1.load("vp6-96o.mrc")
-        self.skeletonViewer.load("densityMap-skeleton.mrc")
+        self.skeletonViewer.load("skeleton-vp6-b0.4.mrc")
