@@ -41,6 +41,9 @@ class BaseViewer(QtOpenGL.QGLWidget):
     def initVisualizationOptions(self, visualizationForm):
         self.visualizationOptions = visualizationForm
     
+    def getModelColor(self):
+        return self.color
+
     def setModelColor(self, color):
         self.color = color
         self.repaintCamera()
@@ -103,9 +106,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
     def setModelVisibility(self, visible):
         self.modelVisible = visible
         self.repaintCamera()
-
-    def getModelColor(self):
-        return self.color
 
     def setMaterials(self, color):
         glColor4f(color.redF(), color.greenF(), color.blueF(), color.alphaF())
