@@ -29,16 +29,11 @@ namespace Protein_Morph {
         public:
             void clear();
             int addMarchingVertex(Vec3F location, int hashKey);
-            unsigned long long addMarchingFace(unsigned long long vertexHash0,
-                                       unsigned long long vertexHash1,
-                                       unsigned long long vertexHash2);
+            unsigned long long addMarchingFace(TriangleMeshFace vertexHash);
 
             unsigned long long addVertex(TriangleMeshVertex vertex,
                                          unsigned long long hashKey);
             unsigned long long addFace(TriangleMeshFace face);
-            unsigned long long addFace(unsigned long long vertexHash0,
-                                       unsigned long long vertexHash1,
-                                       unsigned long long vertexHash2);
 
             Vec3F getVertexNormal(unsigned long long vertexHash);
             Vec3F getFaceNormal(unsigned long long faceHash);

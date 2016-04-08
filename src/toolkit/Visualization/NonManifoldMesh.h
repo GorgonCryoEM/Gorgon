@@ -87,9 +87,7 @@ namespace Protein_Morph {
 
             void clear();
             int addMarchingVertex(Vec3F location, int hashKey);
-            unsigned long long addMarchingFace(unsigned long long vertexHash0,
-                                       unsigned long long vertexHash1,
-                                       unsigned long long vertexHash2);
+            unsigned long long addMarchingFace(TriangleMeshFace vertexHash);
 
             int addVertex(NonManifoldMeshVertex vertex);
             int addVertex(Vec3F location);
@@ -115,7 +113,7 @@ namespace Protein_Morph {
             void addEdge(int vertexId1, int vertexId2, string tag = "");
             void addQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4,
                          string newEdgeTag = "", string faceTag ="");
-            void addTriangle(int vertexId1, int vertexId2, int vertexId3,
+            void addTriangle(TriangleMeshFace vertexId,
                              string newEdgeTag = "", string faceTag = "");
             void markFixedVertices();
             void mergeMesh(const NonManifoldMesh & srcMesh);

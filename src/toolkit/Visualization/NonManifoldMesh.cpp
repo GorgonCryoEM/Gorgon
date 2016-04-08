@@ -15,10 +15,8 @@ int NonManifoldMesh::addMarchingVertex(Vec3F location, int hashKey){
     return addHashedVertex(location, hashKey);
 }
 
-unsigned long long NonManifoldMesh::addMarchingFace(unsigned long long vertexHash0,
-                                                    unsigned long long vertexHash1,
-                                                    unsigned long long vertexHash2) {
-    addTriangle(vertexHash0, vertexHash1, vertexHash2);
+unsigned long long NonManifoldMesh::addMarchingFace(TriangleMeshFace vertexHash) {
+    addTriangle(vertexHash);
 }
 
 void NonManifoldMesh::draw(bool drawSurfaceBorders, bool drawSurfaces,
@@ -343,11 +341,18 @@ void NonManifoldMesh::addEdge(int vertexId1, int vertexId2, string tag){
 }
 
 void NonManifoldMesh::addQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4, string newEdgeTag, string faceTag) {
-    addTriangle(vertexId1, vertexId2, vertexId3, newEdgeTag, faceTag);
-    addTriangle(vertexId1, vertexId3, vertexId4, newEdgeTag, faceTag);
+    TriangleMeshFace v123(vertexId1, vertexId2, vertexId3);
+    addTriangle(v123, newEdgeTag, faceTag);
+
+    TriangleMeshFace v134(vertexId1, vertexId3, vertexId4);
+    addTriangle(v134, newEdgeTag, faceTag);
 }
 
-void NonManifoldMesh::addTriangle(int vertexId1, int vertexId2, int vertexId3, string newEdgeTag, string faceTag) {
+void NonManifoldMesh::addTriangle(TriangleMeshFace vertexId, string newEdgeTag, string faceTag) {
+    int vertexId1 = vertexId[0];
+    int vertexId2 = vertexId[1];
+    int vertexId3 = vertexId[2];
+
     if(!isEdgePresent(vertexId1, vertexId2))
         addEdge(vertexId1, vertexId2, newEdgeTag);
 
@@ -412,11 +417,12 @@ void NonManifoldMesh::mergeMesh(const NonManifoldMesh & src) {
         addEdge(indices[src.edges[i].vertexIds[0]], indices[src.edges[i].vertexIds[1]], src.edges[i].tag);
 
     for(unsigned int i = 0; i < src.faces.size(); i++) {
-        if(src.faces[i].vertexIds.size() == 3)
-            addTriangle(indices[src.faces[i].vertexIds[0]],
-                    indices[src.faces[i].vertexIds[1]],
-                    indices[src.faces[i].vertexIds[2]], NULL,
-                    src.faces[i].tag);
+        if(src.faces[i].vertexIds.size() == 3) {
+            TriangleMeshFace temp(indices[src.faces[i].vertexIds[0]],
+                                  indices[src.faces[i].vertexIds[1]],
+                                  indices[src.faces[i].vertexIds[2]]);
+            addTriangle(temp, NULL, src.faces[i].tag);
+        }
         else if(src.faces[i].vertexIds.size() == 3)
             addQuad(indices[src.faces[i].vertexIds[0]],
                     indices[src.faces[i].vertexIds[1]],
@@ -817,7 +823,8 @@ NonManifoldMesh NonManifoldMesh::loadOffFile(string fileName) {
                     inFile>>faceNodes[i];
                 }
                 for(int i = 2; i < nFaceNodes; i++) {
-                    mesh.addTriangle(faceNodes[0], faceNodes[i-1], faceNodes[i]);
+                    TriangleMeshFace temp(faceNodes[0], faceNodes[i-1], faceNodes[i]);
+                    mesh.addTriangle(temp);
                 }
                 break;
 

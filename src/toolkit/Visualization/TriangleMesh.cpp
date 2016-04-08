@@ -28,11 +28,9 @@ int TriangleMesh::addMarchingVertex(Vec3F location, int hashKey){
     return addVertex(TriangleMeshVertex(location), hashKey);
 }
 
-unsigned long long TriangleMesh::addMarchingFace(unsigned long long vertexHash0,
-                                                 unsigned long long vertexHash1,
-                                                 unsigned long long vertexHash2)
+unsigned long long TriangleMesh::addMarchingFace(TriangleMeshFace vertexHash)
 {
-    return addFace(vertexHash0, vertexHash1, vertexHash2);
+    return addFace(vertexHash);
 }
 
 void TriangleMesh::clear() {
@@ -54,17 +52,6 @@ unsigned long long TriangleMesh::addFace(TriangleMeshFace face) {
     vertices[face[1]].faceHashes.push_back(faceHash);
     vertices[face[2]].faceHashes.push_back(faceHash);
     return faceHash;
-}
-
-unsigned long long TriangleMesh::addFace(unsigned long long vertexHash0,
-                                         unsigned long long vertexHash1,
-                                         unsigned long long vertexHash2)
-{
-    TriangleMeshFace face;
-    face[0] = vertexHash0;
-    face[1] = vertexHash1;
-    face[2] = vertexHash2;
-    return addFace(face);
 }
 
 Vec3F TriangleMesh::getVertexNormal(unsigned long long vertexHash) {

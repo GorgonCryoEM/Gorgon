@@ -207,14 +207,14 @@ namespace Visualization {
         {
             if(a2iTriangleConnectionTable[iFlagIndex][3*iTriangle] < 0)
                 break;
-            int triangleVertices[3];
+            TriangleMeshFace triangleVertices;
             for(int iCorner = 0; iCorner < 3; iCorner++)
             {
                 iVertex = a2iTriangleConnectionTable[iFlagIndex][3*iTriangle+iCorner];
                 triangleVertices[iCorner] = vertexIds[iVertex];
             }
 
-            mesh.addMarchingFace(triangleVertices[0], triangleVertices[1], triangleVertices[2]);
+            mesh.addMarchingFace(triangleVertices);
         }
     }
 
