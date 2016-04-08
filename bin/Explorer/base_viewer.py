@@ -36,13 +36,13 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.twoWayLighting = False
         
         self.multipleSelection = True
-        self.modelColor = QtGui.QColor(180, 180, 180, 150)
+        self.color = QtGui.QColor(180, 180, 180, 150)
         
     def initVisualizationOptions(self, visualizationForm):
         self.visualizationOptions = visualizationForm
     
     def setModelColor(self, color):
-        self.modelColor = color
+        self.color = color
         self.repaintCamera()
 
     def identityMatrix(self):
@@ -105,7 +105,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.repaintCamera()
 
     def getModelColor(self):
-        return self.modelColor
+        return self.color
 
     def setMaterials(self, color):
         glColor4f(color.redF(), color.greenF(), color.blueF(), color.alphaF())
