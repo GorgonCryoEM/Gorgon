@@ -644,8 +644,8 @@ namespace Protein_Morph {
             }
         }
 
-        int minPosInt[3];
-        int maxPosInt[3];
+        Vec3I minPosInt;
+        Vec3I maxPosInt;
 
         for(unsigned int j = 0; j < 3; j++) {
             minPosInt[j] = (int)floor(minPos[j]);
@@ -654,17 +654,12 @@ namespace Protein_Morph {
 
         Volume vol(maxPosInt[0] - minPosInt[0]+1, maxPosInt[1] - minPosInt[1]+1, maxPosInt[2] - minPosInt[2]+1);
 
-        int pos[3];
-
         for(unsigned int i = 0;  i < edges.size(); i++) {
             NonManifoldMeshVertex v1 = vertices[getVertexIndex(edges[i].vertexIds[0])];
             NonManifoldMeshVertex v2 = vertices[getVertexIndex(edges[i].vertexIds[1])];
             vector<Vec3I> positions = Rasterizer::ScanConvertLineC8(v1.position.XInt(), v1.position.YInt(), v1.position.ZInt(), v2.position.XInt(), v2.position.YInt(), v2.position.ZInt());
             for(unsigned int j = 0; j < positions.size(); j++) {
-                for(unsigned int k = 0; k < 3; k++) {
-                    pos[k] = positions[j][k] - minPosInt[k];
-                }
-                vol(pos[0], pos[1], pos[2]) = 1.0;
+                vol(positions[j] - minPosInt) = 1.0;
             }
         }
 
