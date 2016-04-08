@@ -143,14 +143,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
             self.mouseMoveEnabledRay = value
             self.emitMouseTrackingChanged()
 
-    #Override this method to handle menu enabling / disabling when another viewer takes control of this one.
-    def updateViewerAutonomy(self, value):
-        pass
-
-    def setViewerAutonomy(self, value):
-        self.viewerAutonomous = value;
-        self.updateViewerAutonomy(value)
-    
     def getMinMax(self):
         scale    = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
         location = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]
