@@ -908,10 +908,6 @@ namespace Protein_Morph {
         scale = val;
     }
 
-    void NonManifoldMesh::translateVertex(int vertexIx, Vec3F translateVector) {
-        vertices[vertexIx].position = vertices[vertexIx].position + translateVector;
-    }
-
     int NonManifoldMesh::getClosestVertexIndex(Vec3F pos) {
         if(vertices.size() == 0) {
             return -1;
