@@ -695,7 +695,7 @@ namespace Protein_Morph {
     Vec3F NonManifoldMesh::getVertexNormal(int vertexId) {
         int index = getVertexIndex(vertexId);
         int edgeIndex;
-        Vec3F normal = Vec3F(0,0,0);
+        Vec3F normal(0,0,0);
         for(unsigned int i = 0; i < vertices[index].edgeIds.size(); i++) {
             edgeIndex = getEdgeIndex(vertices[index].edgeIds[i]);
             for(unsigned int j = 0; j < edges[edgeIndex].faceIds.size(); j++) {
@@ -708,7 +708,7 @@ namespace Protein_Morph {
 
     Vec3F NonManifoldMesh::getFaceNormal(int faceId) {
 
-        Vec3F normal = Vec3F(1,0,0);
+        Vec3F normal(1,0,0);
 
         NonManifoldMeshFace face = faces[getFaceIndex(faceId)];
 
@@ -722,15 +722,15 @@ namespace Protein_Morph {
 
     NonManifoldMesh NonManifoldMesh::smoothLaplacian(double converganceRate) {
         NonManifoldMesh smoothedMesh(*this);
-        int i, j, vertexIndex;
         Vec3F newPosition;
         NonManifoldMeshVertex vertex;
-        for(i = 0; i < (int)vertices.size(); i++) {
+        for(int i = 0; i < (int)vertices.size(); i++) {
             vertex = vertices[i];
             if(vertex.valid) {
                 if(vertex.edgeIds.size() > 0) {
                     newPosition = Vec3F(0,0,0);
-                    for(j = 0; j < (int)vertex.edgeIds.size(); j++) {
+                    for(int j = 0; j < (int)vertex.edgeIds.size(); j++) {
+                        int vertexIndex;
                         if((int)edges[getEdgeIndex(vertex.edgeIds[j])].vertexIds[0] == i) {
                             vertexIndex = 1;
                         } else {
@@ -750,7 +750,6 @@ namespace Protein_Morph {
     }
 
     NonManifoldMesh NonManifoldMesh::smoothLaplacian(double converganceRate, int iterations) {
-        NonManifoldMesh newMesh;
         NonManifoldMesh oldMesh(*this);
 
         for(int i = 0; i < iterations; i++) {
