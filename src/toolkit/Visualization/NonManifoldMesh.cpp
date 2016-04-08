@@ -171,9 +171,8 @@ namespace Protein_Morph {
     cout<<"src.getSize(): "<<src.getSize()<<endl;
     #endif
 
-        int x, y, z, i, j, index, index2;
         int vertexLocations[src.getSize()];
-        int value;
+
         fromVolume = true;
         size = src.getSizeObj();
         setOrigin(src.getOriginX(), src.getOriginY(), src.getOriginZ());
@@ -182,12 +181,12 @@ namespace Protein_Morph {
     // Adding vertices
         NonManifoldMeshVertex tempVertex;
         tempVertex.edgeIds.clear();
-        for(x = 0; x < src.getSizeX(); x++) {
-            for(y = 0; y < src.getSizeY(); y++) {
-                for(z = 0; z < src.getSizeZ(); z++) {
-                    index = src.getIndex(x, y, z);
+        for(int x = 0; x < src.getSizeX(); x++) {
+            for(int y = 0; y < src.getSizeY(); y++) {
+                for(int z = 0; z < src.getSizeZ(); z++) {
+                    int index = src.getIndex(x, y, z);
                     vertexLocations[index] = -1;
-                    value = (int)round(src(index));
+                    int value = (int)round(src(index));
                     if(value > 0) {
                         tempVertex.position = Vec3F(x, y, z);
                         vertexLocations[index] = addVertex(tempVertex);
@@ -198,12 +197,12 @@ namespace Protein_Morph {
 
         //Adding edges
         int edgeNeighbors[3][3] = {{1,0,0}, {0,1,0}, {0,0,1}};
-        for(x = 0; x < src.getSizeX()-1; x++) {
-            for(y = 0; y < src.getSizeY()-1; y++) {
-                for(z = 0; z < src.getSizeZ()-1; z++) {
-                    index = src.getIndex(x, y, z);
-                    for(i = 0; i < 3; i++) {
-                        index2 = src.getIndex(x+edgeNeighbors[i][0], y+edgeNeighbors[i][1], z+edgeNeighbors[i][2]);
+        for(int x = 0; x < src.getSizeX()-1; x++) {
+            for(int y = 0; y < src.getSizeY()-1; y++) {
+                for(int z = 0; z < src.getSizeZ()-1; z++) {
+                    int index = src.getIndex(x, y, z);
+                    for(int i = 0; i < 3; i++) {
+                        int index2 = src.getIndex(x+edgeNeighbors[i][0], y+edgeNeighbors[i][1], z+edgeNeighbors[i][2]);
                         if((vertexLocations[index] >= 0) && (vertexLocations[index2] >= 0)) {
                             addEdge(vertexLocations[index], vertexLocations[index2]);
                         }
@@ -217,17 +216,16 @@ namespace Protein_Morph {
                                         {{1,0,0}, {1,1,0}, {0,1,0}},
                                         {{0,1,0}, {0,1,1}, {0,0,1}}};
         int indices[4];
-        bool faceFound;
-        for(x = 0; x < src.getSizeX()-1; x++) {
-            for(y = 0; y < src.getSizeY()-1; y++) {
-                for(z = 0; z < src.getSizeZ()-1; z++) {
-                    index = src.getIndex(x, y, z);
+        for(int x = 0; x < src.getSizeX()-1; x++) {
+            for(int y = 0; y < src.getSizeY()-1; y++) {
+                for(int z = 0; z < src.getSizeZ()-1; z++) {
+                    int index = src.getIndex(x, y, z);
                     if(vertexLocations[index] >= 0) {
-                        for(i = 0; i < 3; i++) {
-                            faceFound = true;
+                        for(int i = 0; i < 3; i++) {
+                            bool faceFound = true;
                             indices[0] = vertexLocations[index];
-                            for(j = 0; j < 3; j++) {
-                                index2 = src.getIndex(x+faceNeighbors[i][j][0], y+faceNeighbors[i][j][1], z+faceNeighbors[i][j][2]);
+                            for(int j = 0; j < 3; j++) {
+                                int index2 = src.getIndex(x+faceNeighbors[i][j][0], y+faceNeighbors[i][j][1], z+faceNeighbors[i][j][2]);
                                 indices[j+1] = vertexLocations[index2];
                                 faceFound = faceFound && vertexLocations[index2] >= 0;
                             }
@@ -411,11 +409,10 @@ namespace Protein_Morph {
 
     void NonManifoldMesh::removeFace(int faceId) {
         int faceIndex = getFaceIndex(faceId);
-        int edgeIndex;
         faces[faceIndex].valid = false;
 
         for(unsigned int i = 0; i < faces[faceIndex].edgeIds.size(); i++) {
-            edgeIndex = getEdgeIndex(faces[faceIndex].edgeIds[i]);
+            int edgeIndex = getEdgeIndex(faces[faceIndex].edgeIds[i]);
             for(int j = (int)edges[edgeIndex].faceIds.size()-1; j >= 0; j--) {
                 if(edges[edgeIndex].faceIds[j] == faceId) {
                     edges[edgeIndex].faceIds.erase(edges[edgeIndex].faceIds.begin() + j);
@@ -738,9 +735,6 @@ namespace Protein_Morph {
         ifstream inFile(fileName.c_str());
         string strTemp;
         int nVertices, nEdges, nFaces;
-        int lVertices, lFaces;
-        lVertices = 0;
-        lFaces = 0;
 
         inFile>>strTemp;
         //printf("[%s]\n", strTemp);
@@ -748,7 +742,8 @@ namespace Protein_Morph {
         //printf("[%d] [%d] [%d]\n", nVertices, nFaces, nEdges);
 
         float xPos, yPos, zPos;
-        lVertices = 0;
+        int lVertices = 0;
+        int lFaces = 0;
         for(int i=0; i < nVertices; i++) {
             lVertices++;
             inFile>>xPos>>yPos>>zPos;
@@ -812,17 +807,16 @@ namespace Protein_Morph {
         edgeList.push(edge0Ix);
 
         bool found = false;
-        unsigned int currentEdge, vertexIx, edgeIx;
 
         while((edgeList.size() > 0) && !found) {
-            currentEdge = edgeList.front();
+            unsigned int currentEdge = edgeList.front();
             edgeList.pop();
             found = currentEdge == edge1Ix;
             if(!found) {
                 for(unsigned int v = 0; v < 2; v++) {
-                    vertexIx = getVertexIndex(edges[currentEdge].vertexIds[v]);
+                    unsigned int vertexIx = getVertexIndex(edges[currentEdge].vertexIds[v]);
                     for(unsigned int e = 0; e < vertices[vertexIx].edgeIds.size(); e++) {
-                        edgeIx = getEdgeIndex(vertices[vertexIx].edgeIds[e]);
+                        unsigned int edgeIx = getEdgeIndex(vertices[vertexIx].edgeIds[e]);
                         if(source.find(edgeIx) == source.end()) {
                             source[edgeIx] = currentEdge;
                             edgeList.push(edgeIx);
@@ -833,7 +827,7 @@ namespace Protein_Morph {
         }
 
         if(found) {
-            currentEdge = edge1Ix;
+            unsigned int currentEdge = edge1Ix;
             path.push_back(currentEdge);
             while(currentEdge != edge0Ix) {
                 currentEdge = source[currentEdge];
