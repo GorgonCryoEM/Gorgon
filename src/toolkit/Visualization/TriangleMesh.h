@@ -33,7 +33,6 @@ namespace Protein_Morph {
 
             unsigned long long addVertex(TriangleMeshVertex vertex,
                                          unsigned long long hashKey);
-            unsigned long long addFace(TriangleMeshFace face);
 
             Vec3F getVertexNormal(unsigned long long vertexHash);
             Vec3F getFaceNormal(unsigned long long faceHash);
