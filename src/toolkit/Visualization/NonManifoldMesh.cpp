@@ -26,14 +26,6 @@ namespace Protein_Morph {
     {
         glPushAttrib(GL_LIGHTING_BIT | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT | GL_POINT_BIT);
 
-        drawSurfaceBorders = true;
-        drawSurfaces = true;
-        drawLines = false;
-        drawPoints = true;
-        annotateSurfaces = true;
-        annotateLines = true;
-        annotatePoints = true;
-
         if(drawSurfaceBorders) {
             glLineWidth(1);
             glEnable(GL_LINE_SMOOTH);
