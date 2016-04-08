@@ -139,9 +139,7 @@ namespace Protein_Morph {
         TV vertices;
         TE edges;
         TF faces;
-        int edgeCount;
-        int vertexCount;
-        int faceCount;
+
         HashMapType vertexHashMap;
         bool fromVolume;
 

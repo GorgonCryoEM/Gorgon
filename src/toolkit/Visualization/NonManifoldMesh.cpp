@@ -153,9 +153,7 @@ void NonManifoldMesh::clear() {
     vertices.clear();
     edges.clear();
     faces.clear();
-    vertexCount = 0;
-    edgeCount = 0;
-    faceCount = 0;
+
     vertexHashMap.clear();
 }
 
@@ -267,7 +265,7 @@ int NonManifoldMesh::addVertex(NonManifoldMeshVertex vertex) {
     vertex.id = vertices.size();
     vertex.valid = true;
     vertices.push_back(vertex);
-    vertexCount++;
+
     return vertex.id;
 }
 
@@ -294,7 +292,7 @@ int NonManifoldMesh::addEdge(NonManifoldMeshEdge edge) {
     edge.id = edges.size();
     edge.valid = true;
     edges.push_back(edge);
-    edgeCount++;
+
     return edge.id;
 }
 
@@ -302,7 +300,7 @@ int NonManifoldMesh::addFace(NonManifoldMeshFace face) {
     face.id = faces.size();
     face.valid = true;
     faces.push_back(face);
-    faceCount++;
+
     return face.id;
 }
 
@@ -435,7 +433,7 @@ void NonManifoldMesh::removeFace(int faceId) {
     int faceIndex = getFaceIndex(faceId);
     int edgeIndex;
     faces[faceIndex].valid = false;
-    faceCount--;
+
     for(unsigned int i = 0; i < faces[faceIndex].edgeIds.size(); i++) {
         edgeIndex = getEdgeIndex(faces[faceIndex].edgeIds[i]);
         for(int j = (int)edges[edgeIndex].faceIds.size()-1; j >= 0; j--) {
@@ -454,7 +452,6 @@ void NonManifoldMesh::removeEdge(int edgeId) {
         exit(0);
     }
     edges[edgeIndex].valid = false;
-    edgeCount--;
 
     for(int i = 0; i < 2; i++) {
         vertexIndex = getVertexIndex(edges[edgeIndex].vertexIds[i]);
@@ -469,7 +466,6 @@ void NonManifoldMesh::removeEdge(int edgeId) {
 void NonManifoldMesh::removeVertex(int vertexId) {
     int vertexIndex = getVertexIndex(vertexId);
     vertices[vertexIndex].valid = false;
-    vertexCount--;
 
     if(vertices[vertexIndex].edgeIds.size() > 0) {
         printf("Cannot remove vertexId %i as it has edge associations\n", vertexId);
