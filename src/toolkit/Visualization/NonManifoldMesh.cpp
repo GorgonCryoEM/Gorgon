@@ -408,7 +408,6 @@ void NonManifoldMesh::markFixedVertices() {
 
 void NonManifoldMesh::mergeMesh(const NonManifoldMesh & src) {
     vector<int> indices;
-    indices.clear();
 
     for(unsigned int i = 0; i < src.vertices.size(); i++)
         indices.push_back(addVertex(src.vertices[i]));
