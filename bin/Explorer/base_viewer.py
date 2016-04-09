@@ -7,13 +7,20 @@ from OpenGL.GLUT import *
 from libpytoolkit import Display
 from libpytoolkit import *
 from .libs import Vec3
+from .ui_common import Ui_Common
+from base_dock_widget import BaseDockWidget
 
 
-class BaseViewer(QtOpenGL.QGLWidget):
+class BaseViewer(BaseDockWidget):
     DisplayStyleWireframe, DisplayStyleFlat, DisplayStyleSmooth = range(3)
     
     def __init__(self, main, parent=None):
-        super(BaseViewer, self).__init__(parent)
+        super(BaseViewer, self).__init__(
+                                main,
+                                self,
+                                self.title,
+                                QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea,
+                                QtCore.Qt.RightDockWidgetArea)
         self.app = main
         self.title = "Untitled"
         self.shortTitle = "UNT"
