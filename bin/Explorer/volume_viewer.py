@@ -13,8 +13,8 @@ from OpenGL.GLUT import *
 class VolumeViewer(BaseViewer):
 
     def __init__(self, main, parent=None):
-        super(VolumeViewer, self).__init__(main, parent)
         self.title = "Volume"
+        super(VolumeViewer, self).__init__(main, parent)
         self.shortTitle = "VOL"
         
         self.color = QtGui.QColor(50, 200, 50, 150)

@@ -12,8 +12,8 @@ from OpenGL.GLUT import *
 class SkeletonViewer(BaseViewer):
 
     def __init__(self, main, parent=None):
-        super(SkeletonViewer, self).__init__(main, parent)
         self.title = "Skeleton"
+        super(SkeletonViewer, self).__init__(main, parent)
         self.shortTitle = "SKE"
         
         self.color = QtGui.QColor(200, 50, 50, 150)
