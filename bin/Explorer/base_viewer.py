@@ -47,6 +47,9 @@ class BaseViewer(BaseDockWidget):
         
         self.ui = Ui_Common()
         self.ui.setupUi(self)
+        self.setupSignals()
+
+    def setupSignals(self):
         self.ui.pushButtonModelColor.clicked.connect(self.setColor)
         
     def initVisualizationOptions(self, visualizationForm):
