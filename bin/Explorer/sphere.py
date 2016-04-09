@@ -6,7 +6,7 @@ from libpytoolkit import Vec3F
 from .libs import Vec3
 
 # from volume_surface_editor_form import VolumeSurfaceEditorForm
-# from model_visualization_form import ModelVisualizationForm
+from model_visualization_form import ModelVisualizationForm
 # from string import split, upper
 
 from OpenGL.GL import *
@@ -27,6 +27,7 @@ class Sphere(BaseViewer):
         
         self.selectEnabled    = True
         self.mouseMoveEnabled = True
+        self.initVisualizationOptions(ModelVisualizationForm(main, self))
         
     def draw(self):
         self.setMaterials(self.color)
