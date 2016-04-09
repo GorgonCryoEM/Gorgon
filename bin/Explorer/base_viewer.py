@@ -51,7 +51,12 @@ class BaseViewer(BaseDockWidget):
 
     def setupSignals(self):
         self.ui.pushButtonModelColor.valueChanged.connect(self.setColor)
+        self.ui.checkBoxModelVisible.toggled.connect(self.setModelVisibility)
         
+        self.ui.radioButtonWireframe.toggled.connect(self.setDisplayStyle)
+        self.ui.radioButtonFlat.toggled.connect(self.setDisplayStyle)
+        self.ui.radioButtonSmooth.toggled.connect(self.setDisplayStyle)
+
     def initVisualizationOptions(self, visualizationForm):
         self.visualizationOptions = visualizationForm
     
