@@ -259,7 +259,7 @@ class Ui_Common(object):
         self.gridlayout.addItem(spacerItem2, 2, 0, 1, 1)
 
         self.retranslateUi(Common)
-        self.tabWidget.setCurrentIndex(2)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(Common)
         Common.setTabOrder(self.pushButtonCenter, self.pushButtonClose)
         Common.setTabOrder(self.pushButtonClose, self.tabWidget)
