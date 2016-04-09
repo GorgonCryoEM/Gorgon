@@ -31,11 +31,3 @@ class Sphere(BaseViewer):
     def draw(self):
         self.setMaterials(self.color)
         self.s.drawSphere(Vec3(30., 10., 10.), 10.)
-        
-    def performElementSelection(self, hitStack):
-        print "In: performElementSelection"
-        
-        color = QtGui.QColorDialog.getColor(self.color, self, '', QtGui.QColorDialog.ShowAlphaChannel)
-        
-        if color.isValid():
-            self.color = color
