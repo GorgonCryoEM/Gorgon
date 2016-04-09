@@ -16,6 +16,8 @@ class VolumeViewer(BaseViewer):
         super(VolumeViewer, self).__init__(main, parent)
         self.title = "Volume"
         self.shortTitle = "VOL"
+        
+        self.color = QtGui.QColor(50, 200, 50, 150)
 
         self.renderer = Display()
         self.loaded = False
