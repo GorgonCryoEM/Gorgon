@@ -45,6 +45,10 @@ class BaseViewer(BaseDockWidget):
         self.multipleSelection = True
         self.color = QtGui.QColor(180, 180, 180, 150)
         
+        self.ui = Ui_Common()
+        self.ui.setupUi(self)
+#         self.initVisualizationOptions(Ui_Common())
+        
     def initVisualizationOptions(self, visualizationForm):
         self.visualizationOptions = visualizationForm
     
