@@ -50,7 +50,7 @@ class BaseViewer(BaseDockWidget):
         self.setupSignals()
 
     def setupSignals(self):
-        self.ui.pushButtonModelColor.clicked.connect(self.setColor)
+        self.ui.pushButtonModelColor.valueChanged.connect(self.setColor)
         
     def initVisualizationOptions(self, visualizationForm):
         self.visualizationOptions = visualizationForm
