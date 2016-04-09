@@ -31,7 +31,7 @@ class ModelVisualizationForm(BaseDockWidget):
         self.connect(self.ui.radioButtonFlat,        QtCore.SIGNAL("toggled (bool)"),     self.setDisplayStyle)
         self.connect(self.ui.radioButtonSmooth,      QtCore.SIGNAL("toggled (bool)"),     self.setDisplayStyle)
         self.connect(self.ui.checkBoxModelVisible,   QtCore.SIGNAL("toggled (bool)"),     self.viewer.setModelVisibility)
-        self.connect(self.ui.pushButtonModelColor,   QtCore.SIGNAL("colorChanged ()"),    self.setModelColor)
+        self.ui.pushButtonModelColor.clicked.connect(self.setModelColor)
         self.connect(self.ui.pushButtonCenter,       QtCore.SIGNAL("pressed ()"),         self.viewer.emitViewerSetCenterLocal)
         self.connect(self.ui.pushButtonClose,        QtCore.SIGNAL("pressed ()"),         self.viewer.unload)
         self.connect(self.ui.doubleSpinBoxSizeX,     QtCore.SIGNAL("editingFinished ()"), self.scaleChanged)
