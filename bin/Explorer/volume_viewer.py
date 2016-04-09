@@ -21,5 +21,3 @@ class VolumeViewer(BaseViewer):
 
         self.renderer = Display()
         self.loaded = False
-        self.surfaceEditor = VolumeSurfaceEditorForm(self.app, self)
-        self.initVisualizationOptions(ModelVisualizationForm(self.app, self))

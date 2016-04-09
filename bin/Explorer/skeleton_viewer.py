@@ -25,9 +25,3 @@ class SkeletonViewer(BaseViewer):
         self.lineThickness = 3
         self.renderer.setLineThickness(self.lineThickness)
 
-        self.initVisualizationOptions(ModelVisualizationForm(self.app, self))
-        self.visualizationOptions.ui.spinBoxThickness.setValue(self.lineThickness)
-        self.visualizationOptions.ui.spinBoxThickness.setVisible(True)
-        self.visualizationOptions.ui.labelThickness.setVisible(True)
-
-        self.visualizationOptions.ui.checkBoxModelVisible.setText("Show curves colored:")

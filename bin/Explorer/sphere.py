@@ -27,7 +27,6 @@ class Sphere(BaseViewer):
         
         self.selectEnabled    = True
         self.mouseMoveEnabled = True
-        self.initVisualizationOptions(ModelVisualizationForm(main, self))
         
     def draw(self):
         self.setMaterials(self.color)
