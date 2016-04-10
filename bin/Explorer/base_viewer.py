@@ -10,8 +10,11 @@ from .libs import Vec3
 from .ui_common import Ui_Common
 from base_dock_widget import BaseDockWidget
 
+from Explorer.display_styles import *
+
 
 class BaseViewer(BaseDockWidget):
+    display_styles = [wireframe, flat, smooth]
     
     def __init__(self, main, parent=None):
         super(BaseViewer, self).__init__(
@@ -47,6 +50,8 @@ class BaseViewer(BaseDockWidget):
         self.ui.setupUi(self)
         self.setupSignals()
 #         self.ui.buttonGroup.setExclusive(False)
+        
+        self.runDisplayType = wireframe
 
     def setupSignals(self):
         self.ui.pushButtonModelColor.valueChanged.connect(self.setColor)
@@ -54,6 +59,9 @@ class BaseViewer(BaseDockWidget):
                 
         buttons = self.ui.buttonGroup.buttons()
         self.bg = self.ui.buttonGroup
+        for i in range(len(self.display_styles)):
+            self.bg.setId(buttons[i], i)
+        
         print [self.bg.id(b) for b in buttons]
 
     def initVisualizationOptions(self, visualizationForm):
@@ -191,6 +199,8 @@ class BaseViewer(BaseDockWidget):
         glEnable (GL_BLEND);
         glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         
+        self.display_styles[self.bg.checkedId()]()
+    
     def unInitializeGLDisplayType(self):
         glPopAttrib()
 
