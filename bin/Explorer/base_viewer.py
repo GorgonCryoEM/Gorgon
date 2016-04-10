@@ -12,7 +12,6 @@ from base_dock_widget import BaseDockWidget
 
 
 class BaseViewer(BaseDockWidget):
-    DisplayStyleWireframe, DisplayStyleFlat, DisplayStyleSmooth = range(3)
     
     def __init__(self, main, parent=None):
         super(BaseViewer, self).__init__(
@@ -32,7 +31,6 @@ class BaseViewer(BaseDockWidget):
         self.mouseMoveEnabledRay = True
         self.isClosedMesh = True
 #         self.displayStyle = self.DisplayStyleSmooth
-        self.displayStyle = self.DisplayStyleWireframe
         self.modelVisible = True
         self.rotation = self.identityMatrix()
         self.connect(self, QtCore.SIGNAL("modelChanged()"), self.modelChanged)
@@ -53,10 +51,6 @@ class BaseViewer(BaseDockWidget):
     def setupSignals(self):
         self.ui.pushButtonModelColor.valueChanged.connect(self.setColor)
         self.ui.checkBoxModelVisible.toggled.connect(self.setModelVisibility)
-        
-        self.ui.radioButtonWireframe.toggled.connect(self.setDisplayStyle)
-        self.ui.radioButtonFlat.toggled.connect(self.setDisplayStyle)
-        self.ui.radioButtonSmooth.toggled.connect(self.setDisplayStyle)
                 
         buttons = self.ui.buttonGroup.buttons()
         self.bg = self.ui.buttonGroup
@@ -123,10 +117,6 @@ class BaseViewer(BaseDockWidget):
     def repaintCamera(self):
         self.app.mainCamera.updateGL()
         
-    def setDisplayStyle(self, style):
-        self.displayStyle = style
-        self.emitModelVisualizationChanged()
-
     def setModelVisibility(self, visible):
         self.modelVisible = visible
         self.repaintCamera()
@@ -201,24 +191,6 @@ class BaseViewer(BaseDockWidget):
         glEnable (GL_BLEND);
         glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         
-        if self.displayStyle == self.DisplayStyleWireframe:
-            glPolygonMode(GL_FRONT, GL_LINE)
-            glPolygonMode(GL_BACK, GL_LINE)
-            
-        elif self.displayStyle == self.DisplayStyleFlat:
-            glPolygonMode(GL_FRONT, GL_FILL)
-            glPolygonMode(GL_BACK, GL_FILL)
-            glShadeModel(GL_FLAT)
-            
-        elif self.displayStyle == self.DisplayStyleSmooth:
-            glPolygonMode(GL_FRONT, GL_FILL)
-            glPolygonMode(GL_BACK, GL_FILL)
-            glShadeModel(GL_SMOOTH)
-            
-        else:
-            self.displayStyle = self.DisplayStyleSmooth;
-            self.setDisplayType()
-    
     def unInitializeGLDisplayType(self):
         glPopAttrib()
 
