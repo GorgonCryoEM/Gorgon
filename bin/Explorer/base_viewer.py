@@ -63,6 +63,8 @@ class BaseViewer(BaseDockWidget):
             self.bg.setId(buttons[i], i)
         
         print [self.bg.id(b) for b in buttons]
+        
+        self.bg.buttonClicked[int].connect(self.repaintCamera)
 
     def initVisualizationOptions(self, visualizationForm):
         self.visualizationOptions = visualizationForm
