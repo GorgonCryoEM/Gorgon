@@ -75,8 +75,6 @@ namespace Visualization {
               cout<<(Volume)(*this)<<endl;
 //        #endif
 
-        updateBoundingBox();
-
         #ifdef _WIN32
             glTexImage3D = (PFNGLTEXIMAGE3DPROC) wglGetProcAddress("glTexImage3D");
         #endif
@@ -125,20 +123,6 @@ namespace Visualization {
             textureLoaded = false;
         }
         calculateDisplay();
-        updateBoundingBox();
-    }
-
-    void DisplayBase::updateBoundingBox() {
-        if(volData == NULL) {
-            minPts = 0.0;
-            maxPts = 1.0;
-        } else {
-            minPts = 0.0;
-
-            maxPts[0] = getSizeX()-1;
-            maxPts[1] = getSizeY()-1;
-            maxPts[2] = getSizeZ()-1;
-        }
     }
 
     int smallest2ndPower(int value) {

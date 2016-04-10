@@ -75,7 +75,6 @@ namespace Visualization {
             void setSampleInterval(const int size);
             void setSurfaceValue(const float value);
             void setMaxSurfaceValue(const float value);
-            void updateBoundingBox();
             void unload();
 
             virtual bool calculateDisplay();
