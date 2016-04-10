@@ -28,10 +28,6 @@ namespace Visualization {
                                          float angle);
             virtual Vec3F selectionCenterOfMass();
             virtual bool selectionMove(Vec3F moveDirection);
-            void drawSphere(Vec3F center, float radius);
-            void static drawCylinder(Vec3F pt1, Vec3F pt2,
-                                     float radius, int slices = 10, int stacks = 10);
-            void static drawLine(Vec3F pt1, Vec3F pt2);
 
             float getMin(int dimension);
             float getMax(int dimension);

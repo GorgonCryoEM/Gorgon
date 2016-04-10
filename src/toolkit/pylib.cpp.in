@@ -11,6 +11,7 @@
 #include "Readers/SEQReader.h"
 #include "Visualization/Display.h"
 #include "Visualization/Octree.h"
+#include "Visualization/Shapes.h"
 
 using namespace SkeletonMaker;
 using namespace Protein_Morph;
@@ -119,10 +120,11 @@ BOOST_PYTHON_MODULE(@current_pylib@)
 //        .def("setObjectSpecificColoring", &RendererBase::setObjectSpecificColoring)
 //        .def("updateBoundingBox", &RendererBase::UpdateBoundingBox)
 //        .def("clearOtherHighlights", &RendererBase::clearOtherHighlights)
-        .def("drawSphere", &RendererBase::drawSphere)
-        .def("drawCylinder", &RendererBase::drawCylinder)
-        .def("drawLine", &RendererBase::drawLine)
     ;
+  
+    def("drawSphere",   drawSphere);
+    def("drawCylinder", drawCylinder);
+    def("drawLine",     drawLine);
   
   class_<Display, bases<Volume> >("Display", init<>())
         .def("draw", &Display::draw)
