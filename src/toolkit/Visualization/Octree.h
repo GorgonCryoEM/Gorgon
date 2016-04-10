@@ -32,33 +32,6 @@ namespace Foundation {
         {{0,6}, {0,7}, {2,6}, {2,7}, {4,6}, {4,7}, {6,6}, {6,7}},
         {{0,7}, {1,7}, {2,7}, {3,7}, {4,7}, {5,7}, {6,7}, {7,7}}};
 
-
-    struct Range {
-         Range()
-             : max(MIN_FLOAT),
-               min(MAX_FLOAT)
-         {}
-
-         void setMin(float val) {
-             min = ::min(min, val);
-         }
-
-         void setMax(float val) {
-             max = ::max(max, val);
-         }
-
-         float getMin() {
-             return min;
-         }
-
-         float getMax() {
-             return max;
-         }
-
-        float min;
-        float max;
-    };
-
     template <class TTag>
     struct OctreeNode {
         unsigned int pos[3];
