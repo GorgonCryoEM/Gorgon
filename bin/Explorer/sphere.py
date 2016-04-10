@@ -1,7 +1,7 @@
 from PyQt4 import QtGui, QtCore, QtOpenGL
 from base_viewer import BaseViewer
 from libpytoolkit import Display
-from libpytoolkit import RendererBase
+from libpytoolkit import drawSphere
 from libpytoolkit import Vec3F
 from .libs import Vec3
 
@@ -24,7 +24,6 @@ class Sphere(BaseViewer):
         self.R      = 10.
         
         self.renderer = Display()
-        self.s = RendererBase()
 #         self.color = QtGui.QColorDialog().getColor()
         self.color = QtGui.QColor(120, 18, 80, 150)
         
@@ -37,4 +36,4 @@ class Sphere(BaseViewer):
         if(self.modelVisible):
             self.display_styles[self.bg.checkedId()]()
             self.setMaterials(self.color)
-            self.s.drawSphere(self.center, self.R)
+            drawSphere(self.center, self.R)
