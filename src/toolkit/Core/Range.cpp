@@ -6,6 +6,11 @@
  */
 
 #include "Range.h"
+#include "MathTools/BasicDefines.h"
+
+#include <algorithm>
+
+using namespace MathTools;
 
 namespace Core {
 
@@ -18,11 +23,11 @@ namespace Core {
     }
 
     void Range::setMin(float val) {
-        min = ::min(min, val);
+        min = std::min(min, val);
     }
 
     void Range::setMax(float val) {
-        max = ::max(max, val);
+        max = std::max(max, val);
     }
 
     float Range::getMin() {
