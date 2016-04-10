@@ -20,7 +20,6 @@ namespace Visualization {
             CrossSection();
             virtual ~CrossSection();
 
-            bool calculateDisplay();
             void load3DTexture();
 
             void draw(int subSceneIndex, bool selectEnabled);

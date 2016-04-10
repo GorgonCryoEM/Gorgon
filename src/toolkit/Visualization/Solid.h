@@ -20,7 +20,6 @@ namespace Visualization {
             Solid();
             virtual ~Solid();
 
-            bool calculateDisplay();
             void load3DTexture();
 
             void draw(int subSceneIndex, bool selectEnabled);
