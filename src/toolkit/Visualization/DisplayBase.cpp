@@ -11,7 +11,6 @@
 namespace Visualization {
 
     DisplayBase::DisplayBase()
-        : RendererBase()
     {
         textureLoaded = false;
         viewingType = VIEWING_TYPE_ISO_SURFACE;

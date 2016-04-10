@@ -16,7 +16,6 @@
 ////#include <GorgonGL.h>
 ////#include <string>
 ////#include <GraphMatch/VectorMath.h>
-#include "RendererBase.h"
 ////#include "GlobalConstants.h"
 ////#include "MeshRenderer.h"
 #include <Core/volume.h>
@@ -61,7 +60,7 @@ namespace Visualization {
         typedef int PFNGLTEXIMAGE3DPROC;
     #endif
 
-    class DisplayBase : public Volume, public RendererBase {
+    class DisplayBase : public Volume {
         public:
             DisplayBase();
             virtual ~DisplayBase();
