@@ -24,7 +24,6 @@ class Sphere(BaseViewer):
         self.R      = 10.
         
         self.renderer = Display()
-#         self.color = QtGui.QColorDialog().getColor()
         self.color = QtGui.QColor(120, 18, 80, 150)
         
         self.selectEnabled    = True
