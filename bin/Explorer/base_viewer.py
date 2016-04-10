@@ -48,6 +48,7 @@ class BaseViewer(BaseDockWidget):
         self.ui = Ui_Common()
         self.ui.setupUi(self)
         self.setupSignals()
+#         self.ui.buttonGroup.setExclusive(False)
 
     def setupSignals(self):
         self.ui.pushButtonModelColor.valueChanged.connect(self.setColor)
@@ -56,6 +57,10 @@ class BaseViewer(BaseDockWidget):
         self.ui.radioButtonWireframe.toggled.connect(self.setDisplayStyle)
         self.ui.radioButtonFlat.toggled.connect(self.setDisplayStyle)
         self.ui.radioButtonSmooth.toggled.connect(self.setDisplayStyle)
+                
+        buttons = self.ui.buttonGroup.buttons()
+        self.bg = self.ui.buttonGroup
+        print [self.bg.id(b) for b in buttons]
 
     def initVisualizationOptions(self, visualizationForm):
         self.visualizationOptions = visualizationForm
