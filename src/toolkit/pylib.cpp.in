@@ -10,7 +10,7 @@
 #include "GraphMatch/PDBBond.h"
 #include "Readers/SEQReader.h"
 #include "Visualization/Display.h"
-#include "Visualization/Octree.h"
+#include "Core/Range.h"
 #include "Visualization/Shapes.h"
 
 using namespace SkeletonMaker;
