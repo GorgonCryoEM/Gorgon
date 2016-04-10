@@ -497,9 +497,9 @@ namespace Foundation {
 
         for(unsigned int i = 0; i < testVectors.size(); i++) {
             intersecting = intersecting &&
-                (((minMaxCubePoints1D[i].min <= minMaxRayPoints1D[i].min) && (minMaxCubePoints1D[i].max >= minMaxRayPoints1D[i].min)) ||
-                ((minMaxCubePoints1D[i].min <= minMaxRayPoints1D[i].max) && (minMaxCubePoints1D[i].max >= minMaxRayPoints1D[i].max)) ||
-                ((minMaxCubePoints1D[i].min >= minMaxRayPoints1D[i].min) && (minMaxCubePoints1D[i].max <= minMaxRayPoints1D[i].max)));
+                (((minMaxCubePoints1D[i].getMin() <= minMaxRayPoints1D[i].getMin()) && (minMaxCubePoints1D[i].getMax() >= minMaxRayPoints1D[i].getMin())) ||
+                ((minMaxCubePoints1D[i].getMin() <= minMaxRayPoints1D[i].getMax()) && (minMaxCubePoints1D[i].getMax() >= minMaxRayPoints1D[i].getMax())) ||
+                ((minMaxCubePoints1D[i].getMin() >= minMaxRayPoints1D[i].getMin()) && (minMaxCubePoints1D[i].getMax() <= minMaxRayPoints1D[i].getMax())));
         }
 
         if(intersecting) {
