@@ -12,9 +12,11 @@
 
 //#include <vector>
 //#include <MathTools/Vector3.h>
+#include "Core/Range.h"
 
 //using namespace std;
 //using namespace wustl_mm::MathTools;
+using namespace Core;
 
 namespace Foundation {
 
