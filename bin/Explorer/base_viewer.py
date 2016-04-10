@@ -227,8 +227,6 @@ class BaseViewer(BaseDockWidget):
         glEnable(GL_DEPTH_TEST);
         glDepthMask(GL_TRUE);
         
-        self.emitDrawingModel()
-        
         if(self.loaded and self.modelVisible):
             self.setMaterials(self.getColor())
             self.initializeGLDisplayType()
