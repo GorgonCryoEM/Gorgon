@@ -20,6 +20,9 @@ class Sphere(BaseViewer):
         self.title = "Sphere"
         super(Sphere, self).__init__(main, parent)
         
+        self.center = Vec3(30., 10., 10.)
+        self.R      = 10.
+        
         self.renderer = Display()
         self.s = RendererBase()
 #         self.color = QtGui.QColorDialog().getColor()
@@ -27,7 +30,11 @@ class Sphere(BaseViewer):
         
         self.selectEnabled    = True
         self.mouseMoveEnabled = True
+        self.loaded           = True
+        self.modelVisible     = True
         
     def draw(self):
-        self.setMaterials(self.color)
-        self.s.drawSphere(Vec3(30., 10., 10.), 10.)
+        if(self.modelVisible):
+            self.display_styles[self.bg.checkedId()]()
+            self.setMaterials(self.color)
+            self.s.drawSphere(self.center, self.R)
