@@ -18,13 +18,13 @@ class Sphere(BaseViewer):
     
     def __init__(self, main, parent=None):
         self.title = "Sphere"
+        self.color = QtGui.QColor(120, 18, 80, 150)
+        
         super(Sphere, self).__init__(main, parent)
         
         self.center = Vec3(30., 10., 10.)
         self.R      = 10.
-        
         self.renderer = Display()
-        self.color = QtGui.QColor(120, 18, 80, 150)
         
         self.loaded           = True
         
