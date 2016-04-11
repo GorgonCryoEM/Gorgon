@@ -25,9 +25,6 @@ using namespace SkeletonMaker;
 
 namespace Visualization {
 
-    /*
-     *
-     */
     class MeshRenderer : public Volume {
         public:
             NonManifoldMesh getMesh();
