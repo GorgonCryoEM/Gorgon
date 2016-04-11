@@ -77,6 +77,9 @@ namespace Visualization {
             void setMaxSurfaceValue(const float value);
             void unload();
 
+            virtual float getMinPos(int i) const;
+            virtual float getMaxPos(int i) const;
+
             virtual bool calculateDisplay();
             virtual void load3DTexture();
 
