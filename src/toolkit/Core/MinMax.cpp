@@ -7,17 +7,14 @@
 
 #include "MinMax.h"
 
-#include "MathTools/BasicDefines.h"
-
 #include <algorithm>
-
-using namespace MathTools;
+#include <limits>
 
 namespace Core {
 
     MinMax::MinMax()
-          : max(MIN_FLOAT),
-            min(MAX_FLOAT)
+          : max(std::numeric_limits<float>::min()),
+            min(std::numeric_limits<float>::max())
     {}
 
     MinMax::~MinMax() {
