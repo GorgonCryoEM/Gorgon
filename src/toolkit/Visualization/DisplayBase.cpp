@@ -16,7 +16,6 @@ namespace Visualization {
         viewingType = VIEWING_TYPE_ISO_SURFACE;
         surfaceValue = 1.5;
         sampleInterval = 1;
-        drawEnabled = false;
     }
 
     DisplayBase::~DisplayBase() {
@@ -32,15 +31,6 @@ namespace Visualization {
 
     int DisplayBase::getSampleInterval() const  {
         return sampleInterval;
-    }
-
-    void DisplayBase::enableDraw(bool enable) {
-        if(drawEnabled != enable) {
-            drawEnabled = enable;
-            if(drawEnabled) {
-                calculateDisplay();
-            }
-        }
     }
 
     void DisplayBase::setViewingType(const int type) {

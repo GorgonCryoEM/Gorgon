@@ -64,7 +64,6 @@ namespace Visualization {
 
             float getSurfaceValue() const;
             int getSampleInterval() const;
-            void enableDraw(bool enable);
             virtual void draw(int subSceneIndex, bool selectEnabled);
             void load(string fileName);
             void save(string fileName);
@@ -81,7 +80,6 @@ namespace Visualization {
             virtual void load3DTexture();
 
     protected:
-        bool drawEnabled;
         bool textureLoaded;
         Dim3D<int> textureSize;
         GLuint textureName;
