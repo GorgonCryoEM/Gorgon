@@ -246,7 +246,7 @@ class BaseViewer(BaseDockWidget):
             self.glList = glGenLists(1)
             glNewList(self.glList, GL_COMPILE)
 
-            if(self.getColor().alpha() < 255):
+            if(self.color.alpha() < 255):
                 glDepthFunc(GL_LESS)
                 glColorMask(False, False, False, False)
                 self.renderer.draw(0, False)
