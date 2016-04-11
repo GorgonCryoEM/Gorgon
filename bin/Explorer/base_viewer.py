@@ -84,8 +84,9 @@ class BaseViewer(BaseDockWidget):
         return self.color
 
     def setColor(self, color):
-        self.color = color
-        self.repaintCamera()
+        if(self.color != color):
+            self.color = color
+            self.repaintCamera()
 
     def identityMatrix(self):
         return [[1.0, 0.0, 0.0, 0.0],
