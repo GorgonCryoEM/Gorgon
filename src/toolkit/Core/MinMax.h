@@ -1,19 +1,19 @@
 /*
- * Range.h
+ * MinMax.h
  *
  * Author: shadow_walker <shadowwalkersb@gmail.com>
  *
  */
 
-#ifndef SRC_TOOLKIT_CORE_RANGE_H_
-#define SRC_TOOLKIT_CORE_RANGE_H_
+#ifndef SRC_TOOLKIT_CORE_MINMAX_H_
+#define SRC_TOOLKIT_CORE_MINMAX_H_
 
 namespace Core {
 
-    class Range {
+    class MinMax {
         public:
-            Range();
-            virtual ~Range();
+            MinMax();
+            virtual ~MinMax();
 
             void setMin(float val);
             void setMax(float val);
@@ -27,4 +27,4 @@ namespace Core {
 
 } /* namespace Core */
 
-#endif /* SRC_TOOLKIT_CORE_RANGE_H_ */
+#endif /* SRC_TOOLKIT_CORE_MINMAX_H_ */
