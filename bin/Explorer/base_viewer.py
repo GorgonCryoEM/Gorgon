@@ -242,7 +242,6 @@ class BaseViewer(BaseDockWidget):
         self.extraDrawingRoutines()
         
         if(self.loaded):
-            glDeleteLists(self.glList,1)
             self.glList = glGenLists(1)
             glNewList(self.glList, GL_COMPILE)
 
