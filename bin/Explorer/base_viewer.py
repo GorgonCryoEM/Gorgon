@@ -53,7 +53,7 @@ class BaseViewer(BaseDockWidget):
         self.runDisplayType = wireframe
 
     def initializeGL(self):
-        self.setupDisplayList()
+        self.setupGlList()
 
     def setupSignals(self):
         self.ui.pushButtonModelColor.valueChanged.connect(self.setColor)
@@ -246,9 +246,9 @@ class BaseViewer(BaseDockWidget):
         self.extraDrawingRoutines()
         
         if(self.loaded):
-            self.setupDisplayList()
+            self.setupGlList()
 
-    def setupDisplayList(self):
+    def setupGlList(self):
         self.glList = glGenLists(1)
         glNewList(self.glList, GL_COMPILE)
         self.displayListGL()
