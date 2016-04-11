@@ -179,8 +179,8 @@ class BaseViewer(BaseDockWidget):
     def getMinMax(self):
         scale    = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
         location = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]
-        minPos = Vec3([(self.renderer.getMin(i)*scale[i] + location[i]) for i in range(3)])
-        maxPos = Vec3([(self.renderer.getMax(i)*scale[i] + location[i]) for i in range(3)])
+        minPos = Vec3([(self.renderer.getMinPos(i)*scale[i] + location[i]) for i in range(3)])
+        maxPos = Vec3([(self.renderer.getMaxPos(i)*scale[i] + location[i]) for i in range(3)])
         
         return minPos, maxPos
         
