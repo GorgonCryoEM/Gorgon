@@ -31,8 +31,5 @@ class Sphere(BaseViewer):
         self.loaded           = True
         self.modelVisible     = True
         
-    def draw(self):
-        if(self.modelVisible):
-            self.display_styles[self.bg.checkedId()]()
-            self.setMaterials()
-            drawSphere(self.center, self.R)
+    def displayListGL(self):
+        drawSphere(self.center, self.R)

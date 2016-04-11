@@ -213,9 +213,6 @@ class Camera(QtOpenGL.QGLWidget):
                   self.up[0], self.up[1], self.up[2])
         
     def paintGL(self):
-        self.drawScene()
-              
-    def drawScene(self):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glEnable(GL_DEPTH_TEST)
         glMatrixMode(GL_MODELVIEW)
@@ -224,7 +221,7 @@ class Camera(QtOpenGL.QGLWidget):
         self.setLights()
         for i in range(len(self.scene)):
             glPushName(i)
-            self.scene[i].draw()
+            self.scene[i].paintGL()
             glPopName()
         glPopMatrix()
         
@@ -312,7 +309,7 @@ class Camera(QtOpenGL.QGLWidget):
         glLoadIdentity()
         gluPickMatrix(x, viewport[3]-y, 5, 5, viewport)
         self.setGluPerspective()
-        self.drawScene()
+        self.paintGL()
         glMatrixMode(GL_PROJECTION)
         glPopMatrix()
         glFlush()

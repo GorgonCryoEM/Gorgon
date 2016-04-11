@@ -218,7 +218,7 @@ class BaseViewer(BaseDockWidget):
     def unInitializeGLDisplayType(self):
         glPopAttrib()
 
-    def draw(self):
+    def paintGL(self):
         glPushMatrix()
         loc = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]
         glTranslated(loc[0], loc[1], loc[2])
