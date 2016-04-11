@@ -34,5 +34,5 @@ class Sphere(BaseViewer):
     def draw(self):
         if(self.modelVisible):
             self.display_styles[self.bg.checkedId()]()
-            self.setMaterials(self.color)
+            self.setMaterials()
             drawSphere(self.center, self.R)

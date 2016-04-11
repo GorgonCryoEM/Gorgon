@@ -139,7 +139,8 @@ class BaseViewer(BaseDockWidget):
         self.modelVisible = visible
         self.repaintCamera()
 
-    def setMaterials(self, color):
+    def setMaterials(self):
+        color = self.color
         glColor4f(color.redF(), color.greenF(), color.blueF(), color.alphaF())
         diffuseMaterial = [color.redF(), color.greenF(), color.blueF(), color.alphaF()]
         ambientMaterial = [color.redF()*0.2, color.greenF()*0.2, color.blueF()*0.2, color.alphaF()]
@@ -227,7 +228,7 @@ class BaseViewer(BaseDockWidget):
         glDepthMask(GL_TRUE);
         
         if(self.loaded and self.modelVisible):
-            self.setMaterials(self.getColor())
+            self.setMaterials()
             self.initializeGLDisplayType()
             glCallList(self.glList)
             self.unInitializeGLDisplayType();
