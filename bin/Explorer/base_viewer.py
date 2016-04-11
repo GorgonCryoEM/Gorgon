@@ -243,21 +243,24 @@ class BaseViewer(BaseDockWidget):
         self.extraDrawingRoutines()
         
         if(self.loaded):
-            self.glList = glGenLists(1)
-            glNewList(self.glList, GL_COMPILE)
+            self.setupDisplayList()
 
-            if(self.color.alpha() < 255):
-                glDepthFunc(GL_LESS)
-                glColorMask(False, False, False, False)
-                self.renderer.draw(0, False)
-                glDepthFunc(GL_LEQUAL)
-                glColorMask(True, True, True, True)
-                self.renderer.draw(0, self.selectEnabled or self.mouseMoveEnabled)
-            else:
-                self.renderer.draw(0, self.selectEnabled or self.mouseMoveEnabled)
-            glEndList()
-                                    
-        glPopAttrib()
+    def setupDisplayList(self):
+        self.glList = glGenLists(1)
+        glNewList(self.glList, GL_COMPILE)
+        self.displayListGL()
+        glEndList()
+
+    def displayListGL(self):
+        if(self.color.alpha() < 255):
+            glDepthFunc(GL_LESS)
+            glColorMask(False, False, False, False)
+            self.renderer.draw(0, False)
+            glDepthFunc(GL_LEQUAL)
+            glColorMask(True, True, True, True)
+            self.renderer.draw(0, self.selectEnabled or self.mouseMoveEnabled)
+        else:
+            self.renderer.draw(0, self.selectEnabled or self.mouseMoveEnabled)
 
     def load(self, fileName):
         try:
