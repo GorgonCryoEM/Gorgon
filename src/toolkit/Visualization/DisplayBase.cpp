@@ -163,10 +163,10 @@ namespace Visualization {
 
         //Find which vertices are inside of the surface and which are outside
         iFlagIndex = 0;
-        for(int iVertexTest = 0; iVertexTest < 8; iVertexTest++)
+        for(int i = 0; i < 8; i++)
         {
-            if(afCubeValue[iVertexTest] <= iso_level)
-                iFlagIndex |= 1<<iVertexTest;
+            if(afCubeValue[i] <= iso_level)
+                iFlagIndex |= 1<<i;
         }
 
         //Find which edges are intersected by the surface
@@ -180,32 +180,32 @@ namespace Visualization {
 
         //Find the point of intersection of the surface with each edge
         //Then find the normal to the surface at those points
-        for(int iEdge = 0; iEdge < 12; iEdge++)
+        for(int i = 0; i < 12; i++)
         {
             //if there is an intersection on this edge
-            if(iEdgeFlags & (1<<iEdge))
+            if(iEdgeFlags & (1<<i))
             {
-                fOffset = vol.getOffset(afCubeValue[ a2iEdgeConnection[iEdge][0] ], afCubeValue[ a2iEdgeConnection[iEdge][1] ], iso_level);
+                fOffset = vol.getOffset(afCubeValue[ a2iEdgeConnection[i][0] ], afCubeValue[ a2iEdgeConnection[i][1] ], iso_level);
 
-                asEdgeVertex[iEdge][0] = (float)iX + ((float)a2iVertexOffset[ a2iEdgeConnection[iEdge][0] ][0] +  fOffset * (float)a2iEdgeDirection[iEdge][0]) * (float)iScale;
-                asEdgeVertex[iEdge][1] = (float)iY + ((float)a2iVertexOffset[ a2iEdgeConnection[iEdge][0] ][1] +  fOffset * (float)a2iEdgeDirection[iEdge][1]) * (float)iScale;
-                asEdgeVertex[iEdge][2] = (float)iZ + ((float)a2iVertexOffset[ a2iEdgeConnection[iEdge][0] ][2] +  fOffset * (float)a2iEdgeDirection[iEdge][2]) * (float)iScale;
+                asEdgeVertex[i][0] = (float)iX + ((float)a2iVertexOffset[ a2iEdgeConnection[i][0] ][0] +  fOffset * (float)a2iEdgeDirection[i][0]) * (float)iScale;
+                asEdgeVertex[i][1] = (float)iY + ((float)a2iVertexOffset[ a2iEdgeConnection[i][0] ][1] +  fOffset * (float)a2iEdgeDirection[i][1]) * (float)iScale;
+                asEdgeVertex[i][2] = (float)iZ + ((float)a2iVertexOffset[ a2iEdgeConnection[i][0] ][2] +  fOffset * (float)a2iEdgeDirection[i][2]) * (float)iScale;
 
-                vertexIds[iEdge] = mesh.addMarchingVertex(Vec3F(asEdgeVertex[iEdge][0], asEdgeVertex[iEdge][1], asEdgeVertex[iEdge][2]), vol.getHashKey(iX, iY, iZ, iEdge, iScale));
+                vertexIds[i] = mesh.addMarchingVertex(Vec3F(asEdgeVertex[i][0], asEdgeVertex[i][1], asEdgeVertex[i][2]), vol.getHashKey(iX, iY, iZ, i, iScale));
             }
         }
 
 
         //Draw the triangles that were found.  There can be up to five per cube
-        for(int iTriangle = 0; iTriangle < 5; iTriangle++)
+        for(int i = 0; i < 5; i++)
         {
-            if(a2iTriangleConnectionTable[iFlagIndex][3*iTriangle] < 0)
+            if(a2iTriangleConnectionTable[iFlagIndex][3*i] < 0)
                 break;
             TriangleMeshFace triangleVertices;
-            for(int iCorner = 0; iCorner < 3; iCorner++)
+            for(int j = 0; j < 3; j++)
             {
-                iVertex = a2iTriangleConnectionTable[iFlagIndex][3*iTriangle+iCorner];
-                triangleVertices[iCorner] = vertexIds[iVertex];
+                iVertex = a2iTriangleConnectionTable[iFlagIndex][3*i+j];
+                triangleVertices[j] = vertexIds[iVertex];
             }
 
             mesh.addMarchingFace(triangleVertices);
