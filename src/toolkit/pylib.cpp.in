@@ -10,7 +10,7 @@
 #include "GraphMatch/PDBBond.h"
 #include "Readers/SEQReader.h"
 #include "Visualization/Display.h"
-#include "Core/Range.h"
+#include "Core/MinMax.h"
 #include "Visualization/Shapes.h"
 
 using namespace SkeletonMaker;
@@ -522,11 +522,11 @@ BOOST_PYTHON_MODULE(@current_pylib@)
         .def("setSelected", &PDBBond::SetSelected)
     ;
 
-    class_<Range>("Range", init<>())
-        .def("getMin", &Range::getMin)
-        .def("getMax", &Range::getMax)
-        .def("setMin", &Range::setMin)
-        .def("setMax", &Range::setMax)
+    class_<MinMax>("MinMax", init<>())
+        .def("getMin", &MinMax::getMin)
+        .def("getMax", &MinMax::getMax)
+        .def("setMin", &MinMax::setMin)
+        .def("setMax", &MinMax::setMax)
     ;
 
 }
