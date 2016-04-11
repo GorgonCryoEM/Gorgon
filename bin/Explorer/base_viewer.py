@@ -251,10 +251,10 @@ class BaseViewer(BaseDockWidget):
     def setupGlList(self):
         self.glList = glGenLists(1)
         glNewList(self.glList, GL_COMPILE)
-        self.displayListGL()
+        self.drawGL()
         glEndList()
 
-    def displayListGL(self):
+    def drawGL(self):
         if(self.color.alpha() < 255):
             glDepthFunc(GL_LESS)
             glColorMask(False, False, False, False)

@@ -31,7 +31,7 @@ class Sphere(BaseViewer):
         self.loaded           = True
         self.modelVisible     = True
         
-    def displayListGL(self):
+    def drawGL(self):
         drawSphere(self.center, self.R)
 
     def draw(self):
