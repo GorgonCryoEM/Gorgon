@@ -28,7 +28,7 @@ namespace Visualization {
             //appTimeManager.PopAndDisplayTime("Marching Cubes)  Clearing : %f seconds |");
             redraw = false;
 
-            if(drawEnabled && volData != NULL) {
+            if(volData != NULL) {
                 redraw = true;
                 int maxX = getSizeX();
                 int maxY = getSizeY();
