@@ -242,7 +242,6 @@ class BaseViewer(BaseDockWidget):
             print self.renderer.getSize()
             self.setScale(self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ())
             self.loaded = True
-            self.dirty = False
             self.emitModelLoadedPreDraw()
             self.emitModelLoaded()
             self.emitViewerSetCenter()
@@ -254,13 +253,11 @@ class BaseViewer(BaseDockWidget):
     def save(self,fileName):
         self.setCursor(QtCore.Qt.WaitCursor)
         self.renderer.saveFile(str(fileName))
-        self.dirty = False
         self.setCursor(QtCore.Qt.ArrowCursor)
     
     def unload(self):
         self.fileName = ""
         self.loaded = False
-        self.dirty = False
         self.renderer.setOrigin(0,0,0)
         self.renderer.setSpacing(1, 1, 1)
         self.rotation = self.identityMatrix()
