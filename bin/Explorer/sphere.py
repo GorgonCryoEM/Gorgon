@@ -26,10 +26,7 @@ class Sphere(BaseViewer):
         self.renderer = Display()
         self.color = QtGui.QColor(120, 18, 80, 150)
         
-        self.selectEnabled    = True
-        self.mouseMoveEnabled = True
         self.loaded           = True
-        self.modelVisible     = True
         
     def drawGL(self):
         drawSphere(self.center, self.R)
