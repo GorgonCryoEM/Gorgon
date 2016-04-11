@@ -236,13 +236,13 @@ class BaseViewer(BaseDockWidget):
         glPopMatrix()
         
     def modelChanged(self):
-        glDeleteLists(self.glList,1)
             
         glPushAttrib(GL_LIGHTING_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT)
                          
         self.extraDrawingRoutines()
         
         if(self.loaded):
+            glDeleteLists(self.glList,1)
             self.glList = glGenLists(1)
             glNewList(self.glList, GL_COMPILE)
 
