@@ -26,7 +26,6 @@ class BaseViewer(BaseDockWidget):
         self.app = main
         self.title = "Untitled"
         self.shortTitle = "UNT"
-        self.fileName = "";
         self.sceneIndex = -1;
         self.loaded = False
         self.selectEnabled = True
@@ -256,7 +255,6 @@ class BaseViewer(BaseDockWidget):
         self.setCursor(QtCore.Qt.ArrowCursor)
     
     def unload(self):
-        self.fileName = ""
         self.loaded = False
         self.renderer.setOrigin(0,0,0)
         self.renderer.setSpacing(1, 1, 1)
