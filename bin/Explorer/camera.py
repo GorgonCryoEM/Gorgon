@@ -154,6 +154,8 @@ class Camera(QtOpenGL.QGLWidget):
        
     def initializeGL(self):
         self.initializeScene()
+        for s in self.scene:
+            s.initializeGL()
 
     def initializeScene(self):
         if((sys.platform != 'darwin') and (sys.platform != 'win32')):

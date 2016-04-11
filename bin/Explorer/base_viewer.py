@@ -52,6 +52,9 @@ class BaseViewer(BaseDockWidget):
         
         self.runDisplayType = wireframe
 
+    def initializeGL(self):
+        self.setupDisplayList()
+
     def setupSignals(self):
         self.ui.pushButtonModelColor.valueChanged.connect(self.setColor)
         self.ui.checkBoxModelVisible.toggled.connect(self.setModelVisibility)
