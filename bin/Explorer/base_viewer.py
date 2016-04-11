@@ -235,6 +235,30 @@ class BaseViewer(BaseDockWidget):
         glPopAttrib()
         glPopMatrix()
         
+    def modelChanged(self):
+        glDeleteLists(self.glList,1)
+            
+        glPushAttrib(GL_LIGHTING_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT)
+                         
+        self.extraDrawingRoutines()
+        
+        if(self.loaded):
+            self.glList = glGenLists(1)
+            glNewList(self.glList, GL_COMPILE)
+
+            if(self.getColor().alpha() < 255):
+                glDepthFunc(GL_LESS)
+                glColorMask(False, False, False, False)
+                self.renderer.draw(0, False)
+                glDepthFunc(GL_LEQUAL)
+                glColorMask(True, True, True, True)
+                self.renderer.draw(0, self.selectEnabled or self.mouseMoveEnabled)
+            else:
+                self.renderer.draw(0, self.selectEnabled or self.mouseMoveEnabled)
+            glEndList()
+                                    
+        glPopAttrib()
+
     def load(self, fileName):
         try:
             self.renderer.loadFile(str(fileName))
@@ -263,30 +287,6 @@ class BaseViewer(BaseDockWidget):
     def extraDrawingRoutines(self):
         pass
     
-    def modelChanged(self):
-        glDeleteLists(self.glList,1)
-            
-        glPushAttrib(GL_LIGHTING_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT)
-                         
-        self.extraDrawingRoutines()
-        
-        if(self.loaded):
-            self.glList = glGenLists(1)
-            glNewList(self.glList, GL_COMPILE)
-
-            if(self.getColor().alpha() < 255):
-                glDepthFunc(GL_LESS)
-                glColorMask(False, False, False, False)
-                self.renderer.draw(0, False)
-                glDepthFunc(GL_LEQUAL)
-                glColorMask(True, True, True, True)
-                self.renderer.draw(0, self.selectEnabled or self.mouseMoveEnabled)
-            else:
-                self.renderer.draw(0, self.selectEnabled or self.mouseMoveEnabled)
-            glEndList()
-                                    
-        glPopAttrib()
-
     def getClickCoordinates(self, hitStack):
         hits = [-1,-1,-1,-1,-1]
         for i in range(5):
