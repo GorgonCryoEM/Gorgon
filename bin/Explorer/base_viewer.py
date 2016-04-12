@@ -39,9 +39,6 @@ class BaseViewer(BaseDockWidget):
 #         self.displayStyle = self.DisplayStyleSmooth
         self.modelVisible = True
         self.rotation = self.identityMatrix()
-        self.connect(self, QtCore.SIGNAL("modelChanged()"), self.modelChanged)
-        self.connect(self, QtCore.SIGNAL("modelLoaded()"), self.modelChanged)
-        self.connect(self, QtCore.SIGNAL("modelUnloaded()"), self.modelChanged)
 
         self.glList =  GLuint()
         self.twoWayLighting = False
@@ -60,6 +57,7 @@ class BaseViewer(BaseDockWidget):
         self.setupGlList()
 
     def setupSignals(self):
+        self.connect(self, QtCore.SIGNAL("modelChanged()"), self.modelChanged)
         self.ui.pushButtonModelColor.valueChanged.connect(self.setColor)
         self.ui.checkBoxModelVisible.toggled.connect(self.setModelVisibility)
                 
