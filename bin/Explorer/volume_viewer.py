@@ -17,12 +17,11 @@ class VolumeViewer(BaseViewer):
         super(VolumeViewer, self).__init__(main, parent)
         self.shortTitle = "VOL"
         
-        self.color = QtGui.QColor(50, 200, 50, 150)
-
         self.renderer = Display()
         self.loaded = False
         
         self.connect(self, QtCore.SIGNAL("modelLoadedPreDraw()"), self.modelLoadedPreDraw)
+        self.setColor(QtGui.QColor(50, 200, 50, 150))
 
     def modelLoadedPreDraw(self):
         maxDensity = self.renderer.getMaxDensity()

@@ -24,9 +24,9 @@ class Sphere(BaseViewer):
         self.R      = 10.
         
         self.renderer = Display()
-        self.color = QtGui.QColor(120, 18, 80, 150)
         
         self.loaded           = True
+        self.setColor(QtGui.QColor(120, 18, 80, 150))
         
     def drawGL(self):
         drawCylinder(self.center, self.center + Vec3(20,20,0), 10., 50, 50)

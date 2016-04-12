@@ -14,6 +14,9 @@ from Explorer.display_styles import *
 
 
 class BaseViewer(BaseDockWidget):
+    
+    colorChanged = QtCore.pyqtSignal(QtGui.QColor)
+    
     display_styles = [wireframe, flat, smooth]
     
     def __init__(self, main, parent=None):
@@ -67,6 +70,7 @@ class BaseViewer(BaseDockWidget):
         print [self.bg.id(b) for b in buttons]
         
         self.bg.buttonClicked[int].connect(self.repaintCamera)
+        self.colorChanged.connect(self.ui.pushButtonModelColor.setColor)
 #         self.ui.pushButtonCenter.clicked.connect(self.viewer.emitViewerSetCenterLocal)
 #         self.ui.pushButtonClose.clicked.connect(self.viewer.unload)
 #         self.ui.doubleSpinBoxSizeX.editingFinished.connect(self.scaleChanged)
@@ -87,6 +91,7 @@ class BaseViewer(BaseDockWidget):
         if(self.color != color):
             self.color = color
             self.repaintCamera()
+            self.colorChanged.emit(self.color)
 
     def identityMatrix(self):
         return [[1.0, 0.0, 0.0, 0.0],
