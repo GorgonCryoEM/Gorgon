@@ -1,7 +1,7 @@
 from PyQt4 import QtGui, QtCore, QtOpenGL
 from base_viewer import BaseViewer
 from libpytoolkit import Display
-from libpytoolkit import drawSphere
+from libpytoolkit import drawSphere, drawLine, drawCylinder
 from libpytoolkit import Vec3F
 from .libs import Vec3
 
@@ -29,6 +29,8 @@ class Sphere(BaseViewer):
         self.loaded           = True
         
     def drawGL(self):
+        drawCylinder(self.center, self.center + Vec3(20,20,0), 10., 50, 50)
+        drawLine(self.center, self.center + Vec3(20,20,0))
         drawSphere(self.center, self.R)
 
     def draw(self):
