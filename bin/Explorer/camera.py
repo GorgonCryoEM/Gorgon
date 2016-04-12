@@ -55,6 +55,7 @@ class Camera(QtOpenGL.QGLWidget):
             self.scene[i].sceneIndex = i;
 
         for s in self.scene:
+            s.visualizationUpdated.connect(self.updateGL)
             self.connect(s, QtCore.SIGNAL("viewerSetCenterLocal(float, float, float, float)"), self.sceneSetCenterLocal)
             self.connect(s, QtCore.SIGNAL("viewerSetCenter(float, float, float, float)"), self.sceneSetCenter)
             self.connect(s, QtCore.SIGNAL("modelChanged()"), self.modelChanged)
