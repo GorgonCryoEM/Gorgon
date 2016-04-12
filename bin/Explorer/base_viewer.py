@@ -69,7 +69,7 @@ class BaseViewer(BaseDockWidget):
         
         print [self.bg.id(b) for b in buttons]
         
-        self.bg.buttonClicked[int].connect(self.repaintCamera)
+        self.bg.buttonClicked[int].connect(self.visualizationUpdated)
         self.colorChanged.connect(self.ui.pushButtonModelColor.setColor)
 #         self.ui.pushButtonCenter.clicked.connect(self.viewer.emitViewerSetCenterLocal)
 #         self.ui.pushButtonClose.clicked.connect(self.viewer.unload)
@@ -90,7 +90,7 @@ class BaseViewer(BaseDockWidget):
     def setColor(self, color):
         if(self.color != color):
             self.color = color
-            self.repaintCamera()
+            self.visualizationUpdated.emit()
             self.colorChanged.emit(self.color)
 
     def identityMatrix(self):
@@ -102,11 +102,11 @@ class BaseViewer(BaseDockWidget):
     
     def setScale(self, x, y, z):
         self.renderer.setSpacing(x, y, z)
-        self.repaintCamera()
+        self.visualizationUpdated.emit()
         
     def setLocation(self, x, y, z):
         self.renderer.setOrigin(x, y, z)
-        self.repaintCamera()
+        self.visualizationUpdated.emit()
                         
     def setRotation(self, axis, angle):
         glMatrixMode(GL_MODELVIEW)
@@ -141,12 +141,9 @@ class BaseViewer(BaseDockWidget):
         scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
         return Vec3([worldCoords[i] / scale[i] for i in range(3)])
         
-    def repaintCamera(self):
-        self.visualizationUpdated.emit()
-        
     def setModelVisibility(self, visible):
         self.modelVisible = visible
-        self.repaintCamera()
+        self.visualizationUpdated.emit()
 
     def setMaterials(self):
         color = self.color
