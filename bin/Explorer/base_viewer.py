@@ -57,7 +57,7 @@ class BaseViewer(BaseDockWidget):
         self.setupGlList()
 
     def setupSignals(self):
-        self.connect(self, QtCore.SIGNAL("modelChanged()"), self.modelChanged)
+        self.modelUpdated.connect(self.modelChanged)
         self.ui.pushButtonModelColor.valueChanged.connect(self.setColor)
         self.ui.checkBoxModelVisible.toggled.connect(self.setModelVisibility)
                 
@@ -382,7 +382,7 @@ class BaseViewer(BaseDockWidget):
         self.emit(QtCore.SIGNAL("modelLoadedPreDraw()"))
         
     def emitModelChanged(self):
-        self.emit(QtCore.SIGNAL("modelChanged()"))
+        self.modelUpdated.emit()
         
     def emitModelVisualizationChanged(self):
         self.emit(QtCore.SIGNAL("modelVisualizationChanged()"))
