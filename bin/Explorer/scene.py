@@ -1,3 +1,5 @@
+from PyQt4 import QtGui, QtCore, QtOpenGL
+
 from .libs import Vec3
 # from line import Line
 # from line0 import Line0
@@ -8,6 +10,8 @@ from sphere import Sphere
 
 
 class Scene:
+    
+    visualizationUpdated = QtCore.pyqtSignal()
 
     def __init__(self, parent):
         
