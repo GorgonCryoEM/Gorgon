@@ -163,17 +163,17 @@ class BaseViewer(BaseDockWidget):
         self.thickness = value
         self.renderer.setLineThickness(value)
         self.emitThicknessChanged(value)
-        self.emitModelChanged()
+        self.modelUpdated.emit()
         
     def setSelectEnabled(self, value):
         if(value != self.selectEnabled):
             self.selectEnabled = value
-            self.emitModelChanged()
+            self.modelUpdated.emit()
 
     def setMouseMoveEnabled(self, value):
         if(value != self.mouseMoveEnabled):
             self.mouseMoveEnabled = value
-            self.emitModelChanged()
+            self.modelUpdated.emit()
             self.emitMouseTrackingChanged()
 
     def setMouseMoveEnabledRay(self, value):
@@ -274,7 +274,7 @@ class BaseViewer(BaseDockWidget):
             self.setScale(self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ())
             self.loaded = True
             self.emitModelLoadedPreDraw()
-            self.emitModelChanged()
+            self.modelUpdated.emit()
             self.emitViewerSetCenter()
         except:
             QtGui.QMessageBox.critical(self, "Unable to load data file", "The file might be corrupt, or the format may not be supported.", "Ok")
@@ -329,7 +329,7 @@ class BaseViewer(BaseDockWidget):
             self.performElementSelection(hitStack)
             if len(hitStack) == 0:
                 hitStack.append(-1)
-            self.emitModelChanged()
+            self.modelUpdated.emit()
             self.emitElementClicked(hitStack, e)
             self.emitElementSelected(hitStack, e)
 
@@ -380,9 +380,6 @@ class BaseViewer(BaseDockWidget):
 
     def emitModelLoadedPreDraw(self):
         self.emit(QtCore.SIGNAL("modelLoadedPreDraw()"))
-        
-    def emitModelChanged(self):
-        self.modelUpdated.emit()
         
     def emitModelVisualizationChanged(self):
         self.emit(QtCore.SIGNAL("modelVisualizationChanged()"))
