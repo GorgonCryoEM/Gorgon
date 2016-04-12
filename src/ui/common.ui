@@ -203,6 +203,9 @@
          </property>
         </spacer>
        </item>
+       <item row="4" column="0">
+        <widget class="Widget3" name="spinbox3d" native="true"/>
+       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="tab_2">
@@ -290,10 +293,6 @@
          <double>1.000000000000000</double>
         </property>
        </widget>
-       <zorder>doubleSpinBoxSizeX</zorder>
-       <zorder>doubleSpinBoxSizeY</zorder>
-       <zorder>doubleSpinBoxSizeZ</zorder>
-       <zorder>labelSizeZ</zorder>
       </widget>
       <widget class="QGroupBox" name="GroupBoxLocation">
        <property name="geometry">
@@ -504,6 +503,12 @@
    <class>ColoredPushButton</class>
    <extends>QPushButton</extends>
    <header>colored_push_button.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Widget3</class>
+   <extends>QWidget</extends>
+   <header>widget3.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <tabstops>
