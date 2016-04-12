@@ -11,6 +11,7 @@ import argparse
 
 from libpytoolkit import *
 from Explorer import MainWindowForm
+from Explorer.widget3 import Widget3
 
 
 class GLWidget(QtOpenGL.QGLWidget):
@@ -57,6 +58,9 @@ def main():
     window.raise_()
 #     window1.raise_()
     
+    form = Widget3()
+    form.show()
+            
     sys.exit(app.exec_())
 
 if __name__ == '__main__':

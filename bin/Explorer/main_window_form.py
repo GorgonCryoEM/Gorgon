@@ -1,6 +1,7 @@
 from PyQt4 import QtCore, QtGui
 from camera import Camera
 from scene import Scene
+from .widget3 import Widget3
 
 import sys, os
 
@@ -9,6 +10,9 @@ class MainWindowForm(QtGui.QMainWindow):
 
     def __init__(self, version):
         super(MainWindowForm, self).__init__()
+        
+#         self.form = Widget3(self)
+#         self.form.show()
         
         self.menubar = self.menuBar()
         self.docksMenu = self.menubar.addMenu('&Docks')

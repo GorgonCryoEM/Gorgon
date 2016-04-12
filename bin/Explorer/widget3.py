@@ -1,17 +1,24 @@
-from PyQt4.QtGui import QWidget, QPushButton, QPainter, QColorDialog, QColor, QSpinBox, QLayout
+from PyQt4.QtGui import *
 from PyQt4.QtCore import pyqtSignal
 
 
-class Widget3(QSpinBox):
+class Widget3(QFrame):
 
-    def __init__(self, widget, parent=None):
+    def __init__(self, parent=None):
         super(Widget3, self).__init__(parent)
         
         self.widgets = [QSpinBox(), QSpinBox(), QSpinBox()]
         
-        hbox = QtGui.QHBoxLayout()
-#         hbox.addStretch(1)
+        hbox = QHBoxLayout()
+        hbox.addStretch(1)
         for w in self.widgets:
             hbox.addWidget(w)
-        
+
         self.setLayout(hbox)
+        
+#         for w in self.widgets:
+#             w.
+
+    def show(self):
+        for w in self.widgets:
+            w.show()
