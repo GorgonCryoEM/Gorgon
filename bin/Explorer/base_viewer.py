@@ -75,9 +75,9 @@ class BaseViewer(BaseDockWidget):
 #         self.ui.doubleSpinBoxSizeX.editingFinished.connect(self.scaleChanged)
 #         self.ui.doubleSpinBoxSizeY.editingFinished.connect(self.scaleChanged)
 #         self.ui.doubleSpinBoxSizeZ.editingFinished.connect(self.scaleChanged)
-#         self.ui.doubleSpinBoxLocationX.editingFinished.connect(self.locationChanged)
-#         self.ui.doubleSpinBoxLocationY.editingFinished.connect(self.locationChanged)
-#         self.ui.doubleSpinBoxLocationZ.editingFinished.connect(self.locationChanged)
+        self.ui.doubleSpinBoxLocationX.editingFinished.connect(self.setLocation)
+        self.ui.doubleSpinBoxLocationY.editingFinished.connect(self.setLocation)
+        self.ui.doubleSpinBoxLocationZ.editingFinished.connect(self.setLocation)
 #         self.ui.spinBoxThickness.editingFinished.connect(self.thicknessChanged)
         
     def initVisualizationOptions(self, visualizationForm):
