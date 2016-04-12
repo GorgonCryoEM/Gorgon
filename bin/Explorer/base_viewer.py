@@ -16,6 +16,7 @@ from Explorer.display_styles import *
 class BaseViewer(BaseDockWidget):
     
     colorChanged = QtCore.pyqtSignal(QtGui.QColor)
+    visualizationUpdated = QtCore.pyqtSignal()
     
     display_styles = [wireframe, flat, smooth]
     
@@ -26,7 +27,6 @@ class BaseViewer(BaseDockWidget):
                                 self.title,
                                 QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea,
                                 QtCore.Qt.RightDockWidgetArea)
-        self.app = main
         self.title = "Untitled"
         self.shortTitle = "UNT"
         self.sceneIndex = -1;
@@ -142,7 +142,7 @@ class BaseViewer(BaseDockWidget):
         return Vec3([worldCoords[i] / scale[i] for i in range(3)])
         
     def repaintCamera(self):
-        self.app.mainCamera.updateGL()
+        self.visualizationUpdated.emit()
         
     def setModelVisibility(self, visible):
         self.modelVisible = visible
