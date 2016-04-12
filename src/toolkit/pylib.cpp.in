@@ -122,8 +122,10 @@ BOOST_PYTHON_MODULE(@current_pylib@)
 ////        .def("clearOtherHighlights", &RendererBase::clearOtherHighlights)
 //    ;
   
+//  BOOST_PYTHON_FUNCTION_OVERLOADS(cylinder_overloads, drawCylinder, 3, 5)
     def("drawSphere",   drawSphere);
     def("drawCylinder", drawCylinder);
+//    def("drawCylinder", drawCylinder, cylinder_overloads());
     def("drawLine",     drawLine);
   
   class_<Display, bases<Volume> >("Display", init<>())
