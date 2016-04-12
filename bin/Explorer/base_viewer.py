@@ -17,6 +17,7 @@ class BaseViewer(BaseDockWidget):
     
     colorChanged = QtCore.pyqtSignal(QtGui.QColor)
     visualizationUpdated = QtCore.pyqtSignal()
+    modelUpdated = QtCore.pyqtSignal()
     
     display_styles = [wireframe, flat, smooth]
     
