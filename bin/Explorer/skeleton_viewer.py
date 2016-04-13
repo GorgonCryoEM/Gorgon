@@ -1,7 +1,6 @@
 from PyQt4 import QtGui, QtCore, QtOpenGL
 from libpytoolkit import MeshRenderer
 from base_viewer import BaseViewer
-from model_visualization_form import ModelVisualizationForm
 
 
 from OpenGL.GL import *

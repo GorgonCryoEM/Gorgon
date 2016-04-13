@@ -1,8 +1,6 @@
 from PyQt4 import QtGui, QtCore, QtOpenGL
 from base_viewer import BaseViewer
 from libpytoolkit import Display
-from volume_surface_editor_form import VolumeSurfaceEditorForm
-from model_visualization_form import ModelVisualizationForm
 from string import split, upper
 
 from OpenGL.GL import *
