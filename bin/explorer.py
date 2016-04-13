@@ -56,10 +56,13 @@ def main():
     window.load()
     
     window.raise_()
+#     window.form.show()
+#     window.form.raise_()
 #     window1.raise_()
     
-    form = Widget3()
-    form.show()
+#     form = Widget3()
+#     form.show()
+#     form.raise_()
             
     sys.exit(app.exec_())
 

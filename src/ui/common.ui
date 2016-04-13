@@ -204,7 +204,7 @@
         </spacer>
        </item>
        <item row="4" column="0">
-        <widget class="Widget3" name="spinbox3d" native="true"/>
+        <widget class="Info" name="spinbox3d"/>
        </item>
       </layout>
      </widget>
@@ -505,9 +505,9 @@
    <header>colored_push_button.h</header>
   </customwidget>
   <customwidget>
-   <class>Widget3</class>
-   <extends>QWidget</extends>
-   <header>widget3.h</header>
+   <class>Info</class>
+   <extends>QFrame</extends>
+   <header>info.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

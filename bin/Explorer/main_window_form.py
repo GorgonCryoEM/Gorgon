@@ -11,8 +11,8 @@ class MainWindowForm(QtGui.QMainWindow):
     def __init__(self, version):
         super(MainWindowForm, self).__init__()
         
-#         self.form = Widget3(self)
-#         self.form.show()
+        self.form = Widget3(self)
+        self.form.show()
         
         self.menubar = self.menuBar()
         self.docksMenu = self.menubar.addMenu('&Docks')
@@ -22,6 +22,8 @@ class MainWindowForm(QtGui.QMainWindow):
 
         self.mainCamera = Camera(scenes, self)
         self.setCentralWidget(self.mainCamera)
+        
+#         self.form.raise_()
         
 #         self.dockWidgets = []
                 

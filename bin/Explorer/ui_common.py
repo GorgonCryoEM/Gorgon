@@ -126,7 +126,7 @@ class Ui_Common(object):
         self.gridLayout.addWidget(self.spinBoxThickness, 3, 1, 1, 2)
         spacerItem1 = QtGui.QSpacerItem(20, 16, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.gridLayout.addItem(spacerItem1, 4, 1, 1, 1)
-        self.spinbox3d = Widget3(self.tab)
+        self.spinbox3d = Info(self.tab)
         self.spinbox3d.setObjectName(_fromUtf8("spinbox3d"))
         self.gridLayout.addWidget(self.spinbox3d, 4, 0, 1, 1)
         self.tabWidget.addTab(self.tab, _fromUtf8(""))
@@ -288,4 +288,4 @@ class Ui_Common(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), _translate("Common", "Properties", None))
 
 from colored_push_button import ColoredPushButton
-from widget3 import Widget3
+from info import Info
