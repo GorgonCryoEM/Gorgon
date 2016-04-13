@@ -128,7 +128,7 @@ class Ui_Common(object):
         self.gridLayout.addItem(spacerItem1, 4, 1, 1, 1)
         self.spinbox3d = Info(self.tab)
         self.spinbox3d.setObjectName(_fromUtf8("spinbox3d"))
-        self.gridLayout.addWidget(self.spinbox3d, 4, 0, 1, 1)
+        self.gridLayout.addWidget(self.spinbox3d, 5, 1, 1, 1)
         self.tabWidget.addTab(self.tab, _fromUtf8(""))
         self.tab_2 = QtGui.QWidget()
         self.tab_2.setObjectName(_fromUtf8("tab_2"))
