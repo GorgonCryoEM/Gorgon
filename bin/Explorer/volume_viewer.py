@@ -18,7 +18,6 @@ class VolumeViewer(BaseViewer):
         self.renderer = Display()
         self.loaded = False
         
-        self.connect(self, QtCore.SIGNAL("modelLoadedPreDraw()"), self.modelLoadedPreDraw)
         self.setColor(QtGui.QColor(50, 200, 50, 150))
 
     def modelLoadedPreDraw(self):

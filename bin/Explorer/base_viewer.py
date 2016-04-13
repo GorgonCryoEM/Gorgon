@@ -273,7 +273,7 @@ class BaseViewer(BaseDockWidget):
             print self.renderer.getSize()
             self.setScale(self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ())
             self.loaded = True
-            self.emitModelLoadedPreDraw()
+            self.modelLoadedPreDraw()
             self.modelUpdated.emit()
             self.emitViewerSetCenter()
         except:
@@ -378,9 +378,6 @@ class BaseViewer(BaseDockWidget):
                     hits[i] = hitStack[i]
         self.emit(QtCore.SIGNAL("elementMouseOver (int, int, int, int, int, int, QMouseEvent)"), hits[0], hits[1], hits[2], hits[3], hits[4], hits[5], e)
 
-    def emitModelLoadedPreDraw(self):
-        self.emit(QtCore.SIGNAL("modelLoadedPreDraw()"))
-        
     def emitModelVisualizationChanged(self):
         self.emit(QtCore.SIGNAL("modelVisualizationChanged()"))
     
