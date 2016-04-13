@@ -70,7 +70,7 @@ class BaseViewer(BaseDockWidget):
         
         self.bg.buttonClicked[int].connect(self.visualizationUpdated)
         self.colorChanged.connect(self.ui.pushButtonModelColor.setColor)
-#         self.ui.pushButtonCenter.clicked.connect(self.viewer.emitViewerSetCenterLocal)
+        self.ui.pushButtonCenter.clicked.connect(self.emitViewerSetCenterLocal)
 #         self.ui.pushButtonClose.clicked.connect(self.viewer.unload)
 #         self.ui.doubleSpinBoxSizeX.editingFinished.connect(self.scaleChanged)
 #         self.ui.doubleSpinBoxSizeY.editingFinished.connect(self.scaleChanged)
