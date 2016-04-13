@@ -3,6 +3,8 @@ from PyQt4.QtCore import pyqtSignal
 
 
 class Widget3(QFrame):
+    
+    valueChanged = pyqtSignal()
 
     def __init__(self, lbl, parent=None):
         super(Widget3, self).__init__(parent)
@@ -25,8 +27,11 @@ class Widget3(QFrame):
         
     def setupSignals(self):
         for w in self.widgets:
-            w.valueChanged.connect(self.locationChanged)
+            w.valueChanged.connect(self.valueChanged)
             
+    def emitLoc(self):
+        self.valueChanged.emit(self.getLocation())
+
     def getLocation(self):
         return [self.widgets[i].value() for i in range(len(self.widgets))]
 
