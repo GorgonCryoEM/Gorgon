@@ -54,9 +54,6 @@ class BaseViewer(BaseDockWidget):
         
         self.runDisplayType = wireframe
 
-    def initializeGL(self):
-        self.setupGlList()
-
     def setupSignals(self):
         self.ui.pushButtonModelColor.valueChanged.connect(self.setColor)
         self.ui.checkBoxModelVisible.toggled.connect(self.setModelVisibility)
@@ -79,124 +76,12 @@ class BaseViewer(BaseDockWidget):
         self.ui.doubleSpinBoxLocationY.editingFinished.connect(self.setLocation)
         self.ui.doubleSpinBoxLocationZ.editingFinished.connect(self.setLocation)
 #         self.ui.spinBoxThickness.valueChanged.connect(self.setThickness)
-        
+
     def initVisualizationOptions(self, visualizationForm):
         self.visualizationOptions = visualizationForm
-    
-    def getColor(self):
-        return self.color
 
-    def setColor(self, color):
-        if(self.color != color):
-            self.color = color
-            self.visualizationUpdated.emit()
-            self.colorChanged.emit(self.color)
-
-    def identityMatrix(self):
-        return [[1.0, 0.0, 0.0, 0.0],
-				[0.0, 1.0, 0.0, 0.0],
-				[0.0, 0.0, 1.0, 0.0],
-				[0.0, 0.0, 0.0, 1.0]
-				]
-    
-    def setScale(self, x, y, z):
-        self.renderer.setSpacing(x, y, z)
-        self.visualizationUpdated.emit()
-        
-    def setLocation(self, x, y, z):
-        self.renderer.setOrigin(x, y, z)
-        self.visualizationUpdated.emit()
-                        
-    def setRotation(self, axis, angle):
-        glMatrixMode(GL_MODELVIEW)
-        glPushMatrix()
-        glLoadIdentity()
-        glRotatef(angle, axis[0], axis[1], axis[2])
-        
-        glMultMatrixf(self.rotation)
-        
-        self.rotation = glGetFloatv(GL_MODELVIEW_MATRIX)
-        glPopMatrix()
-                        
-    def objectToWorldCoordinates(self, objectCoords):
-        #Need to apply rotations
-        origin = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]
-        scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
-
-        return Vec3([objectCoords[i] * scale[i] + origin[i] for i in range(3)])
-    
-    def worldToObjectCoordinates(self, worldCoords):
-        origin = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]
-        scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
-        
-        return Vec3([(worldCoords[i] - origin[i]) / scale[i] for i in range(3)])
-
-    def objectVectorToWorldCoordinates(self, objectCoords):
-        #Need to apply rotations
-        scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
-        return Vec3([objectCoords[i] * scale[i] for i in range(3)])
-    
-    def worldVectorToObjectCoordinates(self, worldCoords):
-        scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
-        return Vec3([worldCoords[i] / scale[i] for i in range(3)])
-        
-    def setModelVisibility(self, visible):
-        self.modelVisible = visible
-        self.visualizationUpdated.emit()
-
-    def setMaterials(self):
-        color = self.color
-        glColor4f(color.redF(), color.greenF(), color.blueF(), color.alphaF())
-        diffuseMaterial = [color.redF(), color.greenF(), color.blueF(), color.alphaF()]
-        ambientMaterial = [color.redF()*0.2, color.greenF()*0.2, color.blueF()*0.2, color.alphaF()]
-        specularMaterial = [1.0, 1.0, 1.0, 1.0]
-        glMaterialfv(GL_BACK,  GL_AMBIENT,   ambientMaterial)
-        glMaterialfv(GL_BACK,  GL_DIFFUSE,   diffuseMaterial)
-        glMaterialfv(GL_BACK,  GL_SPECULAR,  specularMaterial)
-        glMaterialf (GL_BACK,  GL_SHININESS, 0.1)
-        glMaterialfv(GL_FRONT, GL_AMBIENT,   ambientMaterial)
-        glMaterialfv(GL_FRONT, GL_DIFFUSE,   diffuseMaterial)
-        glMaterialfv(GL_FRONT, GL_SPECULAR,  specularMaterial)
-        glMaterialf (GL_FRONT, GL_SHININESS, 0.1)
-
-    def setThickness(self, value):
-        self.thickness = value
-        self.renderer.setLineThickness(value)
-        self.modelChanged()
-        
-    def setSelectEnabled(self, value):
-        if(value != self.selectEnabled):
-            self.selectEnabled = value
-            self.modelChanged()
-
-    def setMouseMoveEnabled(self, value):
-        if(value != self.mouseMoveEnabled):
-            self.mouseMoveEnabled = value
-            self.modelChanged()
-            self.emitMouseTrackingChanged()
-
-    def setMouseMoveEnabledRay(self, value):
-        if(value != self.mouseMoveEnabledRay):
-            self.mouseMoveEnabledRay = value
-            self.emitMouseTrackingChanged()
-
-    def getMinMax(self):
-        scale    = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
-        location = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]
-        minPos = Vec3([(self.renderer.getMinPos(i)*scale[i] + location[i]) for i in range(3)])
-        maxPos = Vec3([(self.renderer.getMaxPos(i)*scale[i] + location[i]) for i in range(3)])
-        
-        return minPos, maxPos
-        
-    def getCenter(self):
-        min, max = self.getMinMax()
-
-        return (min + max)*0.5
-
-    def getDistance(self):
-        min, max = self.getMinMax()
-
-        return (min - max).length()
+    def initializeGL(self):
+        self.setupGlList()
 
     def initializeGLDisplayType(self):
         glPushAttrib(GL_LIGHTING_BIT | GL_ENABLE_BIT)
@@ -217,7 +102,7 @@ class BaseViewer(BaseDockWidget):
         glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         
         self.display_styles[self.bg.checkedId()]()
-    
+
     def unInitializeGLDisplayType(self):
         glPopAttrib()
 
@@ -241,13 +126,10 @@ class BaseViewer(BaseDockWidget):
 
         glPopAttrib()
         glPopMatrix()
-        
+
     def modelChanged(self):
-            
         glPushAttrib(GL_LIGHTING_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT)
-                         
         self.extraDrawingRoutines()
-        
         if(self.loaded):
             self.setupGlList()
 
@@ -268,6 +150,70 @@ class BaseViewer(BaseDockWidget):
         else:
             self.renderer.draw(0, self.selectEnabled or self.mouseMoveEnabled)
 
+    def setMaterials(self):
+        color = self.color
+        glColor4f(color.redF(), color.greenF(), color.blueF(), color.alphaF())
+        diffuseMaterial = [color.redF(), color.greenF(), color.blueF(), color.alphaF()]
+        ambientMaterial = [color.redF()*0.2, color.greenF()*0.2, color.blueF()*0.2, color.alphaF()]
+        specularMaterial = [1.0, 1.0, 1.0, 1.0]
+        glMaterialfv(GL_BACK,  GL_AMBIENT,   ambientMaterial)
+        glMaterialfv(GL_BACK,  GL_DIFFUSE,   diffuseMaterial)
+        glMaterialfv(GL_BACK,  GL_SPECULAR,  specularMaterial)
+        glMaterialf (GL_BACK,  GL_SHININESS, 0.1)
+        glMaterialfv(GL_FRONT, GL_AMBIENT,   ambientMaterial)
+        glMaterialfv(GL_FRONT, GL_DIFFUSE,   diffuseMaterial)
+        glMaterialfv(GL_FRONT, GL_SPECULAR,  specularMaterial)
+        glMaterialf (GL_FRONT, GL_SHININESS, 0.1)
+
+    def extraDrawingRoutines(self):
+        pass
+
+    def getColor(self):
+        return self.color
+
+    def setColor(self, color):
+        if(self.color != color):
+            self.color = color
+            self.visualizationUpdated.emit()
+            self.colorChanged.emit(self.color)
+
+    def setScale(self, x, y, z):
+        self.renderer.setSpacing(x, y, z)
+        self.visualizationUpdated.emit()
+
+    def setLocation(self, x, y, z):
+        self.renderer.setOrigin(x, y, z)
+        self.visualizationUpdated.emit()
+
+    def getCenter(self):
+        min, max = self.getMinMax()
+        return (min + max)*0.5
+
+    def getDistance(self):
+        min, max = self.getMinMax()
+        return (min - max).length()
+
+    def setModelVisibility(self, visible):
+        self.modelVisible = visible
+        self.visualizationUpdated.emit()
+
+    def setThickness(self, value):
+        self.thickness = value
+        self.renderer.setLineThickness(value)
+        self.modelChanged()
+
+    def on_center_clicked(self):
+        center   = self.getCenter()
+        distance = self.getDistance()
+        self.centerRequested.emit(center[0], center[1], center[2], distance)
+
+    def getMinMax(self):
+        scale    = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
+        location = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]
+        minPos = Vec3([(self.renderer.getMinPos(i)*scale[i] + location[i]) for i in range(3)])
+        maxPos = Vec3([(self.renderer.getMaxPos(i)*scale[i] + location[i]) for i in range(3)])
+        return minPos, maxPos
+
     def load(self, fileName):
         try:
             self.renderer.loadFile(str(fileName))
@@ -281,21 +227,74 @@ class BaseViewer(BaseDockWidget):
             QtGui.QMessageBox.critical(self, "Unable to load data file", "The file might be corrupt, or the format may not be supported.", "Ok")
 
             self.loaded = False
-        
+
     def save(self,fileName):
         self.setCursor(QtCore.Qt.WaitCursor)
         self.renderer.saveFile(str(fileName))
         self.setCursor(QtCore.Qt.ArrowCursor)
-    
+
     def unload(self):
         self.loaded = False
         self.renderer.setOrigin(0,0,0)
         self.renderer.setSpacing(1, 1, 1)
         self.rotation = self.identityMatrix()
+
+    def identityMatrix(self):
+        return [[1.0, 0.0, 0.0, 0.0],
+				[0.0, 1.0, 0.0, 0.0],
+				[0.0, 0.0, 1.0, 0.0],
+				[0.0, 0.0, 0.0, 1.0]
+				]
+
+    def setSelectEnabled(self, value):
+        if(value != self.selectEnabled):
+            self.selectEnabled = value
+            self.modelChanged()
+
+    def setRotation(self, axis, angle):
+        glMatrixMode(GL_MODELVIEW)
+        glPushMatrix()
+        glLoadIdentity()
+        glRotatef(angle, axis[0], axis[1], axis[2])
         
-    def extraDrawingRoutines(self):
-        pass
-    
+        glMultMatrixf(self.rotation)
+        
+        self.rotation = glGetFloatv(GL_MODELVIEW_MATRIX)
+        glPopMatrix()
+
+    def objectToWorldCoordinates(self, objectCoords):
+        #Need to apply rotations
+        origin = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]
+        scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
+
+        return Vec3([objectCoords[i] * scale[i] + origin[i] for i in range(3)])
+
+    def worldToObjectCoordinates(self, worldCoords):
+        origin = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]
+        scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
+        
+        return Vec3([(worldCoords[i] - origin[i]) / scale[i] for i in range(3)])
+
+    def objectVectorToWorldCoordinates(self, objectCoords):
+        #Need to apply rotations
+        scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
+        return Vec3([objectCoords[i] * scale[i] for i in range(3)])
+
+    def worldVectorToObjectCoordinates(self, worldCoords):
+        scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
+        return Vec3([worldCoords[i] / scale[i] for i in range(3)])
+
+    def setMouseMoveEnabled(self, value):
+        if(value != self.mouseMoveEnabled):
+            self.mouseMoveEnabled = value
+            self.modelChanged()
+            self.emitMouseTrackingChanged()
+
+    def setMouseMoveEnabledRay(self, value):
+        if(value != self.mouseMoveEnabledRay):
+            self.mouseMoveEnabledRay = value
+            self.emitMouseTrackingChanged()
+
     def getClickCoordinates(self, hitStack):
         hits = [-1,-1,-1,-1,-1]
         for i in range(5):
@@ -310,15 +309,15 @@ class BaseViewer(BaseDockWidget):
             return [coords.x(), coords.y(), coords.z()]
         else:
             raise Exception("Unable to call renderer.get3DCoordinates method due as there are too many levels in the hit stack")
-        
+
     def performElementSelection(self, hitStack):
         #Override this method to enable mouse selection functionality
         pass
-            
+
     def processMouseWheel(self, amount, e):
         #Override this method to enable mouse wheel functionality
         pass
-                                
+
     def processMouseClick(self, hitStack, e, forceTrue):
         print self.title, ": ", hitStack
         hits = [-1,-1,-1,-1,-1]
@@ -339,7 +338,7 @@ class BaseViewer(BaseDockWidget):
 
     def processMouseMove(self, hitStack, e):
         self.emitElementMouseOver(hitStack, e)
-        
+
     def processMouseMoveRay(self, ray, rayWidth, eye, e):
         self.emitMouseOverRay(ray, rayWidth, eye, e)
 
@@ -362,18 +361,13 @@ class BaseViewer(BaseDockWidget):
                 if(len(hitStack) > i):
                     hits[i] = hitStack[i]
         self.emit(QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), hits[0], hits[1], hits[2], hits[3], hits[4], hits[5], e)
-        
+
     def emitMouseTrackingChanged(self):
         self.emit(QtCore.SIGNAL("mouseTrackingChanged ()"))
-        
+
     def emitElementMouseOver(self, hitStack, e):
         hits = [-1,-1,-1,-1,-1,-1]
         for i in range(6):
                 if(len(hitStack) > i):
                     hits[i] = hitStack[i]
         self.emit(QtCore.SIGNAL("elementMouseOver (int, int, int, int, int, int, QMouseEvent)"), hits[0], hits[1], hits[2], hits[3], hits[4], hits[5], e)
-
-    def on_center_clicked(self):
-        center   = self.getCenter()
-        distance = self.getDistance()
-        self.centerRequested.emit(center[0], center[1], center[2], distance)
