@@ -61,8 +61,6 @@ class Camera(QtOpenGL.QGLWidget):
             s.visualizationUpdated.connect(self.updateGL)
             s.centerRequested.connect(self.sceneSetCenterLocal)
             s.centerAllRequested.connect(self.sceneSetCenter)
-            self.connect(s, QtCore.SIGNAL("modelLoaded()"), self.modelChanged)
-            self.connect(s, QtCore.SIGNAL("modelUnloaded()"), self.modelChanged)
             self.connect(s, QtCore.SIGNAL("mouseTrackingChanged()"), self.refreshMouseTracking)
     
     def setEye(self, v):
