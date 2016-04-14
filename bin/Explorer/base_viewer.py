@@ -389,5 +389,4 @@ class BaseViewer(BaseDockWidget):
         self.emit(QtCore.SIGNAL("viewerSetCenterLocal(float, float, float, float)"), center[0], center[1], center[2], distance)
     
     def emitViewerSetCenter(self):
-        center = self.getCenter()
-        self.emit(QtCore.SIGNAL("viewerSetCenter(float, float, float)"), center[0], center[1], center[2])
+        self.emit(QtCore.SIGNAL("viewerSetCenter()"))
