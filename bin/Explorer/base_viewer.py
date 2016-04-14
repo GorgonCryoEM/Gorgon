@@ -380,9 +380,6 @@ class BaseViewer(BaseDockWidget):
                     hits[i] = hitStack[i]
         self.emit(QtCore.SIGNAL("elementMouseOver (int, int, int, int, int, int, QMouseEvent)"), hits[0], hits[1], hits[2], hits[3], hits[4], hits[5], e)
 
-    def emitModelVisualizationChanged(self):
-        self.emit(QtCore.SIGNAL("modelVisualizationChanged()"))
-    
     def on_center_clicked(self):
         center   = self.getCenter()
         distance = self.getDistance()
