@@ -278,7 +278,7 @@ class BaseViewer(BaseDockWidget):
             self.loaded = True
             self.modelLoadedPreDraw()
             self.modelUpdated.emit()
-            self.emitViewerSetCenter()
+            self.emit(QtCore.SIGNAL("viewerSetCenter()"))
         except:
             QtGui.QMessageBox.critical(self, "Unable to load data file", "The file might be corrupt, or the format may not be supported.", "Ok")
 
@@ -388,6 +388,3 @@ class BaseViewer(BaseDockWidget):
         center   = self.getCenter()
         distance = self.getDistance()
         self.centerRequested.emit(center[0], center[1], center[2], distance)
-    
-    def emitViewerSetCenter(self):
-        self.emit(QtCore.SIGNAL("viewerSetCenter()"))
