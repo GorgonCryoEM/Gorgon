@@ -85,7 +85,6 @@ class Camera(QtOpenGL.QGLWidget):
             except:
                 self.look  = Vec3(0,1,0)
                 self.right = Vec3(1,0,0)
-            self.setRendererCenter()
         
     def setUp(self, v):
         if(self.up != v.normalize()):
@@ -114,11 +113,6 @@ class Camera(QtOpenGL.QGLWidget):
         glFogf(GL_FOG_END,   self.far)
         self.setGlProjection()
     
-    def setRendererCenter(self):
-        for s in self.scene:
-            if(s.setCenter(self.center)):
-                s.emitModelChanged()
-                 
     def sceneSetCenter(self):
         minmax=[MinMax(), MinMax(), MinMax()]
         for s in self.scene:
