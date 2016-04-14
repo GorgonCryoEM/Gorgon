@@ -77,9 +77,6 @@ class BaseViewer(BaseDockWidget):
         self.ui.doubleSpinBoxLocationZ.editingFinished.connect(self.setLocation)
 #         self.ui.spinBoxThickness.valueChanged.connect(self.setThickness)
 
-    def initVisualizationOptions(self, visualizationForm):
-        self.visualizationOptions = visualizationForm
-
     def initializeGL(self):
         self.setupGlList()
 
