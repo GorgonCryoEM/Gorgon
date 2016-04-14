@@ -41,14 +41,17 @@ class Camera(QtOpenGL.QGLWidget):
         self.look   = Vec3(0.0, 1.1, 0.0)
         self.right  = Vec3(1.1, 0.0, 0.0)
         self.up     = Vec3(0.0, 0.0, 1.1)
-        self.near    = 0.11
-        self.far     = 1000.01
-        self.eyeZoom = 0.26
+        
+        self.near    = 0.1
+        self.far     = 1000
+        self.eyeZoom = 0.25
         
         self.setEyeRotation(0.0, 0.0, 0.0)
         self.setCenter     (self.center)
         self.setEye        (self.eye)
         self.setUp         (self.up)
+        self.setNearFarZoom()
+        
         self.lastPos = QtCore.QPoint()
         
         for i in range(len(self.scene)):
@@ -156,10 +159,6 @@ class Camera(QtOpenGL.QGLWidget):
         glClearDepth( 1.0 )
         
         self.setLights()
-        self.near    = 0.1
-        self.far     = 1000
-        self.eyeZoom = 0.25
-        self.setNearFarZoom()
 
         if(self.fogEnabled):
             fogColor = QtGui.QColor(0, 0, 0, 255)
