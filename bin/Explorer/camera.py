@@ -14,23 +14,15 @@ class Camera(QtOpenGL.QGLWidget):
     def __init__(self, scene, main, parent=None):
         QtOpenGL.QGLWidget.__init__(self, parent)
         
+        self.scene = scene
         self.app = main
 
-        self.scene = scene
-        self.mouseTrackingEnabled    = True
-        self.mouseTrackingEnabledRay = True
         self.aspectRatio   = 1.0
-        self.selectedScene = -1
         self.lightsEnabled = [True, False]
         self.lightsPosition = [Vec3(1000,1000,1000),
 							   Vec3(-1000,-1000,-1000)
 							   ]
         self.lightsUseEyePosition = [True, False]
-        self.mouseMovePoint = QtCore.QPoint(0,0)
-        self.mouseDownPoint = QtCore.QPoint(0,0)
-        self.mouseLeftPressed  = False
-        self.mouseMidPressed   = False
-        self.mouseRightPressed = False
         
         self.fogDensity = 0.01
         self.fogEnabled = False
@@ -50,6 +42,16 @@ class Camera(QtOpenGL.QGLWidget):
         self.setEye        (self.eye)
         self.setUp         (self.up)
         self.setNearFarZoom()
+        
+        self.selectedScene = -1
+        
+        self.mouseTrackingEnabled    = True
+        self.mouseTrackingEnabledRay = True
+        self.mouseMovePoint = QtCore.QPoint(0,0)
+        self.mouseDownPoint = QtCore.QPoint(0,0)
+        self.mouseLeftPressed  = False
+        self.mouseMidPressed   = False
+        self.mouseRightPressed = False
         
         self.lastPos = QtCore.QPoint()
         
