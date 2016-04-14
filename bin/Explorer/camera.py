@@ -16,7 +16,6 @@ class Camera(QtOpenGL.QGLWidget):
         
         self.app = main
 
-        self.near = 0
         self.scene = scene
         self.mouseTrackingEnabled    = True
         self.mouseTrackingEnabledRay = True
