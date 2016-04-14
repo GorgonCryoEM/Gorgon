@@ -136,8 +136,8 @@ class Camera(QtOpenGL.QGLWidget):
         
         self.sceneSetCenterCommon(center, d)
     
-    def sceneSetCenterLocal(self, centerX, centerY, centerZ, d):
-        center = Vec3(centerX, centerY, centerZ)
+    def sceneSetCenterLocal(self, cX, cY, cZ, d):
+        center = Vec3(cX, cY, cZ)
         self.sceneSetCenterCommon(center, d)
         
     def sceneSetCenterCommon(self, center, d):
