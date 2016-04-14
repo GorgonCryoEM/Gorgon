@@ -17,7 +17,6 @@ class BaseViewer(BaseDockWidget):
     
     colorChanged = QtCore.pyqtSignal(QtGui.QColor)
     visualizationUpdated = QtCore.pyqtSignal()
-    modelUpdated = QtCore.pyqtSignal()
     centerRequested = QtCore.pyqtSignal(float, float, float, float)
     centerAllRequested = QtCore.pyqtSignal()
     
@@ -59,7 +58,6 @@ class BaseViewer(BaseDockWidget):
         self.setupGlList()
 
     def setupSignals(self):
-        self.modelUpdated.connect(self.modelChanged)
         self.ui.pushButtonModelColor.valueChanged.connect(self.setColor)
         self.ui.checkBoxModelVisible.toggled.connect(self.setModelVisibility)
                 
@@ -165,17 +163,17 @@ class BaseViewer(BaseDockWidget):
         self.thickness = value
         self.renderer.setLineThickness(value)
         self.emitThicknessChanged(value)
-        self.modelUpdated.emit()
+        self.modelChanged()
         
     def setSelectEnabled(self, value):
         if(value != self.selectEnabled):
             self.selectEnabled = value
-            self.modelUpdated.emit()
+            self.modelChanged()
 
     def setMouseMoveEnabled(self, value):
         if(value != self.mouseMoveEnabled):
             self.mouseMoveEnabled = value
-            self.modelUpdated.emit()
+            self.modelChanged()
             self.emitMouseTrackingChanged()
 
     def setMouseMoveEnabledRay(self, value):
@@ -278,7 +276,7 @@ class BaseViewer(BaseDockWidget):
             self.setScale(self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ())
             self.loaded = True
             self.modelLoadedPreDraw()
-            self.modelUpdated.emit()
+            self.modelChanged()
             self.centerAllRequested.emit()
         except:
             QtGui.QMessageBox.critical(self, "Unable to load data file", "The file might be corrupt, or the format may not be supported.", "Ok")
@@ -333,7 +331,7 @@ class BaseViewer(BaseDockWidget):
             self.performElementSelection(hitStack)
             if len(hitStack) == 0:
                 hitStack.append(-1)
-            self.modelUpdated.emit()
+            self.modelChanged()
             self.emitElementClicked(hitStack, e)
             self.emitElementSelected(hitStack, e)
 
