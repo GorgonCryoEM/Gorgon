@@ -471,16 +471,16 @@ class Camera(QtOpenGL.QGLWidget):
             self.updateGL()
         
     def modelChanged(self):
-        minDist = 1000000000000.0
-        maxDist = 0.0
+        mins = []
+        maxs = []
         eyeDist = (self.eye - self.center).length()
         for s in self.scene:
             if(s.loaded):
                 (center, dist) = s.getCenterAndDistance()
                 modelDist = (self.center - center).length()
-                minDist = min(minDist, eyeDist - modelDist - dist/2.0)
-                maxDist = max(maxDist, eyeDist + modelDist + dist/2.0)
-        self.setNearFarZoom(minDist, maxDist, self.eyeZoom)
+                mins.append(eyeDist - modelDist - dist/2.0)
+                maxs.append(eyeDist + modelDist + dist/2.0)
+        self.setNearFarZoom(min(mins), max(maxs), self.eyeZoom)
         self.updateGL()
         
     def emitMouseMovedRaw(self, hits, event):
