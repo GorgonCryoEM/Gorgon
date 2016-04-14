@@ -106,14 +106,13 @@ class Camera(QtOpenGL.QGLWidget):
         up = (self.right*roll*0.01 + self.up).normalize()
         self.setUp(up)
             
-    def setNearFarZoom(self, near, far, zoom):
-        if((self.eyeZoom != zoom) or (self.near != near) or (self.far != far)):
-            self.eyeZoom = min(max(zoom, 0.0001), 0.9999);
-            self.near = max(min(near, far), 0.1)
-            self.far = max(self.near + 1.0, far)
-            glFogf(GL_FOG_START, self.near)
-            glFogf(GL_FOG_END, self.far)
-            self.setGlProjection()
+    def setNearFarZoom(self):
+        self.eyeZoom = min(max(self.eyeZoom, 0.0001), 0.9999);
+        self.near = max(min(self.near, self.far), 0.1)
+        self.far = max(self.near + 1.0, self.far)
+        glFogf(GL_FOG_START, self.near)
+        glFogf(GL_FOG_END, self.far)
+        self.setGlProjection()
     
     def setRendererCenter(self):
         for s in self.scene:
@@ -168,7 +167,10 @@ class Camera(QtOpenGL.QGLWidget):
         glClearDepth( 1.0 )
         
         self.setLights()
-        self.setNearFarZoom(0.1, 1000, 0.25)
+        self.near    = 0.1
+        self.far     = 1000
+        self.eyeZoom = 0.25
+        self.setNearFarZoom()
 
         if(self.fogEnabled):
             fogColor = QtGui.QColor(0, 0, 0, 255)
@@ -467,7 +469,8 @@ class Camera(QtOpenGL.QGLWidget):
             dir = e.delta()/abs(e.delta())
             self.processMouseWheel(dir, e)
             if(not (e.modifiers() & QtCore.Qt.ALT) and not (e.modifiers() & QtCore.Qt.CTRL)):     # Zoom in / out
-                self.setNearFarZoom(self.near, self.far, self.eyeZoom + dir * 10.0/360.0)
+                self.eyeZoom = self.eyeZoom + dir * 10.0/360.0
+                self.setNearFarZoom()
             self.updateGL()
         
     def modelChanged(self):
@@ -480,7 +483,9 @@ class Camera(QtOpenGL.QGLWidget):
                 modelDist = (self.center - center).length()
                 mins.append(eyeDist - modelDist - dist/2.0)
                 maxs.append(eyeDist + modelDist + dist/2.0)
-        self.setNearFarZoom(min(mins), max(maxs), self.eyeZoom)
+        self.near = min(mins)
+        self.far  = max(maxs)
+        self.setNearFarZoom()
         self.updateGL()
         
     def emitMouseMovedRaw(self, hits, event):
