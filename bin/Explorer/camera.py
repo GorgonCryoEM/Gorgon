@@ -60,7 +60,7 @@ class Camera(QtOpenGL.QGLWidget):
         for s in self.scene:
             s.visualizationUpdated.connect(self.updateGL)
             s.centerRequested.connect(self.sceneSetCenterLocal)
-            self.connect(s, QtCore.SIGNAL("viewerSetCenter()"), self.sceneSetCenter)
+            s.centerAllRequested.connect(self.sceneSetCenter)
             self.connect(s, QtCore.SIGNAL("modelChanged()"), self.modelChanged)
             self.connect(s, QtCore.SIGNAL("modelLoaded()"), self.modelChanged)
             self.connect(s, QtCore.SIGNAL("modelUnloaded()"), self.modelChanged)

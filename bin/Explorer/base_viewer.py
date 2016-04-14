@@ -19,6 +19,7 @@ class BaseViewer(BaseDockWidget):
     visualizationUpdated = QtCore.pyqtSignal()
     modelUpdated = QtCore.pyqtSignal()
     centerRequested = QtCore.pyqtSignal(float, float, float, float)
+    centerAllRequested = QtCore.pyqtSignal()
     
     display_styles = [wireframe, flat, smooth]
     
@@ -278,7 +279,7 @@ class BaseViewer(BaseDockWidget):
             self.loaded = True
             self.modelLoadedPreDraw()
             self.modelUpdated.emit()
-            self.emit(QtCore.SIGNAL("viewerSetCenter()"))
+            self.centerAllRequested.emit()
         except:
             QtGui.QMessageBox.critical(self, "Unable to load data file", "The file might be corrupt, or the format may not be supported.", "Ok")
 
