@@ -343,9 +343,6 @@ class BaseViewer(BaseDockWidget):
     def processMouseMoveRay(self, ray, rayWidth, eye, e):
         self.emitMouseOverRay(ray, rayWidth, eye, e)
 
-    def setCenter(self, center):
-        return False
-    
     def emitMouseClickRay(self, ray, rayWidth, eye, e):
         self.emit(QtCore.SIGNAL("mouseClickRay(PyQt_PyObject, float, PyQt_PyObject, QMouseEvent)"), ray, rayWidth, eye, e);
 
