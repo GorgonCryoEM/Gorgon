@@ -18,6 +18,7 @@ class BaseViewer(BaseDockWidget):
     colorChanged = QtCore.pyqtSignal(QtGui.QColor)
     visualizationUpdated = QtCore.pyqtSignal()
     modelUpdated = QtCore.pyqtSignal()
+    centerRequested = QtCore.pyqtSignal(float, float, float, float)
     
     display_styles = [wireframe, flat, smooth]
     
@@ -70,7 +71,7 @@ class BaseViewer(BaseDockWidget):
         
         self.bg.buttonClicked[int].connect(self.visualizationUpdated)
         self.colorChanged.connect(self.ui.pushButtonModelColor.setColor)
-        self.ui.pushButtonCenter.clicked.connect(self.emitViewerSetCenterLocal)
+        self.ui.pushButtonCenter.clicked.connect(self.on_center_clicked)
 #         self.ui.pushButtonClose.clicked.connect(self.viewer.unload)
 #         self.ui.doubleSpinBoxSizeX.editingFinished.connect(self.scaleChanged)
 #         self.ui.doubleSpinBoxSizeY.editingFinished.connect(self.scaleChanged)
@@ -383,10 +384,10 @@ class BaseViewer(BaseDockWidget):
     def emitModelVisualizationChanged(self):
         self.emit(QtCore.SIGNAL("modelVisualizationChanged()"))
     
-    def emitViewerSetCenterLocal(self):
+    def on_center_clicked(self):
         center   = self.getCenter()
         distance = self.getDistance()
-        self.emit(QtCore.SIGNAL("viewerSetCenterLocal(float, float, float, float)"), center[0], center[1], center[2], distance)
+        self.centerRequested.emit(center[0], center[1], center[2], distance)
     
     def emitViewerSetCenter(self):
         self.emit(QtCore.SIGNAL("viewerSetCenter()"))
