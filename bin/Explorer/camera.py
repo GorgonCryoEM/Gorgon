@@ -62,88 +62,30 @@ class Camera(QtOpenGL.QGLWidget):
             s.centerRequested.connect(self.sceneSetCenterLocal)
             s.centerAllRequested.connect(self.sceneSetCenter)
             self.connect(s, QtCore.SIGNAL("mouseTrackingChanged()"), self.refreshMouseTracking)
-    
-    def setEye(self, v):
-        if(self.eye != v):
-            self.eye = v
-            try:
-                self.look  = (self.center - self.eye).normalize()
-                self.right = (self.look^self.up).normalize()            #print("Eye: right :", self.right)
-                self.up    = (self.right^self.look).normalize()
-            except:
-                self.look  = Vec3(0,1,0)
-                self.right = Vec3(1,0,0)
-                self.up    = Vec3(0,0,1)
-    
-    def setCenter(self, v):
-        if(self.center != v):
-            self.center = v
-            try:
-                self.look  = (self.center - self.eye).normalize()
-                self.right = (self.look^self.up).normalize()
-            except:
-                self.look  = Vec3(0,1,0)
-                self.right = Vec3(1,0,0)
-        
-    def setUp(self, v):
-        if(self.up != v.normalize()):
-            self.up = v.normalize()
-            try:
-                self.right = (self.look^self.up   ).normalize()
-                self.up    = (self.right^self.look).normalize()
-            except:
-                self.right = Vec3(1,0,0)
-        
-    def setEyeRotation(self, yaw, pitch, roll):
-        look = (self.eye + self.up*pitch + self.right*yaw - self.center).normalize()
-        d = (self.eye - self.center).length()
-        eye = self.center + look*d
-        
-        self.setEye(eye)
-        
-        up = (self.right*roll*0.01 + self.up).normalize()
-        self.setUp(up)
-            
-    def setNearFarZoom(self):
-        self.eyeZoom = min(max(self.eyeZoom, 0.0001), 0.9999);
-        self.near    = max(min(self.near, self.far), 0.1)
-        self.far     = max(self.near + 1.0, self.far)
-        glFogf(GL_FOG_START, self.near)
-        glFogf(GL_FOG_END,   self.far)
-        self.setGlProjection()
-    
-    def sceneSetCenter(self):
-        minmax=[MinMax(), MinMax(), MinMax()]
-        for s in self.scene:
-            if s.loaded:
-                minPos, maxPos = s.getMinMax()
-                for i in range(3):
-                    minmax[i].setMin(minPos[i])
-                    minmax[i].setMax(maxPos[i])
-        
-        sceneMin = Vec3([minmax[i].getMin() for i in range(3)])
-        sceneMax = Vec3([minmax[i].getMax() for i in range(3)])
-        c   = (sceneMin + sceneMax)*0.5
-        d   = (sceneMin - sceneMax).length()
-        
-        self.sceneSetCenterLocal(c[0], c[1], c[2], d)
-    
-    def sceneSetCenterLocal(self, cX, cY, cZ, d):
-        self.setCenter(Vec3(cX, cY, cZ))
-        self.setEye(Vec3(cX, cY, cZ - d))
-        self.setUp(Vec3(0, -1, 0))
-        self.modelChanged()
-     
-    def minimumSizeHint(self):
-        return QtCore.QSize(50, 50)
 
-    def sizeHint(self):
-        return QtCore.QSize(400, 400)
-       
     def initializeGL(self):
         self.initializeScene()
         for s in self.scene:
             s.initializeGL()
+
+    def paintGL(self):
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+        glEnable(GL_DEPTH_TEST)
+        glMatrixMode(GL_MODELVIEW)
+        glPushMatrix()
+        self.setGluLookAt()
+        self.setLights()
+        for i in range(len(self.scene)):
+            glPushName(i)
+            self.scene[i].paintGL()
+            glPopName()
+        glPopMatrix()
+
+    def resizeGL(self, w, h):
+        if(h > 0):
+            self.aspectRatio = w/(1.0*h)
+            glViewport(0,0, w, h)
+            self.setGlProjection()
 
     def initializeScene(self):
         if((sys.platform != 'darwin') and (sys.platform != 'win32')):
@@ -171,6 +113,12 @@ class Camera(QtOpenGL.QGLWidget):
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
 
+    def minimumSizeHint(self):
+        return QtCore.QSize(50, 50)
+
+    def sizeHint(self):
+        return QtCore.QSize(400, 400)
+
     def setLights(self):
         glLight = [GL_LIGHT0, GL_LIGHT1]
         light0Color = QtGui.QColor(255, 255, 255, 255)
@@ -193,97 +141,108 @@ class Camera(QtOpenGL.QGLWidget):
                 glEnable(glLight[i])
             else:
                 glDisable(glLight[i])
-       
+
     def setGluLookAt(self):
         gluLookAt(self.eye[0], self.eye[1], self.eye[2],
                   self.center[0], self.center[1], self.center[2],
                   self.up[0], self.up[1], self.up[2])
-        
-    def paintGL(self):
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-        glEnable(GL_DEPTH_TEST)
-        glMatrixMode(GL_MODELVIEW)
-        glPushMatrix()
-        self.setGluLookAt()
-        self.setLights()
-        for i in range(len(self.scene)):
-            glPushName(i)
-            self.scene[i].paintGL()
-            glPopName()
-        glPopMatrix()
-        
-    def processMouseWheel(self, dir, e):
-        for s in self.scene:
-            s.processMouseWheel(dir, e)
-     
-    def processMouseDown(self, hits, e):
-        globalMinDepth = self.far + 1
-        minNames = list()
-        sceneId = -1
-        for hit_record in hits:
-            minDepth, maxDepth, names = hit_record
-            names = list(names)
-            if(globalMinDepth > minDepth):
-                globalMinDepth = minDepth
-                minNames = names
-        if(minNames != list()):
-            sceneId = minNames[0];
-            minNames.pop(0)
-        self.selectedScene = sceneId;
-            
-    def processMouseClick(self, hits, e, left, mid, right):
-        self.emitMouseClickedRaw(hits, e)
 
-        globalMinDepth = self.far + 1
-        minNames = list()
-        sceneId = -1
-        for hit_record in hits:
-            minDepth, maxDepth, names = hit_record
-            names = list(names)
-            if(self.scene[names[0]].selectEnabled and globalMinDepth > minDepth):
-                globalMinDepth = minDepth
-                minNames = names
-        if(minNames != list()):
-            sceneId = minNames[0]
-            minNames.pop(0)
-            
-        if (left):
-            if (e.modifiers() & QtCore.Qt.CTRL):        # Multiple selection mode
-                if (sceneId >= 0):
-                    self.scene[sceneId].processMouseClick(minNames, e, False)
-            else:                                           # Single selection mode
-                for i in range(len(self.scene)):
-                    self.scene[i].emitModelChanged()
-                
-                for i in range(len(self.scene)):
-                    if (i == sceneId):
-                        self.scene[sceneId].processMouseClick(minNames, e, True)
-                        
-        elif (right):                                # Focusing on current point
-            if(sceneId >= 0):
-                self.scene[sceneId].emitElementClicked(minNames, e)
-            
-    def processMouseMove(self, hits, e):
-        self.emitMouseMovedRaw(hits, e)
-                          
-        globalMinDepth = self.far + 1
-        minNames = list()
-        sceneId = -1
-        for hit_record in hits:
-            minDepth, maxDepth, names = hit_record
-            names = list(names)
-            if(self.scene[names[0]].mouseMoveEnabled and globalMinDepth > minDepth):
-                globalMinDepth = minDepth
-                minNames = names
-        if(minNames != list()):
-            sceneId = minNames[0];
-            minNames.pop(0)
-        if(sceneId >= 0):
-            self.scene[sceneId].processMouseMove(minNames, e)
-       
     def setGluPerspective(self):
         gluPerspective(180 * self.eyeZoom, self.aspectRatio, self.near, self.far)
         #glOrtho(-200 * self.eyeZoom, 200 * self.eyeZoom, -200 * self.eyeZoom, 200 * self.eyeZoom, self.near, self.far)
+
+    def setGlProjection(self):
+        glMatrixMode(GL_PROJECTION)
+        glLoadIdentity()
+        self.setGluPerspective()
+        glMatrixMode(GL_MODELVIEW)
+
+    def modelChanged(self):
+        mins = []
+        maxs = []
+        eyeDist = (self.eye - self.center).length()
+        for s in self.scene:
+            if(s.loaded):
+                center = s.getCenter()
+                dist   = s.getDistance()
+                modelDist = (self.center - center).length()
+                mins.append(eyeDist - modelDist - dist/2.0)
+                maxs.append(eyeDist + modelDist + dist/2.0)
+        self.near = min(mins)
+        self.far  = max(maxs)
+        self.setNearFarZoom()
+        self.updateGL()
+
+    def setEye(self, v):
+        if(self.eye != v):
+            self.eye = v
+            try:
+                self.look  = (self.center - self.eye).normalize()
+                self.right = (self.look^self.up).normalize()            #print("Eye: right :", self.right)
+                self.up    = (self.right^self.look).normalize()
+            except:
+                self.look  = Vec3(0,1,0)
+                self.right = Vec3(1,0,0)
+                self.up    = Vec3(0,0,1)
+
+    def setCenter(self, v):
+        if(self.center != v):
+            self.center = v
+            try:
+                self.look  = (self.center - self.eye).normalize()
+                self.right = (self.look^self.up).normalize()
+            except:
+                self.look  = Vec3(0,1,0)
+                self.right = Vec3(1,0,0)
+
+    def setUp(self, v):
+        if(self.up != v.normalize()):
+            self.up = v.normalize()
+            try:
+                self.right = (self.look^self.up   ).normalize()
+                self.up    = (self.right^self.look).normalize()
+            except:
+                self.right = Vec3(1,0,0)
+
+    def setEyeRotation(self, yaw, pitch, roll):
+        look = (self.eye + self.up*pitch + self.right*yaw - self.center).normalize()
+        d = (self.eye - self.center).length()
+        eye = self.center + look*d
+        
+        self.setEye(eye)
+        
+        up = (self.right*roll*0.01 + self.up).normalize()
+        self.setUp(up)
+
+    def setNearFarZoom(self):
+        self.eyeZoom = min(max(self.eyeZoom, 0.0001), 0.9999);
+        self.near    = max(min(self.near, self.far), 0.1)
+        self.far     = max(self.near + 1.0, self.far)
+        glFogf(GL_FOG_START, self.near)
+        glFogf(GL_FOG_END,   self.far)
+        self.setGlProjection()
+
+    def sceneSetCenter(self):
+        minmax=[MinMax(), MinMax(), MinMax()]
+        for s in self.scene:
+            if s.loaded:
+                minPos, maxPos = s.getMinMax()
+                for i in range(3):
+                    minmax[i].setMin(minPos[i])
+                    minmax[i].setMax(maxPos[i])
+        
+        sceneMin = Vec3([minmax[i].getMin() for i in range(3)])
+        sceneMax = Vec3([minmax[i].getMax() for i in range(3)])
+        c   = (sceneMin + sceneMax)*0.5
+        d   = (sceneMin - sceneMax).length()
+        
+        self.sceneSetCenterLocal(c[0], c[1], c[2], d)
+
+    def sceneSetCenterLocal(self, cX, cY, cZ, d):
+        self.setCenter(Vec3(cX, cY, cZ))
+        self.setEye(Vec3(cX, cY, cZ - d))
+        self.setUp(Vec3(0, -1, 0))
+        self.modelChanged()
 
     def pickObject(self, x, y):
         viewport = list(glGetIntegerv(GL_VIEWPORT))
@@ -304,44 +263,13 @@ class Camera(QtOpenGL.QGLWidget):
         hits = glRenderMode(GL_RENDER)
         return hits
 
-    def getMouseRay(self, x, y):
-        glMatrixMode(GL_MODELVIEW)
-        glPushMatrix()
-        self.setGluLookAt()
-        viewport = glGetIntegerv(GL_VIEWPORT)
-        modelview = glGetDoublev(GL_MODELVIEW_MATRIX)
-        projection = glGetDoublev(GL_PROJECTION_MATRIX)
-        oglX = x
-        oglY = viewport[3] - y
-        oglZ = glReadPixels(oglX, oglY, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT)[0][0]
-        
-        p2 = gluUnProject(oglX, oglY, oglZ, modelview, projection, viewport)
-        glPopMatrix()
-        return Vec3(p2) - self.eye
-                
-    def resizeGL(self, w, h):
-        if(h > 0):
-            self.aspectRatio = w/(1.0*h)
-            glViewport(0,0, w, h)
-            self.setGlProjection()
-
-    def setGlProjection(self):
-        glMatrixMode(GL_PROJECTION)
-        glLoadIdentity()
-        self.setGluPerspective()
-        glMatrixMode(GL_MODELVIEW)
-    
-    def refreshMouseTracking(self):
-        self.mouseTrackingEnabled    = False
-        self.mouseTrackingEnabledRay = False
-        for s in self.scene:
-            self.mouseTrackingEnabled    = self.mouseTrackingEnabled    or s.mouseMoveEnabled
-            self.mouseTrackingEnabledRay = self.mouseTrackingEnabledRay or s.mouseMoveEnabledRay
-        self.setMouseTracking(self.mouseTrackingEnabled or self.mouseTrackingEnabledRay)
-        self.updateGL()
-     
     def moveConstant(self):
         return (self.eye - self.center).length() #* abs(tan(pi * self.eyeZoom))
+
+    def mouseVec(self, dx, dy):
+        newDx = self.moveConstant() * dx / float(self.width())
+        newDy = self.moveConstant() * dy / float(self.height())
+        return self.up*(-newDy) + self.right*newDx;
 
     def moveSelectedScene(self, dx, dy):
         dirVec = self.mouseVec(dx, dy)
@@ -376,7 +304,100 @@ class Camera(QtOpenGL.QGLWidget):
             selectionAxis = s.worldToObjectCoordinates(rotationAxis3D)
             if(s.renderer.selectionRotate(selectionCOM, selectionAxis, moveLength.length())):
                 s.emitModelChanged()
-                     
+
+    def getMouseRay(self, x, y):
+        glMatrixMode(GL_MODELVIEW)
+        glPushMatrix()
+        self.setGluLookAt()
+        viewport = glGetIntegerv(GL_VIEWPORT)
+        modelview = glGetDoublev(GL_MODELVIEW_MATRIX)
+        projection = glGetDoublev(GL_PROJECTION_MATRIX)
+        oglX = x
+        oglY = viewport[3] - y
+        oglZ = glReadPixels(oglX, oglY, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT)[0][0]
+        
+        p2 = gluUnProject(oglX, oglY, oglZ, modelview, projection, viewport)
+        glPopMatrix()
+        return Vec3(p2) - self.eye
+
+    def refreshMouseTracking(self):
+        self.mouseTrackingEnabled    = False
+        self.mouseTrackingEnabledRay = False
+        for s in self.scene:
+            self.mouseTrackingEnabled    = self.mouseTrackingEnabled    or s.mouseMoveEnabled
+            self.mouseTrackingEnabledRay = self.mouseTrackingEnabledRay or s.mouseMoveEnabledRay
+        self.setMouseTracking(self.mouseTrackingEnabled or self.mouseTrackingEnabledRay)
+        self.updateGL()
+
+    def processMouseWheel(self, dir, e):
+        for s in self.scene:
+            s.processMouseWheel(dir, e)
+
+    def processMouseDown(self, hits, e):
+        globalMinDepth = self.far + 1
+        minNames = list()
+        sceneId = -1
+        for hit_record in hits:
+            minDepth, maxDepth, names = hit_record
+            names = list(names)
+            if(globalMinDepth > minDepth):
+                globalMinDepth = minDepth
+                minNames = names
+        if(minNames != list()):
+            sceneId = minNames[0];
+            minNames.pop(0)
+        self.selectedScene = sceneId;
+
+    def processMouseClick(self, hits, e, left, mid, right):
+        self.emitMouseClickedRaw(hits, e)
+
+        globalMinDepth = self.far + 1
+        minNames = list()
+        sceneId = -1
+        for hit_record in hits:
+            minDepth, maxDepth, names = hit_record
+            names = list(names)
+            if(self.scene[names[0]].selectEnabled and globalMinDepth > minDepth):
+                globalMinDepth = minDepth
+                minNames = names
+        if(minNames != list()):
+            sceneId = minNames[0]
+            minNames.pop(0)
+            
+        if (left):
+            if (e.modifiers() & QtCore.Qt.CTRL):        # Multiple selection mode
+                if (sceneId >= 0):
+                    self.scene[sceneId].processMouseClick(minNames, e, False)
+            else:                                           # Single selection mode
+                for i in range(len(self.scene)):
+                    self.scene[i].emitModelChanged()
+                
+                for i in range(len(self.scene)):
+                    if (i == sceneId):
+                        self.scene[sceneId].processMouseClick(minNames, e, True)
+                        
+        elif (right):                                # Focusing on current point
+            if(sceneId >= 0):
+                self.scene[sceneId].emitElementClicked(minNames, e)
+
+    def processMouseMove(self, hits, e):
+        self.emitMouseMovedRaw(hits, e)
+                          
+        globalMinDepth = self.far + 1
+        minNames = list()
+        sceneId = -1
+        for hit_record in hits:
+            minDepth, maxDepth, names = hit_record
+            names = list(names)
+            if(self.scene[names[0]].mouseMoveEnabled and globalMinDepth > minDepth):
+                globalMinDepth = minDepth
+                minNames = names
+        if(minNames != list()):
+            sceneId = minNames[0];
+            minNames.pop(0)
+        if(sceneId >= 0):
+            self.scene[sceneId].processMouseMove(minNames, e)
+
     def mousePressEvent(self, e):
         self.mouseDownPoint    = QtCore.QPoint(e.pos())
         self.mouseMovePoint    = QtCore.QPoint(e.pos())
@@ -384,7 +405,7 @@ class Camera(QtOpenGL.QGLWidget):
         self.mouseMidPressed   = (e.buttons() & QtCore.Qt.MidButton)
         self.mouseRightPressed = (e.buttons() & QtCore.Qt.RightButton)
         self.processMouseDown(self.pickObject(self.mouseDownPoint.x(), self.mouseDownPoint.y()), e)
-        
+
     def mouseReleaseEvent(self, e):
         self.mouseUpPoint = QtCore.QPoint(e.pos())
         #Enter selection mode only if we didnt move the mouse much.. (If the mouse was moved, then we assume a camera motion instead of a selection
@@ -406,11 +427,6 @@ class Camera(QtOpenGL.QGLWidget):
             for s in self.scene:
                 if(s.mouseMoveEnabledRay):
                     s.processMouseClickRay(ray, 0.1, self.eye, e)
-
-    def mouseVec(self, dx, dy):
-        newDx = self.moveConstant() * dx / float(self.width())
-        newDy = self.moveConstant() * dy / float(self.height())
-        return self.up*(-newDy) + self.right*newDx;
 
     def mouseMoveEvent(self, e):
         if(self.mouseTrackingEnabledRay):
@@ -447,7 +463,7 @@ class Camera(QtOpenGL.QGLWidget):
         self.mouseMovePoint = QtCore.QPoint(e.pos())
 
         self.updateGL()
-    
+
     def wheelEvent(self, e):
         if(e.delta() != 0):
             dir = e.delta()/abs(e.delta())
@@ -456,23 +472,7 @@ class Camera(QtOpenGL.QGLWidget):
                 self.eyeZoom = self.eyeZoom + dir * 10.0/360.0
                 self.setNearFarZoom()
             self.updateGL()
-        
-    def modelChanged(self):
-        mins = []
-        maxs = []
-        eyeDist = (self.eye - self.center).length()
-        for s in self.scene:
-            if(s.loaded):
-                center = s.getCenter()
-                dist   = s.getDistance()
-                modelDist = (self.center - center).length()
-                mins.append(eyeDist - modelDist - dist/2.0)
-                maxs.append(eyeDist + modelDist + dist/2.0)
-        self.near = min(mins)
-        self.far  = max(maxs)
-        self.setNearFarZoom()
-        self.updateGL()
-        
+
     def emitMouseMovedRaw(self, hits, event):
         self.emit(QtCore.SIGNAL("mouseMovedRAW(PyQt_PyObject, QMouseEvent)"), hits, event)
 
