@@ -133,15 +133,11 @@ class Camera(QtOpenGL.QGLWidget):
         c   = (sceneMin + sceneMax)*0.5
         d   = (sceneMin - sceneMax).length()
         
-        self.sceneSetCenterCommon(center, d)
+        self.sceneSetCenterLocal(c[0], c[1], c[2], d)
     
     def sceneSetCenterLocal(self, cX, cY, cZ, d):
-        center = Vec3(cX, cY, cZ)
-        self.sceneSetCenterCommon(center, d)
-        
-    def sceneSetCenterCommon(self, center, d):
-        self.setCenter(center)
-        self.setEye(Vec3(self.center[0], self.center[1], self.center[2] - d))
+        self.setCenter(Vec3(cX, cY, cZ))
+        self.setEye(Vec3(cX, cY, cZ - d))
         self.setUp(Vec3(0, -1, 0))
         self.modelChanged()
      
