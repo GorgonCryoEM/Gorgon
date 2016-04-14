@@ -57,6 +57,7 @@ class Camera(QtOpenGL.QGLWidget):
         for s in self.scene:
             s.visualizationUpdated.connect(self.updateGL)
             self.connect(s, QtCore.SIGNAL("viewerSetCenterLocal(float, float, float, float)"), self.sceneSetCenterLocal)
+            self.connect(s, QtCore.SIGNAL("viewerSetCenter(float, float, float, float)"), self.sceneSetCenter)
             self.connect(s, QtCore.SIGNAL("modelChanged()"), self.modelChanged)
             self.connect(s, QtCore.SIGNAL("modelLoaded()"), self.modelChanged)
             self.connect(s, QtCore.SIGNAL("modelUnloaded()"), self.modelChanged)
@@ -114,6 +115,11 @@ class Camera(QtOpenGL.QGLWidget):
             glFogf(GL_FOG_END, self.far)
             self.setGlProjection()
     
+    def setRendererCenter(self):
+        for s in self.scene:
+            if(s.setCenter(self.center)):
+                s.emitModelChanged()
+                 
     def sceneSetCenter(self, cX, cY, cZ, d):
         sceneMin = Vec3(cX, cY, cZ)
         sceneMax = Vec3(cX, cY, cZ)
@@ -469,11 +475,13 @@ class Camera(QtOpenGL.QGLWidget):
         maxDist = 0.0
         eyeDist = (self.eye - self.center).length()
         for s in self.scene:
+            if(s.loaded):
                 (center, dist) = s.getCenterAndDistance()
                 modelDist = (self.center - center).length()
                 minDist = min(minDist, eyeDist - modelDist - dist/2.0)
                 maxDist = max(maxDist, eyeDist + modelDist + dist/2.0)
         self.setNearFarZoom(minDist, maxDist, self.eyeZoom)
+        self.updateGL()
         
     def emitMouseMovedRaw(self, hits, event):
         self.emit(QtCore.SIGNAL("mouseMovedRAW(PyQt_PyObject, QMouseEvent)"), hits, event)

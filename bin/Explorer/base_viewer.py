@@ -275,6 +275,7 @@ class BaseViewer(BaseDockWidget):
             self.loaded = True
             self.modelLoadedPreDraw()
             self.modelUpdated.emit()
+            self.emitViewerSetCenter()
         except:
             QtGui.QMessageBox.critical(self, "Unable to load data file", "The file might be corrupt, or the format may not be supported.", "Ok")
 
@@ -341,6 +342,9 @@ class BaseViewer(BaseDockWidget):
     def processMouseMoveRay(self, ray, rayWidth, eye, e):
         self.emitMouseOverRay(ray, rayWidth, eye, e)
 
+    def setCenter(self, center):
+        return False
+    
     def emitThicknessChanged(self, value):
         self.emit(QtCore.SIGNAL("thicknessChanged(int)"), value);
 
@@ -380,3 +384,7 @@ class BaseViewer(BaseDockWidget):
     def emitViewerSetCenterLocal(self):
         (center, distance) = self.getCenterAndDistance()
         self.emit(QtCore.SIGNAL("viewerSetCenterLocal(float, float, float, float)"), center[0], center[1], center[2], distance)
+    
+    def emitViewerSetCenter(self):
+        (center, distance) = self.getCenterAndDistance()
+        self.emit(QtCore.SIGNAL("viewerSetCenter(float, float, float, float)"), center[0], center[1], center[2], distance)
