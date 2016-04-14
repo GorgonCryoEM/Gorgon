@@ -162,7 +162,6 @@ class BaseViewer(BaseDockWidget):
     def setThickness(self, value):
         self.thickness = value
         self.renderer.setLineThickness(value)
-        self.emitThicknessChanged(value)
         self.modelChanged()
         
     def setSelectEnabled(self, value):
@@ -347,9 +346,6 @@ class BaseViewer(BaseDockWidget):
     def setCenter(self, center):
         return False
     
-    def emitThicknessChanged(self, value):
-        self.emit(QtCore.SIGNAL("thicknessChanged(int)"), value);
-
     def emitMouseClickRay(self, ray, rayWidth, eye, e):
         self.emit(QtCore.SIGNAL("mouseClickRay(PyQt_PyObject, float, PyQt_PyObject, QMouseEvent)"), ray, rayWidth, eye, e);
 
