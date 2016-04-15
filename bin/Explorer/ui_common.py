@@ -119,13 +119,13 @@ class Ui_Common(object):
         self.checkBoxModelVisible.setChecked(True)
         self.checkBoxModelVisible.setObjectName(_fromUtf8("checkBoxModelVisible"))
         
-        self.gridLayout.addWidget(self.groupBoxDisplayStyle, 0, 0, 1, 1)
+        self.gridLayout.addWidget(self.groupBoxDisplayStyle, 0, 0, 1, -1)
         self.gridLayout.addWidget(self.checkBoxBoundingBox, 1, 0, 1, 1)
         self.gridLayout.addWidget(self.pushButtonBoundingBoxColor, 1, 0, 1, 1)
-        self.gridLayout.addWidget(self.checkBoxModelVisible, 2, 0, 1, 1)
-        self.gridLayout.addWidget(self.pushButtonModelColor, 2, 0, 1, 1)
+        self.gridLayout.addWidget(self.checkBoxModelVisible, 1, 1, 1, 1)
+        self.gridLayout.addWidget(self.pushButtonModelColor, 1, 1, 1, 1)
 #         self.gridLayout.addItem(spacerItem1, 3, 1, 1, 1)
-        self.gridLayout.addWidget(self.spinbox3d, 4, 0, 1, 1)
+        self.gridLayout.addWidget(self.spinbox3d, 2, 0, 1, -1)
         
         self.tabWidget.addTab(self.tab, _fromUtf8(""))
         self.tab_3 = QtGui.QWidget()
