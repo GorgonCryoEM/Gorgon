@@ -21,6 +21,8 @@ class Widget3(QFrame):
             w.setMaximum(1000)
             hbox.addWidget(w)
 
+        hbox.setSpacing(0)
+        hbox.setMargin(0)
         self.setLayout(hbox)
         
         self.setupSignals()

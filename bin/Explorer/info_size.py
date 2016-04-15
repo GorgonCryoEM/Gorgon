@@ -14,4 +14,6 @@ class InfoSize(QFrame):
         for l in self.labels:
             hbox.addWidget(l)
         
+        hbox.setSpacing(0)
+        hbox.setMargin(0)
         self.setLayout(hbox)
