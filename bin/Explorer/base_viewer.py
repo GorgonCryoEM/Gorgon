@@ -29,8 +29,6 @@ class BaseViewer(BaseDockWidget):
                                 self.title,
                                 QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea,
                                 QtCore.Qt.RightDockWidgetArea)
-        self.title = "Untitled"
-        self.shortTitle = "UNT"
         self.sceneIndex = -1;
         self.loaded = False
         self.selectEnabled = True
@@ -211,7 +209,7 @@ class BaseViewer(BaseDockWidget):
     def load(self, fileName):
         try:
             self.renderer.loadFile(str(fileName))
-            print self.renderer.getSize()
+            print self.title, self.renderer.getSize()
             self.setScale(self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ())
             self.loaded = True
             self.modelLoadedPreDraw()
