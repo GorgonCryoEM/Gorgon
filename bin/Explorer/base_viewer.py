@@ -215,6 +215,8 @@ class BaseViewer(BaseDockWidget):
             self.modelLoadedPreDraw()
             self.modelChanged()
             self.centerAllRequested.emit()
+        except AttributeError:
+            raise
         except:
             QtGui.QMessageBox.critical(self, "Unable to load data file", "The file might be corrupt, or the format may not be supported.", "Ok")
 
