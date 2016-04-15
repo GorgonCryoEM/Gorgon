@@ -18,6 +18,10 @@ class Info(QFrame):
         vbox.addWidget(self.loc)
         vbox.addWidget(self.scale)
         
+        vbox.setSpacing(0)
+        print vbox.contentsMargins()
+        vbox.setContentsMargins(0,0,0,0)
+        
         self.setLayout(vbox)
         
         self.loc.valueChanged.connect(self.valueChanged)
