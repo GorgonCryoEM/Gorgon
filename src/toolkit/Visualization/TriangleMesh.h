@@ -29,7 +29,7 @@ namespace Protein_Morph {
         public:
             void clear();
             int addMarchingVertex(Vec3F location, int hashKey);
-            unsigned long long addMarchingFace(TriangleMeshFace vertexHash);
+            unsigned long long addMarchingFace(Face vertexHash);
 
             unsigned long long addVertex(Vertex vertex,
                                          unsigned long long hashKey);
@@ -45,7 +45,7 @@ namespace Protein_Morph {
             typedef map<unsigned long long, Vertex> TVertex;
 
             TVertex vertices;
-            vector<TriangleMeshFace> faces;
+            vector<Face> faces;
 
             friend ostream & operator<<(ostream & out, const TriangleMesh & obj) {
                 return out
