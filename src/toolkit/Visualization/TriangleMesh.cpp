@@ -25,7 +25,7 @@ using namespace Protein_Morph;
 
 
 int TriangleMesh::addMarchingVertex(Vec3F location, int hashKey){
-    return addVertex(TriangleMeshVertex(location), hashKey);
+    return addVertex(Vertex(location), hashKey);
 }
 
 unsigned long long TriangleMesh::addMarchingFace(TriangleMeshFace face)
@@ -44,7 +44,7 @@ void TriangleMesh::clear() {
     faces.clear();
 }
 
-unsigned long long TriangleMesh::addVertex(TriangleMeshVertex vertex,
+unsigned long long TriangleMesh::addVertex(Vertex vertex,
                                            unsigned long long hashKey)
 {
     vertices[hashKey] = vertex;

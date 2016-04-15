@@ -1,13 +1,13 @@
 /*
- * TriangleMeshVertex.h
+ * Vertex.h
  *
  * Author: shadow_walker <shadowwalkersb@gmail.com>
  *
  */
 
 
-#ifndef SRC_TOOLKIT_VISUALIZATION_TRIANGLEMESHVERTEX_H_
-#define SRC_TOOLKIT_VISUALIZATION_TRIANGLEMESHVERTEX_H_
+#ifndef SRC_TOOLKIT_VISUALIZATION_VERTEX_H_
+#define SRC_TOOLKIT_VISUALIZATION_VERTEX_H_
 
 #include "MathTools/Vector3.h"
 
@@ -17,23 +17,23 @@ using namespace GraphMatch;
 using namespace std;
 
 namespace Protein_Morph {
-    class TriangleMeshVertex {
+    class Vertex {
         public:
-            TriangleMeshVertex();
-            TriangleMeshVertex(Vec3F position);
+            Vertex();
+            Vertex(Vec3F position);
         public:
             Vec3F position;
             vector<unsigned long long> faceHashes;
     };
 
-    inline TriangleMeshVertex::TriangleMeshVertex() {
+    inline Vertex::Vertex() {
         position = Vec3F(0, 0, 0);
     }
 
-    inline TriangleMeshVertex::TriangleMeshVertex(Vec3F position) {
+    inline Vertex::Vertex(Vec3F position) {
         this->position = position;
     }
 }
 
 
-#endif /* SRC_TOOLKIT_VISUALIZATION_TRIANGLEMESHVERTEX_H_ */
+#endif /* SRC_TOOLKIT_VISUALIZATION_VERTEX_H_ */

@@ -14,7 +14,7 @@
 //#include <string>
 //#include "OpenGLUtils.h"
 #include "MathTools/Vector3.h"
-#include "TriangleMeshVertex.h"
+#include "Vertex.h"
 //
 #include "Mesh.h"
 
@@ -31,7 +31,7 @@ namespace Protein_Morph {
             int addMarchingVertex(Vec3F location, int hashKey);
             unsigned long long addMarchingFace(TriangleMeshFace vertexHash);
 
-            unsigned long long addVertex(TriangleMeshVertex vertex,
+            unsigned long long addVertex(Vertex vertex,
                                          unsigned long long hashKey);
 
             Vec3F getVertexNormal(unsigned long long vertexHash);
@@ -42,7 +42,7 @@ namespace Protein_Morph {
             void save(string fileName);
 
         private:
-            typedef map<unsigned long long, TriangleMeshVertex> TriangleMeshVertexType;
+            typedef map<unsigned long long, Vertex> TriangleMeshVertexType;
 
             TriangleMeshVertexType vertices;
             vector<TriangleMeshFace> faces;
