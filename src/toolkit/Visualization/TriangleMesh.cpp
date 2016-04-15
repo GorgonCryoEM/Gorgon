@@ -32,9 +32,9 @@ unsigned long long TriangleMesh::addMarchingFace(Face face)
 {
     unsigned long long faceHash = faces.size();
     faces.push_back(face);
-    vertices[face[0]].faceHashes.push_back(faceHash);
-    vertices[face[1]].faceHashes.push_back(faceHash);
-    vertices[face[2]].faceHashes.push_back(faceHash);
+    vertices[face[0]].faces.push_back(faceHash);
+    vertices[face[1]].faces.push_back(faceHash);
+    vertices[face[2]].faces.push_back(faceHash);
     return faceHash;
 
 }
@@ -53,8 +53,8 @@ unsigned long long TriangleMesh::addVertex(Vertex vertex,
 
 Vec3F TriangleMesh::getVertexNormal(unsigned long long vertexHash) {
     Vec3F normal = Vec3F(0, 0, 0);
-    for(unsigned int i = 0; i < vertices[vertexHash].faceHashes.size(); i++) {
-        normal += getFaceNormal(vertices[vertexHash].faceHashes[i]);
+    for(unsigned int i = 0; i < vertices[vertexHash].faces.size(); i++) {
+        normal += getFaceNormal(vertices[vertexHash].faces[i]);
     }
     normal.normalize();
     return normal;

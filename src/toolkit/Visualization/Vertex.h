@@ -23,7 +23,7 @@ namespace Protein_Morph {
             Vertex(Vec3F pos);
         public:
             Vec3F position;
-            vector<unsigned long long> faceHashes;
+            vector<unsigned long long> faces;
     };
 
     inline Vertex::Vertex() {
