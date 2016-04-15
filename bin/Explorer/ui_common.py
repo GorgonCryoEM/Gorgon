@@ -118,13 +118,15 @@ class Ui_Common(object):
         self.checkBoxModelVisible.setSizePolicy(sizePolicy)
         self.checkBoxModelVisible.setChecked(True)
         self.checkBoxModelVisible.setObjectName(_fromUtf8("checkBoxModelVisible"))
-        self.gridLayout.addItem(spacerItem1, 3, 1, 1, 1)
-        self.gridLayout.addWidget(self.spinbox3d, 4, 1, 1, 1)
+        
         self.gridLayout.addWidget(self.groupBoxDisplayStyle, 0, 0, 1, 3)
         self.gridLayout.addWidget(self.checkBoxBoundingBox, 1, 0, 1, 2)
         self.gridLayout.addWidget(self.pushButtonBoundingBoxColor, 1, 2, 1, 1)
         self.gridLayout.addWidget(self.pushButtonModelColor, 2, 2, 1, 1)
         self.gridLayout.addWidget(self.checkBoxModelVisible, 2, 0, 1, 2)
+        self.gridLayout.addItem(spacerItem1, 3, 1, 1, 1)
+        self.gridLayout.addWidget(self.spinbox3d, 4, 1, 1, 1)
+        
         self.tabWidget.addTab(self.tab, _fromUtf8(""))
         self.tab_3 = QtGui.QWidget()
         self.tab_3.setObjectName(_fromUtf8("tab_3"))
