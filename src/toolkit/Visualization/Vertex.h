@@ -20,7 +20,7 @@ namespace Protein_Morph {
     class Vertex {
         public:
             Vertex();
-            Vertex(Vec3F position);
+            Vertex(Vec3F pos);
         public:
             Vec3F position;
             vector<unsigned long long> faceHashes;
@@ -30,8 +30,8 @@ namespace Protein_Morph {
         position = Vec3F(0, 0, 0);
     }
 
-    inline Vertex::Vertex(Vec3F position) {
-        this->position = position;
+    inline Vertex::Vertex(Vec3F pos) {
+        position = pos;
     }
 }
 
