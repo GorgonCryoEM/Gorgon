@@ -181,7 +181,6 @@ namespace Protein_Morph {
             static NonManifoldMesh loadOffFile(string fileName);
 
     public:
-        Dim3D<float> scale;
         TV vertices;
         TE edges;
         TF faces;

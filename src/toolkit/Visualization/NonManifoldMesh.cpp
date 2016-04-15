@@ -188,8 +188,9 @@ namespace Protein_Morph {
 
 
     NonManifoldMesh::NonManifoldMesh()
-            : scale(1, 1, 1), fromVolume(false)
+            : fromVolume(false)
     {
+        setSpacing(1, 1, 1);
         setOrigin(0,0,0);
     }
 
@@ -564,9 +565,9 @@ namespace Protein_Morph {
                <<endl;
 
         for(int i = 0; i < (int)vertices.size(); i++) {
-            outFile<<" "<<origin.X() + scale.X() * vertices[i].position.X()
-                   <<" "<<origin.Y() + scale.Y() * vertices[i].position.Y()
-                   <<" "<<origin.Z() + scale.Z() * vertices[i].position.Z()
+            outFile<<" "<<getOriginX() + getSpacingX() * vertices[i].position.X()
+                   <<" "<<getOriginY() + getSpacingY() * vertices[i].position.Y()
+                   <<" "<<getOriginZ() + getSpacingZ() * vertices[i].position.Z()
                    <<endl;
         }
         int lastVertex;
@@ -691,7 +692,7 @@ namespace Protein_Morph {
         }
 
         vol.setOrigin(origin);
-        vol.setSpacing(scale);
+        vol.setSpacing(spacing);
         return vol;
     }
 
@@ -894,11 +895,11 @@ namespace Protein_Morph {
     }
 
     void NonManifoldMesh::setScale(float x, float y, float z){
-        scale = Dim3D<float>(x, y, z);
+        spacing = Dim3D<float>(x, y, z);
     }
 
     void NonManifoldMesh::setScale(Dim3D<float> val){
-        scale = val;
+        spacing = val;
     }
 
     int NonManifoldMesh::getClosestVertexIndex(Vec3F pos) {

@@ -121,7 +121,7 @@ namespace Protein_Morph {
 #endif
             pAtomPosition = patoms[i].GetPosition();
             pAtomPosition -= skeletonOrigin;
-            Vec3F skel_scale(skeleton.scale[0], skeleton.scale[1], skeleton.scale[2]);
+            Vec3F skel_scale(skeleton.getSpacingX(), skeleton.getSpacingY(), skeleton.getSpacingZ());
 //            skel_scale = skeleton.scale;
             for (unsigned int n = 0; n < 3; n++)
                 pAtomPosition[n] = pAtomPosition[n] * (1.0/skel_scale[n]);
