@@ -70,6 +70,22 @@
        <string>Visualization</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
+       <item row="3" column="1">
+        <spacer>
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>16</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="4" column="1">
+        <widget class="Info" name="spinbox3d"/>
+       </item>
        <item row="0" column="0" colspan="3">
         <widget class="QGroupBox" name="groupBoxDisplayStyle">
          <property name="sizePolicy">
@@ -176,254 +192,7 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="0">
-        <widget class="QLabel" name="labelThickness">
-         <property name="text">
-          <string>Thickness:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="1" colspan="2">
-        <widget class="QSpinBox" name="spinBoxThickness">
-         <property name="value">
-          <number>3</number>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="1">
-        <spacer>
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>16</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="5" column="1">
-        <widget class="Info" name="spinbox3d"/>
-       </item>
       </layout>
-     </widget>
-     <widget class="QWidget" name="tab_2">
-      <attribute name="title">
-       <string>Positioning</string>
-      </attribute>
-      <widget class="QGroupBox" name="GroupBoxLocation_2">
-       <property name="geometry">
-        <rect>
-         <x>3</x>
-         <y>37</y>
-         <width>371</width>
-         <height>61</height>
-        </rect>
-       </property>
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="title">
-        <string>Scale:</string>
-       </property>
-       <widget class="QDoubleSpinBox" name="doubleSpinBoxSizeX">
-        <property name="geometry">
-         <rect>
-          <x>110</x>
-          <y>20</y>
-          <width>71</width>
-          <height>24</height>
-         </rect>
-        </property>
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="decimals">
-         <number>8</number>
-        </property>
-        <property name="maximum">
-         <double>99999999999999.984375000000000</double>
-        </property>
-        <property name="value">
-         <double>1.000000000000000</double>
-        </property>
-       </widget>
-       <widget class="QDoubleSpinBox" name="doubleSpinBoxSizeY">
-        <property name="geometry">
-         <rect>
-          <x>200</x>
-          <y>20</y>
-          <width>71</width>
-          <height>24</height>
-         </rect>
-        </property>
-        <property name="decimals">
-         <number>8</number>
-        </property>
-        <property name="maximum">
-         <double>99999999999999.984375000000000</double>
-        </property>
-        <property name="value">
-         <double>1.000000000000000</double>
-        </property>
-       </widget>
-       <widget class="QDoubleSpinBox" name="doubleSpinBoxSizeZ">
-        <property name="geometry">
-         <rect>
-          <x>279</x>
-          <y>20</y>
-          <width>91</width>
-          <height>24</height>
-         </rect>
-        </property>
-        <property name="decimals">
-         <number>8</number>
-        </property>
-        <property name="maximum">
-         <double>99999999999999.984375000000000</double>
-        </property>
-        <property name="value">
-         <double>1.000000000000000</double>
-        </property>
-       </widget>
-      </widget>
-      <widget class="QGroupBox" name="GroupBoxLocation">
-       <property name="geometry">
-        <rect>
-         <x>12</x>
-         <y>108</y>
-         <width>362</width>
-         <height>61</height>
-        </rect>
-       </property>
-       <property name="title">
-        <string>Location:</string>
-       </property>
-       <widget class="QDoubleSpinBox" name="doubleSpinBoxLocationX">
-        <property name="geometry">
-         <rect>
-          <x>100</x>
-          <y>20</y>
-          <width>61</width>
-          <height>24</height>
-         </rect>
-        </property>
-        <property name="decimals">
-         <number>8</number>
-        </property>
-        <property name="minimum">
-         <double>-100000000000000.000000000000000</double>
-        </property>
-        <property name="maximum">
-         <double>100000000000000.000000000000000</double>
-        </property>
-        <property name="value">
-         <double>0.000000000000000</double>
-        </property>
-       </widget>
-       <widget class="QDoubleSpinBox" name="doubleSpinBoxLocationY">
-        <property name="geometry">
-         <rect>
-          <x>180</x>
-          <y>20</y>
-          <width>71</width>
-          <height>24</height>
-         </rect>
-        </property>
-        <property name="decimals">
-         <number>8</number>
-        </property>
-        <property name="minimum">
-         <double>-100000000000000.000000000000000</double>
-        </property>
-        <property name="maximum">
-         <double>99999999999999.984375000000000</double>
-        </property>
-       </widget>
-       <widget class="QDoubleSpinBox" name="doubleSpinBoxLocationZ">
-        <property name="geometry">
-         <rect>
-          <x>280</x>
-          <y>20</y>
-          <width>61</width>
-          <height>24</height>
-         </rect>
-        </property>
-        <property name="decimals">
-         <number>8</number>
-        </property>
-        <property name="minimum">
-         <double>-100000000000000.000000000000000</double>
-        </property>
-        <property name="maximum">
-         <double>99999999999999.984375000000000</double>
-        </property>
-       </widget>
-      </widget>
-      <widget class="QLabel" name="labelSizeX">
-       <property name="geometry">
-        <rect>
-         <x>130</x>
-         <y>20</y>
-         <width>16</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text">
-        <string>X:</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="labelSizeY">
-       <property name="geometry">
-        <rect>
-         <x>220</x>
-         <y>20</y>
-         <width>16</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text">
-        <string>Y:</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="labelSizeZ">
-       <property name="geometry">
-        <rect>
-         <x>310</x>
-         <y>20</y>
-         <width>16</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text">
-        <string>Z:</string>
-       </property>
-      </widget>
      </widget>
      <widget class="QWidget" name="tab_3">
       <attribute name="title">
@@ -522,13 +291,6 @@
   <tabstop>pushButtonBoundingBoxColor</tabstop>
   <tabstop>checkBoxModelVisible</tabstop>
   <tabstop>pushButtonModelColor</tabstop>
-  <tabstop>spinBoxThickness</tabstop>
-  <tabstop>doubleSpinBoxSizeX</tabstop>
-  <tabstop>doubleSpinBoxSizeY</tabstop>
-  <tabstop>doubleSpinBoxSizeZ</tabstop>
-  <tabstop>doubleSpinBoxLocationX</tabstop>
-  <tabstop>doubleSpinBoxLocationY</tabstop>
-  <tabstop>doubleSpinBoxLocationZ</tabstop>
  </tabstops>
  <resources/>
  <connections/>
