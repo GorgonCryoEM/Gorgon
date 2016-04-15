@@ -207,7 +207,7 @@ namespace Protein_Morph {
         fromVolume = true;
         size = src.getSizeObj();
         setOrigin(src.getOriginX(), src.getOriginY(), src.getOriginZ());
-        setScale(src.getSpacingX(), src.getSpacingY(), src.getSpacingZ());
+        setSpacing(src.getSpacingX(), src.getSpacingY(), src.getSpacingZ());
 
     // Adding vertices
         NonManifoldMeshVertex tempVertex;
@@ -892,14 +892,6 @@ namespace Protein_Morph {
             }
             return points;
         }
-    }
-
-    void NonManifoldMesh::setScale(float x, float y, float z){
-        spacing = Dim3D<float>(x, y, z);
-    }
-
-    void NonManifoldMesh::setScale(Dim3D<float> val){
-        spacing = val;
     }
 
     int NonManifoldMesh::getClosestVertexIndex(Vec3F pos) {

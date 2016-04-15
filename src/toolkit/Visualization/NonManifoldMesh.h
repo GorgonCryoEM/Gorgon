@@ -170,8 +170,6 @@ namespace Protein_Morph {
             void removeNullEntries();
             void toOffCells(string fileName);
             void toMathematicaFile(string fileName);
-            void setScale(float x, float y, float z);
-            void setScale(Dim3D<float> val);
             vector<unsigned int> getPath(unsigned int edge0Ix, unsigned int edge1Ix);
             vector<unsigned int> getNeighboringVertexIndices(unsigned int vertexIx);
             vector<Vec3F> sampleTriangle(int faceId, double discretizationStep);
