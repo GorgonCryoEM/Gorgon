@@ -220,6 +220,9 @@ class BaseViewer(BaseDockWidget):
 
             self.loaded = False
 
+    def modelLoadedPreDraw(self):
+        pass
+
     def save(self,fileName):
         self.setCursor(QtCore.Qt.WaitCursor)
         self.renderer.saveFile(str(fileName))
