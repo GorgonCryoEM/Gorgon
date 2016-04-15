@@ -53,9 +53,9 @@ def main():
 
     window.resize(800, 600)
     window.show()
+    window.raise_()
     window.load()
     
-    window.raise_()
 #     window.form.show()
 #     window.form.raise_()
 #     window1.raise_()
