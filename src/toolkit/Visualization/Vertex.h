@@ -26,13 +26,7 @@ namespace Protein_Morph {
             vector<unsigned long long> faces;
     };
 
-    inline Vertex::Vertex() {
-        position = Vec3F(0, 0, 0);
-    }
 
-    inline Vertex::Vertex(Vec3F pos) {
-        position = pos;
-    }
 }
 
 
