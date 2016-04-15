@@ -9,7 +9,7 @@ class Widget3(QFrame):
     def __init__(self, lbl, parent=None):
         super(Widget3, self).__init__(parent)
         
-        self.setFrameShape(QFrame.Box)
+#         self.setFrameShape(QFrame.Box)
         
         self.lbl = QLabel(lbl)
         self.widgets = [QDoubleSpinBox() for i in range(3)]
