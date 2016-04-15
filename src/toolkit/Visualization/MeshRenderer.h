@@ -25,7 +25,7 @@ using namespace SkeletonMaker;
 
 namespace Visualization {
 
-    class MeshRenderer : public Volume {
+    class MeshRenderer : public Display {
         public:
             NonManifoldMesh getMesh();
             Vec3F get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
