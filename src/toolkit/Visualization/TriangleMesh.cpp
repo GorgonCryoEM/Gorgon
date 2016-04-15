@@ -118,7 +118,7 @@ void TriangleMesh::save(string fileName) {
     vector<Vec3F> vertexList;
 
     int index = 0;
-    for(TriangleMeshVertexType::iterator i = vertices.begin(); i != vertices.end(); ++i) {
+    for(TVertex::iterator i = vertices.begin(); i != vertices.end(); ++i) {
         vertexList.push_back(i->second.position);
         indexedVertices[i->first] = index;
         index++;
