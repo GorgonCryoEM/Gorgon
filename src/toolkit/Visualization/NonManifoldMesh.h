@@ -69,13 +69,13 @@ namespace Protein_Morph {
         bool valid;
     };
 
-    struct NonManifoldMeshEdge : public Base {
+    struct Edge : public Base {
         unsigned int vertexIds[2];
         vector<unsigned int> faceIds;
         string tag;
     };
 
-    inline ostream& operator<<(ostream& out, const NonManifoldMeshEdge& obj){
+    inline ostream& operator<<(ostream& out, const Edge& obj){
         set<unsigned int> faces(obj.faceIds.begin(), obj.faceIds.end());
         return out//<<"\033[34m"
                   <<"\tvertexIds: "<<obj.vertexIds[0]<<"\t"<<obj.vertexIds[1]<<endl
@@ -85,13 +85,13 @@ namespace Protein_Morph {
 //                  <<"\033[0m";
     }
 
-    struct NonManifoldMeshFace : public Base {
+    struct Face : public Base {
         vector<unsigned int> edgeIds;
         vector<unsigned int> vertexIds;
         string tag;
     };
 
-    inline ostream& operator<<(ostream& out, const NonManifoldMeshFace& obj){
+    inline ostream& operator<<(ostream& out, const Face& obj){
         set<unsigned int> vertices(obj.vertexIds.begin(), obj.vertexIds.end());
         set<unsigned int> edges(obj.edgeIds.begin(), obj.edgeIds.end());
             return out//<<"\033[34m"
@@ -103,13 +103,13 @@ namespace Protein_Morph {
 //                      <<"\033[0m";
     }
 
-    struct NonManifoldMeshVertex : public Base {
+    struct TVertex : public Base {
         Vec3F position;
         vector<unsigned int> edgeIds;
         bool tag;
     };
 
-    inline ostream& operator<<(ostream& out, const NonManifoldMeshVertex& obj){
+    inline ostream& operator<<(ostream& out, const TVertex& obj){
             return out//<<"\033[34m"
                     <<obj.position
                     <<"\tedgeIds.size(): "<<obj.edgeIds.size()
@@ -118,9 +118,9 @@ namespace Protein_Morph {
     //                      <<"\033[0m";
     }
 
-    typedef vector<NonManifoldMeshVertex > TV;
-    typedef vector<NonManifoldMeshEdge >   TE;
-    typedef vector<NonManifoldMeshFace >   TF;
+    typedef vector<TVertex > TV;
+    typedef vector<Edge >   TE;
+    typedef vector<Face >   TF;
 
     #ifdef _WIN32
         typedef hash_map<int, int> HashMapType;
@@ -137,12 +137,12 @@ namespace Protein_Morph {
             int addMarchingVertex(Vec3F location, int hashKey);
             TKey addMarchingFace(Vec3U vertexHash);
 
-            int addVertex(NonManifoldMeshVertex vertex);
+            int addVertex(TVertex vertex);
             int addVertex(Vec3F location);
             int addHashedVertex(Vec3F location, int hashKey);
-            int addFace(NonManifoldMeshFace face);
+            int addFace(Face face);
 
-            int addEdge(NonManifoldMeshEdge edge);
+            int addEdge(Edge edge);
 
             Vec3F getVertexNormal(int vertexId);
             Vec3F getFaceNormal(int faceId);
