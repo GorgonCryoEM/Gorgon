@@ -17,5 +17,18 @@ namespace Protein_Morph {
             : Vec3F(pos)
     {}
 
+    unsigned long long Vertex::addFace(unsigned long long hash) {
+        faces.push_back(hash);
+        return hash;
+    }
+
+    unsigned int Vertex::sizeFaces() const {
+        return faces.size();
+    }
+
+    vector<unsigned long long> Vertex::getFaces() const {
+        return faces;
+    }
+
 }
 

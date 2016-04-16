@@ -22,6 +22,10 @@ namespace Protein_Morph {
             Vertex();
             Vertex(Vec3F pos);
 
+            unsigned long long addFace(unsigned long long hash);
+            unsigned int sizeFaces() const;
+            vector<unsigned long long> getFaces() const;
+
             vector<unsigned long long> faces;
     };
 
