@@ -119,7 +119,7 @@ namespace Protein_Morph {
     typedef vector<Edge >   TE;
     typedef vector<Face >   TF;
 
-    typedef map<int, int> HashMapType;
+    typedef map<TKey, TKey> HashMapType;
 
     class NonManifoldMesh : public Volume, public Mesh {
         public:
