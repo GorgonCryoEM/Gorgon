@@ -134,13 +134,13 @@ namespace Visualization {
             switch(subsceneIndex){
                 case 0:
                     for(unsigned int i = 0; i < mesh.faces[ix1].vertexIds.size(); i++) {
-                        position += mesh.vertices[mesh.getVertexIndex(mesh.faces[ix0].vertexIds[i])].position;
+                        position += mesh.vertices[mesh.faces[ix0].vertexIds[i]].position;
                     }
                     position = position * (1.0 / mesh.faces[ix1].vertexIds.size());
                     break;
                 case 1:
                     for(unsigned int i = 0; i < 2; i++) {
-                        position += mesh.vertices[mesh.getVertexIndex(mesh.edges[ix0].vertexIds[i])].position;
+                        position += mesh.vertices[mesh.edges[ix0].vertexIds[i]].position;
                     }
                     position = position * 0.5;
                     break;

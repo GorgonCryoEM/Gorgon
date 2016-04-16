@@ -145,9 +145,6 @@ namespace Protein_Morph {
 
             bool isEdgePresent(int vertexId1, int vertexId2);
             bool isSurfaceVertex(int ix) const;
-            int getVertexIndex(int vertexId);
-            int getFaceIndex(int faceId);
-            int getEdgeIndex(int edgeId) const;
             int getEdgeIndex(int vertexId1, int vertexId2) const;
             int getClosestVertexIndex(Vec3F pos);
             void addEdge(int vertexId1, int vertexId2, string tag = "");
