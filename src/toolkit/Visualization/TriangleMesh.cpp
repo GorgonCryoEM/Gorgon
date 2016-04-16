@@ -32,11 +32,11 @@ TKey TriangleMesh::addMarchingFace(Vec3U face)
 {
     TKey faceHash = faceHashes.size();
     faceHashes.push_back(face);
-    vertices[face[0]].addFaceHash(faceHash);
-    vertices[face[1]].addFaceHash(faceHash);
-    vertices[face[2]].addFaceHash(faceHash);
-    return faceHash;
+    for (int i = 0; i < 3; ++i) {
+        vertices[face[i]].addFaceHash(faceHash);
+    }
 
+    return faceHash;
 }
 
 void TriangleMesh::clear() {
