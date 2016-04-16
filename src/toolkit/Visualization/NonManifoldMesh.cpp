@@ -14,7 +14,7 @@ namespace Protein_Morph {
         return addHashedVertex(location, hashKey);
     }
 
-    unsigned long long NonManifoldMesh::addMarchingFace(Face vertexHash) {
+    unsigned long long NonManifoldMesh::addMarchingFace(Vec3U vertexHash) {
         addTriangle(vertexHash);
     }
 
@@ -365,14 +365,14 @@ namespace Protein_Morph {
     }
 
     void NonManifoldMesh::addQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4, string newEdgeTag, string faceTag) {
-        Face v123(vertexId1, vertexId2, vertexId3);
+        Vec3U v123(vertexId1, vertexId2, vertexId3);
         addTriangle(v123, newEdgeTag, faceTag);
 
-        Face v134(vertexId1, vertexId3, vertexId4);
+        Vec3U v134(vertexId1, vertexId3, vertexId4);
         addTriangle(v134, newEdgeTag, faceTag);
     }
 
-    void NonManifoldMesh::addTriangle(Face vertexId, string newEdgeTag, string faceTag) {
+    void NonManifoldMesh::addTriangle(Vec3U vertexId, string newEdgeTag, string faceTag) {
         int vertexId1 = vertexId[0];
         int vertexId2 = vertexId[1];
         int vertexId3 = vertexId[2];
@@ -424,7 +424,7 @@ namespace Protein_Morph {
 
         for(unsigned int i = 0; i < src.faces.size(); i++) {
             if(src.faces[i].vertexIds.size() == 3) {
-                Face temp(indices[src.faces[i].vertexIds[0]],
+                Vec3U temp(indices[src.faces[i].vertexIds[0]],
                                       indices[src.faces[i].vertexIds[1]],
                                       indices[src.faces[i].vertexIds[2]]);
                 addTriangle(temp, NULL, src.faces[i].tag);
@@ -810,7 +810,7 @@ namespace Protein_Morph {
                         inFile>>faceNodes[i];
                     }
                     for(int i = 2; i < nFaceNodes; i++) {
-                        Face temp(faceNodes[0], faceNodes[i-1], faceNodes[i]);
+                        Vec3U temp(faceNodes[0], faceNodes[i-1], faceNodes[i]);
                         mesh.addTriangle(temp);
                     }
                     break;

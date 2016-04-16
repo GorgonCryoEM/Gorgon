@@ -201,7 +201,7 @@ namespace Visualization {
         {
             if(a2iTriangleConnectionTable[iFlagIndex][3*i] < 0)
                 break;
-            Face triangleVertices;
+            Vec3U triangleVertices;
             for(int j = 0; j < 3; j++)
             {
                 int iVertex = a2iTriangleConnectionTable[iFlagIndex][3*i+j];
