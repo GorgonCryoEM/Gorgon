@@ -19,12 +19,9 @@ using namespace std;
 namespace Protein_Morph {
     class Vertex : public Vec3F {
         public:
-            Vertex()
-                : Vec3F()
-                    {}
-            Vertex(Vec3F loc)
-                : Vec3F(loc)
-        {}
+            Vertex();
+            Vertex(Vec3F pos);
+
             vector<unsigned long long> faces;
     };
 
