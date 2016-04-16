@@ -17,12 +17,14 @@ using namespace GraphMatch;
 using namespace std;
 
 namespace Protein_Morph {
-    class Vertex {
+    class Vertex : public Vec3F {
         public:
-            Vertex();
-            Vertex(Vec3F pos);
-        public:
-            Vec3F position;
+            Vertex()
+                : Vec3F()
+                    {}
+            Vertex(Vec3F loc)
+                : Vec3F(loc)
+        {}
             vector<unsigned long long> faces;
     };
 
