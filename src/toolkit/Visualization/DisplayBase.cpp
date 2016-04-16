@@ -177,7 +177,7 @@ namespace Visualization {
 
         //Find the point of intersection of the surface with each edge
         //Then find the normal to the surface at those points
-        Vec3D asEdgeVertex[12];
+        Vec3F asEdgeVertex[12];
         int vertexIds[12];
 
         for(int i = 0; i < 12; i++)
@@ -191,7 +191,7 @@ namespace Visualization {
                 asEdgeVertex[i][1] = (float)iY + ((float)a2iVertexOffset[ a2iEdgeConnection[i][0] ][1] +  fOffset * (float)a2iEdgeDirection[i][1]) * (float)iScale;
                 asEdgeVertex[i][2] = (float)iZ + ((float)a2iVertexOffset[ a2iEdgeConnection[i][0] ][2] +  fOffset * (float)a2iEdgeDirection[i][2]) * (float)iScale;
 
-                vertexIds[i] = mesh.addMarchingVertex(Vec3F(asEdgeVertex[i][0], asEdgeVertex[i][1], asEdgeVertex[i][2]), vol.getHashKey(iX, iY, iZ, i, iScale));
+                vertexIds[i] = mesh.addMarchingVertex(Vec3F(asEdgeVertex[i]), vol.getHashKey(iX, iY, iZ, i, iScale));
             }
         }
 
