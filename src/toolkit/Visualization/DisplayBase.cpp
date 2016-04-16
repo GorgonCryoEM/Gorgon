@@ -154,8 +154,8 @@ namespace Visualization {
 
         for(int iVertex = 0; iVertex < 8; iVertex++) {
             afCubeValue[iVertex] = vol.getVoxelData(iX + a2iVertexOffset[iVertex][0]*iScale,
-                    iY + a2iVertexOffset[iVertex][1]*iScale,
-                    iZ + a2iVertexOffset[iVertex][2]*iScale);
+                                                    iY + a2iVertexOffset[iVertex][1]*iScale,
+                                                    iZ + a2iVertexOffset[iVertex][2]*iScale);
         }
 
         //Find which vertices are inside of the surface and which are outside
