@@ -11,7 +11,7 @@
 namespace Protein_Morph {
 
     int NonManifoldMesh::addMarchingVertex(Vec3F location, int hashKey){
-        return addHashedVertex(location, hashKey);
+        return addVertex(location, hashKey);
     }
 
     TKey NonManifoldMesh::addMarchingFace(Vec3U vertexHash) {
@@ -302,7 +302,7 @@ namespace Protein_Morph {
         return addVertex(v);
     }
 
-    int NonManifoldMesh::addHashedVertex(Vec3F location, int hashKey) {
+    int NonManifoldMesh::addVertex(Vec3F location, int hashKey) {
         HashMapType::const_iterator pos = vertexHashMap.find(hashKey);
         int vertexId;
         if(pos == vertexHashMap.end()) {
