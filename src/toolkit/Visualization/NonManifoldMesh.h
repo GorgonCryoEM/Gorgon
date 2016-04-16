@@ -67,8 +67,8 @@ namespace Protein_Morph {
     };
 
     struct Edge : public Base {
-        unsigned int vertexIds[2];
-        vector<unsigned int> faceIds;
+        TKey vertexIds[2];
+        vector<TKey> faceIds;
         string tag;
     };
 
@@ -83,8 +83,8 @@ namespace Protein_Morph {
     }
 
     struct Face : public Base {
-        vector<unsigned int> edgeIds;
-        vector<unsigned int> vertexIds;
+        vector<TKey> edgeIds;
+        vector<TKey> vertexIds;
         string tag;
     };
 
@@ -102,7 +102,7 @@ namespace Protein_Morph {
 
     struct TVertex : public Base {
         Vec3F position;
-        vector<unsigned int> edgeIds;
+        vector<TKey> edgeIds;
         bool tag;
     };
 
@@ -162,8 +162,8 @@ namespace Protein_Morph {
             void removeNullEntries();
             void toOffCells(string fileName);
             void toMathematicaFile(string fileName);
-            vector<unsigned int> getPath(unsigned int edge0Ix, unsigned int edge1Ix);
-            vector<unsigned int> getNeighboringVertexIndices(unsigned int vertexIx);
+            vector<TKey> getPath(TKey edge0Ix, TKey edge1Ix);
+            vector<TKey> getNeighboringVertexIndices(TKey vertexIx);
             vector<Vec3F> sampleTriangle(int faceId, double discretizationStep);
             Volume toVolume();
             NonManifoldMesh smoothLaplacian(double converganceRate);

@@ -821,22 +821,22 @@ namespace Protein_Morph {
         return mesh;
     }
 
-    vector<unsigned int> NonManifoldMesh::getPath(unsigned int edge0Ix, unsigned int edge1Ix) {
-        vector<unsigned int> path;
-        map<unsigned int,  unsigned int> source;
+    vector<TKey> NonManifoldMesh::getPath(TKey edge0Ix, TKey edge1Ix) {
+        vector<TKey> path;
+        map<TKey,  TKey> source;
 
-        queue<unsigned int> edgeList;
+        queue<TKey> edgeList;
         edgeList.push(edge0Ix);
 
         bool found = false;
 
         while((edgeList.size() > 0) && !found) {
-            unsigned int currentEdge = edgeList.front();
+            TKey currentEdge = edgeList.front();
             edgeList.pop();
             found = currentEdge == edge1Ix;
             if(!found) {
                 for(unsigned int v = 0; v < 2; v++) {
-                    unsigned int vertexIx = getVertexIndex(edges[currentEdge].vertexIds[v]);
+                    TKey vertexIx = getVertexIndex(edges[currentEdge].vertexIds[v]);
                     for(unsigned int e = 0; e < vertices[vertexIx].edgeIds.size(); e++) {
                         unsigned int edgeIx = getEdgeIndex(vertices[vertexIx].edgeIds[e]);
                         if(source.find(edgeIx) == source.end()) {
@@ -849,7 +849,7 @@ namespace Protein_Morph {
         }
 
         if(found) {
-            unsigned int currentEdge = edge1Ix;
+            TKey currentEdge = edge1Ix;
             path.push_back(currentEdge);
             while(currentEdge != edge0Ix) {
                 currentEdge = source[currentEdge];
@@ -918,8 +918,8 @@ namespace Protein_Morph {
         return isSurface;
     }
 
-    vector<unsigned int> NonManifoldMesh::getNeighboringVertexIndices(unsigned int vertexIx) {
-        vector<unsigned int> neighbors;
+    vector<TKey> NonManifoldMesh::getNeighboringVertexIndices(TKey vertexIx) {
+        vector<TKey> neighbors;
         for(unsigned int i = 0; i < vertices[vertexIx].edgeIds.size(); i++) {
             if(edges[vertices[vertexIx].edgeIds[i]].vertexIds[0] == vertexIx) {
                 neighbors.push_back(edges[vertices[vertexIx].edgeIds[i]].vertexIds[1]);

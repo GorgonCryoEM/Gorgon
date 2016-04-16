@@ -32,7 +32,7 @@ namespace Visualization {
 
         void InitializePathFinder(NonManifoldMesh * mesh);
         void InitializePathHelix(int helixIndex, Vec3F p1, Vec3F p2, float radius);
-        void PrunePathMesh(NonManifoldMesh * mesh, vector<unsigned int> pathVertices);
+        void PrunePathMesh(NonManifoldMesh * mesh, vector<TKey> pathVertices);
         void GetPathSpace(int helix1Ix, bool helix1Start, int helix2Ix, bool helix2Start);
         int GetPathVertexCount();
         Vec3F GetPathVertex(int index);
@@ -47,8 +47,8 @@ namespace Visualization {
         // Attributes for path calculation
         NonManifoldMesh * pathMesh;
         NonManifoldMesh * singlePathMesh;
-        map<unsigned int, vector<unsigned int> > helixStartPoints;
-        map<unsigned int, vector<unsigned int> > helixEndPoints;
+        map<TKey, vector<TKey> > helixStartPoints;
+        map<TKey, vector<TKey> > helixEndPoints;
         int pathCount;
 
     };
@@ -174,10 +174,10 @@ namespace Visualization {
 
     void SSEEngine::InitializePathHelix(int helixIndex, Vec3F p1, Vec3F p2, float radius) {
         Shape * helix = Shape::CreateHelix(p1, p2, radius);
-        set<unsigned int> internalVertices;
+        set<TKey> internalVertices;
         internalVertices.clear();
-        vector<unsigned int> startPoints;
-        vector<unsigned int> endPoints;
+        vector<TKey> startPoints;
+        vector<TKey> endPoints;
         helixStartPoints[helixIndex] = startPoints;
         helixEndPoints[helixIndex] = endPoints;
 
@@ -187,10 +187,10 @@ namespace Visualization {
                 pathMesh->vertices[i].tag = false;
             }
         }
-        vector<unsigned int> neighbors;
+        vector<TKey> neighbors;
         bool isEnd = false, isStart;
         float dist1, dist2;
-        for(set<unsigned int>::iterator i = internalVertices.begin(); i != internalVertices.end(); i++) {
+        for(set<TKey>::iterator i = internalVertices.begin(); i != internalVertices.end(); i++) {
             neighbors = pathMesh->getNeighboringVertexIndices(*i);
             for(unsigned int j = 0; j < neighbors.size(); j++) {
                 isEnd = isEnd || (internalVertices.find(neighbors[j]) == internalVertices.end());
@@ -219,7 +219,7 @@ namespace Visualization {
 
     }
 
-    void SSEEngine::PrunePathMesh(NonManifoldMesh * mesh, vector<unsigned int> pathVertices) {
+    void SSEEngine::PrunePathMesh(NonManifoldMesh * mesh, vector<TKey> pathVertices) {
         for(unsigned int i = 0; i < mesh->vertices.size(); i++) {
             mesh->vertices[i].tag = true;
         }
@@ -231,14 +231,14 @@ namespace Visualization {
     void SSEEngine::GetPathSpace(int helix1Ix, bool helix1Start, int helix2Ix, bool helix2Start) {
         NonManifoldMesh mesh(*pathMesh);
 
-        vector<unsigned int> queue;
+        vector<TKey> queue;
         for(unsigned int i = 0; i < helixStartPoints[helix1Ix].size(); i++) {
             queue.push_back(helixStartPoints[helix1Ix][i]);
         }
 
-        unsigned int currIx;
-        vector<unsigned int> neighbors;
-        vector<unsigned int> pathVertices;
+        TKey currIx;
+        vector<TKey> neighbors;
+        vector<TKey> pathVertices;
         pathVertices.clear();
         while(queue.size() > 0){
             currIx = queue[0];
@@ -258,7 +258,7 @@ namespace Visualization {
         PrunePathMesh(&mesh, pathVertices);
 
         singlePathMesh = new NonManifoldMesh();
-        map<unsigned int, unsigned int> vertexMap;
+        map<TKey, TKey> vertexMap;
         for(unsigned int i=0; i < mesh.vertices.size(); i++) {
             if(!mesh.vertices[i].tag) {
                 vertexMap[i] = singlePathMesh->addVertex(mesh.vertices[i]);
