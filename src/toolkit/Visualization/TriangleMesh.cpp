@@ -25,7 +25,7 @@ using namespace Protein_Morph;
 
 
 int TriangleMesh::addMarchingVertex(Vec3F location, int hashKey){
-    return addVertex(Vertex(location), hashKey);
+    return addVertex(location, hashKey);
 }
 
 unsigned long long TriangleMesh::addMarchingFace(Face face)
@@ -44,10 +44,10 @@ void TriangleMesh::clear() {
     faces.clear();
 }
 
-unsigned long long TriangleMesh::addVertex(Vertex vertex,
+unsigned long long TriangleMesh::addVertex(Vec3F vertex,
                                            unsigned long long hashKey)
 {
-    vertices[hashKey] = vertex;
+    vertices[hashKey] = Vertex(vertex);
     return hashKey;
 }
 
@@ -63,7 +63,7 @@ Vec3F TriangleMesh::getVertexNormal(unsigned long long vertexHash) {
 Vec3F TriangleMesh::getFaceNormal(unsigned long long faceHash) {
     Face face = faces[faceHash];
     Vec3F normal =
-            (vertices[face[1]].position - vertices[face[0]].position) ^ (vertices[face[2]].position - vertices[face[0]].position);
+            (vertices[face[1]] - vertices[face[0]]) ^ (vertices[face[2]] - vertices[face[0]]);
 
     normal.normalize();
     return normal;
@@ -88,7 +88,7 @@ void TriangleMesh::draw(bool drawSurfaces,
             if(fadeExtreme) {
                 for(unsigned int j = 0; j < 3; j++) {
                     int k = faces[i][j];
-                    drawTriangle = drawTriangle && (vertices[k].position - center).length() <= radius;
+                    drawTriangle = drawTriangle && (vertices[k] - center).length() <= radius;
                 }
             }
             if(drawTriangle) {
@@ -96,7 +96,7 @@ void TriangleMesh::draw(bool drawSurfaces,
                     int k = faces[i][j];
                     Vec3F normal = getVertexNormal(k);
                     glNormal3f(normal.X(), normal.Y(), normal.Z());
-                    glVertex3fv(vertices[k].position.getValues());
+                    glVertex3fv(vertices[k].getValues());
                 }
             }
             glEnd();
@@ -119,7 +119,7 @@ void TriangleMesh::save(string fileName) {
 
     int index = 0;
     for(TVertex::iterator i = vertices.begin(); i != vertices.end(); ++i) {
-        vertexList.push_back(i->second.position);
+        vertexList.push_back(i->second);
         indexedVertices[i->first] = index;
         index++;
     }

@@ -31,7 +31,7 @@ namespace Protein_Morph {
             int addMarchingVertex(Vec3F location, int hashKey);
             unsigned long long addMarchingFace(Face vertexHash);
 
-            unsigned long long addVertex(Vertex vertex,
+            unsigned long long addVertex(Vec3F vertex,
                                          unsigned long long hashKey);
 
             Vec3F getVertexNormal(unsigned long long vertexHash);
