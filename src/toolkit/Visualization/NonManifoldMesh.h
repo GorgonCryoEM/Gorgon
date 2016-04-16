@@ -2,21 +2,18 @@
 #define TOOLKIT_PROTEINMORPH_NON_MANIFOLD_MESH_H
 
 #include <vector>
-#include <MathTools/BasicDefines.h>
-#include <Core/volume.h>
 //#include <string>
-#include <GorgonGL.h>
-#include <Visualization/Rasterizer.h>
 #include <map>
 #include <set>
 #include <queue>
 #include <fstream>
-#ifdef _WIN32
-	#include <hash_map>
-	using namespace stdext;
-#endif
 
 #include "Mesh.h"
+
+#include "MathTools/BasicDefines.h"
+#include "Core/volume.h"
+#include "GorgonGL.h"
+#include "Visualization/Rasterizer.h"
 
 using namespace std;
 using namespace MathTools;
@@ -122,11 +119,7 @@ namespace Protein_Morph {
     typedef vector<Edge >   TE;
     typedef vector<Face >   TF;
 
-    #ifdef _WIN32
-        typedef hash_map<int, int> HashMapType;
-    #else
-        typedef map<int, int> HashMapType;
-    #endif
+    typedef map<int, int> HashMapType;
 
     class NonManifoldMesh : public Volume, public Mesh {
         public:
