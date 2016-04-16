@@ -43,13 +43,13 @@ namespace Core {
         private:
             typedef map<TKey, Vertex> MUV;
 
-            MUV vertices;
+            MUV verticesB;
             vector<Vec3U> faceHashes;
 
             friend ostream & operator<<(ostream & out, const Mesh & obj) {
                 return out
                         <<"Mesh:\n"
-                        <<"vertices.size(): "<<obj.vertices.size()<<endl
+                        <<"vertices.size(): "<<obj.verticesB.size()<<endl
                         <<"faces.size(): "<<obj.faceHashes.size()
                         <<endl;
             }
