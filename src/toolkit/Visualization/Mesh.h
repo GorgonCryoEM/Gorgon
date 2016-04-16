@@ -21,7 +21,6 @@ using namespace GraphMatch;
 
 namespace Core {
 
-    typedef unsigned long long TKey;
     typedef Vector3<TKey> Vec3U;
 
     class Mesh {

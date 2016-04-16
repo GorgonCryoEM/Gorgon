@@ -7,7 +7,7 @@
 
 #include "Vertex.h"
 
-namespace Protein_Morph {
+namespace Core {
 
     Vertex::Vertex()
             : Vec3F(0, 0, 0)

@@ -10,15 +10,13 @@
 #define SRC_TOOLKIT_VISUALIZATION_VERTEX_H_
 
 #include "MathTools/Vector3.h"
-#include "Mesh.h"
 
 using namespace GraphMatch;
-using namespace Core;
 
+namespace Core {
 
-using namespace std;
+    typedef unsigned long long TKey;
 
-namespace Protein_Morph {
     class Vertex : public Vec3F {
         public:
             Vertex();
