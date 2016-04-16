@@ -30,8 +30,8 @@ int TriangleMesh::addMarchingVertex(Vec3F location, int hashKey){
 
 TKey TriangleMesh::addMarchingFace(Vec3U face)
 {
-    TKey faceHash = faces.size();
-    faces.push_back(face);
+    TKey faceHash = faceHashes.size();
+    faceHashes.push_back(face);
     vertices[face[0]].addFaceHash(faceHash);
     vertices[face[1]].addFaceHash(faceHash);
     vertices[face[2]].addFaceHash(faceHash);
@@ -41,7 +41,7 @@ TKey TriangleMesh::addMarchingFace(Vec3U face)
 
 void TriangleMesh::clear() {
     vertices.clear();
-    faces.clear();
+    faceHashes.clear();
 }
 
 TKey TriangleMesh::addVertex(Vec3F vertex, TKey hashKey)
@@ -64,7 +64,7 @@ Vec3F TriangleMesh::getVertexNormal(TKey vertexHash) {
 }
 
 Vec3F TriangleMesh::getFaceNormal(TKey faceHash) {
-    Vec3U face = faces[faceHash];
+    Vec3U face = faceHashes[faceHash];
     Vec3F normal =
             (vertices[face[1]] - vertices[face[0]]) ^ (vertices[face[2]] - vertices[face[0]]);
 
@@ -82,7 +82,7 @@ void TriangleMesh::draw(bool drawSurfaces,
             glPushName(0);
             glPushName(0);
         }
-        for(unsigned int i = 0; i < faces.size(); i++) {
+        for(unsigned int i = 0; i < faceHashes.size(); i++) {
             if(annotateSurfaces) {
                 glLoadName(i);
             }
@@ -90,13 +90,13 @@ void TriangleMesh::draw(bool drawSurfaces,
             bool drawTriangle = true;
             if(fadeExtreme) {
                 for(unsigned int j = 0; j < 3; j++) {
-                    int k = faces[i][j];
+                    int k = faceHashes[i][j];
                     drawTriangle = drawTriangle && (vertices[k] - center).length() <= radius;
                 }
             }
             if(drawTriangle) {
                 for(unsigned int j = 0; j < 3; j++) {
-                    int k = faces[i][j];
+                    int k = faceHashes[i][j];
                     Vec3F normal = getVertexNormal(k);
                     glNormal3f(normal.X(), normal.Y(), normal.Z());
                     glVertex3fv(vertices[k].getValues());
@@ -115,7 +115,7 @@ void TriangleMesh::draw(bool drawSurfaces,
 void TriangleMesh::save(string fileName) {
     FILE * outFile = fopen(fileName.c_str(), "wt");
     fprintf(outFile, "OFF\n");
-    fprintf(outFile, "%d %d %d\n", (int)vertices.size(), (int)faces.size(), 0);
+    fprintf(outFile, "%d %d %d\n", (int)vertices.size(), (int)faceHashes.size(), 0);
 
     map<TKey, int> indexedVertices;
     vector<Vec3F> vertexList;
@@ -131,11 +131,11 @@ void TriangleMesh::save(string fileName) {
         fprintf(outFile, "%f %f %f \n", vertexList[i].X(), vertexList[i].Y(), vertexList[i].Z());
     }
 
-    for(unsigned int i = 0; i < faces.size(); i++) {
+    for(unsigned int i = 0; i < faceHashes.size(); i++) {
         fprintf(outFile, "3 %d %d %d\n",
-                indexedVertices[faces[i][2]],
-                indexedVertices[faces[i][1]],
-                indexedVertices[faces[i][0]]);
+                indexedVertices[faceHashes[i][2]],
+                indexedVertices[faceHashes[i][1]],
+                indexedVertices[faceHashes[i][0]]);
     }
     fclose(outFile);
 }

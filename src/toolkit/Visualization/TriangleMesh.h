@@ -42,13 +42,13 @@ namespace Protein_Morph {
             typedef map<TKey, Vertex> MUV;
 
             MUV vertices;
-            vector<Vec3U> faces;
+            vector<Vec3U> faceHashes;
 
             friend ostream & operator<<(ostream & out, const TriangleMesh & obj) {
                 return out
                         <<"TriangleMesh:\n"
                         <<"vertices.size(): "<<obj.vertices.size()<<endl
-                        <<"faces.size(): "<<obj.faces.size()
+                        <<"faces.size(): "<<obj.faceHashes.size()
                         <<endl;
             }
     };
