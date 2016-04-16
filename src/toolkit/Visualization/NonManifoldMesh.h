@@ -64,12 +64,12 @@ namespace Protein_Morph {
             return out;
     }
 
-    struct NonManifoldMeshBase {
+    struct Base {
         unsigned int id;
         bool valid;
     };
 
-    struct NonManifoldMeshEdge : public NonManifoldMeshBase {
+    struct NonManifoldMeshEdge : public Base {
         unsigned int vertexIds[2];
         vector<unsigned int> faceIds;
         string tag;
@@ -85,7 +85,7 @@ namespace Protein_Morph {
 //                  <<"\033[0m";
     }
 
-    struct NonManifoldMeshFace : public NonManifoldMeshBase {
+    struct NonManifoldMeshFace : public Base {
         vector<unsigned int> edgeIds;
         vector<unsigned int> vertexIds;
         string tag;
@@ -103,7 +103,7 @@ namespace Protein_Morph {
 //                      <<"\033[0m";
     }
 
-    struct NonManifoldMeshVertex : public NonManifoldMeshBase {
+    struct NonManifoldMeshVertex : public Base {
         Vec3F position;
         vector<unsigned int> edgeIds;
         bool tag;
