@@ -26,6 +26,7 @@ namespace Protein_Morph {
             unsigned int sizeFaces() const;
             vector<unsigned long long> getFaces() const;
 
+        private:
             vector<unsigned long long> faces;
     };
 
