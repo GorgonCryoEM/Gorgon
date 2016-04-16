@@ -139,7 +139,6 @@ namespace Protein_Morph {
 
             int addVertex(TVertex vertex);
             int addVertex(Vec3F location);
-            int addVertex(Vec3F location, int hashKey);
             int addFace(Face face);
 
             int addEdge(Edge edge);
