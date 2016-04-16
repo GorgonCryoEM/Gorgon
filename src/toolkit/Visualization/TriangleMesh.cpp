@@ -8,22 +8,6 @@
 #include "TriangleMesh.h"
 
 
-#include <map>
-//#include <vector>
-//#include <string>
-//#include "OpenGLUtils.h"
-#include "GorgonGL.h"
-
-#include "Mesh.h"
-
-using namespace std;
-//using namespace Foundation;
-using namespace Core;
-using namespace MathTools;
-using namespace Protein_Morph;
-
-
-
 int TriangleMesh::addMarchingVertex(Vec3F location, int hashKey){
     return addVertex(location, hashKey);
 }
