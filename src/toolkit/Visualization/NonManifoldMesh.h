@@ -104,6 +104,8 @@ namespace Protein_Morph {
         Vec3F position;
         vector<TKey> edgeIds;
         bool tag;
+        TVertex() : Vertex() {}
+        TVertex(Vec3F pos) : Vertex(pos) {}
     };
 
     inline ostream& operator<<(ostream& out, const TVertex& obj){
