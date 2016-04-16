@@ -42,9 +42,9 @@ namespace Protein_Morph {
             void save(string fileName);
 
         private:
-            typedef map<unsigned long long, Vertex> TVertex;
+            typedef map<unsigned long long, Vertex> MUV;
 
-            TVertex vertices;
+            MUV vertices;
             vector<Vec3U> faces;
 
             friend ostream & operator<<(ostream & out, const TriangleMesh & obj) {

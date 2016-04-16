@@ -122,7 +122,7 @@ void TriangleMesh::save(string fileName) {
     vector<Vec3F> vertexList;
 
     int index = 0;
-    for(TVertex::iterator i = vertices.begin(); i != vertices.end(); ++i) {
+    for(MUV::iterator i = vertices.begin(); i != vertices.end(); ++i) {
         vertexList.push_back(i->second);
         indexedVertices[i->first] = index;
         index++;
