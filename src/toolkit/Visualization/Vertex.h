@@ -10,8 +10,10 @@
 #define SRC_TOOLKIT_VISUALIZATION_VERTEX_H_
 
 #include "MathTools/Vector3.h"
+#include "Mesh.h"
 
 using namespace GraphMatch;
+using namespace Core;
 
 
 using namespace std;
@@ -22,12 +24,12 @@ namespace Protein_Morph {
             Vertex();
             Vertex(Vec3F pos);
 
-            unsigned long long addFaceHash(unsigned long long hash);
+            TKey addFaceHash(TKey hash);
             unsigned int sizeFaceHashes() const;
-            vector<unsigned long long> getFaceHashes() const;
+            vector<TKey> getFaceHashes() const;
 
         private:
-            vector<unsigned long long> faceHashes;
+            vector<TKey> faceHashes;
     };
 
 

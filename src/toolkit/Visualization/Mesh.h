@@ -14,14 +14,15 @@ using namespace GraphMatch;
 
 namespace Core {
 
-    typedef Vector3<unsigned long long> Vec3U;
+    typedef unsigned long long TKey;
+    typedef Vector3<TKey> Vec3U;
 
     class Mesh {
         public:
 //            Mesh();
 //            virtual ~Mesh();
             virtual int addMarchingVertex(Vec3F location, int hashKey) =0;
-            virtual unsigned long long addMarchingFace(Vec3U vertexHash) =0;
+            virtual TKey addMarchingFace(Vec3U vertexHash) =0;
 
     };
 

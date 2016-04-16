@@ -28,9 +28,9 @@ int TriangleMesh::addMarchingVertex(Vec3F location, int hashKey){
     return addVertex(location, hashKey);
 }
 
-unsigned long long TriangleMesh::addMarchingFace(Vec3U face)
+TKey TriangleMesh::addMarchingFace(Vec3U face)
 {
-    unsigned long long faceHash = faces.size();
+    TKey faceHash = faces.size();
     faces.push_back(face);
     vertices[face[0]].addFaceHash(faceHash);
     vertices[face[1]].addFaceHash(faceHash);
@@ -44,16 +44,15 @@ void TriangleMesh::clear() {
     faces.clear();
 }
 
-unsigned long long TriangleMesh::addVertex(Vec3F vertex,
-                                           unsigned long long hashKey)
+TKey TriangleMesh::addVertex(Vec3F vertex, TKey hashKey)
 {
     vertices[hashKey] = Vertex(vertex);
     return hashKey;
 }
 
-Vec3F TriangleMesh::getVertexNormal(unsigned long long vertexHash) {
+Vec3F TriangleMesh::getVertexNormal(TKey vertexHash) {
     Vertex vertex(vertices[vertexHash]);
-    vector<unsigned long long> hashes(vertex.getFaceHashes());
+    vector<TKey> hashes(vertex.getFaceHashes());
 
     Vec3F normal = Vec3F(0, 0, 0);
 
@@ -64,7 +63,7 @@ Vec3F TriangleMesh::getVertexNormal(unsigned long long vertexHash) {
     return normal;
 }
 
-Vec3F TriangleMesh::getFaceNormal(unsigned long long faceHash) {
+Vec3F TriangleMesh::getFaceNormal(TKey faceHash) {
     Vec3U face = faces[faceHash];
     Vec3F normal =
             (vertices[face[1]] - vertices[face[0]]) ^ (vertices[face[2]] - vertices[face[0]]);
@@ -118,7 +117,7 @@ void TriangleMesh::save(string fileName) {
     fprintf(outFile, "OFF\n");
     fprintf(outFile, "%d %d %d\n", (int)vertices.size(), (int)faces.size(), 0);
 
-    map<unsigned long long, int> indexedVertices;
+    map<TKey, int> indexedVertices;
     vector<Vec3F> vertexList;
 
     int index = 0;

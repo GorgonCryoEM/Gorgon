@@ -17,7 +17,7 @@ namespace Protein_Morph {
             : Vec3F(pos)
     {}
 
-    unsigned long long Vertex::addFaceHash(unsigned long long hash) {
+    TKey Vertex::addFaceHash(TKey hash) {
         faceHashes.push_back(hash);
         return hash;
     }
@@ -26,7 +26,7 @@ namespace Protein_Morph {
         return faceHashes.size();
     }
 
-    vector<unsigned long long> Vertex::getFaceHashes() const {
+    vector<TKey> Vertex::getFaceHashes() const {
         return faceHashes;
     }
 

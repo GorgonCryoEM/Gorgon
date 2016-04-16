@@ -135,7 +135,7 @@ namespace Protein_Morph {
 
             void clear();
             int addMarchingVertex(Vec3F location, int hashKey);
-            unsigned long long addMarchingFace(Vec3U vertexHash);
+            TKey addMarchingFace(Vec3U vertexHash);
 
             int addVertex(NonManifoldMeshVertex vertex);
             int addVertex(Vec3F location);

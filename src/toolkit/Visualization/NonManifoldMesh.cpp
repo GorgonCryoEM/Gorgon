@@ -14,7 +14,7 @@ namespace Protein_Morph {
         return addHashedVertex(location, hashKey);
     }
 
-    unsigned long long NonManifoldMesh::addMarchingFace(Vec3U vertexHash) {
+    TKey NonManifoldMesh::addMarchingFace(Vec3U vertexHash) {
         addTriangle(vertexHash);
     }
 

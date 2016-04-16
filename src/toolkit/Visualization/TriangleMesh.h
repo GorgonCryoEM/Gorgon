@@ -29,20 +29,17 @@ namespace Protein_Morph {
         public:
             void clear();
             int addMarchingVertex(Vec3F location, int hashKey);
-            unsigned long long addMarchingFace(Vec3U vertexHash);
-
-            unsigned long long addVertex(Vec3F vertex,
-                                         unsigned long long hashKey);
-
-            Vec3F getVertexNormal(unsigned long long vertexHash);
-            Vec3F getFaceNormal(unsigned long long faceHash);
+            TKey addMarchingFace(Vec3U vertexHash);
+            TKey addVertex(Vec3F vertex, TKey hashKey);
+            Vec3F getVertexNormal(TKey vertexHash);
+            Vec3F getFaceNormal(TKey faceHash);
             void draw(bool drawSurfaces, bool annotateSurfaces,
                       bool fadeExtreme, int radius, Vec3F center);
 
             void save(string fileName);
 
         private:
-            typedef map<unsigned long long, Vertex> MUV;
+            typedef map<TKey, Vertex> MUV;
 
             MUV vertices;
             vector<Vec3U> faces;
