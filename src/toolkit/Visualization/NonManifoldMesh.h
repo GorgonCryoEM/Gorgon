@@ -61,10 +61,7 @@ namespace Protein_Morph {
             return out;
     }
 
-    struct Base {
-    };
-
-    struct Edge : public Base {
+    struct Edge {
         TKey vertexIds[2];
         vector<TKey> faceIds;
     };
@@ -79,7 +76,7 @@ namespace Protein_Morph {
 //                  <<"\033[0m";
     }
 
-    struct Face : public Base {
+    struct Face {
         vector<TKey> edgeIds;
         vector<TKey> vertexIds;
     };
@@ -96,7 +93,7 @@ namespace Protein_Morph {
 //                      <<"\033[0m";
     }
 
-    struct TVertex : public Base, public Vertex {
+    struct TVertex : public Vertex {
         public:
         TVertex() : Vertex() {}
         TVertex(Vec3F pos) : Vertex(pos) {}
