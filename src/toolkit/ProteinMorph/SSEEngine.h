@@ -30,7 +30,6 @@ namespace Visualization {
         int GetSkeletonSSECount();
         int GetSequenceSSECount();
 
-        void InitializePathFinder(NonManifoldMesh * mesh);
         void InitializePathHelix(int helixIndex, Vec3F p1, Vec3F p2, float radius);
         void PrunePathMesh(NonManifoldMesh * mesh, vector<TKey> pathVertices);
         void GetPathSpace(int helix1Ix, bool helix1Start, int helix2Ix, bool helix2Start);
@@ -162,15 +161,6 @@ namespace Visualization {
         return sequence->pdbStructures.size();
     }
 
-
-    void SSEEngine::InitializePathFinder(NonManifoldMesh * mesh) {
-        NonManifoldMesh pathMesh(*mesh);
-        for(unsigned int i = 0; i < pathMesh.vertices.size(); i++) {
-            pathMesh.vertices[i].tag = true;
-        }
-        helixEndPoints.clear();
-        pathCount++;
-    }
 
     void SSEEngine::InitializePathHelix(int helixIndex, Vec3F p1, Vec3F p2, float radius) {
         Shape * helix = Shape::CreateHelix(p1, p2, radius);
