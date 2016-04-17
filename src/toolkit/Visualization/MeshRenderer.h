@@ -31,7 +31,6 @@ namespace Visualization {
             Vec3F get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
             void load(string fileName);
             void save(string fileName);
-            void performSmoothLaplacian(double convergenceRate, int iterations);
             int intersectMeshAndSphere(Vec3F center, float radius);
             Vec3F getIntersectionPoint(int ix);
 

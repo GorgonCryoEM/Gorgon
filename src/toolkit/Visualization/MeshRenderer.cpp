@@ -81,10 +81,6 @@ namespace Visualization {
             }
     }
 
-    void MeshRenderer::performSmoothLaplacian(double convergenceRate, int iterations) {
-        mesh = mesh.smoothLaplacian(convergenceRate, iterations);
-    }
-
     int MeshRenderer::intersectMeshAndSphere(Vec3F center, float radius) {
         float x1, y1, z1, x2, y2, z2, x3, y3, z3, r, a, b, c, d, u;
         Vec3F p1, p2;
