@@ -295,7 +295,6 @@ namespace Protein_Morph {
 
     int NonManifoldMesh::addVertex(TVertex vertex) {
         vertex.id = vertices.size();
-        vertex.valid = true;
         vertices.push_back(vertex);
 
         return vertex.id;
@@ -309,7 +308,6 @@ namespace Protein_Morph {
 
     int NonManifoldMesh::addEdge(Edge edge) {
         edge.id = edges.size();
-        edge.valid = true;
         edges.push_back(edge);
 
         return edge.id;
@@ -339,7 +337,6 @@ namespace Protein_Morph {
 
     int NonManifoldMesh::addFace(Face face) {
         face.id = faces.size();
-        face.valid = true;
         faces.push_back(face);
 
         return face.id;

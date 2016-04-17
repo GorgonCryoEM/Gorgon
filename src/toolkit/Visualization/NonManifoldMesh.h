@@ -63,7 +63,6 @@ namespace Protein_Morph {
 
     struct Base {
         unsigned int id;
-        bool valid;
         string tag;
     };
 
