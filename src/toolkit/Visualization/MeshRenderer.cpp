@@ -122,28 +122,4 @@ namespace Visualization {
         return intersectionPoints.size();
     }
 
-    Vec3F MeshRenderer::get3DCoordinates(int subsceneIndex, int ix0, int ix1, int ix2, int ix3, int ix4) {
-        Vec3F position = Vec3F(0, 0, 0);
-        if((subsceneIndex >= 0) && (ix0 >= 0)) {
-            switch(subsceneIndex){
-                case 0:
-                    for(unsigned int i = 0; i < mesh.faces[ix1].vertexIds.size(); i++) {
-                        position += mesh.vertices[mesh.faces[ix0].vertexIds[i]];
-                    }
-                    position = position * (1.0 / mesh.faces[ix1].vertexIds.size());
-                    break;
-                case 1:
-                    for(unsigned int i = 0; i < 2; i++) {
-                        position += mesh.vertices[mesh.edges[ix0].vertexIds[i]];
-                    }
-                    position = position * 0.5;
-                    break;
-                case 2:
-                    position = mesh.vertices[ix0];
-                    break;
-            }
-        }
-        return position;
-    }
-
 } /* namespace Visualization */
