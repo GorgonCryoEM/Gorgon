@@ -30,7 +30,6 @@ namespace Visualization {
         int GetSkeletonSSECount();
         int GetSequenceSSECount();
 
-        void GetPathSpace(int helix1Ix, bool helix1Start, int helix2Ix, bool helix2Start);
         int GetPathVertexCount();
         Vec3F GetPathVertex(int index);
         int GetPathEdgeCount();
@@ -157,53 +156,6 @@ namespace Visualization {
 
     int SSEEngine::GetSequenceSSECount() {
         return sequence->pdbStructures.size();
-    }
-
-    void SSEEngine::GetPathSpace(int helix1Ix, bool helix1Start, int helix2Ix, bool helix2Start) {
-        NonManifoldMesh mesh(*pathMesh);
-
-        vector<TKey> queue;
-        for(unsigned int i = 0; i < helixStartPoints[helix1Ix].size(); i++) {
-            queue.push_back(helixStartPoints[helix1Ix][i]);
-        }
-
-        TKey currIx;
-        vector<TKey> neighbors;
-        vector<TKey> pathVertices;
-        pathVertices.clear();
-        while(queue.size() > 0){
-            currIx = queue[0];
-            queue.erase(queue.begin());
-            if(mesh.vertices[currIx].tag=="true") {
-                mesh.vertices[currIx].tag = "false";
-                pathVertices.push_back(currIx);
-                neighbors = mesh.getNeighboringVertexIndices(currIx);
-                for(unsigned int i = 0; i < neighbors.size(); i++) {
-                    if(mesh.vertices[neighbors[i]].tag == "true") {
-                        queue.push_back(neighbors[i]);
-                    }
-                }
-            }
-        }
-
-        PrunePathMesh(&mesh, pathVertices);
-
-        singlePathMesh = new NonManifoldMesh();
-        map<TKey, TKey> vertexMap;
-        for(unsigned int i=0; i < mesh.vertices.size(); i++) {
-            if(mesh.vertices[i].tag=="false") {
-                vertexMap[i] = singlePathMesh->addVertex(mesh.vertices[i]);
-            }
-        }
-
-        for(unsigned int i=0; i < mesh.edges.size(); i++) {
-            if(mesh.vertices[mesh.edges[i].vertexIds[0]].tag =="false" && mesh.vertices[mesh.edges[i].vertexIds[1]].tag=="false") {
-                singlePathMesh->addEdge(vertexMap[mesh.edges[i].vertexIds[0]], vertexMap[mesh.edges[i].vertexIds[1]], mesh.edges[i].tag);
-            }
-        }
-
-        vertexMap.clear();
-        pathVertices.clear();
     }
 
     void SSEEngine::ClearPathSpace() {
