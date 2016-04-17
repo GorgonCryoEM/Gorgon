@@ -30,7 +30,6 @@ namespace Visualization {
         int GetSkeletonSSECount();
         int GetSequenceSSECount();
 
-        void InitializePathHelix(int helixIndex, Vec3F p1, Vec3F p2, float radius);
         void PrunePathMesh(NonManifoldMesh * mesh, vector<TKey> pathVertices);
         void GetPathSpace(int helix1Ix, bool helix1Start, int helix2Ix, bool helix2Start);
         int GetPathVertexCount();
@@ -159,54 +158,6 @@ namespace Visualization {
 
     int SSEEngine::GetSequenceSSECount() {
         return sequence->pdbStructures.size();
-    }
-
-
-    void SSEEngine::InitializePathHelix(int helixIndex, Vec3F p1, Vec3F p2, float radius) {
-        Shape * helix = Shape::CreateHelix(p1, p2, radius);
-        set<TKey> internalVertices;
-        internalVertices.clear();
-        vector<TKey> startPoints;
-        vector<TKey> endPoints;
-        helixStartPoints[helixIndex] = startPoints;
-        helixEndPoints[helixIndex] = endPoints;
-
-        for(unsigned int i = 0; i < pathMesh->vertices.size(); i++) {
-            if(helix->IsInsideShape(pathMesh->vertices[i])) {
-                internalVertices.insert(i);
-                pathMesh->vertices[i].tag = "false";
-            }
-        }
-        vector<TKey> neighbors;
-        bool isEnd = false, isStart;
-        float dist1, dist2;
-        for(set<TKey>::iterator i = internalVertices.begin(); i != internalVertices.end(); i++) {
-            neighbors = pathMesh->getNeighboringVertexIndices(*i);
-            for(unsigned int j = 0; j < neighbors.size(); j++) {
-                isEnd = isEnd || (internalVertices.find(neighbors[j]) == internalVertices.end());
-            }
-            if(isEnd) {
-                dist1 = (p1 - pathMesh->vertices[*i]).length();
-                dist2 = (p2 - pathMesh->vertices[*i]).length();
-                isStart = (dist1 <= dist2);
-                if(isStart && (dist1 <= radius)) {
-                    helixStartPoints[helixIndex].push_back(*i);
-                    pathMesh->vertices[*i].tag = true;
-                } else if (!isStart && (dist2 <= radius)) {
-                    helixEndPoints[helixIndex].push_back(*i);
-                    pathMesh->vertices[*i].tag = true;
-                }
-            }
-        }
-        if(helixStartPoints[helixIndex].size() == 0) {
-            printf("Error <SSEEngine, InitializePathHelix>: No helix start points found for helix %d\n", helixIndex);
-        }
-        if(helixEndPoints[helixIndex].size() == 0) {
-            printf("Error <SSEEngine, InitializePathHelix>: No helix end points found for helix %d\n", helixIndex);
-        }
-
-        delete helix;
-
     }
 
     void SSEEngine::PrunePathMesh(NonManifoldMesh * mesh, vector<TKey> pathVertices) {
