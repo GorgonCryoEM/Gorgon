@@ -64,12 +64,12 @@ namespace Protein_Morph {
     struct Base {
         unsigned int id;
         bool valid;
+        string tag;
     };
 
     struct Edge : public Base {
         TKey vertexIds[2];
         vector<TKey> faceIds;
-        string tag;
     };
 
     inline ostream& operator<<(ostream& out, const Edge& obj){
@@ -85,7 +85,6 @@ namespace Protein_Morph {
     struct Face : public Base {
         vector<TKey> edgeIds;
         vector<TKey> vertexIds;
-        string tag;
     };
 
     inline ostream& operator<<(ostream& out, const Face& obj){
@@ -102,7 +101,6 @@ namespace Protein_Morph {
 
     struct TVertex : public Base, public Vertex {
         public:
-        bool tag;
         TVertex() : Vertex() {}
         TVertex(Vec3F pos) : Vertex(pos) {}
 

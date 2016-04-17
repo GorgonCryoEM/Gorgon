@@ -184,7 +184,7 @@ namespace Visualization {
         for(unsigned int i = 0; i < pathMesh->vertices.size(); i++) {
             if(helix->IsInsideShape(pathMesh->vertices[i])) {
                 internalVertices.insert(i);
-                pathMesh->vertices[i].tag = false;
+                pathMesh->vertices[i].tag = "false";
             }
         }
         vector<TKey> neighbors;
@@ -224,7 +224,7 @@ namespace Visualization {
             mesh->vertices[i].tag = true;
         }
         for(unsigned int i = 0; i < pathVertices.size(); i++) {
-            mesh->vertices[pathVertices[i]].tag = false;
+            mesh->vertices[pathVertices[i]].tag = "false";
         }
     }
 
@@ -243,12 +243,12 @@ namespace Visualization {
         while(queue.size() > 0){
             currIx = queue[0];
             queue.erase(queue.begin());
-            if(mesh.vertices[currIx].tag) {
-                mesh.vertices[currIx].tag = false;
+            if(mesh.vertices[currIx].tag=="true") {
+                mesh.vertices[currIx].tag = "false";
                 pathVertices.push_back(currIx);
                 neighbors = mesh.getNeighboringVertexIndices(currIx);
                 for(unsigned int i = 0; i < neighbors.size(); i++) {
-                    if(mesh.vertices[neighbors[i]].tag) {
+                    if(mesh.vertices[neighbors[i]].tag == "true") {
                         queue.push_back(neighbors[i]);
                     }
                 }
@@ -260,13 +260,13 @@ namespace Visualization {
         singlePathMesh = new NonManifoldMesh();
         map<TKey, TKey> vertexMap;
         for(unsigned int i=0; i < mesh.vertices.size(); i++) {
-            if(!mesh.vertices[i].tag) {
+            if(mesh.vertices[i].tag=="false") {
                 vertexMap[i] = singlePathMesh->addVertex(mesh.vertices[i]);
             }
         }
 
         for(unsigned int i=0; i < mesh.edges.size(); i++) {
-            if(!mesh.vertices[mesh.edges[i].vertexIds[0]].tag && !mesh.vertices[mesh.edges[i].vertexIds[1]].tag) {
+            if(mesh.vertices[mesh.edges[i].vertexIds[0]].tag =="false" && mesh.vertices[mesh.edges[i].vertexIds[1]].tag=="false") {
                 singlePathMesh->addEdge(vertexMap[mesh.edges[i].vertexIds[0]], vertexMap[mesh.edges[i].vertexIds[1]], mesh.edges[i].tag);
             }
         }
