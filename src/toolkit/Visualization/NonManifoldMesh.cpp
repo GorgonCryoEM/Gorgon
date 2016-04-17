@@ -484,44 +484,6 @@ namespace Protein_Morph {
         return normal;
     }
 
-    NonManifoldMesh NonManifoldMesh::smoothLaplacian(double converganceRate) {
-        NonManifoldMesh smoothedMesh(*this);
-        for(int i = 0; i < (int)vertices.size(); i++) {
-            TVertex vertex = vertices[i];
-            if(vertex.valid) {
-                Vec3F newPosition;
-                if(vertex.sizeEdge() > 0) {
-                    newPosition = Vec3F(0,0,0);
-                    for(int j = 0; j < (int)vertex.sizeEdge(); j++) {
-                        int vertexIndex;
-                        if((int)edges[vertex.edge(j)].vertexIds[0] == i) {
-                            vertexIndex = 1;
-                        } else {
-                            vertexIndex = 0;
-                        }
-
-                        newPosition = newPosition + vertices[edges[vertex.edge(j)].vertexIds[vertexIndex]];
-                    }
-                    newPosition = newPosition * (1.0/vertex.sizeEdge());
-                } else {
-                    newPosition = vertex;
-                }
-                smoothedMesh.vertices[i] = smoothedMesh.vertices[i] * (1.0 - converganceRate)+ newPosition * converganceRate;
-            }
-        }
-        return smoothedMesh;
-    }
-
-    NonManifoldMesh NonManifoldMesh::smoothLaplacian(double converganceRate, int iterations) {
-        NonManifoldMesh oldMesh(*this);
-
-        for(int i = 0; i < iterations; i++) {
-            oldMesh = oldMesh.smoothLaplacian(converganceRate);
-        }
-
-        return oldMesh;
-    }
-
     NonManifoldMesh NonManifoldMesh::loadOffFile(string fileName) {
         ifstream inFile(fileName.c_str());
         string strTemp;

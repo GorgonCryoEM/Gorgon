@@ -166,8 +166,6 @@ namespace Protein_Morph {
             vector<TKey> getNeighboringVertexIndices(TKey vertexIx);
             vector<Vec3F> sampleTriangle(int faceId, double discretizationStep);
             Volume toVolume();
-            NonManifoldMesh smoothLaplacian(double converganceRate);
-            NonManifoldMesh smoothLaplacian(double converganceRate, int iterations);
             static NonManifoldMesh loadOffFile(string fileName);
 
     public:
