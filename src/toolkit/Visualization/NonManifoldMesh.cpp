@@ -324,9 +324,8 @@ namespace Protein_Morph {
         return edgeId;
     }
 
-    void NonManifoldMesh::addEdge(int vertexId1, int vertexId2, string tag){
+    void NonManifoldMesh::addEdge(int vertexId1, int vertexId2) {
         Edge edge;
-        edge.tag = tag;
         edge.faceIds.clear();
         edge.vertexIds[0] = vertexId1;
         edge.vertexIds[1] = vertexId2;
@@ -342,30 +341,29 @@ namespace Protein_Morph {
         return face.id;
     }
 
-    void NonManifoldMesh::addQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4, string newEdgeTag, string faceTag) {
+    void NonManifoldMesh::addQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4) {
         Vec3U v123(vertexId1, vertexId2, vertexId3);
-        addTriangle(v123, newEdgeTag, faceTag);
+        addTriangle(v123);
 
         Vec3U v134(vertexId1, vertexId3, vertexId4);
-        addTriangle(v134, newEdgeTag, faceTag);
+        addTriangle(v134);
     }
 
-    void NonManifoldMesh::addTriangle(Vec3U vertexId, string newEdgeTag, string faceTag) {
+    void NonManifoldMesh::addTriangle(Vec3U vertexId) {
         int vertexId1 = vertexId[0];
         int vertexId2 = vertexId[1];
         int vertexId3 = vertexId[2];
 
         if(!isEdgePresent(vertexId1, vertexId2))
-            addEdge(vertexId1, vertexId2, newEdgeTag);
+            addEdge(vertexId1, vertexId2);
 
         if(!isEdgePresent(vertexId2, vertexId3))
-            addEdge(vertexId2, vertexId3, newEdgeTag);
+            addEdge(vertexId2, vertexId3);
 
         if(!isEdgePresent(vertexId3, vertexId1))
-            addEdge(vertexId3, vertexId1, newEdgeTag);
+            addEdge(vertexId3, vertexId1);
 
         Face face;
-        face.tag = faceTag;
         face.vertexIds.clear();
         face.vertexIds.push_back(vertexId1);
         face.vertexIds.push_back(vertexId2);
@@ -398,21 +396,20 @@ namespace Protein_Morph {
             indices.push_back(addVertex(src.vertices[i]));
 
         for(unsigned int i = 0; i < src.edges.size(); i++)
-            addEdge(indices[src.edges[i].vertexIds[0]], indices[src.edges[i].vertexIds[1]], src.edges[i].tag);
+            addEdge(indices[src.edges[i].vertexIds[0]], indices[src.edges[i].vertexIds[1]]);
 
         for(unsigned int i = 0; i < src.faces.size(); i++) {
             if(src.faces[i].vertexIds.size() == 3) {
                 Vec3U temp(indices[src.faces[i].vertexIds[0]],
                                       indices[src.faces[i].vertexIds[1]],
                                       indices[src.faces[i].vertexIds[2]]);
-                addTriangle(temp, NULL, src.faces[i].tag);
+                addTriangle(temp);
             }
             else if(src.faces[i].vertexIds.size() == 3)
                 addQuad(indices[src.faces[i].vertexIds[0]],
                         indices[src.faces[i].vertexIds[1]],
                         indices[src.faces[i].vertexIds[2]],
-                        indices[src.faces[i].vertexIds[3]], NULL,
-                        src.faces[i].tag);
+                        indices[src.faces[i].vertexIds[3]]);
         }
     }
 

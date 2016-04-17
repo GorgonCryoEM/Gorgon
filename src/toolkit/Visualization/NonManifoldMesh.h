@@ -63,7 +63,6 @@ namespace Protein_Morph {
 
     struct Base {
         unsigned int id;
-        string tag;
     };
 
     struct Edge : public Base {
@@ -155,11 +154,9 @@ namespace Protein_Morph {
             bool isSurfaceVertex(int ix) const;
             int getEdgeIndex(int vertexId1, int vertexId2) const;
             int getClosestVertexIndex(Vec3F pos);
-            void addEdge(int vertexId1, int vertexId2, string tag = "");
-            void addQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4,
-                         string newEdgeTag = "", string faceTag ="");
-            void addTriangle(Vec3U vertexId,
-                             string newEdgeTag = "", string faceTag = "");
+            void addEdge(int vertexId1, int vertexId2);
+            void addQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4);
+            void addTriangle(Vec3U vertexId);
             void mergeMesh(const NonManifoldMesh & srcMesh);
             vector<TKey> getPath(TKey edge0Ix, TKey edge1Ix);
             vector<TKey> getNeighboringVertexIndices(TKey vertexIx);
