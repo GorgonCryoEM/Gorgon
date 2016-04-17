@@ -30,7 +30,6 @@ namespace Visualization {
         int GetSkeletonSSECount();
         int GetSequenceSSECount();
 
-        void PrunePathMesh(NonManifoldMesh * mesh, vector<TKey> pathVertices);
         void GetPathSpace(int helix1Ix, bool helix1Start, int helix2Ix, bool helix2Start);
         int GetPathVertexCount();
         Vec3F GetPathVertex(int index);
@@ -158,15 +157,6 @@ namespace Visualization {
 
     int SSEEngine::GetSequenceSSECount() {
         return sequence->pdbStructures.size();
-    }
-
-    void SSEEngine::PrunePathMesh(NonManifoldMesh * mesh, vector<TKey> pathVertices) {
-        for(unsigned int i = 0; i < mesh->vertices.size(); i++) {
-            mesh->vertices[i].tag = true;
-        }
-        for(unsigned int i = 0; i < pathVertices.size(); i++) {
-            mesh->vertices[pathVertices[i]].tag = "false";
-        }
     }
 
     void SSEEngine::GetPathSpace(int helix1Ix, bool helix1Start, int helix2Ix, bool helix2Start) {
