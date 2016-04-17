@@ -30,13 +30,6 @@ namespace Visualization {
         int GetSkeletonSSECount();
         int GetSequenceSSECount();
 
-        int GetPathVertexCount();
-        Vec3F GetPathVertex(int index);
-        int GetPathEdgeCount();
-        int GetEdgeVertexIndex(int index, int side);
-        void ClearPathSpace();
-        void ClearPathFinder();
-
     private:
         vector<SSEResult> correspondence;
 
@@ -156,33 +149,6 @@ namespace Visualization {
 
     int SSEEngine::GetSequenceSSECount() {
         return sequence->pdbStructures.size();
-    }
-
-    void SSEEngine::ClearPathSpace() {
-        delete singlePathMesh;
-        singlePathMesh = NULL;
-    }
-
-    void SSEEngine::ClearPathFinder() {
-        helixStartPoints.clear();
-        helixEndPoints.clear();
-        delete pathMesh;
-    }
-
-    int SSEEngine::GetPathVertexCount() {
-        return singlePathMesh->vertices.size();
-    }
-
-    Vec3F SSEEngine::GetPathVertex(int index) {
-        return singlePathMesh->vertices[index];
-    }
-
-    int SSEEngine::GetPathEdgeCount() {
-        return singlePathMesh->edges.size();
-    }
-
-    int SSEEngine::GetEdgeVertexIndex(int index, int side) {
-        return singlePathMesh->edges[index].vertexIds[side];
     }
 }
 
