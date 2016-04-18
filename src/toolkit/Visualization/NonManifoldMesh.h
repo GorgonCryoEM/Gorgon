@@ -62,8 +62,15 @@ namespace Protein_Morph {
     }
 
     struct Edge {
-        TKey vertexIds[2];
+        vector<TKey> vertexIds;
         vector<TKey> faceIds;
+
+        Edge() : vertexIds(2) {}
+
+        Edge(TKey v1, TKey v2) : vertexIds(2) {
+            vertexIds[0] = v1;
+            vertexIds[1] = v2;
+        }
     };
 
     inline ostream& operator<<(ostream& out, const Edge& obj){
