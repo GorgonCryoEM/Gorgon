@@ -76,7 +76,7 @@ namespace Protein_Morph {
                   ofstream fout3("edges.txt");
                   ofstream fout4("non-manifold-mesh.txt");
 
-                  map<unsigned int, TVertex> mapVertices;
+                  map<unsigned int, Vertex> mapVertices;
                   for(unsigned int i=0; i<vertices.size(); ++i)
                       mapVertices[i] = vertices[i];
 
@@ -227,7 +227,7 @@ namespace Protein_Morph {
                     vertexLocations[index] = -1;
                     int value = (int)round(src(index));
                     if(value > 0) {
-                        TVertex tempVertex(Vec3F(x, y, z));
+                        Vertex tempVertex(Vec3F(x, y, z));
                         vertexLocations[index] = addVertex(tempVertex);
                     }
                 }
@@ -293,7 +293,7 @@ namespace Protein_Morph {
         return isPresent;
     }
 
-    int NonManifoldMesh::addVertex(TVertex vertex) {
+    int NonManifoldMesh::addVertex(Vertex vertex) {
         TKey id = vertices.size();
         vertices.push_back(vertex);
 
@@ -301,7 +301,7 @@ namespace Protein_Morph {
     }
 
     int NonManifoldMesh::addVertex(Vec3F location) {
-        TVertex v(location);
+        Vertex v(location);
 
         return addVertex(v);
     }
@@ -443,8 +443,8 @@ namespace Protein_Morph {
         Volume vol(maxPosInt[0] - minPosInt[0]+1, maxPosInt[1] - minPosInt[1]+1, maxPosInt[2] - minPosInt[2]+1);
 
         for(unsigned int i = 0;  i < edges.size(); i++) {
-            TVertex v1 = vertices[edges[i].vertexIds[0]];
-            TVertex v2 = vertices[edges[i].vertexIds[1]];
+            Vertex v1 = vertices[edges[i].vertexIds[0]];
+            Vertex v2 = vertices[edges[i].vertexIds[1]];
             vector<Vec3I> positions = Rasterizer::ScanConvertLineC8(v1.XInt(), v1.YInt(), v1.ZInt(), v2.XInt(), v2.YInt(), v2.ZInt());
             for(unsigned int j = 0; j < positions.size(); j++) {
                 vol(positions[j] - minPosInt) = 1.0;
@@ -593,9 +593,9 @@ namespace Protein_Morph {
             printf("ERROR: Sampling a polygon NOT a triangle!\n");
             return points;
         } else {
-            TVertex p = vertices[face.vertexIds[0]];
-            TVertex q = vertices[face.vertexIds[1]];
-            TVertex r = vertices[face.vertexIds[2]];
+            Vertex p = vertices[face.vertexIds[0]];
+            Vertex q = vertices[face.vertexIds[1]];
+            Vertex r = vertices[face.vertexIds[2]];
             Vec3F v1 = q - p;
             Vec3F v2 = r - p;
             double v1Length = v1.length();

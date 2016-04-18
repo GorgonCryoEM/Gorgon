@@ -93,32 +93,7 @@ namespace Protein_Morph {
 //                      <<"\033[0m";
     }
 
-    struct TVertex : public Vertex {
-        public:
-        TVertex() : Vertex() {}
-        TVertex(Vec3F pos) : Vertex(pos) {}
-
-        TKey sizeEdge() const {
-            return sizeFaceHashes();
-        }
-
-        TKey edge(int i) const {
-            return Vertex::edge(i);
-        }
-
-        friend ostream& operator<<(ostream& out, const TVertex& obj);
-    };
-
-    inline ostream& operator<<(ostream& out, const TVertex& obj){
-            return out//<<"\033[34m"
-                    <<Vec3F(obj)
-                    <<"\tedgeIds.size(): "<<obj.sizeFaceHashes()
-                    <<endl<<obj.getFaceHashes()
-                    <<endl;
-    //                      <<"\033[0m";
-    }
-
-    typedef vector<TVertex > TV;
+    typedef vector<Vertex > TV;
     typedef vector<Edge >   TE;
     typedef vector<Face >   TF;
 
@@ -133,7 +108,7 @@ namespace Protein_Morph {
             int addMarchingVertex(Vec3F location, int hashKey);
             TKey addMarchingFace(Vec3U vertexHash);
 
-            int addVertex(TVertex vertex);
+            int addVertex(Vertex vertex);
             int addVertex(Vec3F location);
             int addFace(Face face);
 
