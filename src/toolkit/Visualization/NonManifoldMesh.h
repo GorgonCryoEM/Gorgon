@@ -170,7 +170,6 @@ namespace Protein_Morph {
             int addMarchingVertex(Vec3F location, int hashKey);
             TKey addMarchingFace(Vec3U vertexHash);
 
-            int addVertex(Vertex vertex);
             int addVertex(Vec3F location);
             int addFace(Face face);
             int addEdge(Edge edge);

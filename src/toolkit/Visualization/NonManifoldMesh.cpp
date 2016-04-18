@@ -282,17 +282,13 @@ namespace Protein_Morph {
         glFlush();
     }
 
-    int NonManifoldMesh::addVertex(Vertex vertex) {
+    int NonManifoldMesh::addVertex(Vec3F location) {
+        Vertex vertex(location);
+
         TKey id = vertices.size();
         vertices.push_back(vertex);
 
         return id;
-    }
-
-    int NonManifoldMesh::addVertex(Vec3F location) {
-        Vertex v(location);
-
-        return addVertex(v);
     }
 
     int NonManifoldMesh::addEdge(Edge edge) {
