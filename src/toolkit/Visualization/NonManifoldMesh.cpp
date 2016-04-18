@@ -231,7 +231,7 @@ namespace Protein_Morph {
             glEnable(GL_LINE_SMOOTH);
             glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
             for(unsigned int i = 0; i < edges.size(); i++) {
-                if(edges[i].faceIds.size() == 0) {
+                if(edges[i].size() == 0) {
                     if(annotateLines) {
                         glLoadName(i);
                     }
