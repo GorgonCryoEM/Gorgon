@@ -346,6 +346,9 @@ namespace Protein_Morph {
         int vertexId2 = vertexId[1];
         int vertexId3 = vertexId[2];
 
+//        add to edges: edge
+//        add to vertices: edge IDs
+//        add to edges: vertex IDs
         if(!isEdgePresent(vertexId1, vertexId2))
             addEdge(vertexId1, vertexId2);
 
@@ -355,6 +358,7 @@ namespace Protein_Morph {
         if(!isEdgePresent(vertexId3, vertexId1))
             addEdge(vertexId3, vertexId1);
 
+//        add to faces: vertex Ids
         Face face;
         face.vertexIds.clear();
         face.vertexIds.push_back(vertexId1);
@@ -364,6 +368,7 @@ namespace Protein_Morph {
 
         int vertexIds[4] = {vertexId1, vertexId2, vertexId3, vertexId1};
 
+//        add to faces: edge Ids
         for(int i = 0; i < 3; i++) {
             int vertexIndex = vertexIds[i];
             for (int j = 0; j < (int)vertices[vertexIndex].sizeEdge(); j++) {
@@ -376,6 +381,7 @@ namespace Protein_Morph {
             }
         }
 
+//        add to edges: face IDs
         int faceId = addFace(face);
         for(int i = 0; i < (int)face.edgeIds.size(); i++)
             edges[face.edgeIds[i]].faceIds.push_back(faceId);
