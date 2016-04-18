@@ -116,7 +116,7 @@ namespace Protein_Morph {
             int addVertex(Vec3F location);
             int addFace(Face face);
             int addEdge(Edge edge);
-            void addEdge(int vertexId1, int vertexId2);
+            Edge addEdge(int vertexId1, int vertexId2);
             int getEdgeIndex(int vertexId1, int vertexId2) const;
 
             Vec3F getVertexNormal(int vertexId);
