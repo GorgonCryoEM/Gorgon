@@ -73,6 +73,19 @@ namespace Protein_Morph {
         }
     };
 
+    inline bool operator<(const Edge &l, const Edge &r) {
+        vector<TKey> ll = l.vertexIds;
+        vector<TKey> rr = r.vertexIds;
+
+        if(ll.size() != 2 && rr.size() != 2)
+            throw "Edges have inconsistent size!";
+
+        sort(ll.begin(), ll.end());
+        sort(rr.begin(), rr.end());
+
+        return ll[0]<rr[0] && ll[1]<rr[1];
+    }
+
     inline ostream& operator<<(ostream& out, const Edge& obj){
         set<unsigned int> faces(obj.faceIds.begin(), obj.faceIds.end());
         return out//<<"\033[34m"
