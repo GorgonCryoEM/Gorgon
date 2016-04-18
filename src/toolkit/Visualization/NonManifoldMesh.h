@@ -61,6 +61,8 @@ namespace Protein_Morph {
             return out;
     }
 
+    typedef set<TKey> CKey;
+
     struct Edge {
         vector<TKey> vertexIds;
         vector<TKey> faceIds;
@@ -70,6 +72,22 @@ namespace Protein_Morph {
         Edge(TKey v1, TKey v2) : vertexIds(2) {
             vertexIds[0] = v1;
             vertexIds[1] = v2;
+        }
+
+        vector<TKey> getVertices() const {
+            return vertexIds;
+        }
+
+        CKey getVerticesSet() const {
+            return CKey(vertexIds.begin(), vertexIds.end());
+        }
+
+        int size() const {
+            return faceIds.size();
+        }
+
+        CKey getFaces() const {
+            return CKey(faceIds.begin(), faceIds.end());
         }
     };
 
@@ -96,9 +114,29 @@ namespace Protein_Morph {
 //                  <<"\033[0m";
     }
 
+    typedef set<Edge> CEdge;
     struct Face {
         vector<TKey> edgeIds;
         vector<TKey> vertexIds;
+        CEdge edges;
+
+        void insert(Edge edge) {
+            edges.insert(edge);
+        }
+
+        CKey getVertices() const {
+            CKey result;
+            for(CEdge::const_iterator it=edges.begin(); it!=edges.end(); ++it) {
+                CKey vertices = it->getVerticesSet();
+                result.insert(vertices.begin(), vertices.end());
+            }
+
+            return result;
+        }
+
+        int size() const {
+            return edgeIds.size();
+        }
     };
 
     inline ostream& operator<<(ostream& out, const Face& obj){
