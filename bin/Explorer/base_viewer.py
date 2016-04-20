@@ -132,16 +132,17 @@ class BaseViewer(BaseDockWidget):
         glEndList()
 
     def drawGL(self):
-        ss=0
-        if(self.color.alpha() < 255):
-            glDepthFunc(GL_LESS)
-            glColorMask(False, False, False, False)
-            self.renderer.draw(ss, False)
-            glDepthFunc(GL_LEQUAL)
-            glColorMask(True, True, True, True)
-            self.renderer.draw(ss, self.selectEnabled or self.mouseMoveEnabled)
-        else:
-            self.renderer.draw(ss, self.selectEnabled or self.mouseMoveEnabled)
+        ss=[0,1,2]
+        for s in ss:
+            if(self.color.alpha() < 255):
+                glDepthFunc(GL_LESS)
+                glColorMask(False, False, False, False)
+                self.renderer.draw(s, False)
+                glDepthFunc(GL_LEQUAL)
+                glColorMask(True, True, True, True)
+                self.renderer.draw(s, self.selectEnabled or self.mouseMoveEnabled)
+            else:
+                self.renderer.draw(s, self.selectEnabled or self.mouseMoveEnabled)
 
     def setMaterials(self):
         color = self.color
