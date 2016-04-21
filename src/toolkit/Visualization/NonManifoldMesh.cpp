@@ -43,6 +43,7 @@ namespace Protein_Morph {
                 glDisable(GL_LIGHTING);
             }
             for(unsigned int i = 0; i < faces.size(); i++) {
+                glColor4f(0.4, 0.7, 0.7, 0.6);
                 glBegin(GL_LINE_STRIP);
                 for(unsigned int j = 0; j < faces[i].vertexIds.size(); j++) {
                     int k = faces[i].vertexIds[j];
@@ -98,6 +99,7 @@ namespace Protein_Morph {
                 if(annotateSurfaces) {
                     glLoadName(i);
                 }
+                glColor4f(1.2, 0.2, 0.2, 0.6);
                 glBegin(GL_POLYGON);
                 for(unsigned int j = 0; j < faces[i].vertexIds.size(); j++) {
                     Vec3F normal;
