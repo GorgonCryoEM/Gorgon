@@ -34,5 +34,14 @@ namespace Core {
         return faceHashes[i];
     }
 
+    ostream& operator<<(ostream& out, const Vertex& obj) {
+        return out//<<"\033[34m"
+                <<Vec3F(obj)
+                <<"\tedgeIds.size(): "<<obj.sizeFaceHashes()
+                <<endl<<obj.getFaceHashes()
+                <<endl;
+//                      <<"\033[0m";
+    }
+
 }
 

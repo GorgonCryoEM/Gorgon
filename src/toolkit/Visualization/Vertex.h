@@ -17,6 +17,18 @@ namespace Core {
 
     typedef unsigned long long TKey;
 
+    template <class T>
+    ostream & operator<<(ostream & out, const vector<T> & obj) {
+            for(typename vector<T>::const_iterator it=obj.begin();
+                    it!=obj.end();
+                    ++it)
+
+                out<<"\t\t\t"<<*it
+                <<endl;
+
+            return out;
+    }
+
     class Vertex : public Vec3F {
         public:
             Vertex();
@@ -29,6 +41,8 @@ namespace Core {
 
         private:
             vector<TKey> faceHashes;
+
+            friend ostream& operator<<(ostream& out, const Vertex& obj);
     };
 
 
