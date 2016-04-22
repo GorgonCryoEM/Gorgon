@@ -56,6 +56,23 @@ namespace Protein_Morph {
                 glPushName(0);
                 glPushName(0);
             }
+//            #ifdef GORGON_DEBUG
+                  cout<<"\033[32m"<<endl;
+                  cout<<"DEBUG: Method: NonManifoldMesh::draw(bool, bool, bool, bool, bool, bool, bool, bool, bool, bool, int, bool)\033[0m"<<endl;
+                  cout<<"faces.size(): "<<faces.size()<<endl;
+                  cout<<"\033[0m";
+
+                  ofstream fout1("vertices.txt");
+                  ofstream fout2("faces.txt");
+                  ofstream fout3("edges.txt");
+                  ofstream fout4("non-manifold-mesh.txt");
+                  fout1<<vertices;
+                  fout2<<faces;
+                  fout3<<edges;
+                  fout4<<*this;
+
+//            #endif
+
             for(unsigned int i = 0; i < faces.size(); i++) {
                 if(annotateSurfaces) {
                     glLoadName(i);
