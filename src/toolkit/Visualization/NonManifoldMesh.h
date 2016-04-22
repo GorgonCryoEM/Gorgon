@@ -76,10 +76,11 @@ namespace Protein_Morph {
     };
 
     inline ostream& operator<<(ostream& out, const NonManifoldMeshEdge& obj){
+        set<unsigned int> faces(obj.faceIds.begin(), obj.faceIds.end());
         return out//<<"\033[34m"
                   <<"\tvertexIds: "<<obj.vertexIds[0]<<"\t"<<obj.vertexIds[1]<<endl
                   <<"faceIds.size(): "<<obj.faceIds.size()
-                  <<obj.faceIds
+                  <<faces
                   <<endl;
 //                  <<"\033[0m";
     }
@@ -91,11 +92,13 @@ namespace Protein_Morph {
     };
 
     inline ostream& operator<<(ostream& out, const NonManifoldMeshFace& obj){
+        set<unsigned int> vertices(obj.vertexIds.begin(), obj.vertexIds.end());
+        set<unsigned int> edges(obj.edgeIds.begin(), obj.edgeIds.end());
             return out//<<"\033[34m"
                       <<"\nedgeIds.size(): "<<obj.edgeIds.size()
-                      <<endl<<obj.edgeIds
+                      <<endl<<edges
                       <<"\n\nvertexIds.size(): "<<obj.vertexIds.size()
-                      <<endl<<obj.vertexIds
+                      <<endl<<vertices
                       <<endl<<endl;
 //                      <<"\033[0m";
     }
