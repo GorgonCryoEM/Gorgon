@@ -66,9 +66,22 @@ namespace Protein_Morph {
                   ofstream fout2("faces.txt");
                   ofstream fout3("edges.txt");
                   ofstream fout4("non-manifold-mesh.txt");
-                  fout1<<vertices;
-                  fout2<<faces;
-                  fout3<<edges;
+
+                  map<unsigned int, NonManifoldMeshVertex> mapVertices;
+                  for(unsigned int i=0; i<vertices.size(); ++i)
+                      mapVertices[i] = vertices[i];
+
+                  map<unsigned int, NonManifoldMeshEdge> mapEdges;
+                  for(unsigned int i=0; i<edges.size(); ++i)
+                      mapEdges[i] = edges[i];
+
+                  map<unsigned int, NonManifoldMeshFace> mapFaces;
+                  for(unsigned int i=0; i<faces.size(); ++i)
+                      mapFaces[i] = faces[i];
+
+                  fout1<<mapVertices;
+                  fout2<<mapFaces;
+                  fout3<<mapEdges;
                   fout4<<*this;
 
 //            #endif
