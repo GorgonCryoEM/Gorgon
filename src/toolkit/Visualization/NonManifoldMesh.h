@@ -76,10 +76,12 @@ namespace Protein_Morph {
     };
 
     inline ostream& operator<<(ostream& out, const NonManifoldMeshEdge& obj){
-        return out<<"\033[34m"
+        return out//<<"\033[34m"
+                  <<"\tvertexIds: "<<obj.vertexIds[0]<<"\t"<<obj.vertexIds[1]<<endl
                   <<"faceIds.size(): "<<obj.faceIds.size()
-                  <<endl
-                  <<"\033[0m";
+                  <<obj.faceIds
+                  <<endl;
+//                  <<"\033[0m";
     }
 
     struct NonManifoldMeshFace : public NonManifoldMeshBase {
@@ -89,11 +91,13 @@ namespace Protein_Morph {
     };
 
     inline ostream& operator<<(ostream& out, const NonManifoldMeshFace& obj){
-            return out<<"\033[34m"
-                      <<"edgeIds.size(): "<<obj.edgeIds.size()
-                      <<"vertexIds.size(): "<<obj.vertexIds.size()
-                      <<endl
-                      <<"\033[0m";
+            return out//<<"\033[34m"
+                      <<"\nedgeIds.size(): "<<obj.edgeIds.size()
+                      <<endl<<obj.edgeIds
+                      <<"\n\nvertexIds.size(): "<<obj.vertexIds.size()
+                      <<endl<<obj.vertexIds
+                      <<endl<<endl;
+//                      <<"\033[0m";
     }
 
     struct NonManifoldMeshVertex : public NonManifoldMeshBase {
@@ -103,10 +107,12 @@ namespace Protein_Morph {
     };
 
     inline ostream& operator<<(ostream& out, const NonManifoldMeshVertex& obj){
-            return out<<"\033[34m"
-                      <<"edgeIds.size(): "<<obj.edgeIds.size()
-                      <<endl
-                      <<"\033[0m";
+            return out//<<"\033[34m"
+                    <<obj.position
+                    <<"\tedgeIds.size(): "<<obj.edgeIds.size()
+                    <<endl<<obj.edgeIds
+                    <<endl;
+    //                      <<"\033[0m";
     }
 
     typedef vector<NonManifoldMeshVertex > TV;
@@ -181,12 +187,12 @@ namespace Protein_Morph {
         bool fromVolume;
 
         friend ostream& operator<<(ostream& out, const NonManifoldMesh& obj){
-            return out<<"\033[34m"
+            return out//<<"\033[34m"
                       <<"vertices.size(): "<<obj.vertices.size()
                       <<"\nedges.size(): "<<obj.edges.size()
                       <<"\nfaces.size(): "<<obj.faces.size()
-                      <<endl
-                      <<"\033[0m";
+                      <<endl;
+//                      <<"\033[0m";
         }
     };
 }
