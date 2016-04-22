@@ -10,6 +10,101 @@
 
 namespace Protein_Morph {
 
+    NonManifoldMesh::NonManifoldMesh()
+            : fromVolume(false)
+    {
+        setSpacing(1, 1, 1);
+        setOrigin(0,0,0);
+    }
+
+    NonManifoldMesh::NonManifoldMesh(const Volume & src) {
+    #ifdef GORGON_DEBUG
+    cout<<"\033[33mDEBUG: File:   NonManifoldMesh.h"<<endl;
+    cout<<"DEBUG: Method: NonManifoldMesh::NonManifoldMesh\033[0m"<<endl;
+    cout<<"DEBUG: Args: Volume*\033[0m"<<endl;
+    cout<<"src.getSize(): "<<src.getSize()<<endl;
+    #endif
+
+        int vertexLocations[src.getSize()];
+
+        fromVolume = true;
+        size = src.getSizeObj();
+        setOrigin(src.getOriginX(), src.getOriginY(), src.getOriginZ());
+        setSpacing(src.getSpacingX(), src.getSpacingY(), src.getSpacingZ());
+
+    // Adding vertices
+        for(int x = 0; x < src.getSizeX(); x++) {
+            for(int y = 0; y < src.getSizeY(); y++) {
+                for(int z = 0; z < src.getSizeZ(); z++) {
+                    int index = src.getIndex(x, y, z);
+                    vertexLocations[index] = -1;
+                    int value = (int)round(src(index));
+                    if(value > 0) {
+                        Vertex tempVertex(Vec3F(x, y, z));
+                        vertexLocations[index] = addVertex(tempVertex);
+                    }
+                }
+            }
+        }
+
+        //Adding edges
+        int edgeNeighbors[3][3] = {{1,0,0}, {0,1,0}, {0,0,1}};
+        for(int x = 0; x < src.getSizeX()-1; x++) {
+            for(int y = 0; y < src.getSizeY()-1; y++) {
+                for(int z = 0; z < src.getSizeZ()-1; z++) {
+                    int index = src.getIndex(x, y, z);
+                    for(int i = 0; i < 3; i++) {
+                        int index2 = src.getIndex(x+edgeNeighbors[i][0], y+edgeNeighbors[i][1], z+edgeNeighbors[i][2]);
+                        if((vertexLocations[index] >= 0) && (vertexLocations[index2] >= 0)) {
+                            addEdge(vertexLocations[index], vertexLocations[index2]);
+                        }
+                    }
+                }
+            }
+        }
+
+        //Adding Faces
+        int faceNeighbors[3][3][3] = {  {{1,0,0}, {1,0,1}, {0,0,1}},
+                                        {{1,0,0}, {1,1,0}, {0,1,0}},
+                                        {{0,1,0}, {0,1,1}, {0,0,1}}};
+        int indices[4];
+        for(int x = 0; x < src.getSizeX()-1; x++) {
+            for(int y = 0; y < src.getSizeY()-1; y++) {
+                for(int z = 0; z < src.getSizeZ()-1; z++) {
+                    int index = src.getIndex(x, y, z);
+                    if(vertexLocations[index] >= 0) {
+                        for(int i = 0; i < 3; i++) {
+                            bool faceFound = true;
+                            indices[0] = vertexLocations[index];
+                            for(int j = 0; j < 3; j++) {
+                                int index2 = src.getIndex(x+faceNeighbors[i][j][0], y+faceNeighbors[i][j][1], z+faceNeighbors[i][j][2]);
+                                indices[j+1] = vertexLocations[index2];
+                                faceFound = faceFound && vertexLocations[index2] >= 0;
+                            }
+                            if(faceFound) {
+                                addQuad(indices[0], indices[1], indices[2], indices[3]);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+    #ifdef GORGON_DEBUG
+    cout<<"\033[33mDEBUG: END"<<endl;
+    cout<<"DEBUG: Method: NonManifoldMesh::NonManifoldMesh\n\033[0m"<<endl;
+    #endif
+
+    }
+
+    void NonManifoldMesh::clear() {
+        Mesh::clear();
+        vertices.clear();
+        edges.clear();
+        faces.clear();
+        vertexHashMap.clear();
+    }
+
     int NonManifoldMesh::addMarchingVertex(Vec3F location, int hashKey){
         HashMapType::const_iterator pos = vertexHashMap.find(hashKey);
         int vertexId;
@@ -187,102 +282,6 @@ namespace Protein_Morph {
         glFlush();
     }
 
-
-    void NonManifoldMesh::clear() {
-        vertices.clear();
-        edges.clear();
-        faces.clear();
-
-        vertexHashMap.clear();
-    }
-
-
-    NonManifoldMesh::NonManifoldMesh()
-            : fromVolume(false)
-    {
-        setSpacing(1, 1, 1);
-        setOrigin(0,0,0);
-    }
-
-    NonManifoldMesh::NonManifoldMesh(const Volume & src) {
-    #ifdef GORGON_DEBUG
-    cout<<"\033[33mDEBUG: File:   NonManifoldMesh.h"<<endl;
-    cout<<"DEBUG: Method: NonManifoldMesh::NonManifoldMesh\033[0m"<<endl;
-    cout<<"DEBUG: Args: Volume*\033[0m"<<endl;
-    cout<<"src.getSize(): "<<src.getSize()<<endl;
-    #endif
-
-        int vertexLocations[src.getSize()];
-
-        fromVolume = true;
-        size = src.getSizeObj();
-        setOrigin(src.getOriginX(), src.getOriginY(), src.getOriginZ());
-        setSpacing(src.getSpacingX(), src.getSpacingY(), src.getSpacingZ());
-
-    // Adding vertices
-        for(int x = 0; x < src.getSizeX(); x++) {
-            for(int y = 0; y < src.getSizeY(); y++) {
-                for(int z = 0; z < src.getSizeZ(); z++) {
-                    int index = src.getIndex(x, y, z);
-                    vertexLocations[index] = -1;
-                    int value = (int)round(src(index));
-                    if(value > 0) {
-                        Vertex tempVertex(Vec3F(x, y, z));
-                        vertexLocations[index] = addVertex(tempVertex);
-                    }
-                }
-            }
-        }
-
-        //Adding edges
-        int edgeNeighbors[3][3] = {{1,0,0}, {0,1,0}, {0,0,1}};
-        for(int x = 0; x < src.getSizeX()-1; x++) {
-            for(int y = 0; y < src.getSizeY()-1; y++) {
-                for(int z = 0; z < src.getSizeZ()-1; z++) {
-                    int index = src.getIndex(x, y, z);
-                    for(int i = 0; i < 3; i++) {
-                        int index2 = src.getIndex(x+edgeNeighbors[i][0], y+edgeNeighbors[i][1], z+edgeNeighbors[i][2]);
-                        if((vertexLocations[index] >= 0) && (vertexLocations[index2] >= 0)) {
-                            addEdge(vertexLocations[index], vertexLocations[index2]);
-                        }
-                    }
-                }
-            }
-        }
-
-        //Adding Faces
-        int faceNeighbors[3][3][3] = {  {{1,0,0}, {1,0,1}, {0,0,1}},
-                                        {{1,0,0}, {1,1,0}, {0,1,0}},
-                                        {{0,1,0}, {0,1,1}, {0,0,1}}};
-        int indices[4];
-        for(int x = 0; x < src.getSizeX()-1; x++) {
-            for(int y = 0; y < src.getSizeY()-1; y++) {
-                for(int z = 0; z < src.getSizeZ()-1; z++) {
-                    int index = src.getIndex(x, y, z);
-                    if(vertexLocations[index] >= 0) {
-                        for(int i = 0; i < 3; i++) {
-                            bool faceFound = true;
-                            indices[0] = vertexLocations[index];
-                            for(int j = 0; j < 3; j++) {
-                                int index2 = src.getIndex(x+faceNeighbors[i][j][0], y+faceNeighbors[i][j][1], z+faceNeighbors[i][j][2]);
-                                indices[j+1] = vertexLocations[index2];
-                                faceFound = faceFound && vertexLocations[index2] >= 0;
-                            }
-                            if(faceFound) {
-                                addQuad(indices[0], indices[1], indices[2], indices[3]);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-    #ifdef GORGON_DEBUG
-    cout<<"\033[33mDEBUG: END"<<endl;
-    cout<<"DEBUG: Method: NonManifoldMesh::NonManifoldMesh\n\033[0m"<<endl;
-    #endif
-
-    }
 
     bool NonManifoldMesh::isEdgePresent(int vertexId1, int vertexId2) {
         bool isPresent = false;
