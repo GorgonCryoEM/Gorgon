@@ -282,16 +282,6 @@ namespace Protein_Morph {
         glFlush();
     }
 
-
-    bool NonManifoldMesh::isEdgePresent(int vertexId1, int vertexId2) {
-        bool isPresent = false;
-        for(unsigned int i = 0; (i < vertices[vertexId1].sizeEdge()) && !isPresent; i++) {
-            isPresent = ((int)edges[vertices[vertexId1].edge(i)].vertexIds[0] == vertexId2) || ((int)edges[vertices[vertexId1].edge(i)].vertexIds[1] == vertexId2);
-        }
-
-        return isPresent;
-    }
-
     int NonManifoldMesh::addVertex(Vertex vertex) {
         TKey id = vertices.size();
         vertices.push_back(vertex);
@@ -320,6 +310,15 @@ namespace Protein_Morph {
         int edgeId = addEdge(edge);
         vertices[vertexId1].addFaceHash(edgeId);
         vertices[vertexId2].addFaceHash(edgeId);
+    }
+
+    bool NonManifoldMesh::isEdgePresent(int vertexId1, int vertexId2) {
+        bool isPresent = false;
+        for(unsigned int i = 0; (i < vertices[vertexId1].sizeEdge()) && !isPresent; i++) {
+            isPresent = ((int)edges[vertices[vertexId1].edge(i)].vertexIds[0] == vertexId2) || ((int)edges[vertices[vertexId1].edge(i)].vertexIds[1] == vertexId2);
+        }
+
+        return isPresent;
     }
 
     int NonManifoldMesh::getEdgeIndex(int vertexId1, int vertexId2) const {
