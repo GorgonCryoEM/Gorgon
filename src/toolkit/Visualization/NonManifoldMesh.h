@@ -8,6 +8,7 @@
 #include <GorgonGL.h>
 #include <Visualization/Rasterizer.h>
 #include <map>
+#include <set>
 #include <queue>
 #include <fstream>
 #ifdef _WIN32
@@ -25,6 +26,44 @@ using namespace Core;
 
 
 namespace Protein_Morph {
+
+    template <class T, class U>
+    inline ostream & operator<<(ostream & out, const map<T, U> & obj) {
+            for(typename map<T, U>::const_iterator it=obj.begin();
+                    it!=obj.end();
+                    ++it)
+
+                out<<"\t"<<it->first
+                <<"\t"<<it->second
+                <<endl;
+
+            return out;
+    }
+
+    template <class T>
+    inline ostream & operator<<(ostream & out, const set<T> & obj) {
+            for(typename set<T>::const_iterator it=obj.begin();
+                    it!=obj.end();
+                    ++it)
+
+                out<<"\t"<<*it
+                <<endl;
+
+            return out;
+    }
+
+    template <class T>
+    inline ostream & operator<<(ostream & out, const vector<T> & obj) {
+            for(typename vector<T>::const_iterator it=obj.begin();
+                    it!=obj.end();
+                    ++it)
+
+                out<<"\t\t\t"<<*it
+                <<endl;
+
+            return out;
+    }
+
     struct NonManifoldMeshBase {
         unsigned int id;
         bool valid;
