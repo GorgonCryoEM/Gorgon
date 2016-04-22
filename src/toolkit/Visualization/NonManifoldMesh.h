@@ -103,35 +103,35 @@ namespace Protein_Morph {
         public:
             NonManifoldMesh();
             NonManifoldMesh(const Volume & src);
-
             void clear();
+            void draw(bool drawSurfaceBorders, bool drawSurfaces, bool drawLines, bool drawPoints,
+                      bool annotateSurfaces, bool annotateLines, bool annotatePoints,
+                      bool disableSurfaceLighting, bool disableCurveLighting, bool disablePointLighting,
+                      int lineThickness, bool smoothSurfaceNormals);
+
             int addMarchingVertex(Vec3F location, int hashKey);
             TKey addMarchingFace(Vec3U vertexHash);
 
             int addVertex(Vertex vertex);
             int addVertex(Vec3F location);
             int addFace(Face face);
-
             int addEdge(Edge edge);
+            void addEdge(int vertexId1, int vertexId2);
+            int getEdgeIndex(int vertexId1, int vertexId2) const;
 
             Vec3F getVertexNormal(int vertexId);
             Vec3F getFaceNormal(int faceId);
-            void draw(bool drawSurfaceBorders, bool drawSurfaces, bool drawLines, bool drawPoints,
-                      bool annotateSurfaces, bool annotateLines, bool annotatePoints,
-                      bool disableSurfaceLighting, bool disableCurveLighting, bool disablePointLighting,
-                      int lineThickness, bool smoothSurfaceNormals);
 
+            void addTriangle(Vec3U vertexId);
+            void addQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4);
+            void mergeMesh(const NonManifoldMesh & srcMesh);
             bool isEdgePresent(int vertexId1, int vertexId2);
             bool isSurfaceVertex(int ix) const;
-            int getEdgeIndex(int vertexId1, int vertexId2) const;
             int getClosestVertexIndex(Vec3F pos);
-            void addEdge(int vertexId1, int vertexId2);
-            void addQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4);
-            void addTriangle(Vec3U vertexId);
-            void mergeMesh(const NonManifoldMesh & srcMesh);
             vector<TKey> getPath(TKey edge0Ix, TKey edge1Ix);
             vector<TKey> getNeighboringVertexIndices(TKey vertexIx);
             vector<Vec3F> sampleTriangle(int faceId, double discretizationStep);
+
             Volume toVolume();
             static NonManifoldMesh loadOffFile(string fileName);
 
