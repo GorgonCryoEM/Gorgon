@@ -411,49 +411,6 @@ namespace Protein_Morph {
         }
     }
 
-    Volume NonManifoldMesh::toVolume() {
-        double minPos[3] = {MAX_DOUBLE, MAX_DOUBLE, MAX_DOUBLE};
-        double maxPos[3] = {MIN_DOUBLE, MIN_DOUBLE, MIN_DOUBLE};
-        if(fromVolume) {
-            minPos[0] = 0;
-            minPos[1] = 0;
-            minPos[2] = 0;
-            maxPos[0] = getSizeX()-1;
-            maxPos[1] = getSizeY()-1;
-            maxPos[2] = getSizeZ()-1;
-        }
-
-        for(unsigned int i = 0; i < vertices.size(); i++) {
-            for(unsigned int j = 0; j < 3; j++) {
-                minPos[j] = min(minPos[j], (double)vertices[i][j]);
-                maxPos[j] = max(maxPos[j], (double)vertices[i][j]);
-            }
-        }
-
-        Vec3I minPosInt;
-        Vec3I maxPosInt;
-
-        for(unsigned int j = 0; j < 3; j++) {
-            minPosInt[j] = (int)floor(minPos[j]);
-            maxPosInt[j] = (int)ceil(maxPos[j]);
-        }
-
-        Volume vol(maxPosInt[0] - minPosInt[0]+1, maxPosInt[1] - minPosInt[1]+1, maxPosInt[2] - minPosInt[2]+1);
-
-        for(unsigned int i = 0;  i < edges.size(); i++) {
-            Vertex v1 = vertices[edges[i].vertexIds[0]];
-            Vertex v2 = vertices[edges[i].vertexIds[1]];
-            vector<Vec3I> positions = Rasterizer::ScanConvertLineC8(v1.XInt(), v1.YInt(), v1.ZInt(), v2.XInt(), v2.YInt(), v2.ZInt());
-            for(unsigned int j = 0; j < positions.size(); j++) {
-                vol(positions[j] - minPosInt) = 1.0;
-            }
-        }
-
-        vol.setOrigin(origin);
-        vol.setSpacing(spacing);
-        return vol;
-    }
-
     Vec3F NonManifoldMesh::getVertexNormal(int vertexId) {
         Vec3F normal(0,0,0);
         for(unsigned int i = 0; i < vertices[vertexId].sizeEdge(); i++) {
@@ -476,72 +433,6 @@ namespace Protein_Morph {
             normal.normalize();
         }
         return normal;
-    }
-
-    NonManifoldMesh NonManifoldMesh::loadOffFile(string fileName) {
-        ifstream inFile(fileName.c_str());
-        string strTemp;
-        int nVertices, nEdges, nFaces;
-
-        inFile>>strTemp;
-        //printf("[%s]\n", strTemp);
-        inFile>>nVertices>>nFaces>>nEdges;
-        //printf("[%d] [%d] [%d]\n", nVertices, nFaces, nEdges);
-
-        NonManifoldMesh mesh;
-        for(int i=0, lVertices=0; i < nVertices; i++, lVertices++) {
-            float xPos, yPos, zPos;
-            inFile>>xPos>>yPos>>zPos;
-            //printf("[%f] [%f] [%f]\n", xPos, yPos, zPos);
-            mesh.addVertex(Vec3F(xPos, yPos, zPos));
-            inFile>>strTemp;
-        }
-
-
-        int faceNodes[100], nFaceNodes;
-        int lFaces = 0;
-        for(int i=0; i < nFaces; i++) {
-            inFile>>nFaceNodes;
-            //printf("[%d]\n", nFaceNodes);
-            switch(nFaceNodes) {
-                case 1:
-                case 2:
-                    printf("Cannot load polygon... unsupported polygon size: %d\n", nFaceNodes);
-                    break;
-                case 4:
-                    lFaces++;
-                    for(int i = 0; i < nFaceNodes; i++) {
-                        //                        fscanf(inFile, "");
-                        inFile>>faceNodes[i];
-                    }
-
-                    if((faceNodes[0] != faceNodes[1]) && (faceNodes[0] != faceNodes[2]) && (faceNodes[0] != faceNodes[3])
-                            && (faceNodes[1] != faceNodes[2]) && (faceNodes[1] != faceNodes[3]) && (faceNodes[2] != faceNodes[3])) {
-                        mesh.addQuad(faceNodes[0], faceNodes[1], faceNodes[2], faceNodes[3]);
-                    } else {
-                        mesh.addEdge(faceNodes[0], faceNodes[2]);
-                    }
-                    break;
-                default :
-                    lFaces++;
-                    for(int i = 0; i < nFaceNodes; i++) {
-                        //                        fscanf(inFile, "");
-                        inFile>>faceNodes[i];
-                    }
-                    for(int i = 2; i < nFaceNodes; i++) {
-                        Vec3U temp(faceNodes[0], faceNodes[i-1], faceNodes[i]);
-                        mesh.addTriangle(temp);
-                    }
-                    break;
-
-            }
-            inFile>>strTemp;
-        }
-
-        //printf(" Vertices %d of %d loaded.  Faces %d of %d loaded", lVertices, nVertices, lFaces, nFaces);
-
-        inFile.close();
-        return mesh;
     }
 
     vector<TKey> NonManifoldMesh::getPath(TKey edge0Ix, TKey edge1Ix) {
@@ -650,6 +541,115 @@ namespace Protein_Morph {
             }
         }
         return neighbors;
+    }
+
+    Volume NonManifoldMesh::toVolume() {
+        double minPos[3] = {MAX_DOUBLE, MAX_DOUBLE, MAX_DOUBLE};
+        double maxPos[3] = {MIN_DOUBLE, MIN_DOUBLE, MIN_DOUBLE};
+        if(fromVolume) {
+            minPos[0] = 0;
+            minPos[1] = 0;
+            minPos[2] = 0;
+            maxPos[0] = getSizeX()-1;
+            maxPos[1] = getSizeY()-1;
+            maxPos[2] = getSizeZ()-1;
+        }
+
+        for(unsigned int i = 0; i < vertices.size(); i++) {
+            for(unsigned int j = 0; j < 3; j++) {
+                minPos[j] = min(minPos[j], (double)vertices[i][j]);
+                maxPos[j] = max(maxPos[j], (double)vertices[i][j]);
+            }
+        }
+
+        Vec3I minPosInt;
+        Vec3I maxPosInt;
+
+        for(unsigned int j = 0; j < 3; j++) {
+            minPosInt[j] = (int)floor(minPos[j]);
+            maxPosInt[j] = (int)ceil(maxPos[j]);
+        }
+
+        Volume vol(maxPosInt[0] - minPosInt[0]+1, maxPosInt[1] - minPosInt[1]+1, maxPosInt[2] - minPosInt[2]+1);
+
+        for(unsigned int i = 0;  i < edges.size(); i++) {
+            Vertex v1 = vertices[edges[i].vertexIds[0]];
+            Vertex v2 = vertices[edges[i].vertexIds[1]];
+            vector<Vec3I> positions = Rasterizer::ScanConvertLineC8(v1.XInt(), v1.YInt(), v1.ZInt(), v2.XInt(), v2.YInt(), v2.ZInt());
+            for(unsigned int j = 0; j < positions.size(); j++) {
+                vol(positions[j] - minPosInt) = 1.0;
+            }
+        }
+
+        vol.setOrigin(origin);
+        vol.setSpacing(spacing);
+        return vol;
+    }
+
+    NonManifoldMesh NonManifoldMesh::loadOffFile(string fileName) {
+        ifstream inFile(fileName.c_str());
+        string strTemp;
+        int nVertices, nEdges, nFaces;
+
+        inFile>>strTemp;
+        //printf("[%s]\n", strTemp);
+        inFile>>nVertices>>nFaces>>nEdges;
+        //printf("[%d] [%d] [%d]\n", nVertices, nFaces, nEdges);
+
+        NonManifoldMesh mesh;
+        for(int i=0, lVertices=0; i < nVertices; i++, lVertices++) {
+            float xPos, yPos, zPos;
+            inFile>>xPos>>yPos>>zPos;
+            //printf("[%f] [%f] [%f]\n", xPos, yPos, zPos);
+            mesh.addVertex(Vec3F(xPos, yPos, zPos));
+            inFile>>strTemp;
+        }
+
+
+        int faceNodes[100], nFaceNodes;
+        int lFaces = 0;
+        for(int i=0; i < nFaces; i++) {
+            inFile>>nFaceNodes;
+            //printf("[%d]\n", nFaceNodes);
+            switch(nFaceNodes) {
+                case 1:
+                case 2:
+                    printf("Cannot load polygon... unsupported polygon size: %d\n", nFaceNodes);
+                    break;
+                case 4:
+                    lFaces++;
+                    for(int i = 0; i < nFaceNodes; i++) {
+                        //                        fscanf(inFile, "");
+                        inFile>>faceNodes[i];
+                    }
+
+                    if((faceNodes[0] != faceNodes[1]) && (faceNodes[0] != faceNodes[2]) && (faceNodes[0] != faceNodes[3])
+                            && (faceNodes[1] != faceNodes[2]) && (faceNodes[1] != faceNodes[3]) && (faceNodes[2] != faceNodes[3])) {
+                        mesh.addQuad(faceNodes[0], faceNodes[1], faceNodes[2], faceNodes[3]);
+                    } else {
+                        mesh.addEdge(faceNodes[0], faceNodes[2]);
+                    }
+                    break;
+                default :
+                    lFaces++;
+                    for(int i = 0; i < nFaceNodes; i++) {
+                        //                        fscanf(inFile, "");
+                        inFile>>faceNodes[i];
+                    }
+                    for(int i = 2; i < nFaceNodes; i++) {
+                        Vec3U temp(faceNodes[0], faceNodes[i-1], faceNodes[i]);
+                        mesh.addTriangle(temp);
+                    }
+                    break;
+
+            }
+            inFile>>strTemp;
+        }
+
+        //printf(" Vertices %d of %d loaded.  Faces %d of %d loaded", lVertices, nVertices, lFaces, nFaces);
+
+        inFile.close();
+        return mesh;
     }
 
 }
