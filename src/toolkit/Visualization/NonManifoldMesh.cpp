@@ -312,6 +312,16 @@ namespace Protein_Morph {
         return id;
     }
 
+    void NonManifoldMesh::addEdge(int vertexId1, int vertexId2) {
+        Edge edge;
+        edge.faceIds.clear();
+        edge.vertexIds[0] = vertexId1;
+        edge.vertexIds[1] = vertexId2;
+        int edgeId = addEdge(edge);
+        vertices[vertexId1].addFaceHash(edgeId);
+        vertices[vertexId2].addFaceHash(edgeId);
+    }
+
     int NonManifoldMesh::getEdgeIndex(int vertexId1, int vertexId2) const {
         int edgeId = -1;
         for(int i = 0; i < vertices[vertexId1].sizeEdge(); i++) {
@@ -323,29 +333,11 @@ namespace Protein_Morph {
         return edgeId;
     }
 
-    void NonManifoldMesh::addEdge(int vertexId1, int vertexId2) {
-        Edge edge;
-        edge.faceIds.clear();
-        edge.vertexIds[0] = vertexId1;
-        edge.vertexIds[1] = vertexId2;
-        int edgeId = addEdge(edge);
-        vertices[vertexId1].addFaceHash(edgeId);
-        vertices[vertexId2].addFaceHash(edgeId);
-    }
-
     int NonManifoldMesh::addFace(Face face) {
         TKey id = faces.size();
         faces.push_back(face);
 
         return id;
-    }
-
-    void NonManifoldMesh::addQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4) {
-        Vec3U v123(vertexId1, vertexId2, vertexId3);
-        addTriangle(v123);
-
-        Vec3U v134(vertexId1, vertexId3, vertexId4);
-        addTriangle(v134);
     }
 
     void NonManifoldMesh::addTriangle(Vec3U vertexId) {
@@ -386,6 +378,14 @@ namespace Protein_Morph {
         int faceId = addFace(face);
         for(int i = 0; i < (int)face.edgeIds.size(); i++)
             edges[face.edgeIds[i]].faceIds.push_back(faceId);
+    }
+
+    void NonManifoldMesh::addQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4) {
+        Vec3U v123(vertexId1, vertexId2, vertexId3);
+        addTriangle(v123);
+
+        Vec3U v134(vertexId1, vertexId3, vertexId4);
+        addTriangle(v134);
     }
 
     void NonManifoldMesh::mergeMesh(const NonManifoldMesh & src) {
