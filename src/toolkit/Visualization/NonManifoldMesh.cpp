@@ -315,14 +315,6 @@ namespace Protein_Morph {
         return edge.id;
     }
 
-    int NonManifoldMesh::addFace(Face face) {
-        face.id = faces.size();
-        face.valid = true;
-        faces.push_back(face);
-
-        return face.id;
-    }
-
     int NonManifoldMesh::getEdgeIndex(int vertexId1, int vertexId2) const {
         int edgeId = -1;
         for(int i = 0; i < vertices[vertexId1].sizeEdge(); i++) {
@@ -343,6 +335,14 @@ namespace Protein_Morph {
         int edgeId = addEdge(edge);
         vertices[vertexId1].addFaceHash(edgeId);
         vertices[vertexId2].addFaceHash(edgeId);
+    }
+
+    int NonManifoldMesh::addFace(Face face) {
+        face.id = faces.size();
+        face.valid = true;
+        faces.push_back(face);
+
+        return face.id;
     }
 
     void NonManifoldMesh::addQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4, string newEdgeTag, string faceTag) {
