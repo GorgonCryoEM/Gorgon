@@ -101,7 +101,6 @@ namespace Protein_Morph {
     }
 
     struct TVertex : public Base, public Vertex {
-        Vec3F position;
         vector<TKey> edgeIds;
         bool tag;
         TVertex() : Vertex() {}
@@ -110,7 +109,7 @@ namespace Protein_Morph {
 
     inline ostream& operator<<(ostream& out, const TVertex& obj){
             return out//<<"\033[34m"
-                    <<obj.position
+                    <<Vec3F(obj)
                     <<"\tedgeIds.size(): "<<obj.edgeIds.size()
                     <<endl<<obj.edgeIds
                     <<endl;

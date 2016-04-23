@@ -182,7 +182,7 @@ namespace Visualization {
         helixEndPoints[helixIndex] = endPoints;
 
         for(unsigned int i = 0; i < pathMesh->vertices.size(); i++) {
-            if(helix->IsInsideShape(pathMesh->vertices[i].position)) {
+            if(helix->IsInsideShape(pathMesh->vertices[i])) {
                 internalVertices.insert(i);
                 pathMesh->vertices[i].tag = false;
             }
@@ -196,8 +196,8 @@ namespace Visualization {
                 isEnd = isEnd || (internalVertices.find(neighbors[j]) == internalVertices.end());
             }
             if(isEnd) {
-                dist1 = (p1 - pathMesh->vertices[*i].position).length();
-                dist2 = (p2 - pathMesh->vertices[*i].position).length();
+                dist1 = (p1 - pathMesh->vertices[*i]).length();
+                dist2 = (p2 - pathMesh->vertices[*i]).length();
                 isStart = (dist1 <= dist2);
                 if(isStart && (dist1 <= radius)) {
                     helixStartPoints[helixIndex].push_back(*i);
@@ -291,7 +291,7 @@ namespace Visualization {
     }
 
     Vec3F SSEEngine::GetPathVertex(int index) {
-        return singlePathMesh->vertices[index].position;
+        return singlePathMesh->vertices[index];
     }
 
     int SSEEngine::GetPathEdgeCount() {

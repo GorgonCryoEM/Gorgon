@@ -130,7 +130,7 @@ namespace Protein_Morph {
       cout<<"skeleton:\n"<<skeleton<<endl;
 #endif
             for (unsigned int j = 0; j < skeleton.vertices.size(); j++) {
-                skeletonAtom = skeleton.vertices[j].position;
+                skeletonAtom = skeleton.vertices[j];
                 Vec3F d = skeletonAtom - pAtomPosition;
                 float distance_squared = d.X()*d.X() + d.Y()*d.Y() + d.Z()*d.Z();
                 if (abs(d.X()) <= SCORE_RANGE && abs(d.Y()) <= SCORE_RANGE && abs(d.Z()) <= SCORE_RANGE) { // 8x8x8 cubic search area

@@ -95,8 +95,8 @@ namespace Visualization {
         intersectionPoints.clear();
 
         for(unsigned int i = 0; i < mesh.edges.size(); i++) {
-            p1 = mesh.vertices[mesh.edges[i].vertexIds[0]].position;
-            p2 = mesh.vertices[mesh.edges[i].vertexIds[1]].position;
+            p1 = mesh.vertices[mesh.edges[i].vertexIds[0]];
+            p2 = mesh.vertices[mesh.edges[i].vertexIds[1]];
             x1 = p1.X();
             y1 = p1.Y();
             z1 = p1.Z();
@@ -132,18 +132,18 @@ namespace Visualization {
             switch(subsceneIndex){
                 case 0:
                     for(unsigned int i = 0; i < mesh.faces[ix1].vertexIds.size(); i++) {
-                        position += mesh.vertices[mesh.faces[ix0].vertexIds[i]].position;
+                        position += mesh.vertices[mesh.faces[ix0].vertexIds[i]];
                     }
                     position = position * (1.0 / mesh.faces[ix1].vertexIds.size());
                     break;
                 case 1:
                     for(unsigned int i = 0; i < 2; i++) {
-                        position += mesh.vertices[mesh.edges[ix0].vertexIds[i]].position;
+                        position += mesh.vertices[mesh.edges[ix0].vertexIds[i]];
                     }
                     position = position * 0.5;
                     break;
                 case 2:
-                    position = mesh.vertices[ix0].position;
+                    position = mesh.vertices[ix0];
                     break;
             }
         }

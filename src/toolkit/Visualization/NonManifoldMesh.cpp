@@ -47,9 +47,9 @@ namespace Protein_Morph {
                 for(unsigned int j = 0; j < faces[i].vertexIds.size(); j++) {
                     int k = faces[i].vertexIds[j];
                     float vals[3];
-                    vals[0] = vertices[k].position.X();
-                    vals[1] = vertices[k].position.Y();
-                    vals[2] = vertices[k].position.Z();
+                    vals[0] = vertices[k][0];
+                    vals[1] = vertices[k][1];
+                    vals[2] = vertices[k][2];
                     glVertex3fv(vals);
                 }
                 glEnd();
@@ -109,9 +109,9 @@ namespace Protein_Morph {
                     int k = faces[i].vertexIds[j];
                     glNormal3f(normal.X(), normal.Y(), normal.Z());
                     float vals[3];
-                    vals[0] = vertices[k].position.X();
-                    vals[1] = vertices[k].position.Y();
-                    vals[2] = vertices[k].position.Z();
+                    vals[0] = vertices[k][0];
+                    vals[1] = vertices[k][1];
+                    vals[2] = vertices[k][2];
                     glVertex3fv(vals);
                 }
                 glEnd();
@@ -140,9 +140,9 @@ namespace Protein_Morph {
                     }
                     glBegin(GL_LINES);
                     int k = edges[i].vertexIds[0];
-                    glVertex3f(vertices[k].position.X(), vertices[k].position.Y(), vertices[k].position.Z());
+                    glVertex3f(vertices[k][0], vertices[k][1], vertices[k][2]);
                     k = edges[i].vertexIds[1];
-                    glVertex3f(vertices[k].position.X(), vertices[k].position.Y(), vertices[k].position.Z());
+                    glVertex3f(vertices[k][0], vertices[k][1], vertices[k][2]);
                     glEnd();
                 }
             }
@@ -171,7 +171,7 @@ namespace Protein_Morph {
                         glLoadName(i);
                     }
                     glBegin(GL_POINTS);
-                    glVertex3f(vertices[i].position.X(), vertices[i].position.Y(), vertices[i].position.Z());
+                    glVertex3f(vertices[i][0], vertices[i][1], vertices[i][2]);
                     glEnd();
                 }
             }
@@ -218,8 +218,6 @@ namespace Protein_Morph {
         setSpacing(src.getSpacingX(), src.getSpacingY(), src.getSpacingZ());
 
     // Adding vertices
-        TVertex tempVertex;
-        tempVertex.edgeIds.clear();
         for(int x = 0; x < src.getSizeX(); x++) {
             for(int y = 0; y < src.getSizeY(); y++) {
                 for(int z = 0; z < src.getSizeZ(); z++) {
@@ -227,7 +225,7 @@ namespace Protein_Morph {
                     vertexLocations[index] = -1;
                     int value = (int)round(src(index));
                     if(value > 0) {
-                        tempVertex.position = Vec3F(x, y, z);
+                        TVertex tempVertex(Vec3F(x, y, z));
                         vertexLocations[index] = addVertex(tempVertex);
                     }
                 }
@@ -302,8 +300,7 @@ namespace Protein_Morph {
     }
 
     int NonManifoldMesh::addVertex(Vec3F location) {
-        TVertex v;
-        v.position = location;
+        TVertex v(location);
 
         return addVertex(v);
     }
@@ -434,8 +431,8 @@ namespace Protein_Morph {
 
         for(unsigned int i = 0; i < vertices.size(); i++) {
             for(unsigned int j = 0; j < 3; j++) {
-                minPos[j] = min(minPos[j], (double)vertices[i].position[j]);
-                maxPos[j] = max(maxPos[j], (double)vertices[i].position[j]);
+                minPos[j] = min(minPos[j], (double)vertices[i][j]);
+                maxPos[j] = max(maxPos[j], (double)vertices[i][j]);
             }
         }
 
@@ -452,7 +449,7 @@ namespace Protein_Morph {
         for(unsigned int i = 0;  i < edges.size(); i++) {
             TVertex v1 = vertices[edges[i].vertexIds[0]];
             TVertex v2 = vertices[edges[i].vertexIds[1]];
-            vector<Vec3I> positions = Rasterizer::ScanConvertLineC8(v1.position.XInt(), v1.position.YInt(), v1.position.ZInt(), v2.position.XInt(), v2.position.YInt(), v2.position.ZInt());
+            vector<Vec3I> positions = Rasterizer::ScanConvertLineC8(v1.XInt(), v1.YInt(), v1.ZInt(), v2.XInt(), v2.YInt(), v2.ZInt());
             for(unsigned int j = 0; j < positions.size(); j++) {
                 vol(positions[j] - minPosInt) = 1.0;
             }
@@ -480,8 +477,8 @@ namespace Protein_Morph {
         Vec3F normal(1,0,0);
 
         if(face.vertexIds.size() >= 3) {
-            normal = (vertices[face.vertexIds[1]].position - vertices[face.vertexIds[0]].position) ^
-                    (vertices[face.vertexIds[2]].position - vertices[face.vertexIds[0]].position);
+            normal = (vertices[face.vertexIds[1]] - vertices[face.vertexIds[0]]) ^
+                    (vertices[face.vertexIds[2]] - vertices[face.vertexIds[0]]);
             normal.normalize();
         }
         return normal;
@@ -503,13 +500,13 @@ namespace Protein_Morph {
                             vertexIndex = 0;
                         }
 
-                        newPosition = newPosition + vertices[edges[vertex.edgeIds[j]].vertexIds[vertexIndex]].position;
+                        newPosition = newPosition + vertices[edges[vertex.edgeIds[j]].vertexIds[vertexIndex]];
                     }
                     newPosition = newPosition * (1.0/vertex.edgeIds.size());
                 } else {
-                    newPosition = vertex.position;
+                    newPosition = vertex;
                 }
-                smoothedMesh.vertices[i].position = smoothedMesh.vertices[i].position * (1.0 - converganceRate)+ newPosition * converganceRate;
+                smoothedMesh.vertices[i] = smoothedMesh.vertices[i] * (1.0 - converganceRate)+ newPosition * converganceRate;
             }
         }
         return smoothedMesh;
@@ -641,8 +638,8 @@ namespace Protein_Morph {
             TVertex p = vertices[face.vertexIds[0]];
             TVertex q = vertices[face.vertexIds[1]];
             TVertex r = vertices[face.vertexIds[2]];
-            Vec3F v1 = q.position - p.position;
-            Vec3F v2 = r.position - p.position;
+            Vec3F v1 = q - p;
+            Vec3F v2 = r - p;
             double v1Length = v1.length();
             double v2Length = v2.length();
             v1.normalize();
@@ -651,7 +648,7 @@ namespace Protein_Morph {
             for(double a1 = 0; a1 <= v1Length; a1 += discretizationStep) {
                 for(double a2 = 0; a2 <= v2Length; a2 += discretizationStep) {
                     if(a1/v1Length + a2/v2Length <= 1) {
-                        points.push_back(p.position + v1 * a1 + v2 * a2);
+                        points.push_back(p + v1 * a1 + v2 * a2);
                     }
                 }
             }
@@ -664,10 +661,10 @@ namespace Protein_Morph {
             return -1;
         }
 
-        double minDistance = (pos - vertices[0].position).length();
+        double minDistance = (pos - vertices[0]).length();
         int minIx = 0;
         for(unsigned int i = 0; i < vertices.size(); i++) {
-            double distance = (pos - vertices[i].position).length();
+            double distance = (pos - vertices[i]).length();
             if(distance < minDistance) {
                 minDistance = distance;
                 minIx = i;
