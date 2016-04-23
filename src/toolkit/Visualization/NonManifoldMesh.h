@@ -100,7 +100,7 @@ namespace Protein_Morph {
 //                      <<"\033[0m";
     }
 
-    struct TVertex : public Base {
+    struct TVertex : public Base, public Vertex {
         Vec3F position;
         vector<TKey> edgeIds;
         bool tag;
