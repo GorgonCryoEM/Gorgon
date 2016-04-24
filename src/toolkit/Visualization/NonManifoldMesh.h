@@ -133,8 +133,11 @@ namespace Protein_Morph {
 
     typedef set<Edge> CEdge;
     struct Face {
+        private:
         vector<TKey> edgeIds;
         vector<TKey> vertexIds;
+
+        public:
         CEdge edges;
 
         void insert(Edge edge) {
