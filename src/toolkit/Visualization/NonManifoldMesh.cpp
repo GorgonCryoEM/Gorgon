@@ -418,7 +418,8 @@ namespace Protein_Morph {
         Vec3F normal(0,0,0);
         for(unsigned int i = 0; i < vertices[vertexId].sizeEdge(); i++) {
             int edgeIndex = vertices[vertexId].edge(i);
-            for(unsigned int j = 0; j < edges[edgeIndex].faceIds.size(); j++) {
+            CKey v = edges[edgeIndex].getFaces();
+            for(unsigned int j = 0; j < v.size(); j++) {
                 normal += getFaceNormal(edges[edgeIndex].edge(j));
             }
         }
@@ -529,7 +530,7 @@ namespace Protein_Morph {
 
         for(unsigned int i = 0; i < vertices[ix].sizeEdge(); i++) {
             Edge edge = edges[vertices[ix].edge(i)];
-            isSurface = isSurface || (edge.faceIds.size() > 0);
+            isSurface = isSurface || (edge.getFaces().size() > 0);
         }
         return isSurface;
     }
