@@ -357,9 +357,9 @@ namespace Protein_Morph {
 
 //        add to faces: vertex Ids
         Face face;
-        face.vertexIds.push_back(vertexId1);
-        face.vertexIds.push_back(vertexId2);
-        face.vertexIds.push_back(vertexId3);
+        face.addVertex(vertexId1);
+        face.addVertex(vertexId2);
+        face.addVertex(vertexId3);
 
         int vertexIds[4] = {vertexId1, vertexId2, vertexId3, vertexId1};
 
