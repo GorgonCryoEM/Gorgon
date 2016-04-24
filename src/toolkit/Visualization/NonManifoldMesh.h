@@ -155,6 +155,22 @@ namespace Protein_Morph {
             return edgeIds.size();
         }
 
+        vector<TKey> getVerticesVec() const {
+            return vertexIds;
+        }
+
+        TKey vertex(int i) const {
+            return vertexIds[i];
+        }
+
+        TKey edge(int i) const {
+            return edgeIds[i];
+        }
+
+        void addEdge(TKey i) {
+            edgeIds.push_back(i);
+        }
+
         friend ostream& operator<<(ostream& out, const Face& obj);
     };
 
