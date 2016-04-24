@@ -402,17 +402,18 @@ namespace Protein_Morph {
             addEdge(indices[src.edges[i].vertex(0)], indices[src.edges[i].vertex(1)]);
 
         for(unsigned int i = 0; i < src.faces.size(); i++) {
-            if(src.faces[i].vertexIds.size() == 3) {
-                Vec3U temp(indices[src.faces[i].vertexIds[0]],
-                                      indices[src.faces[i].vertexIds[1]],
-                                      indices[src.faces[i].vertexIds[2]]);
+            vector<TKey> v = src.faces[i].getVerticesVec();
+            if(v.size() == 3) {
+                Vec3U temp(indices[v[0]],
+                           indices[v[1]],
+                           indices[v[2]]);
                 addTriangle(temp);
             }
-            else if(src.faces[i].vertexIds.size() == 3)
-                addQuad(indices[src.faces[i].vertexIds[0]],
-                        indices[src.faces[i].vertexIds[1]],
-                        indices[src.faces[i].vertexIds[2]],
-                        indices[src.faces[i].vertexIds[3]]);
+            else if(v.size() == 3)
+                addQuad(indices[v[0]],
+                        indices[v[1]],
+                        indices[v[2]],
+                        indices[v[3]]);
         }
     }
 
@@ -433,9 +434,10 @@ namespace Protein_Morph {
         Face face = faces[faceId];
         Vec3F normal(1,0,0);
 
-        if(face.vertexIds.size() >= 3) {
-            normal = (vertices[face.vertexIds[1]] - vertices[face.vertexIds[0]]) ^
-                    (vertices[face.vertexIds[2]] - vertices[face.vertexIds[0]]);
+        vector<TKey> v = face.getVerticesVec();
+        if(v.size() >= 3) {
+            normal = (vertices[v[1]] - vertices[v[0]]) ^
+                     (vertices[v[2]] - vertices[v[0]]);
             normal.normalize();
         }
         return normal;
@@ -484,13 +486,14 @@ namespace Protein_Morph {
         Face face = faces[faceId];
 
         vector<Vec3F> points;
-        if(face.vertexIds.size() != 3) {
+        vector<TKey> v = face.getVerticesVec();
+        if(v.size() != 3) {
             printf("ERROR: Sampling a polygon NOT a triangle!\n");
             return points;
         } else {
-            Vertex p = vertices[face.vertexIds[0]];
-            Vertex q = vertices[face.vertexIds[1]];
-            Vertex r = vertices[face.vertexIds[2]];
+            Vertex p = vertices[v[0]];
+            Vertex q = vertices[v[1]];
+            Vertex r = vertices[v[2]];
             Vec3F v1 = q - p;
             Vec3F v2 = r - p;
             double v1Length = v1.length();
