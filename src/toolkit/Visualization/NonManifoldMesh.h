@@ -98,6 +98,10 @@ namespace Protein_Morph {
             return faceIds[i];
         }
 
+        void addEdge(TKey i) {
+            faceIds.push_back(i);
+        }
+
         friend bool operator<(const Edge &l, const Edge &r);
         friend ostream& operator<<(ostream& out, const Edge& obj);
     };

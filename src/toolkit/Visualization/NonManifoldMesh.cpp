@@ -377,7 +377,7 @@ namespace Protein_Morph {
 //        add to edges: face IDs
         int faceId = addFace(face);
         for(int i = 0; i < (int)face.edgeIds.size(); i++)
-            edges[face.edgeIds[i]].faceIds.push_back(faceId);
+            edges[face.edgeIds[i]].addEdge(faceId);
 
         return faceId;
     }
