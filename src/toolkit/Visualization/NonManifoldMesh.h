@@ -126,8 +126,8 @@ namespace Protein_Morph {
     inline ostream& operator<<(ostream& out, const TVertex& obj){
             return out//<<"\033[34m"
                     <<Vec3F(obj)
-                    <<"\tedgeIds.size(): "<<obj.edgeIds.size()
-                    <<endl<<obj.edgeIds
+                    <<"\tedgeIds.size(): "<<obj.sizeFaceHashes()
+                    <<endl<<obj.getFaceHashes()
                     <<endl;
     //                      <<"\033[0m";
     }
