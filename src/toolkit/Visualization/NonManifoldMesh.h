@@ -64,9 +64,11 @@ namespace Protein_Morph {
     typedef set<TKey> CKey;
 
     struct Edge {
+        private:
         vector<TKey> vertexIds;
         vector<TKey> faceIds;
 
+        public:
         Edge() : vertexIds(2) {}
 
         Edge(TKey v1, TKey v2) : vertexIds(2) {
