@@ -127,6 +127,28 @@ namespace Protein_Morph {
                                bool disableSurfaceLighting, bool disableCurveLighting, bool disablePointLighting,
                                int lineThickness, bool smoothSurfaceNormals)
     {
+        ofstream fout1("vertices.txt");
+        ofstream fout2("faces.txt");
+        ofstream fout3("edges.txt");
+        ofstream fout4("non-manifold-mesh.txt");
+
+        map<unsigned int, Vertex> mapVertices;
+        for(unsigned int i=0; i<vertices.size(); ++i)
+            mapVertices[i] = vertices[i];
+
+        map<unsigned int, Edge> mapEdges;
+        for(unsigned int i=0; i<edges.size(); ++i)
+            mapEdges[i] = edges[i];
+
+        map<unsigned int, Face> mapFaces;
+        for(unsigned int i=0; i<faces.size(); ++i)
+            mapFaces[i] = faces[i];
+
+        fout1<<mapVertices;
+        fout2<<mapFaces;
+        fout3<<mapEdges;
+        fout4<<*this;
+
         glPushAttrib(GL_LIGHTING_BIT | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT | GL_POINT_BIT);
 
         if(drawSurfaceBorders) {
@@ -167,29 +189,6 @@ namespace Protein_Morph {
                   cout<<"DEBUG: Method: NonManifoldMesh::draw(bool, bool, bool, bool, bool, bool, bool, bool, bool, bool, int, bool)\033[0m"<<endl;
                   cout<<"faces.size(): "<<faces.size()<<endl;
                   cout<<"\033[0m";
-
-                  ofstream fout1("vertices.txt");
-                  ofstream fout2("faces.txt");
-                  ofstream fout3("edges.txt");
-                  ofstream fout4("non-manifold-mesh.txt");
-
-                  map<unsigned int, Vertex> mapVertices;
-                  for(unsigned int i=0; i<vertices.size(); ++i)
-                      mapVertices[i] = vertices[i];
-
-                  map<unsigned int, Edge> mapEdges;
-                  for(unsigned int i=0; i<edges.size(); ++i)
-                      mapEdges[i] = edges[i];
-
-                  map<unsigned int, Face> mapFaces;
-                  for(unsigned int i=0; i<faces.size(); ++i)
-                      mapFaces[i] = faces[i];
-
-                  fout1<<mapVertices;
-                  fout2<<mapFaces;
-                  fout3<<mapEdges;
-                  fout4<<*this;
-
 //            #endif
 
             for(unsigned int i = 0; i < faces.size(); i++) {
