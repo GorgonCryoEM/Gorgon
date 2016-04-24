@@ -167,6 +167,10 @@ namespace Protein_Morph {
             return edgeIds[i];
         }
 
+        void addVertex(TKey i) {
+            vertexIds.push_back(i);
+        }
+
         void addEdge(TKey i) {
             edgeIds.push_back(i);
         }
