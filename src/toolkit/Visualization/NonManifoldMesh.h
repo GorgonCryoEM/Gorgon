@@ -179,7 +179,7 @@ namespace Protein_Morph {
             Vec3F getVertexNormal(int vertexId);
             Vec3F getFaceNormal(int faceId);
 
-            void addTriangle(Vec3U vertexId);
+            TKey addTriangle(Vec3U vertexId);
             void addQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4);
             void mergeMesh(const NonManifoldMesh & srcMesh);
             bool isEdgePresent(int vertexId1, int vertexId2);

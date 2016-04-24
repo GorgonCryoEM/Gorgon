@@ -118,7 +118,7 @@ namespace Protein_Morph {
     }
 
     TKey NonManifoldMesh::addMarchingFace(Vec3U vertexHash) {
-        addTriangle(vertexHash);
+        return addTriangle(vertexHash);
     }
 
     void NonManifoldMesh::draw(bool drawSurfaceBorders, bool drawSurfaces,
@@ -334,7 +334,7 @@ namespace Protein_Morph {
         return id;
     }
 
-    void NonManifoldMesh::addTriangle(Vec3U vertexId) {
+    TKey NonManifoldMesh::addTriangle(Vec3U vertexId) {
         int vertexId1 = vertexId[0];
         int vertexId2 = vertexId[1];
         int vertexId3 = vertexId[2];
@@ -378,6 +378,8 @@ namespace Protein_Morph {
         int faceId = addFace(face);
         for(int i = 0; i < (int)face.edgeIds.size(); i++)
             edges[face.edgeIds[i]].faceIds.push_back(faceId);
+
+        return faceId;
     }
 
     void NonManifoldMesh::addQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4) {
