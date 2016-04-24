@@ -140,8 +140,10 @@ namespace Protein_Morph {
             for(unsigned int i = 0; i < faces.size(); i++) {
                 glColor4f(0.4, 0.7, 0.7, 0.6);
                 glBegin(GL_LINE_STRIP);
-                for(unsigned int j = 0; j < faces[i].vertexIds.size(); j++) {
-                    int k = faces[i].vertexIds[j];
+
+                vector<TKey> v = faces[i].getVerticesVec();
+                for(unsigned int j = 0; j < v.size(); j++) {
+                    int k = faces[i].vertex(j);
                     float vals[3];
                     vals[0] = vertices[k][0];
                     vals[1] = vertices[k][1];
@@ -196,14 +198,16 @@ namespace Protein_Morph {
                 }
                 glColor4f(1.2, 0.2, 0.2, 0.6);
                 glBegin(GL_POLYGON);
-                for(unsigned int j = 0; j < faces[i].vertexIds.size(); j++) {
+
+                vector<TKey> v = faces[i].getVerticesVec();
+                for(unsigned int j = 0; j < v.size(); j++) {
                     Vec3F normal;
                     if(smoothSurfaceNormals) {
-                        normal = getVertexNormal(faces[i].vertexIds[j]);
+                        normal = getVertexNormal(faces[i].vertex(j));
                     } else {
                         normal = getFaceNormal(i);
                     }
-                    int k = faces[i].vertexIds[j];
+                    int k = faces[i].vertex(j);
                     glNormal3f(normal.X(), normal.Y(), normal.Z());
                     float vals[3];
                     vals[0] = vertices[k][0];
