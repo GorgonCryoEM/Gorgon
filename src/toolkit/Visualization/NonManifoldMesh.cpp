@@ -419,7 +419,7 @@ namespace Protein_Morph {
         for(unsigned int i = 0; i < vertices[vertexId].sizeEdge(); i++) {
             int edgeIndex = vertices[vertexId].edge(i);
             for(unsigned int j = 0; j < edges[edgeIndex].faceIds.size(); j++) {
-                normal += getFaceNormal(edges[edgeIndex].faceIds[j]);
+                normal += getFaceNormal(edges[edgeIndex].edge(j));
             }
         }
         normal.normalize();
