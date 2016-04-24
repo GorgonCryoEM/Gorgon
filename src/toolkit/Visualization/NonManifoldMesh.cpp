@@ -339,8 +339,8 @@ namespace Protein_Morph {
         edge.vertexIds[0] = vertexId1;
         edge.vertexIds[1] = vertexId2;
         int edgeId = addEdge(edge);
-        vertices[vertexId1].edgeIds.push_back(edgeId);
-        vertices[vertexId2].edgeIds.push_back(edgeId);
+        vertices[vertexId1].addFaceHash(edgeId);
+        vertices[vertexId2].addFaceHash(edgeId);
     }
 
     void NonManifoldMesh::addQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4, string newEdgeTag, string faceTag) {
