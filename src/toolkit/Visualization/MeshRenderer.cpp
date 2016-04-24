@@ -73,9 +73,7 @@ namespace Visualization {
 
             extension = StringUtils::StringToUpper(extension);
 
-            if(extension == "OFF") {
-                mesh.toOffCells(fileName);
-            } else if(extension == "MRC") {
+            if(extension == "MRC") {
                 Volume volume = mesh.toVolume();
                 volume.toMRCFile(fileName.c_str());
             } else {

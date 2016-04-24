@@ -153,12 +153,6 @@ namespace Protein_Morph {
             void addTriangle(Vec3U vertexId,
                              string newEdgeTag = "", string faceTag = "");
             void mergeMesh(const NonManifoldMesh & srcMesh);
-            void removeFace(int faceId);
-            void removeEdge(int edgeId);
-            void removeVertex(int vertexId);
-            void removeNullEntries();
-            void toOffCells(string fileName);
-            void toMathematicaFile(string fileName);
             vector<TKey> getPath(TKey edge0Ix, TKey edge1Ix);
             vector<TKey> getNeighboringVertexIndices(TKey vertexIx);
             vector<Vec3F> sampleTriangle(int faceId, double discretizationStep);
