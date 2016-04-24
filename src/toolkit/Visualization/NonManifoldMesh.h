@@ -154,6 +154,8 @@ namespace Protein_Morph {
         int size() const {
             return edgeIds.size();
         }
+
+        friend ostream& operator<<(ostream& out, const Face& obj);
     };
 
     inline ostream& operator<<(ostream& out, const Face& obj){
