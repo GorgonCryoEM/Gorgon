@@ -294,10 +294,10 @@ namespace Protein_Morph {
     }
 
     int NonManifoldMesh::addVertex(TVertex vertex) {
-        vertex.id = vertices.size();
+        TKey id = vertices.size();
         vertices.push_back(vertex);
 
-        return vertex.id;
+        return id;
     }
 
     int NonManifoldMesh::addVertex(Vec3F location) {
@@ -307,10 +307,10 @@ namespace Protein_Morph {
     }
 
     int NonManifoldMesh::addEdge(Edge edge) {
-        edge.id = edges.size();
+        TKey id = edges.size();
         edges.push_back(edge);
 
-        return edge.id;
+        return id;
     }
 
     int NonManifoldMesh::getEdgeIndex(int vertexId1, int vertexId2) const {
@@ -335,10 +335,10 @@ namespace Protein_Morph {
     }
 
     int NonManifoldMesh::addFace(Face face) {
-        face.id = faces.size();
+        TKey id = faces.size();
         faces.push_back(face);
 
-        return face.id;
+        return id;
     }
 
     void NonManifoldMesh::addQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4) {

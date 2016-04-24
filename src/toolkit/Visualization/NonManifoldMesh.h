@@ -62,7 +62,6 @@ namespace Protein_Morph {
     }
 
     struct Base {
-        unsigned int id;
     };
 
     struct Edge : public Base {
