@@ -89,6 +89,9 @@ namespace Protein_Morph {
         CKey getFaces() const {
             return CKey(faceIds.begin(), faceIds.end());
         }
+
+        friend bool operator<(const Edge &l, const Edge &r);
+        friend ostream& operator<<(ostream& out, const Edge& obj);
     };
 
     inline bool operator<(const Edge &l, const Edge &r) {
