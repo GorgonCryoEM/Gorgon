@@ -90,6 +90,14 @@ namespace Protein_Morph {
             return CKey(faceIds.begin(), faceIds.end());
         }
 
+        TKey vertex(int i) const {
+            return vertexIds[i];
+        }
+
+        TKey edge(int i) const {
+            return faceIds[i];
+        }
+
         friend bool operator<(const Edge &l, const Edge &r);
         friend ostream& operator<<(ostream& out, const Edge& obj);
     };
