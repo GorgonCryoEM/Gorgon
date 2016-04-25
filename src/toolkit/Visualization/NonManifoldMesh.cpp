@@ -83,10 +83,6 @@ namespace Protein_Morph {
         return edgeIds.size();
     }
 
-    vector<TKey> Face::getVerticesVec() const {
-        return vertexIds;
-    }
-
     TKey Face::vertex(int i) const {
         return vertexIds[i];
     }
