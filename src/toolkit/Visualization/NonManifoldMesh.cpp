@@ -497,30 +497,6 @@ namespace Protein_Morph {
         addTriangle(v134);
     }
 
-    void NonManifoldMesh::mergeMesh(const NonManifoldMesh & src) {
-        vector<int> indices;
-
-        for(unsigned int i = 0; i < src.vertices.size(); i++)
-            indices.push_back(addVertex(src.vertices[i]));
-
-        for(unsigned int i = 0; i < src.edges.size(); i++)
-            addEdge(indices[src.edges[i].vertex(0)], indices[src.edges[i].vertex(1)]);
-
-        for(unsigned int i = 0; i < src.faces.size(); i++) {
-            vector<TKey> v = src.faces[i].getVerticesVec();
-            if(v.size() == 3) {
-                Vec3U temp(indices[v[0]],
-                           indices[v[1]],
-                           indices[v[2]]);
-                addTriangle(temp);
-            }
-            else if(v.size() == 3)
-                addQuad(indices[v[0]],
-                        indices[v[1]],
-                        indices[v[2]],
-                        indices[v[3]]);
-        }
-    }
 
     Vec3F NonManifoldMesh::getVertexNormal(int vertexId) {
         Vec3F normal(0, 0, 0);
