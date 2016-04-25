@@ -72,7 +72,6 @@ namespace Protein_Morph {
             int size() const;
             CKey getFaces() const;
             TKey vertex(int i) const;
-            TKey edge(int i) const;
             void addEdge(TKey i);
 
             friend bool operator<(const Edge &l, const Edge &r);
@@ -94,8 +93,6 @@ namespace Protein_Morph {
             CElem getVertices() const;
             CElem getEdges() const;
             int size() const;
-            TKey vertex(int i) const;
-            TKey edge(int i) const;
             void addVertex(TKey i);
             void addEdge(TKey i);
 

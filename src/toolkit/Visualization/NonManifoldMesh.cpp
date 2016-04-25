@@ -40,10 +40,6 @@ namespace Protein_Morph {
         return vertexIds[i];
     }
 
-    TKey Edge::edge(int i) const {
-        return faceIds[i];
-    }
-
     void Edge::addEdge(TKey i) {
         faceIds.push_back(i);
     }
@@ -81,14 +77,6 @@ namespace Protein_Morph {
 
     int Face::size() const {
         return edgeIds.size();
-    }
-
-    TKey Face::vertex(int i) const {
-        return vertexIds[i];
-    }
-
-    TKey Face::edge(int i) const {
-        return edgeIds[i];
     }
 
     void Face::addVertex(TKey i) {
