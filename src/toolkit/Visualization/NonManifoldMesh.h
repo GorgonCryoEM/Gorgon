@@ -91,7 +91,7 @@ namespace Protein_Morph {
             CEdge edges;
 
             void insert(Edge edge);
-            CKey getVertices() const;
+            CElem getVertices() const;
             CElem getEdges() const;
             int size() const;
             vector<TKey> getVerticesVec() const;

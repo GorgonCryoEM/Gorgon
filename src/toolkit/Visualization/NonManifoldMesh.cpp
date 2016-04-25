@@ -75,14 +75,8 @@ namespace Protein_Morph {
         edges.insert(edge);
     }
 
-    CKey Face::getVertices() const {
-        CKey result;
-        for(CEdge::const_iterator it=edges.begin(); it!=edges.end(); ++it) {
-            CKey vertices = it->getVerticesSet();
-            result.insert(vertices.begin(), vertices.end());
-        }
-
-        return result;
+    CElem Face::getVertices() const {
+        return CElem(vertexIds.begin(), vertexIds.end());
     }
 
     int Face::size() const {
