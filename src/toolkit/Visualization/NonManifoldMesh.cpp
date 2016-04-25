@@ -166,7 +166,7 @@ namespace Protein_Morph {
             glEnable(GL_POINT_SMOOTH);
             glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
             for(unsigned int i = 0; i < vertices.size(); i++) {
-                if(vertices[i].edgeIds.size() == 0) {
+                if(vertices[i].sizeEdge() == 0) {
                     if(annotatePoints) {
                         glLoadName(i);
                     }
@@ -284,8 +284,8 @@ namespace Protein_Morph {
 
     bool NonManifoldMesh::isEdgePresent(int vertexId1, int vertexId2) {
         bool isPresent = false;
-        for(unsigned int i = 0; (i < vertices[vertexId1].edgeIds.size()) && !isPresent; i++) {
-            isPresent = ((int)edges[vertices[vertexId1].edgeIds[i]].vertexIds[0] == vertexId2) || ((int)edges[vertices[vertexId1].edgeIds[i]].vertexIds[1] == vertexId2);
+        for(unsigned int i = 0; (i < vertices[vertexId1].sizeEdge()) && !isPresent; i++) {
+            isPresent = ((int)edges[vertices[vertexId1].edge(i)].vertexIds[0] == vertexId2) || ((int)edges[vertices[vertexId1].edge(i)].vertexIds[1] == vertexId2);
         }
 
         return isPresent;
@@ -323,10 +323,10 @@ namespace Protein_Morph {
 
     int NonManifoldMesh::getEdgeIndex(int vertexId1, int vertexId2) const {
         int edgeId = -1;
-        for(int i = 0; i < vertices[vertexId1].edgeIds.size(); i++) {
-            if((edges[vertices[vertexId1].edgeIds[i]].vertexIds[0] == vertexId2) ||
-                    (edges[vertices[vertexId1].edgeIds[i]].vertexIds[1] == vertexId2)) {
-                edgeId = vertices[vertexId1].edgeIds[i];
+        for(int i = 0; i < vertices[vertexId1].sizeEdge(); i++) {
+            if((edges[vertices[vertexId1].edge(i)].vertexIds[0] == vertexId2) ||
+                    (edges[vertices[vertexId1].edge(i)].vertexIds[1] == vertexId2)) {
+                edgeId = vertices[vertexId1].edge(i);
             }
         }
         return edgeId;
