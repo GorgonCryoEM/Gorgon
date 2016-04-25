@@ -129,8 +129,8 @@ namespace Protein_Morph {
       cout<<"Checkpoint 21: i: "<<i<<endl;
       cout<<"skeleton:\n"<<skeleton<<endl;
 #endif
-            for (unsigned int j = 0; j < skeleton.vertices.size(); j++) {
-                skeletonAtom = skeleton.vertices[j];
+            for (TV::const_iterator it=skeleton.vertices.begin(); it!=skeleton.vertices.end(); ++it) {
+                skeletonAtom = it->second;
                 Vec3F d = skeletonAtom - pAtomPosition;
                 float distance_squared = d.X()*d.X() + d.Y()*d.Y() + d.Z()*d.Z();
                 if (abs(d.X()) <= SCORE_RANGE && abs(d.Y()) <= SCORE_RANGE && abs(d.Z()) <= SCORE_RANGE) { // 8x8x8 cubic search area
