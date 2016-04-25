@@ -39,6 +39,8 @@ namespace Core {
             vector<TKey> getFaceHashes() const;
             TKey edge(int i) const;
 
+            TKey sizeEdge() const;
+
         private:
             vector<TKey> faceHashes;
 

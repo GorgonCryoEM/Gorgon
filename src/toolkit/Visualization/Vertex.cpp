@@ -34,6 +34,10 @@ namespace Core {
         return faceHashes[i];
     }
 
+    TKey Vertex::sizeEdge() const {
+        return sizeFaceHashes();
+    }
+
     ostream& operator<<(ostream& out, const Vertex& obj) {
         return out//<<"\033[34m"
                 <<Vec3F(obj)
