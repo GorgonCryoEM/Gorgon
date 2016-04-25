@@ -505,13 +505,12 @@ namespace Protein_Morph {
 
     Vec3F NonManifoldMesh::getVertexNormal(int vertexId) {
         Vec3F normal(0, 0, 0);
-        for(unsigned int i = 0; i < vertices[vertexId].sizeEdge(); i++) {
-            int edgeIndex = vertices[vertexId].edge(i);
-            CKey v = edges[edgeIndex].getFaces();
-            for(unsigned int j = 0; j < v.size(); j++) {
-                normal += getFaceNormal(edges[edgeIndex].edge(j));
-            }
-        }
+        Vertex vertex = vertices[vertexId];
+        CElem fs = vertex.getFaceHashes();
+
+        for(CElem::iterator it=fs.begin(); it!=fs.end(); ++it)
+                normal += getFaceNormal(*it);
+
         normal.normalize();
         return normal;
     }
