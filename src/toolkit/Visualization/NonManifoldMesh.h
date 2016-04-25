@@ -69,67 +69,19 @@ namespace Protein_Morph {
         vector<TKey> faceIds;
 
         public:
-        Edge() : vertexIds(2) {}
-
-        Edge(TKey v1, TKey v2) : vertexIds(2) {
-            vertexIds[0] = v1;
-            vertexIds[1] = v2;
-        }
-
-        vector<TKey> getVertices() const {
-            return vertexIds;
-        }
-
-        CKey getVerticesSet() const {
-            return CKey(vertexIds.begin(), vertexIds.end());
-        }
-
-        int size() const {
-            return faceIds.size();
-        }
-
-        CKey getFaces() const {
-            return CKey(faceIds.begin(), faceIds.end());
-        }
-
-        TKey vertex(int i) const {
-            return vertexIds[i];
-        }
-
-        TKey edge(int i) const {
-            return faceIds[i];
-        }
-
-        void addEdge(TKey i) {
-            faceIds.push_back(i);
-        }
+        Edge();
+        Edge(TKey v1, TKey v2);
+        vector<TKey> getVertices() const;
+        CKey getVerticesSet() const;
+        int size() const;
+        CKey getFaces() const;
+        TKey vertex(int i) const;
+        TKey edge(int i) const;
+        void addEdge(TKey i);
 
         friend bool operator<(const Edge &l, const Edge &r);
         friend ostream& operator<<(ostream& out, const Edge& obj);
     };
-
-    inline bool operator<(const Edge &l, const Edge &r) {
-        vector<TKey> ll = l.vertexIds;
-        vector<TKey> rr = r.vertexIds;
-
-        if(ll.size() != 2 && rr.size() != 2)
-            throw "Edges have inconsistent size!";
-
-        sort(ll.begin(), ll.end());
-        sort(rr.begin(), rr.end());
-
-        return ll[0]<rr[0] && ll[1]<rr[1];
-    }
-
-    inline ostream& operator<<(ostream& out, const Edge& obj){
-        set<unsigned int> faces(obj.faceIds.begin(), obj.faceIds.end());
-        return out//<<"\033[34m"
-                  <<"\tvertexIds: "<<obj.vertexIds[0]<<"\t"<<obj.vertexIds[1]<<endl
-                  <<"faceIds.size(): "<<obj.faceIds.size()
-                  <<faces
-                  <<endl;
-//                  <<"\033[0m";
-    }
 
     typedef set<Edge> CEdge;
     class Face {
