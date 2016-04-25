@@ -107,15 +107,15 @@ namespace Protein_Morph {
         TVertex(Vec3F pos) : Vertex(pos) {}
 
         TKey sizeEdge() const {
-            return edgeIds.size();
+            return sizeFaceHashes();
         }
 
         TKey edge(int i) const {
-            return edgeIds[i];
+            return Vertex::edge(i);
         }
 
         void addEdge(TKey i) {
-            edgeIds.push_back(i);
+            addFaceHash(i);
         }
 
         friend ostream& operator<<(ostream& out, const TVertex& obj);
