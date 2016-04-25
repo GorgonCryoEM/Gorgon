@@ -63,7 +63,7 @@ namespace Protein_Morph {
 
     typedef set<TKey> CKey;
 
-    struct Edge {
+    class Edge {
         private:
         vector<TKey> vertexIds;
         vector<TKey> faceIds;
@@ -132,7 +132,7 @@ namespace Protein_Morph {
     }
 
     typedef set<Edge> CEdge;
-    struct Face {
+    class Face {
         private:
         vector<TKey> edgeIds;
         vector<TKey> vertexIds;
