@@ -339,8 +339,6 @@ namespace Protein_Morph {
         edge.vertexIds[0] = vertexId1;
         edge.vertexIds[1] = vertexId2;
         int edgeId = addEdge(edge);
-        vertices[vertexId1].addEdge(edgeId);
-        vertices[vertexId2].addEdge(edgeId);
         vertices[vertexId1].addFaceHash(edgeId);
         vertices[vertexId2].addFaceHash(edgeId);
     }

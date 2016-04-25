@@ -114,10 +114,6 @@ namespace Protein_Morph {
             return Vertex::edge(i);
         }
 
-        void addEdge(TKey i) {
-            addFaceHash(i);
-        }
-
         friend ostream& operator<<(ostream& out, const TVertex& obj);
     };
 
