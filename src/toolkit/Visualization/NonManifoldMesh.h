@@ -116,6 +116,10 @@ namespace Protein_Morph {
             return edgeIds[i];
         }
 
+        void addEdge(TKey i) {
+            edgeIds.push_back(i);
+        }
+
         friend ostream& operator<<(ostream& out, const TVertex& obj);
     };
 
