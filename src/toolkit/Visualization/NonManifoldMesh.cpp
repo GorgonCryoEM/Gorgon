@@ -638,9 +638,17 @@ namespace Protein_Morph {
     bool NonManifoldMesh::isSurfaceVertex(int ix) const {
         bool isSurface = false;
 
-        for(unsigned int i = 0; i < vertices[ix].sizeEdge(); i++) {
-            Edge edge = edges[vertices[ix].edge(i)];
-            isSurface = isSurface || (edge.getFaces().size() > 0);
+        Vertex vertex;
+        TV::const_iterator it = vertices.find(ix);
+        if(it!=vertices.end())
+            vertex = it->second;
+
+        for(unsigned int i = 0; i < vertex.sizeEdge(); i++) {
+            TE::const_iterator it = edges.find(vertex.edge(i));
+            if(it!=edges.end()) {
+                Edge edge = it->second;
+                isSurface = isSurface || (edge.getFaces().size() > 0);
+            }
         }
         return isSurface;
     }
