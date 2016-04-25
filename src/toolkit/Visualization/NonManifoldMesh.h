@@ -68,10 +68,7 @@ namespace Protein_Morph {
             Edge(TKey v1, TKey v2);
             vector<TKey> getVertices() const;
             CKey getVerticesSet() const;
-            int size() const;
-            CKey getFaces() const;
             TKey vertex(int i) const;
-            void addEdge(TKey i);
 
             friend bool operator<(const Edge &l, const Edge &r);
             friend ostream& operator<<(ostream& out, const Edge& obj);

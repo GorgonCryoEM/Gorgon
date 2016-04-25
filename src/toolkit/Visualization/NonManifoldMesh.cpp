@@ -28,20 +28,8 @@ namespace Protein_Morph {
         return CKey(vertexIds.begin(), vertexIds.end());
     }
 
-    int Edge::size() const {
-        return faceIds.size();
-    }
-
-    CKey Edge::getFaces() const {
-        return CKey(faceIds.begin(), faceIds.end());
-    }
-
     TKey Edge::vertex(int i) const {
         return vertexIds[i];
-    }
-
-    void Edge::addEdge(TKey i) {
-        faceIds.push_back(i);
     }
 
     bool operator<(const Edge &l, const Edge &r) {
