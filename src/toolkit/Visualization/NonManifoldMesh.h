@@ -100,11 +100,9 @@ namespace Protein_Morph {
             friend ostream& operator<<(ostream& out, const Face& obj);
     };
 
-    typedef vector<Vertex > TV;
-    typedef vector<Edge >   TE;
-    typedef vector<Face >   TF;
-
-    typedef map<TKey, TKey> HashMapType;
+    typedef map<TKey, Vertex > TV;
+    typedef map<TKey, Edge >   TE;
+    typedef map<TKey, Face >   TF;
 
     class NonManifoldMesh : public Volume, public Mesh {
         public:
@@ -148,7 +146,6 @@ namespace Protein_Morph {
             TE edges;
             TF faces;
 
-            HashMapType vertexHashMap;
             bool fromVolume;
 
             friend ostream& operator<<(ostream& out, const NonManifoldMesh& obj);
