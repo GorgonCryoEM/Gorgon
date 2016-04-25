@@ -21,87 +21,83 @@ using namespace Foundation;
 using namespace SkeletonMaker;
 using namespace Core;
 
-
 namespace Protein_Morph {
 
     template <class T, class U>
     inline ostream & operator<<(ostream & out, const map<T, U> & obj) {
-            for(typename map<T, U>::const_iterator it=obj.begin();
-                    it!=obj.end();
-                    ++it)
+        for(typename map<T, U>::const_iterator it = obj.begin();
+                it != obj.end(); ++it)
 
                 out<<"\t"<<it->first
-                <<"\t"<<it->second
-                <<endl;
+                    <<"\t"<<it->second
+                    <<endl;
 
-            return out;
+        return out;
     }
 
     template <class T>
     inline ostream & operator<<(ostream & out, const set<T> & obj) {
-            for(typename set<T>::const_iterator it=obj.begin();
-                    it!=obj.end();
-                    ++it)
+        for(typename set<T>::const_iterator it = obj.begin(); it != obj.end();
+                ++it)
 
                 out<<"\t"<<*it
-                <<endl;
+                    <<endl;
 
-            return out;
+        return out;
     }
 
     template <class T>
     inline ostream & operator<<(ostream & out, const vector<T> & obj) {
-            for(typename vector<T>::const_iterator it=obj.begin();
-                    it!=obj.end();
-                    ++it)
+        for(typename vector<T>::const_iterator it = obj.begin();
+                it != obj.end(); ++it)
 
                 out<<"\t\t\t"<<*it
-                <<endl;
+                    <<endl;
 
-            return out;
+        return out;
     }
 
     typedef set<TKey> CKey;
 
     class Edge {
         private:
-        vector<TKey> vertexIds;
-        vector<TKey> faceIds;
+            vector<TKey> vertexIds;
+            vector<TKey> faceIds;
 
         public:
-        Edge();
-        Edge(TKey v1, TKey v2);
-        vector<TKey> getVertices() const;
-        CKey getVerticesSet() const;
-        int size() const;
-        CKey getFaces() const;
-        TKey vertex(int i) const;
-        TKey edge(int i) const;
-        void addEdge(TKey i);
+            Edge();
+            Edge(TKey v1, TKey v2);
+            vector<TKey> getVertices() const;
+            CKey getVerticesSet() const;
+            int size() const;
+            CKey getFaces() const;
+            TKey vertex(int i) const;
+            TKey edge(int i) const;
+            void addEdge(TKey i);
 
-        friend bool operator<(const Edge &l, const Edge &r);
-        friend ostream& operator<<(ostream& out, const Edge& obj);
+            friend bool operator<(const Edge &l, const Edge &r);
+            friend ostream& operator<<(ostream& out, const Edge& obj);
     };
 
     typedef set<Edge> CEdge;
     class Face {
         private:
-        vector<TKey> edgeIds;
-        vector<TKey> vertexIds;
+            vector<TKey> edgeIds;
+            vector<TKey> vertexIds;
 
         public:
-        CEdge edges;
+            CEdge edges;
 
-        void insert(Edge edge);
-        CKey getVertices() const;
-        int size() const;
-        vector<TKey> getVerticesVec() const;
-        TKey vertex(int i) const;
-        TKey edge(int i) const;
-        void addVertex(TKey i);
-        void addEdge(TKey i);
+            void insert(Edge edge);
+            CKey getVertices() const;
+            int size() const;
+            vector<TKey> getVerticesVec() const;
+            TKey vertex(int i) const;
+            TKey edge(int i) const;
+            void addVertex(TKey i);
+            void addEdge(TKey i);
 
-        friend ostream& operator<<(ostream& out, const Face& obj);
+            friend ostream& operator<<(ostream& out, const Face& obj);
     };
 
     typedef vector<Vertex > TV;
@@ -115,10 +111,12 @@ namespace Protein_Morph {
             NonManifoldMesh();
             NonManifoldMesh(const Volume & src);
             void clear();
-            void draw(bool drawSurfaceBorders, bool drawSurfaces, bool drawLines, bool drawPoints,
-                      bool annotateSurfaces, bool annotateLines, bool annotatePoints,
-                      bool disableSurfaceLighting, bool disableCurveLighting, bool disablePointLighting,
-                      int lineThickness, bool smoothSurfaceNormals);
+            void draw(bool drawSurfaceBorders, bool drawSurfaces,
+                      bool drawLines, bool drawPoints, bool annotateSurfaces,
+                      bool annotateLines, bool annotatePoints,
+                      bool disableSurfaceLighting, bool disableCurveLighting,
+                      bool disablePointLighting, int lineThickness,
+                      bool smoothSurfaceNormals);
 
             int addMarchingVertex(Vec3F location, int hashKey);
             TKey addMarchingFace(Vec3U vertexHash);
@@ -145,15 +143,15 @@ namespace Protein_Morph {
             Volume toVolume();
             static NonManifoldMesh loadOffFile(string fileName);
 
-    public:
-        TV vertices;
-        TE edges;
-        TF faces;
+        public:
+            TV vertices;
+            TE edges;
+            TF faces;
 
-        HashMapType vertexHashMap;
-        bool fromVolume;
+            HashMapType vertexHashMap;
+            bool fromVolume;
 
-        friend ostream& operator<<(ostream& out, const NonManifoldMesh& obj);
+            friend ostream& operator<<(ostream& out, const NonManifoldMesh& obj);
     };
 }
 

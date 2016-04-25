@@ -5,14 +5,17 @@
  *
  */
 
-
 #include "NonManifoldMesh.h"
 
 namespace Protein_Morph {
 
-    Edge::Edge() : vertexIds(2) {}
+    Edge::Edge()
+            : vertexIds(2)
+    {}
 
-    Edge::Edge(TKey v1, TKey v2) : vertexIds(2) {
+    Edge::Edge(TKey v1, TKey v2)
+            : vertexIds(2)
+    {
         vertexIds[0] = v1;
         vertexIds[1] = v2;
     }
@@ -106,32 +109,32 @@ namespace Protein_Morph {
         edgeIds.push_back(i);
     }
 
-    ostream& operator<<(ostream& out, const Face& obj){
+    ostream& operator<<(ostream& out, const Face& obj) {
         set<unsigned int> vertices(obj.vertexIds.begin(), obj.vertexIds.end());
         set<unsigned int> edges(obj.edgeIds.begin(), obj.edgeIds.end());
-            return out//<<"\033[34m"
-                      <<"\nedgeIds.size(): "<<obj.edgeIds.size()
-                      <<endl<<edges
-                      <<"\n\nvertexIds.size(): "<<obj.vertexIds.size()
-                      <<endl<<vertices
-                      <<endl<<endl;
-//                      <<"\033[0m";
+        return out //<<"\033[34m"
+                    << "\nedgeIds.size(): " << obj.edgeIds.size() << endl
+                    << edges
+                    << "\n\nvertexIds.size(): " << obj.vertexIds.size()
+                    << endl
+                    << vertices << endl << endl;
+//                    <<"\033[0m";
     }
 
     NonManifoldMesh::NonManifoldMesh()
             : fromVolume(false)
     {
         setSpacing(1, 1, 1);
-        setOrigin(0,0,0);
+        setOrigin(0, 0, 0);
     }
 
     NonManifoldMesh::NonManifoldMesh(const Volume & src) {
-    #ifdef GORGON_DEBUG
-    cout<<"\033[33mDEBUG: File:   NonManifoldMesh.h"<<endl;
-    cout<<"DEBUG: Method: NonManifoldMesh::NonManifoldMesh\033[0m"<<endl;
-    cout<<"DEBUG: Args: Volume*\033[0m"<<endl;
-    cout<<"src.getSize(): "<<src.getSize()<<endl;
-    #endif
+#ifdef GORGON_DEBUG
+        cout<<"\033[33mDEBUG: File:   NonManifoldMesh.h"<<endl;
+        cout<<"DEBUG: Method: NonManifoldMesh::NonManifoldMesh\033[0m"<<endl;
+        cout<<"DEBUG: Args: Volume*\033[0m"<<endl;
+        cout<<"src.getSize(): "<<src.getSize()<<endl;
+#endif
 
         int vertexLocations[src.getSize()];
 
@@ -140,7 +143,7 @@ namespace Protein_Morph {
         setOrigin(src.getOriginX(), src.getOriginY(), src.getOriginZ());
         setSpacing(src.getSpacingX(), src.getSpacingY(), src.getSpacingZ());
 
-    // Adding vertices
+        // Adding vertices
         for(int x = 0; x < src.getSizeX(); x++) {
             for(int y = 0; y < src.getSizeY(); y++) {
                 for(int z = 0; z < src.getSizeZ(); z++) {
@@ -198,10 +201,10 @@ namespace Protein_Morph {
             }
         }
 
-    #ifdef GORGON_DEBUG
-    cout<<"\033[33mDEBUG: END"<<endl;
-    cout<<"DEBUG: Method: NonManifoldMesh::NonManifoldMesh\n\033[0m"<<endl;
-    #endif
+#ifdef GORGON_DEBUG
+        cout<<"\033[33mDEBUG: END"<<endl;
+        cout<<"DEBUG: Method: NonManifoldMesh::NonManifoldMesh\n\033[0m"<<endl;
+#endif
 
     }
 
@@ -213,7 +216,7 @@ namespace Protein_Morph {
         vertexHashMap.clear();
     }
 
-    int NonManifoldMesh::addMarchingVertex(Vec3F location, int hashKey){
+    int NonManifoldMesh::addMarchingVertex(Vec3F location, int hashKey) {
         HashMapType::const_iterator pos = vertexHashMap.find(hashKey);
         int vertexId;
         if(pos == vertexHashMap.end()) {
@@ -252,10 +255,10 @@ namespace Protein_Morph {
         for(unsigned int i=0; i<faces.size(); ++i)
             mapFaces[i] = faces[i];
 
-        fout1<<mapVertices;
-        fout2<<mapFaces;
-        fout3<<mapEdges;
-        fout4<<*this;
+        fout1 << mapVertices;
+        fout2 << mapFaces;
+        fout3 << mapEdges;
+        fout4 << *this;
 
         glPushAttrib(GL_LIGHTING_BIT | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT | GL_POINT_BIT);
 
@@ -364,7 +367,6 @@ namespace Protein_Morph {
             if(disablePointLighting) {
                 glDisable(GL_LIGHTING);
             }
-
 
             if(annotatePoints) {
                 glPushName(2);
@@ -525,7 +527,7 @@ namespace Protein_Morph {
     }
 
     Vec3F NonManifoldMesh::getVertexNormal(int vertexId) {
-        Vec3F normal(0,0,0);
+        Vec3F normal(0, 0, 0);
         for(unsigned int i = 0; i < vertices[vertexId].sizeEdge(); i++) {
             int edgeIndex = vertices[vertexId].edge(i);
             CKey v = edges[edgeIndex].getFaces();
@@ -539,12 +541,12 @@ namespace Protein_Morph {
 
     Vec3F NonManifoldMesh::getFaceNormal(int faceId) {
         Face face = faces[faceId];
-        Vec3F normal(1,0,0);
+        Vec3F normal(1, 0, 0);
 
         vector<TKey> v = face.getVerticesVec();
         if(v.size() >= 3) {
-            normal = (vertices[v[1]] - vertices[v[0]]) ^
-                     (vertices[v[2]] - vertices[v[0]]);
+            normal = (vertices[v[1]] - vertices[v[0]])
+                    ^ (vertices[v[2]] - vertices[v[0]]);
             normal.normalize();
         }
         return normal;
@@ -552,7 +554,7 @@ namespace Protein_Morph {
 
     vector<TKey> NonManifoldMesh::getPath(TKey edge0Ix, TKey edge1Ix) {
         vector<TKey> path;
-        map<TKey,  TKey> source;
+        map<TKey, TKey> source;
 
         queue<TKey> edgeList;
         edgeList.push(edge0Ix);
@@ -666,9 +668,9 @@ namespace Protein_Morph {
             minPos[0] = 0;
             minPos[1] = 0;
             minPos[2] = 0;
-            maxPos[0] = getSizeX()-1;
-            maxPos[1] = getSizeY()-1;
-            maxPos[2] = getSizeZ()-1;
+            maxPos[0] = getSizeX() - 1;
+            maxPos[1] = getSizeY() - 1;
+            maxPos[2] = getSizeZ() - 1;
         }
 
         for(unsigned int i = 0; i < vertices.size(); i++) {
@@ -707,20 +709,19 @@ namespace Protein_Morph {
         string strTemp;
         int nVertices, nEdges, nFaces;
 
-        inFile>>strTemp;
+        inFile >> strTemp;
         //printf("[%s]\n", strTemp);
-        inFile>>nVertices>>nFaces>>nEdges;
+        inFile >> nVertices >> nFaces >> nEdges;
         //printf("[%d] [%d] [%d]\n", nVertices, nFaces, nEdges);
 
         NonManifoldMesh mesh;
         for(int i=0, lVertices=0; i < nVertices; i++, lVertices++) {
             float xPos, yPos, zPos;
-            inFile>>xPos>>yPos>>zPos;
+            inFile >> xPos >> yPos >> zPos;
             //printf("[%f] [%f] [%f]\n", xPos, yPos, zPos);
             mesh.addVertex(Vec3F(xPos, yPos, zPos));
-            inFile>>strTemp;
+            inFile >> strTemp;
         }
-
 
         int faceNodes[100], nFaceNodes;
         int lFaces = 0;
@@ -736,7 +737,7 @@ namespace Protein_Morph {
                     lFaces++;
                     for(int i = 0; i < nFaceNodes; i++) {
                         //                        fscanf(inFile, "");
-                        inFile>>faceNodes[i];
+                        inFile >> faceNodes[i];
                     }
 
                     if((faceNodes[0] != faceNodes[1]) && (faceNodes[0] != faceNodes[2]) && (faceNodes[0] != faceNodes[3])
@@ -746,11 +747,11 @@ namespace Protein_Morph {
                         mesh.addEdge(faceNodes[0], faceNodes[2]);
                     }
                     break;
-                default :
+                default:
                     lFaces++;
                     for(int i = 0; i < nFaceNodes; i++) {
                         //                        fscanf(inFile, "");
-                        inFile>>faceNodes[i];
+                        inFile >> faceNodes[i];
                     }
                     for(int i = 2; i < nFaceNodes; i++) {
                         Vec3U temp(faceNodes[0], faceNodes[i-1], faceNodes[i]);
@@ -759,7 +760,7 @@ namespace Protein_Morph {
                     break;
 
             }
-            inFile>>strTemp;
+            inFile >> strTemp;
         }
 
         //printf(" Vertices %d of %d loaded.  Faces %d of %d loaded", lVertices, nVertices, lFaces, nFaces);
@@ -769,11 +770,12 @@ namespace Protein_Morph {
     }
 
     ostream& operator<<(ostream& out, const NonManifoldMesh& obj) {
-        return out//<<"\033[34m"
-                  <<"vertices.size(): "<<obj.vertices.size()
-                  <<"\nedges.size(): "<<obj.edges.size()
-                  <<"\nfaces.size(): "<<obj.faces.size()
-                  <<endl;
+        return out //<<"\033[34m"
+               << "vertices.size(): "
+               << obj.vertices.size()
+               << "\nedges.size(): " << obj.edges.size()
+               << "\nfaces.size(): "
+               << obj.faces.size() << endl;
 //                      <<"\033[0m";
     }
 
