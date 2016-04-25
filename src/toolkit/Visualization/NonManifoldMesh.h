@@ -153,14 +153,7 @@ namespace Protein_Morph {
         HashMapType vertexHashMap;
         bool fromVolume;
 
-        friend ostream& operator<<(ostream& out, const NonManifoldMesh& obj){
-            return out//<<"\033[34m"
-                      <<"vertices.size(): "<<obj.vertices.size()
-                      <<"\nedges.size(): "<<obj.edges.size()
-                      <<"\nfaces.size(): "<<obj.faces.size()
-                      <<endl;
-//                      <<"\033[0m";
-        }
+        friend ostream& operator<<(ostream& out, const NonManifoldMesh& obj);
     };
 }
 
