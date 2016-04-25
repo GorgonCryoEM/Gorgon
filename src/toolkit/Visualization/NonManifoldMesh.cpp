@@ -454,8 +454,8 @@ namespace Protein_Morph {
 //        add to edges: face IDs
         int faceId = addFace(face);
         CElem es = face.getEdges();
-        for(CElem::iterator it=es.begin(); it!=es.end(); ++it)
-            edges[*it].addEdge(faceId);
+//        for(CElem::iterator it=es.begin(); it!=es.end(); ++it)
+//            edges[*it].addEdge(faceId);
 
         return faceId;
     }
