@@ -109,6 +109,10 @@ namespace Protein_Morph {
         edgeIds.push_back(i);
     }
 
+    CElem Face::getEdges() const {
+        return edgeIds;
+    }
+
     ostream& operator<<(ostream& out, const Face& obj) {
         set<unsigned int> vertices(obj.vertexIds.begin(), obj.vertexIds.end());
         set<unsigned int> edges(obj.edgeIds.begin(), obj.edgeIds.end());
