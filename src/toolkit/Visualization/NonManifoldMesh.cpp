@@ -379,12 +379,12 @@ namespace Protein_Morph {
 
         for(int i = 0; i < 3; i++) {
             int vertexIndex = vertexIds[i];
-            for (int j = 0; j < (int)vertices[vertexIndex].edgeIds.size(); j++) {
-                int edgeIndex = vertices[vertexIndex].edgeIds[j];
+            for (int j = 0; j < (int)vertices[vertexIndex].sizeEdge(); j++) {
+                int edgeIndex = vertices[vertexIndex].edge(j);
 
                 if( (((int)edges[edgeIndex].vertexIds[0] == vertexIds[i])   && ((int)edges[edgeIndex].vertexIds[1] == vertexIds[i+1])) ||
-                        (((int)edges[edgeIndex].vertexIds[0] == vertexIds[i+1]) && ((int)edges[edgeIndex].vertexIds[1] == vertexIds[i]))) {
-                    face.edgeIds.push_back(vertices[vertexIndex].edgeIds[j]);
+                    (((int)edges[edgeIndex].vertexIds[0] == vertexIds[i+1]) && ((int)edges[edgeIndex].vertexIds[1] == vertexIds[i]))) {
+                    face.edgeIds.push_back(vertices[vertexIndex].edge(j));
                 }
             }
         }
@@ -464,8 +464,8 @@ namespace Protein_Morph {
 
     Vec3F NonManifoldMesh::getVertexNormal(int vertexId) {
         Vec3F normal(0,0,0);
-        for(unsigned int i = 0; i < vertices[vertexId].edgeIds.size(); i++) {
-            int edgeIndex = vertices[vertexId].edgeIds[i];
+        for(unsigned int i = 0; i < vertices[vertexId].sizeEdge(); i++) {
+            int edgeIndex = vertices[vertexId].edge(i);
             for(unsigned int j = 0; j < edges[edgeIndex].faceIds.size(); j++) {
                 normal += getFaceNormal(edges[edgeIndex].faceIds[j]);
             }
@@ -492,19 +492,19 @@ namespace Protein_Morph {
             TVertex vertex = vertices[i];
             if(vertex.valid) {
                 Vec3F newPosition;
-                if(vertex.edgeIds.size() > 0) {
+                if(vertex.sizeEdge() > 0) {
                     newPosition = Vec3F(0,0,0);
-                    for(int j = 0; j < (int)vertex.edgeIds.size(); j++) {
+                    for(int j = 0; j < (int)vertex.sizeEdge(); j++) {
                         int vertexIndex;
-                        if((int)edges[vertex.edgeIds[j]].vertexIds[0] == i) {
+                        if((int)edges[vertex.edge(j)].vertexIds[0] == i) {
                             vertexIndex = 1;
                         } else {
                             vertexIndex = 0;
                         }
 
-                        newPosition = newPosition + vertices[edges[vertex.edgeIds[j]].vertexIds[vertexIndex]];
+                        newPosition = newPosition + vertices[edges[vertex.edge(j)].vertexIds[vertexIndex]];
                     }
-                    newPosition = newPosition * (1.0/vertex.edgeIds.size());
+                    newPosition = newPosition * (1.0/vertex.sizeEdge());
                 } else {
                     newPosition = vertex;
                 }
@@ -606,8 +606,8 @@ namespace Protein_Morph {
             if(!found) {
                 for(unsigned int v = 0; v < 2; v++) {
                     TKey vertexIx = edges[currentEdge].vertexIds[v];
-                    for(unsigned int e = 0; e < vertices[vertexIx].edgeIds.size(); e++) {
-                        unsigned int edgeIx = vertices[vertexIx].edgeIds[e];
+                    for(unsigned int e = 0; e < vertices[vertexIx].sizeEdge(); e++) {
+                        unsigned int edgeIx = vertices[vertexIx].edge(e);
                         if(source.find(edgeIx) == source.end()) {
                             source[edgeIx] = currentEdge;
                             edgeList.push(edgeIx);
@@ -679,8 +679,8 @@ namespace Protein_Morph {
     bool NonManifoldMesh::isSurfaceVertex(int ix) const {
         bool isSurface = false;
 
-        for(unsigned int i = 0; i < vertices[ix].edgeIds.size(); i++) {
-            Edge edge = edges[vertices[ix].edgeIds[i]];
+        for(unsigned int i = 0; i < vertices[ix].sizeEdge(); i++) {
+            Edge edge = edges[vertices[ix].edge(i)];
             isSurface = isSurface || (edge.faceIds.size() > 0);
         }
         return isSurface;
@@ -688,11 +688,11 @@ namespace Protein_Morph {
 
     vector<TKey> NonManifoldMesh::getNeighboringVertexIndices(TKey vertexIx) {
         vector<TKey> neighbors;
-        for(unsigned int i = 0; i < vertices[vertexIx].edgeIds.size(); i++) {
-            if(edges[vertices[vertexIx].edgeIds[i]].vertexIds[0] == vertexIx) {
-                neighbors.push_back(edges[vertices[vertexIx].edgeIds[i]].vertexIds[1]);
+        for(unsigned int i = 0; i < vertices[vertexIx].sizeEdge(); i++) {
+            if(edges[vertices[vertexIx].edge(i)].vertexIds[0] == vertexIx) {
+                neighbors.push_back(edges[vertices[vertexIx].edge(i)].vertexIds[1]);
             } else {
-                neighbors.push_back(edges[vertices[vertexIx].edgeIds[i]].vertexIds[0]);
+                neighbors.push_back(edges[vertices[vertexIx].edge(i)].vertexIds[0]);
             }
         }
         return neighbors;
