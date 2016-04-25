@@ -30,5 +30,9 @@ namespace Core {
         return faceHashes;
     }
 
+    TKey Vertex::edge(int i) const {
+        return faceHashes[i];
+    }
+
 }
 

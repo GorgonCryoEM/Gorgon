@@ -25,6 +25,7 @@ namespace Core {
             TKey addFaceHash(TKey hash);
             unsigned int sizeFaceHashes() const;
             vector<TKey> getFaceHashes() const;
+            TKey edge(int i) const;
 
         private:
             vector<TKey> faceHashes;
