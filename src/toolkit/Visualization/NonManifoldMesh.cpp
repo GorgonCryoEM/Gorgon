@@ -420,10 +420,17 @@ namespace Protein_Morph {
 
     int NonManifoldMesh::getEdgeIndex(int vertexId1, int vertexId2) const {
         int edgeId = -1;
-        for(int i = 0; i < vertices[vertexId1].sizeEdge(); i++) {
-            if((edges[vertices[vertexId1].edge(i)].vertex(0) == vertexId2) ||
-                    (edges[vertices[vertexId1].edge(i)].vertex(1) == vertexId2)) {
-                edgeId = vertices[vertexId1].edge(i);
+        Vertex vertex;
+        TV::const_iterator it = vertices.find(vertexId1);
+        if(it!=vertices.end())
+            vertex = it->second;
+
+        for(int i = 0; i < vertex.sizeEdge(); i++) {
+            TE::const_iterator it = edges.find(vertex.edge(i));
+            if(it!=edges.end() && ((it->second).vertex(0) == vertexId2 ||
+                                   (it->second).vertex(1) == vertexId2))
+            {
+                edgeId = vertex.edge(i);
             }
         }
         return edgeId;
