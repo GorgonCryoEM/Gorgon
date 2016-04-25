@@ -58,11 +58,11 @@ namespace Protein_Morph {
     }
 
     ostream& operator<<(ostream& out, const Edge& obj){
-        set<unsigned int> faces(obj.faceIds.begin(), obj.faceIds.end());
+//        set<unsigned int> faces(obj.faceIds.begin(), obj.faceIds.end());
         return out//<<"\033[34m"
                   <<"\tvertexIds: "<<obj.vertexIds[0]<<"\t"<<obj.vertexIds[1]<<endl
-                  <<"faceIds.size(): "<<obj.faceIds.size()
-                  <<faces
+//                  <<"faceIds.size(): "<<obj.faceIds.size()
+//                  <<faces
                   <<endl;
 //                  <<"\033[0m";
     }
