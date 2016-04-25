@@ -115,6 +115,8 @@ namespace Protein_Morph {
         TKey edge(int i) const {
             return edgeIds[i];
         }
+
+        friend ostream& operator<<(ostream& out, const TVertex& obj);
     };
 
     inline ostream& operator<<(ostream& out, const TVertex& obj){
