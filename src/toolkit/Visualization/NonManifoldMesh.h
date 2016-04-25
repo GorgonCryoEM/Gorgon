@@ -80,6 +80,8 @@ namespace Protein_Morph {
     };
 
     typedef set<Edge> CEdge;
+    typedef vector<TKey> CElem;
+
     class Face {
         private:
             vector<TKey> edgeIds;
