@@ -306,7 +306,7 @@ namespace Protein_Morph {
             glEnable(GL_LINE_SMOOTH);
             glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
             for(unsigned int i = 0; i < edges.size(); i++) {
-                if(edges[i].size() == 0) {
+//                if(edges[i].size() == 0) {
                     if(annotateLines) {
                         glLoadName(i);
                     }
@@ -316,7 +316,7 @@ namespace Protein_Morph {
                     k = edges[i].vertex(1);
                     glVertex3f(vertices[k][0], vertices[k][1], vertices[k][2]);
                     glEnd();
-                }
+//                }
             }
             if(annotateLines) {
                 glPopName();
