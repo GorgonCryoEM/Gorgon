@@ -10,6 +10,56 @@
 
 namespace Protein_Morph {
 
+    void Face::insert(Edge edge) {
+        edges.insert(edge);
+    }
+
+    CKey Face::getVertices() const {
+        CKey result;
+        for(CEdge::const_iterator it=edges.begin(); it!=edges.end(); ++it) {
+            CKey vertices = it->getVerticesSet();
+            result.insert(vertices.begin(), vertices.end());
+        }
+
+        return result;
+    }
+
+    int Face::size() const {
+        return edgeIds.size();
+    }
+
+    vector<TKey> Face::getVerticesVec() const {
+        return vertexIds;
+    }
+
+    TKey Face::vertex(int i) const {
+        return vertexIds[i];
+    }
+
+    TKey Face::edge(int i) const {
+        return edgeIds[i];
+    }
+
+    void Face::addVertex(TKey i) {
+        vertexIds.push_back(i);
+    }
+
+    void Face::addEdge(TKey i) {
+        edgeIds.push_back(i);
+    }
+
+    ostream& operator<<(ostream& out, const Face& obj){
+        set<unsigned int> vertices(obj.vertexIds.begin(), obj.vertexIds.end());
+        set<unsigned int> edges(obj.edgeIds.begin(), obj.edgeIds.end());
+            return out//<<"\033[34m"
+                      <<"\nedgeIds.size(): "<<obj.edgeIds.size()
+                      <<endl<<edges
+                      <<"\n\nvertexIds.size(): "<<obj.vertexIds.size()
+                      <<endl<<vertices
+                      <<endl<<endl;
+//                      <<"\033[0m";
+    }
+
     NonManifoldMesh::NonManifoldMesh()
             : fromVolume(false)
     {

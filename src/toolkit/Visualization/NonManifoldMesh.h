@@ -140,58 +140,17 @@ namespace Protein_Morph {
         public:
         CEdge edges;
 
-        void insert(Edge edge) {
-            edges.insert(edge);
-        }
-
-        CKey getVertices() const {
-            CKey result;
-            for(CEdge::const_iterator it=edges.begin(); it!=edges.end(); ++it) {
-                CKey vertices = it->getVerticesSet();
-                result.insert(vertices.begin(), vertices.end());
-            }
-
-            return result;
-        }
-
-        int size() const {
-            return edgeIds.size();
-        }
-
-        vector<TKey> getVerticesVec() const {
-            return vertexIds;
-        }
-
-        TKey vertex(int i) const {
-            return vertexIds[i];
-        }
-
-        TKey edge(int i) const {
-            return edgeIds[i];
-        }
-
-        void addVertex(TKey i) {
-            vertexIds.push_back(i);
-        }
-
-        void addEdge(TKey i) {
-            edgeIds.push_back(i);
-        }
+        void insert(Edge edge);
+        CKey getVertices() const;
+        int size() const;
+        vector<TKey> getVerticesVec() const;
+        TKey vertex(int i) const;
+        TKey edge(int i) const;
+        void addVertex(TKey i);
+        void addEdge(TKey i);
 
         friend ostream& operator<<(ostream& out, const Face& obj);
     };
-
-    inline ostream& operator<<(ostream& out, const Face& obj){
-        set<unsigned int> vertices(obj.vertexIds.begin(), obj.vertexIds.end());
-        set<unsigned int> edges(obj.edgeIds.begin(), obj.edgeIds.end());
-            return out//<<"\033[34m"
-                      <<"\nedgeIds.size(): "<<obj.edgeIds.size()
-                      <<endl<<edges
-                      <<"\n\nvertexIds.size(): "<<obj.vertexIds.size()
-                      <<endl<<vertices
-                      <<endl<<endl;
-//                      <<"\033[0m";
-    }
 
     typedef vector<Vertex > TV;
     typedef vector<Edge >   TE;
