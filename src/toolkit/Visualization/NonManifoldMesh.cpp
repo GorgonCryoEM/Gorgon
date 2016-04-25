@@ -264,8 +264,8 @@ namespace Protein_Morph {
                 glBegin(GL_LINE_STRIP);
 
                 vector<TKey> v = faces[i].getVerticesVec();
-                for(unsigned int j = 0; j < v.size(); j++) {
-                    int k = faces[i].vertex(j);
+                for(CElem::iterator it=v.begin(); it!=v.end(); ++it) {
+                    int k = *it;
                     float vals[3];
                     vals[0] = vertices[k][0];
                     vals[1] = vertices[k][1];
@@ -299,14 +299,14 @@ namespace Protein_Morph {
                 glBegin(GL_POLYGON);
 
                 vector<TKey> v = faces[i].getVerticesVec();
-                for(unsigned int j = 0; j < v.size(); j++) {
+                for(CElem::iterator it=v.begin(); it!=v.end(); ++it) {
                     Vec3F normal;
                     if(smoothSurfaceNormals) {
-                        normal = getVertexNormal(faces[i].vertex(j));
+                        normal = getVertexNormal(*it);
                     } else {
                         normal = getFaceNormal(i);
                     }
-                    int k = faces[i].vertex(j);
+                    int k = *it;
                     glNormal3f(normal.X(), normal.Y(), normal.Z());
                     float vals[3];
                     vals[0] = vertices[k][0];
