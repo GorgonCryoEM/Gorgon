@@ -101,8 +101,6 @@ namespace Protein_Morph {
     }
 
     struct TVertex : public Base, public Vertex {
-        private:
-        vector<TKey> edgeIds;
         public:
         bool tag;
         TVertex() : Vertex() {}
