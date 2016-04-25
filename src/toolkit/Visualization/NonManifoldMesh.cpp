@@ -371,7 +371,7 @@ namespace Protein_Morph {
 
                 if( (((int)edges[edgeIndex].vertex(0) == vertexIds[i])   && ((int)edges[edgeIndex].vertex(1) == vertexIds[i+1])) ||
                         (((int)edges[edgeIndex].vertex(0) == vertexIds[i+1]) && ((int)edges[edgeIndex].vertex(1) == vertexIds[i]))) {
-                    face.edgeIds.push_back(vertices[vertexIndex].edge(j));
+                    face.addEdge(vertices[vertexIndex].edge(j));
                 }
             }
         }
