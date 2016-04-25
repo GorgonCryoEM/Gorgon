@@ -263,7 +263,7 @@ namespace Protein_Morph {
                 glColor4f(0.4, 0.7, 0.7, 0.6);
                 glBegin(GL_LINE_STRIP);
 
-                vector<TKey> v = faces[i].getVerticesVec();
+                CElem v = faces[i].getVertices();
                 for(CElem::iterator it=v.begin(); it!=v.end(); ++it) {
                     int k = *it;
                     float vals[3];
@@ -298,7 +298,7 @@ namespace Protein_Morph {
                 glColor4f(1.2, 0.2, 0.2, 0.6);
                 glBegin(GL_POLYGON);
 
-                vector<TKey> v = faces[i].getVerticesVec();
+                CElem v = faces[i].getVertices();
                 for(CElem::iterator it=v.begin(); it!=v.end(); ++it) {
                     Vec3F normal;
                     if(smoothSurfaceNormals) {
@@ -513,7 +513,7 @@ namespace Protein_Morph {
         Face face = faces[faceId];
         Vec3F normal(1, 0, 0);
 
-        vector<TKey> v = face.getVerticesVec();
+        CElem v = face.getVertices();
         if(v.size() >= 3) {
             normal = (vertices[v[1]] - vertices[v[0]])
                     ^ (vertices[v[2]] - vertices[v[0]]);
@@ -565,7 +565,7 @@ namespace Protein_Morph {
         Face face = faces[faceId];
 
         vector<Vec3F> points;
-        vector<TKey> v = face.getVerticesVec();
+        CElem v = face.getVertices();
         if(v.size() != 3) {
             printf("ERROR: Sampling a polygon NOT a triangle!\n");
             return points;
