@@ -84,8 +84,8 @@ namespace Protein_Morph {
 
     class Face {
         private:
-            vector<TKey> edgeIds;
-            vector<TKey> vertexIds;
+            CElem edgeIds;
+            CElem vertexIds;
 
         public:
             CEdge edges;
