@@ -105,7 +105,6 @@ namespace Protein_Morph {
                       bool smoothSurfaceNormals);
 
             int addMarchingVertex(Vec3F location, int hashKey);
-            TKey addMarchingFace(Vec3U vertexHash);
 
             int addVertex(Vec3F location);
             int addFace(Face face);
@@ -115,7 +114,7 @@ namespace Protein_Morph {
             Vec3F getVertexNormal(int vertexId);
             Vec3F getFaceNormal(int faceId);
 
-            TKey addTriangle(Vec3U vertexId);
+            TKey addMarchingFace(Vec3U vertexId);
             void addQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4);
             bool isSurfaceVertex(int ix) const;
             int getClosestVertexIndex(Vec3F pos);

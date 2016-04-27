@@ -174,10 +174,6 @@ namespace Protein_Morph {
         return addVertex(location);
     }
 
-    TKey NonManifoldMesh::addMarchingFace(Vec3U vertexHash) {
-        return addTriangle(vertexHash);
-    }
-
     void NonManifoldMesh::draw(bool drawSurfaceBorders, bool drawSurfaces,
                                bool drawLines, bool drawPoints,
                                bool annotateSurfaces, bool annotateLines, bool annotatePoints,
@@ -372,7 +368,7 @@ namespace Protein_Morph {
         return id;
     }
 
-    TKey NonManifoldMesh::addTriangle(Vec3U vertex) {
+    TKey NonManifoldMesh::addMarchingFace(Vec3U vertex) {
         int v0 = vertex[0];
         int v1 = vertex[1];
         int v2 = vertex[2];
@@ -390,8 +386,8 @@ namespace Protein_Morph {
     }
 
     void NonManifoldMesh::addQuad(int v1, int v2, int v3, int v4) {
-        addTriangle(Vec3U(v1, v2, v3));
-        addTriangle(Vec3U(v1, v3, v4));
+        addMarchingFace(Vec3U(v1, v2, v3));
+        addMarchingFace(Vec3U(v1, v3, v4));
     }
 
     Vec3F NonManifoldMesh::getVertexNormal(int id) {
@@ -620,7 +616,7 @@ namespace Protein_Morph {
                         inFile >> faceNodes[i];
                     }
                     for(int i = 2; i < nFaceNodes; i++) {
-                        mesh.addTriangle(Vec3U(faceNodes[0], faceNodes[i-1], faceNodes[i]));
+                        mesh.addMarchingFace(Vec3U(faceNodes[0], faceNodes[i-1], faceNodes[i]));
                     }
                     break;
 
