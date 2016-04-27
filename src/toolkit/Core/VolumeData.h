@@ -41,6 +41,7 @@ namespace SkeletonMaker {
         const float & operator()(int i) const;
 
         int getIndex(int x, int y, int z) const;
+        int getIndex(Vec3I pos) const;
         int getMaxIndex() const;
 
         //uses malloc as required by FFT libraries
@@ -181,6 +182,10 @@ namespace SkeletonMaker {
 
     inline int VolumeData::getIndex(int x, int y, int z) const {
         return (x * getSizeY() * getSizeZ() + y * getSizeZ() + z);
+    }
+
+    inline int VolumeData::getIndex(Vec3I pos) const {
+        return getIndex(pos.X(), pos.Y(), pos.Z());
     }
 
     inline int VolumeData::getMaxIndex() const {
