@@ -22,7 +22,7 @@ namespace Core {
     }
 
     int Mesh::addMarchingVertex(Vec3F location, int hashKey) {
-        return addVertex(location);
+        return addVertex(location, hashKey);
     }
 
     TKey Mesh::addMarchingFace(Vec3U face) {
@@ -40,8 +40,7 @@ namespace Core {
         faceHashes.clear();
     }
 
-    TKey Mesh::addVertex(Vec3F vertex) {
-        TKey hashKey = vertices.size();
+    TKey Mesh::addVertex(Vec3F vertex, TKey hashKey) {
         vertices[hashKey] = Vertex(vertex);
         return hashKey;
     }
