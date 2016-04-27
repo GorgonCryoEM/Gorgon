@@ -422,22 +422,9 @@ namespace Protein_Morph {
 
         int vertexIds[4] = {vertexId1, vertexId2, vertexId3, vertexId1};
 
-//        add to faces: edge Ids
-        for(int i = 0; i < 3; i++) {
-            int vertexIndex = vertexIds[i];
-            for (int j = 0; j < (int)vertices[vertexIndex].sizeEdge(); j++) {
-                int edgeIndex = vertices[vertexIndex].edge(j);
-
-                if( (((int)edges[edgeIndex].vertex(0) == vertexIds[i])   && ((int)edges[edgeIndex].vertex(1) == vertexIds[i+1])) ||
-                        (((int)edges[edgeIndex].vertex(0) == vertexIds[i+1]) && ((int)edges[edgeIndex].vertex(1) == vertexIds[i]))) {
-                    face.addEdge(vertices[vertexIndex].edge(j));
-                }
-            }
-        }
-
 //        add to edges: face IDs
         int faceId = addFace(face);
-        CElem es = face.getEdges();
+//        CElem es = face.getEdges();
 //        for(CElem::iterator it=es.begin(); it!=es.end(); ++it)
 //            edges[*it].addEdge(faceId);
 
