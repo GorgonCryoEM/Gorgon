@@ -318,7 +318,7 @@ namespace Protein_Morph {
             glEnable(GL_POINT_SMOOTH);
             glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
             for(unsigned int i = 0; i < vertices.size(); i++) {
-                if(vertices[i].sizeEdge() == 0) {
+                if(vertices[i].sizeIds() == 0) {
                     if(annotatePoints) {
                         glLoadName(i);
                     }
@@ -431,7 +431,7 @@ namespace Protein_Morph {
             if(!found) {
                 for(unsigned int v = 0; v < 2; v++) {
                     TKey i = curves[currentEdge].vertex(v);
-                    for(unsigned int e = 0; e < vertices[i].sizeEdge(); e++) {
+                    for(unsigned int e = 0; e < vertices[i].sizeIds(); e++) {
                         unsigned int id = vertices[i].id(e);
                         if(src.find(id) == src.end()) {
                             src[id] = currentEdge;
@@ -513,7 +513,7 @@ namespace Protein_Morph {
 
     vector<TKey> NonManifoldMesh::getNeighboringVertexIndices(TKey id) {
         vector<TKey> neighbors;
-        for(unsigned int i = 0; i < vertices[id].sizeEdge(); i++) {
+        for(unsigned int i = 0; i < vertices[id].sizeIds(); i++) {
             if(curves[vertices[id].id(i)].vertex(0) == id) {
                 neighbors.push_back(curves[vertices[id].id(i)].vertex(1));
             } else {
