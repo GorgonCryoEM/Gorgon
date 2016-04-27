@@ -541,22 +541,22 @@ namespace Protein_Morph {
         return id;
     }
 
-    bool NonManifoldMesh::isSurfaceVertex(int ix) const {
+    bool NonManifoldMesh::isSurfaceVertex(int id) const {
         Vertex vertex;
-        TV::const_iterator it = vertices.find(ix);
+        TV::const_iterator it = vertices.find(id);
         if(it!=vertices.end())
             vertex = it->second;
 
         return vertex.sizeFaceHashes() > 0;
     }
 
-    vector<TKey> NonManifoldMesh::getNeighboringVertexIndices(TKey vertexIx) {
+    vector<TKey> NonManifoldMesh::getNeighboringVertexIndices(TKey id) {
         vector<TKey> neighbors;
-        for(unsigned int i = 0; i < vertices[vertexIx].sizeEdge(); i++) {
-            if(curves[vertices[vertexIx].edge(i)].vertex(0) == vertexIx) {
-                neighbors.push_back(curves[vertices[vertexIx].edge(i)].vertex(1));
+        for(unsigned int i = 0; i < vertices[id].sizeEdge(); i++) {
+            if(curves[vertices[id].edge(i)].vertex(0) == id) {
+                neighbors.push_back(curves[vertices[id].edge(i)].vertex(1));
             } else {
-                neighbors.push_back(curves[vertices[vertexIx].edge(i)].vertex(0));
+                neighbors.push_back(curves[vertices[id].edge(i)].vertex(0));
             }
         }
         return neighbors;
