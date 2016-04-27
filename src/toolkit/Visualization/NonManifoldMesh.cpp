@@ -620,8 +620,7 @@ namespace Protein_Morph {
                         inFile >> faceNodes[i];
                     }
                     for(int i = 2; i < nFaceNodes; i++) {
-                        Vec3U temp(faceNodes[0], faceNodes[i-1], faceNodes[i]);
-                        mesh.addTriangle(temp);
+                        mesh.addTriangle(Vec3U(faceNodes[0], faceNodes[i-1], faceNodes[i]));
                     }
                     break;
 
