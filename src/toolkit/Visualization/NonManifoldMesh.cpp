@@ -94,20 +94,18 @@ namespace Protein_Morph {
 
         fromVolume = true;
         size = src.getSizeObj();
-        setOrigin(src.getOriginX(), src.getOriginY(), src.getOriginZ());
-        setSpacing(src.getSpacingX(), src.getSpacingY(), src.getSpacingZ());
+        setOrigin(src.getOriginObj());
+        setSpacing(src.getSpacingObj());
 
         // Adding vertices
         for(int x = 0; x < src.getSizeX(); x++) {
             for(int y = 0; y < src.getSizeY(); y++) {
                 for(int z = 0; z < src.getSizeZ(); z++) {
-                    int index = src.getIndex(x, y, z);
-                    vertexLocations[index] = -1;
-                    int value = (int)round(src(index));
-                    if(value > 0) {
-                        Vertex tempVertex(Vec3F(x, y, z));
-                        vertexLocations[index] = addVertex(tempVertex);
-                    }
+                    int i = src.getIndex(x, y, z);
+                    vertexLocations[i] = -1;
+                    int value = (int)round(src(i));
+                    if(value > 0)
+                        vertexLocations[i] = addVertex(Vec3F(x, y, z));
                 }
             }
         }
