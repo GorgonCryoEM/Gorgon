@@ -10,31 +10,31 @@
 namespace Protein_Morph {
 
     Edge::Edge()
-            : vertexIds(2)
+            : ids(2)
     {}
 
     Edge::Edge(TKey v1, TKey v2)
-            : vertexIds(2)
+            : ids(2)
     {
-        vertexIds[0] = v1;
-        vertexIds[1] = v2;
+        ids[0] = v1;
+        ids[1] = v2;
     }
 
     vector<TKey> Edge::getVertices() const {
-        return vertexIds;
+        return ids;
     }
 
     CKey Edge::getVerticesSet() const {
-        return CKey(vertexIds.begin(), vertexIds.end());
+        return CKey(ids.begin(), ids.end());
     }
 
     TKey Edge::vertex(int i) const {
-        return vertexIds[i];
+        return ids[i];
     }
 
     bool operator<(const Edge &l, const Edge &r) {
-        vector<TKey> ll = l.vertexIds;
-        vector<TKey> rr = r.vertexIds;
+        vector<TKey> ll = l.ids;
+        vector<TKey> rr = r.ids;
 
         if(ll.size() != 2 && rr.size() != 2)
             throw "Edges have inconsistent size!";
@@ -48,7 +48,7 @@ namespace Protein_Morph {
     ostream& operator<<(ostream& out, const Edge& obj){
 //        set<unsigned int> faces(obj.faceIds.begin(), obj.faceIds.end());
         return out//<<"\033[34m"
-                  <<"\tvertexIds: "<<obj.vertexIds[0]<<"\t"<<obj.vertexIds[1]<<endl
+                  <<"\tvertexIds: "<<obj.ids[0]<<"\t"<<obj.ids[1]<<endl
 //                  <<"faceIds.size(): "<<obj.faceIds.size()
 //                  <<faces
                   <<endl;

@@ -61,7 +61,7 @@ namespace Protein_Morph {
 
     class Edge {
         private:
-            vector<TKey> vertexIds;
+            vector<TKey> ids;
 
         public:
             Edge();
