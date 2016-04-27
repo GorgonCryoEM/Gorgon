@@ -79,7 +79,6 @@ namespace Protein_Morph {
 
     class Face {
         private:
-            CElem edgeIds;
             CElem vertexIds;
 
         public:
