@@ -493,8 +493,8 @@ namespace Protein_Morph {
         return path;
     }
 
-    vector<Vec3F> NonManifoldMesh::sampleTriangle(int faceId, double discretizationStep) {
-        Face face = faces[faceId];
+    vector<Vec3F> NonManifoldMesh::sampleTriangle(int id, double step) {
+        Face face = faces[id];
 
         vector<Vec3F> points;
         CElem v = face.getVertices();
@@ -512,8 +512,8 @@ namespace Protein_Morph {
             v1.normalize();
             v2.normalize();
 
-            for(double a1 = 0; a1 <= v1Length; a1 += discretizationStep) {
-                for(double a2 = 0; a2 <= v2Length; a2 += discretizationStep) {
+            for(double a1 = 0; a1 <= v1Length; a1 += step) {
+                for(double a2 = 0; a2 <= v2Length; a2 += step) {
                     if(a1/v1Length + a2/v2Length <= 1) {
                         points.push_back(p + v1 * a1 + v2 * a2);
                     }
