@@ -352,11 +352,11 @@ namespace Protein_Morph {
         return id;
     }
 
-    Edge NonManifoldMesh::addEdge(int vertexId1, int vertexId2) {
-        Edge edge(vertexId1, vertexId2);
-        int edgeId = addEdge(edge);
-        vertices[vertexId1].addFaceHash(edgeId);
-        vertices[vertexId2].addFaceHash(edgeId);
+    Edge NonManifoldMesh::addEdge(int v1, int v2) {
+        Edge edge(v1, v2);
+        int id = addEdge(edge);
+        vertices[v1].addFaceHash(id);
+        vertices[v2].addFaceHash(id);
 
         return edge;
     }
