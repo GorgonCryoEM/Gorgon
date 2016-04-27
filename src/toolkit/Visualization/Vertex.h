@@ -34,10 +34,10 @@ namespace Core {
             Vertex();
             Vertex(Vec3F pos);
 
-            TKey addFaceHash(TKey hash);
+            TKey addFaceHash(TKey id);
             unsigned int sizeFaceHashes() const;
             vector<TKey> getFaceHashes() const;
-            TKey edge(int i) const;
+            TKey edge(int id) const;
 
             TKey sizeEdge() const;
 

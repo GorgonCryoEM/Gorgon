@@ -17,9 +17,9 @@ namespace Core {
             : Vec3F(pos)
     {}
 
-    TKey Vertex::addFaceHash(TKey hash) {
-        ids.push_back(hash);
-        return hash;
+    TKey Vertex::addFaceHash(TKey id) {
+        ids.push_back(id);
+        return id;
     }
 
     unsigned int Vertex::sizeFaceHashes() const {
@@ -30,8 +30,8 @@ namespace Core {
         return ids;
     }
 
-    TKey Vertex::edge(int i) const {
-        return ids[i];
+    TKey Vertex::edge(int id) const {
+        return ids[id];
     }
 
     TKey Vertex::sizeEdge() const {
