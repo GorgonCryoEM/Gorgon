@@ -22,7 +22,7 @@ namespace Core {
         return id;
     }
 
-    unsigned int Vertex::sizeFaceHashes() const {
+    unsigned int Vertex::sizeIds() const {
         return ids.size();
     }
 
@@ -35,13 +35,13 @@ namespace Core {
     }
 
     TKey Vertex::sizeEdge() const {
-        return sizeFaceHashes();
+        return sizeIds();
     }
 
     ostream& operator<<(ostream& out, const Vertex& obj) {
         return out//<<"\033[34m"
                 <<Vec3F(obj)
-                <<"\tedgeIds.size(): "<<obj.sizeFaceHashes()
+                <<"\tedgeIds.size(): "<<obj.sizeIds()
                 <<endl<<obj.getFaceHashes()
                 <<endl;
 //                      <<"\033[0m";

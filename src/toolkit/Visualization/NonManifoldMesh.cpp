@@ -508,7 +508,7 @@ namespace Protein_Morph {
         if(it!=vertices.end())
             vertex = it->second;
 
-        return vertex.sizeFaceHashes() > 0;
+        return vertex.sizeIds() > 0;
     }
 
     vector<TKey> NonManifoldMesh::getNeighboringVertexIndices(TKey id) {
