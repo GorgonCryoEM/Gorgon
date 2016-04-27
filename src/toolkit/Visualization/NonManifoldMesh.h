@@ -62,22 +62,8 @@ namespace Core {
             friend ostream& operator<<(ostream& out, const Edge& obj);
     };
 
-    typedef vector<TKey> CElem;
-
-    class Face {
-        private:
-            CElem ids;
-
-        public:
-            CElem getVertices() const;
-            void addVertex(TKey i);
-
-            friend ostream& operator<<(ostream& out, const Face& obj);
-    };
-
     typedef map<TKey, Vertex > TV;
     typedef map<TKey, Edge >   TE;
-    typedef map<TKey, Face >   TF;
 
     class NonManifoldMesh : public Volume, public Mesh {
         public:
