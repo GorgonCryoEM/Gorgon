@@ -361,26 +361,26 @@ namespace Protein_Morph {
         return edge;
     }
 
-    bool NonManifoldMesh::isEdgePresent(int vertexId1, int vertexId2) {
+    bool NonManifoldMesh::isEdgePresent(int v1, int v2) {
         bool isPresent = false;
-        for(unsigned int i = 0; (i < vertices[vertexId1].sizeEdge()) && !isPresent; i++) {
-            isPresent = ((int)curves[vertices[vertexId1].edge(i)].vertex(0) == vertexId2) || ((int)curves[vertices[vertexId1].edge(i)].vertex(1) == vertexId2);
+        for(unsigned int i = 0; (i < vertices[v1].sizeEdge()) && !isPresent; i++) {
+            isPresent = ((int)curves[vertices[v1].edge(i)].vertex(0) == v2) || ((int)curves[vertices[v1].edge(i)].vertex(1) == v2);
         }
 
         return isPresent;
     }
 
-    int NonManifoldMesh::getEdgeIndex(int vertexId1, int vertexId2) const {
+    int NonManifoldMesh::getEdgeIndex(int v1, int v2) const {
         int edgeId = -1;
         Vertex vertex;
-        TV::const_iterator it = vertices.find(vertexId1);
+        TV::const_iterator it = vertices.find(v1);
         if(it!=vertices.end())
             vertex = it->second;
 
         for(int i = 0; i < vertex.sizeEdge(); i++) {
             TE::const_iterator it = curves.find(vertex.edge(i));
-            if(it!=curves.end() && ((it->second).vertex(0) == vertexId2 ||
-                                   (it->second).vertex(1) == vertexId2))
+            if(it!=curves.end() && ((it->second).vertex(0) == v2 ||
+                                   (it->second).vertex(1) == v2))
             {
                 edgeId = vertex.edge(i);
             }
