@@ -30,7 +30,7 @@ namespace Core {
         return ids;
     }
 
-    TKey Vertex::edge(int id) const {
+    TKey Vertex::id(int id) const {
         return ids[id];
     }
 

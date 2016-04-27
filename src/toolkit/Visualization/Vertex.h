@@ -37,7 +37,7 @@ namespace Core {
             TKey addId(TKey id);
             unsigned int sizeIds() const;
             vector<TKey> getIds() const;
-            TKey edge(int id) const;
+            TKey id(int id) const;
 
             TKey sizeEdge() const;
 

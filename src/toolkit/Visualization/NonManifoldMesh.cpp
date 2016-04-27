@@ -432,7 +432,7 @@ namespace Protein_Morph {
                 for(unsigned int v = 0; v < 2; v++) {
                     TKey i = curves[currentEdge].vertex(v);
                     for(unsigned int e = 0; e < vertices[i].sizeEdge(); e++) {
-                        unsigned int id = vertices[i].edge(e);
+                        unsigned int id = vertices[i].id(e);
                         if(src.find(id) == src.end()) {
                             src[id] = currentEdge;
                             q.push(id);
@@ -514,10 +514,10 @@ namespace Protein_Morph {
     vector<TKey> NonManifoldMesh::getNeighboringVertexIndices(TKey id) {
         vector<TKey> neighbors;
         for(unsigned int i = 0; i < vertices[id].sizeEdge(); i++) {
-            if(curves[vertices[id].edge(i)].vertex(0) == id) {
-                neighbors.push_back(curves[vertices[id].edge(i)].vertex(1));
+            if(curves[vertices[id].id(i)].vertex(0) == id) {
+                neighbors.push_back(curves[vertices[id].id(i)].vertex(1));
             } else {
-                neighbors.push_back(curves[vertices[id].edge(i)].vertex(0));
+                neighbors.push_back(curves[vertices[id].id(i)].vertex(0));
             }
         }
         return neighbors;
