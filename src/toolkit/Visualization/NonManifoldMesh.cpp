@@ -454,27 +454,27 @@ namespace Protein_Morph {
         return normal;
     }
 
-    vector<TKey> NonManifoldMesh::getPath(TKey edge0Ix, TKey edge1Ix) {
+    vector<TKey> NonManifoldMesh::getPath(TKey id0, TKey id1) {
         vector<TKey> path;
-        map<TKey, TKey> source;
+        map<TKey, TKey> src;
 
-        queue<TKey> edgeList;
-        edgeList.push(edge0Ix);
+        queue<TKey> q;
+        q.push(id0);
 
         bool found = false;
 
-        while((edgeList.size() > 0) && !found) {
-            TKey currentEdge = edgeList.front();
-            edgeList.pop();
-            found = currentEdge == edge1Ix;
+        while((q.size() > 0) && !found) {
+            TKey currentEdge = q.front();
+            q.pop();
+            found = currentEdge == id1;
             if(!found) {
                 for(unsigned int v = 0; v < 2; v++) {
                     TKey vertexIx = curves[currentEdge].vertex(v);
                     for(unsigned int e = 0; e < vertices[vertexIx].sizeEdge(); e++) {
-                        unsigned int edgeIx = vertices[vertexIx].edge(e);
-                        if(source.find(edgeIx) == source.end()) {
-                            source[edgeIx] = currentEdge;
-                            edgeList.push(edgeIx);
+                        unsigned int id = vertices[vertexIx].edge(e);
+                        if(src.find(id) == src.end()) {
+                            src[id] = currentEdge;
+                            q.push(id);
                         }
                     }
                 }
@@ -482,10 +482,10 @@ namespace Protein_Morph {
         }
 
         if(found) {
-            TKey currentEdge = edge1Ix;
+            TKey currentEdge = id1;
             path.push_back(currentEdge);
-            while(currentEdge != edge0Ix) {
-                currentEdge = source[currentEdge];
+            while(currentEdge != id0) {
+                currentEdge = src[currentEdge];
                 path.push_back(currentEdge);
             }
         }
