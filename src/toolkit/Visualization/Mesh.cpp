@@ -21,8 +21,8 @@ namespace Core {
     Mesh::~Mesh() {
     }
 
-    int Mesh::addMarchingVertex(Vec3F location, int hashKey) {
-        return addVertex(location, hashKey);
+    int Mesh::addMarchingVertex(Vec3F loc, int id) {
+        return addVertex(loc, id);
     }
 
     TKey Mesh::addFace(Vec3U face) {
@@ -40,13 +40,13 @@ namespace Core {
         faceHashes.clear();
     }
 
-    TKey Mesh::addVertex(Vec3F vertex, TKey hashKey) {
-        vertices[hashKey] = Vertex(vertex);
-        return hashKey;
+    TKey Mesh::addVertex(Vec3F vertex, TKey id) {
+        vertices[id] = Vertex(vertex);
+        return id;
     }
 
-    Vec3F Mesh::getVertexNormal(TKey vertexHash) {
-        Vertex vertex(vertices[vertexHash]);
+    Vec3F Mesh::getVertexNormal(TKey id) {
+        Vertex vertex(vertices[id]);
         vector<TKey> hashes(vertex.getIds());
 
         Vec3F normal = Vec3F(0, 0, 0);
@@ -58,8 +58,8 @@ namespace Core {
         return normal;
     }
 
-    Vec3F Mesh::getFaceNormal(TKey faceHash) {
-        Vec3U face = faceHashes[faceHash];
+    Vec3F Mesh::getFaceNormal(TKey id) {
+        Vec3U face = faceHashes[id];
         Vec3F normal =
                 (vertices[face[1]] - vertices[face[0]]) ^ (vertices[face[2]] - vertices[face[0]]);
 
