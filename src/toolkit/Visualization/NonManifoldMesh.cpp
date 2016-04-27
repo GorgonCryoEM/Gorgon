@@ -528,17 +528,17 @@ namespace Protein_Morph {
             return -1;
         }
 
-        double minDistance = (pos - vertices[0]).length();
-        int minIx = 0;
+        double minDist = (pos - vertices[0]).length();
+        int id = 0;
         for(unsigned int i = 0; i < vertices.size(); i++) {
-            double distance = (pos - vertices[i]).length();
-            if(distance < minDistance) {
-                minDistance = distance;
-                minIx = i;
+            double d = (pos - vertices[i]).length();
+            if(d < minDist) {
+                minDist = d;
+                id = i;
             }
 
         }
-        return minIx;
+        return id;
     }
 
     bool NonManifoldMesh::isSurfaceVertex(int ix) const {
