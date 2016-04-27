@@ -26,7 +26,7 @@ namespace Core {
         return ids.size();
     }
 
-    vector<TKey> Vertex::getFaceHashes() const {
+    vector<TKey> Vertex::getIds() const {
         return ids;
     }
 
@@ -42,7 +42,7 @@ namespace Core {
         return out//<<"\033[34m"
                 <<Vec3F(obj)
                 <<"\tedgeIds.size(): "<<obj.sizeIds()
-                <<endl<<obj.getFaceHashes()
+                <<endl<<obj.getIds()
                 <<endl;
 //                      <<"\033[0m";
     }

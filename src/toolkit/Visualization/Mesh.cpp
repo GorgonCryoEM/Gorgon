@@ -47,7 +47,7 @@ namespace Core {
 
     Vec3F Mesh::getVertexNormal(TKey vertexHash) {
         Vertex vertex(vertices[vertexHash]);
-        vector<TKey> hashes(vertex.getFaceHashes());
+        vector<TKey> hashes(vertex.getIds());
 
         Vec3F normal = Vec3F(0, 0, 0);
 

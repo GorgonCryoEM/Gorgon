@@ -393,7 +393,7 @@ namespace Protein_Morph {
     Vec3F NonManifoldMesh::getVertexNormal(int id) {
         Vec3F normal(0, 0, 0);
         Vertex vertex = vertices[id];
-        CElem fs = vertex.getFaceHashes();
+        CElem fs = vertex.getIds();
 
         for(CElem::iterator it=fs.begin(); it!=fs.end(); ++it)
                 normal += getFaceNormal(*it);
