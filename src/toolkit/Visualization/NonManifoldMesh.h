@@ -62,7 +62,6 @@ namespace Core {
             friend ostream& operator<<(ostream& out, const Edge& obj);
     };
 
-    typedef set<Edge> CEdge;
     typedef vector<TKey> CElem;
 
     class Face {
