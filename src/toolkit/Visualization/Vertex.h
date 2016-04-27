@@ -39,8 +39,6 @@ namespace Core {
             vector<TKey> getIds() const;
             TKey id(int id) const;
 
-            TKey sizeEdge() const;
-
         private:
             vector<TKey> ids;
 

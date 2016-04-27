@@ -34,10 +34,6 @@ namespace Core {
         return ids[id];
     }
 
-    TKey Vertex::sizeEdge() const {
-        return sizeIds();
-    }
-
     ostream& operator<<(ostream& out, const Vertex& obj) {
         return out//<<"\033[34m"
                 <<Vec3F(obj)
