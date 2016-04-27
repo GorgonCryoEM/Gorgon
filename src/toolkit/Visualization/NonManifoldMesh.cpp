@@ -426,12 +426,9 @@ namespace Protein_Morph {
         return faceId;
     }
 
-    void NonManifoldMesh::addQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4) {
-        Vec3U v123(vertexId1, vertexId2, vertexId3);
-        addTriangle(v123);
-
-        Vec3U v134(vertexId1, vertexId3, vertexId4);
-        addTriangle(v134);
+    void NonManifoldMesh::addQuad(int v1, int v2, int v3, int v4) {
+        addTriangle(Vec3U(v1, v2, v3));
+        addTriangle(Vec3U(v1, v3, v4));
     }
 
     Vec3F NonManifoldMesh::getVertexNormal(int vertexId) {
