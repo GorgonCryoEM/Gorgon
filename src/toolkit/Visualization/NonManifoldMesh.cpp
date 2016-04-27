@@ -420,13 +420,8 @@ namespace Protein_Morph {
         face.addVertex(vertexId2);
         face.addVertex(vertexId3);
 
-        int vertexIds[4] = {vertexId1, vertexId2, vertexId3, vertexId1};
-
 //        add to edges: face IDs
         int faceId = addFace(face);
-//        CElem es = face.getEdges();
-//        for(CElem::iterator it=es.begin(); it!=es.end(); ++it)
-//            edges[*it].addEdge(faceId);
 
         return faceId;
     }
@@ -438,7 +433,6 @@ namespace Protein_Morph {
         Vec3U v134(vertexId1, vertexId3, vertexId4);
         addTriangle(v134);
     }
-
 
     Vec3F NonManifoldMesh::getVertexNormal(int vertexId) {
         Vec3F normal(0, 0, 0);
