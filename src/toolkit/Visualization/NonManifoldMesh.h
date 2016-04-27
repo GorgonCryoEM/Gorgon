@@ -104,7 +104,7 @@ namespace Protein_Morph {
                       bool disablePointLighting, int lineThickness,
                       bool smoothSurfaceNormals);
 
-            int addMarchingVertex(Vec3F location, int hashKey);
+            int addMarchingVertex(Vec3F location);
             TKey addMarchingFace(Vec3U vertexHash);
 
             int addVertex(Vec3F location);

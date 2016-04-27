@@ -21,7 +21,7 @@ namespace Core {
     Mesh::~Mesh() {
     }
 
-    int Mesh::addMarchingVertex(Vec3F location, int hashKey) {
+    int Mesh::addMarchingVertex(Vec3F location) {
         return addVertex(location);
     }
 

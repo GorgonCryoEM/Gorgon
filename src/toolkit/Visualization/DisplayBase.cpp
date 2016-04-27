@@ -191,7 +191,7 @@ namespace Visualization {
                 asEdgeVertex[i][1] = (float)iY + ((float)a2iVertexOffset[ a2iEdgeConnection[i][0] ][1] +  fOffset * (float)a2iEdgeDirection[i][1]) * (float)iScale;
                 asEdgeVertex[i][2] = (float)iZ + ((float)a2iVertexOffset[ a2iEdgeConnection[i][0] ][2] +  fOffset * (float)a2iEdgeDirection[i][2]) * (float)iScale;
 
-                vertexIds[i] = mesh.addMarchingVertex(Vec3F(asEdgeVertex[i]), vol.getHashKey(iX, iY, iZ, i, iScale));
+                vertexIds[i] = mesh.addMarchingVertex(Vec3F(asEdgeVertex[i]));
             }
         }
 

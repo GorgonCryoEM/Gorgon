@@ -28,7 +28,7 @@ namespace Core {
             Mesh();
             virtual ~Mesh();
 
-            virtual int addMarchingVertex(Vec3F location, int hashKey);
+            virtual int addMarchingVertex(Vec3F location);
             virtual TKey addMarchingFace(Vec3U face);
 
             void clear();

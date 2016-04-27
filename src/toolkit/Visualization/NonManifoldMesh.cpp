@@ -170,7 +170,7 @@ namespace Protein_Morph {
         faces.clear();
     }
 
-    int NonManifoldMesh::addMarchingVertex(Vec3F location, int hashKey) {
+    int NonManifoldMesh::addMarchingVertex(Vec3F location) {
         return addVertex(location);
     }
 
