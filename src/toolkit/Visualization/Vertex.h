@@ -42,7 +42,7 @@ namespace Core {
             TKey sizeEdge() const;
 
         private:
-            vector<TKey> faceHashes;
+            vector<TKey> ids;
 
             friend ostream& operator<<(ostream& out, const Vertex& obj);
     };

@@ -18,20 +18,20 @@ namespace Core {
     {}
 
     TKey Vertex::addFaceHash(TKey hash) {
-        faceHashes.push_back(hash);
+        ids.push_back(hash);
         return hash;
     }
 
     unsigned int Vertex::sizeFaceHashes() const {
-        return faceHashes.size();
+        return ids.size();
     }
 
     vector<TKey> Vertex::getFaceHashes() const {
-        return faceHashes;
+        return ids;
     }
 
     TKey Vertex::edge(int i) const {
-        return faceHashes[i];
+        return ids[i];
     }
 
     TKey Vertex::sizeEdge() const {
