@@ -17,7 +17,7 @@ namespace Core {
             : Vec3F(pos)
     {}
 
-    TKey Vertex::addFaceHash(TKey id) {
+    TKey Vertex::addId(TKey id) {
         ids.push_back(id);
         return id;
     }

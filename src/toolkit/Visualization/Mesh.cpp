@@ -29,7 +29,7 @@ namespace Core {
         TKey faceHash = faceHashes.size();
         faceHashes.push_back(face);
         for (int i = 0; i < 3; ++i) {
-            vertices[face[i]].addFaceHash(faceHash);
+            vertices[face[i]].addId(faceHash);
         }
 
         return faceHash;
