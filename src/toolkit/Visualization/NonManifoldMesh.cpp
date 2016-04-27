@@ -55,10 +55,6 @@ namespace Protein_Morph {
 //                  <<"\033[0m";
     }
 
-    void Face::insert(Edge edge) {
-        edges.insert(edge);
-    }
-
     CElem Face::getVertices() const {
         return CElem(vertexIds.begin(), vertexIds.end());
     }
