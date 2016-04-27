@@ -90,7 +90,7 @@ namespace Protein_Morph {
         cout<<"src.getSize(): "<<src.getSize()<<endl;
 #endif
 
-        int vertexLocations[src.getSize()];
+        int lVertices[src.getSize()];
 
         fromVolume = true;
         size = src.getSizeObj();
@@ -102,10 +102,10 @@ namespace Protein_Morph {
             for(int y = 0; y < src.getSizeY(); y++) {
                 for(int z = 0; z < src.getSizeZ(); z++) {
                     int i = src.getIndex(x, y, z);
-                    vertexLocations[i] = -1;
+                    lVertices[i] = -1;
                     int value = (int)round(src(i));
                     if(value > 0)
-                        vertexLocations[i] = addVertex(Vec3F(x, y, z));
+                        lVertices[i] = addVertex(Vec3F(x, y, z));
                 }
             }
         }
@@ -118,8 +118,8 @@ namespace Protein_Morph {
                     int i = src.getIndex(x, y, z);
                     for(int k = 0; k < 3; k++) {
                         int i2 = src.getIndex(x+ens[k][0], y+ens[k][1], z+ens[k][2]);
-                        if((vertexLocations[i] >= 0) && (vertexLocations[i2] >= 0)) {
-                            addEdge(vertexLocations[i], vertexLocations[i2]);
+                        if((lVertices[i] >= 0) && (lVertices[i2] >= 0)) {
+                            addEdge(lVertices[i], lVertices[i2]);
                         }
                     }
                 }
@@ -135,14 +135,14 @@ namespace Protein_Morph {
             for(int y = 0; y < src.getSizeY()-1; y++) {
                 for(int z = 0; z < src.getSizeZ()-1; z++) {
                     int ind = src.getIndex(x, y, z);
-                    if(vertexLocations[ind] >= 0) {
+                    if(lVertices[ind] >= 0) {
                         for(int i = 0; i < 3; i++) {
                             bool faceFound = true;
-                            inds[0] = vertexLocations[ind];
+                            inds[0] = lVertices[ind];
                             for(int j = 0; j < 3; j++) {
                                 int ind2 = src.getIndex(x+fns[i][j][0], y+fns[i][j][1], z+fns[i][j][2]);
-                                inds[j+1] = vertexLocations[ind2];
-                                faceFound = faceFound && vertexLocations[ind2] >= 0;
+                                inds[j+1] = lVertices[ind2];
+                                faceFound = faceFound && lVertices[ind2] >= 0;
                             }
                             if(faceFound) {
                                 addQuad(inds[0], inds[1], inds[2], inds[3]);
