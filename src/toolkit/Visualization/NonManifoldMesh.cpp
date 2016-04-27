@@ -115,11 +115,11 @@ namespace Protein_Morph {
         for(int x = 0; x < src.getSizeX()-1; x++) {
             for(int y = 0; y < src.getSizeY()-1; y++) {
                 for(int z = 0; z < src.getSizeZ()-1; z++) {
-                    int index = src.getIndex(x, y, z);
-                    for(int i = 0; i < 3; i++) {
-                        int index2 = src.getIndex(x+edgeNeighbors[i][0], y+edgeNeighbors[i][1], z+edgeNeighbors[i][2]);
-                        if((vertexLocations[index] >= 0) && (vertexLocations[index2] >= 0)) {
-                            addEdge(vertexLocations[index], vertexLocations[index2]);
+                    int i = src.getIndex(x, y, z);
+                    for(int k = 0; k < 3; k++) {
+                        int index2 = src.getIndex(x+edgeNeighbors[k][0], y+edgeNeighbors[k][1], z+edgeNeighbors[k][2]);
+                        if((vertexLocations[i] >= 0) && (vertexLocations[index2] >= 0)) {
+                            addEdge(vertexLocations[i], vertexLocations[index2]);
                         }
                     }
                 }
