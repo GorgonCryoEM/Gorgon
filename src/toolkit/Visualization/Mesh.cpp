@@ -26,8 +26,8 @@ namespace Core {
     }
 
     TKey Mesh::addFace(Vec3U face) {
-        TKey faceHash = faceHashes.size();
-        faceHashes.push_back(face);
+        TKey faceHash = faces.size();
+        faces.push_back(face);
         for (int i = 0; i < 3; ++i) {
             vertices[face[i]].addId(faceHash);
         }
@@ -37,7 +37,7 @@ namespace Core {
 
     void Mesh::clear() {
         vertices.clear();
-        faceHashes.clear();
+        faces.clear();
     }
 
     TKey Mesh::addVertex(Vec3F vertex, TKey id) {
@@ -59,7 +59,7 @@ namespace Core {
     }
 
     Vec3F Mesh::getFaceNormal(TKey id) {
-        Vec3U face = faceHashes[id];
+        Vec3U face = faces[id];
         Vec3F normal =
                 (vertices[face[1]] - vertices[face[0]]) ^ (vertices[face[2]] - vertices[face[0]]);
 
@@ -77,7 +77,7 @@ namespace Core {
                 glPushName(0);
                 glPushName(0);
             }
-            for(unsigned int i = 0; i < faceHashes.size(); i++) {
+            for(unsigned int i = 0; i < faces.size(); i++) {
                 if(annotateSurfaces) {
                     glLoadName(i);
                 }
@@ -85,13 +85,13 @@ namespace Core {
                 bool drawTriangle = true;
                 if(fadeExtreme) {
                     for(unsigned int j = 0; j < 3; j++) {
-                        int k = faceHashes[i][j];
+                        int k = faces[i][j];
                         drawTriangle = drawTriangle && (vertices[k] - center).length() <= radius;
                     }
                 }
                 if(drawTriangle) {
                     for(unsigned int j = 0; j < 3; j++) {
-                        int k = faceHashes[i][j];
+                        int k = faces[i][j];
                         Vec3F normal = getVertexNormal(k);
                         glNormal3f(normal.X(), normal.Y(), normal.Z());
                         glVertex3fv(vertices[k].getValues());
@@ -110,7 +110,7 @@ namespace Core {
     void Mesh::save(string fileName) {
         FILE * outFile = fopen(fileName.c_str(), "wt");
         fprintf(outFile, "OFF\n");
-        fprintf(outFile, "%d %d %d\n", (int)vertices.size(), (int)faceHashes.size(), 0);
+        fprintf(outFile, "%d %d %d\n", (int)vertices.size(), (int)faces.size(), 0);
 
         map<TKey, int> indexedVertices;
         vector<Vec3F> vertexList;
@@ -126,11 +126,11 @@ namespace Core {
             fprintf(outFile, "%f %f %f \n", vertexList[i].X(), vertexList[i].Y(), vertexList[i].Z());
         }
 
-        for(unsigned int i = 0; i < faceHashes.size(); i++) {
+        for(unsigned int i = 0; i < faces.size(); i++) {
             fprintf(outFile, "3 %d %d %d\n",
-                    indexedVertices[faceHashes[i][2]],
-                    indexedVertices[faceHashes[i][1]],
-                    indexedVertices[faceHashes[i][0]]);
+                    indexedVertices[faces[i][2]],
+                    indexedVertices[faces[i][1]],
+                    indexedVertices[faces[i][0]]);
         }
         fclose(outFile);
     }
