@@ -79,7 +79,7 @@ namespace Protein_Morph {
 
     class Face {
         private:
-            CElem vertexIds;
+            CElem ids;
 
         public:
             CElem getVertices() const;

@@ -56,20 +56,20 @@ namespace Protein_Morph {
     }
 
     CElem Face::getVertices() const {
-        return CElem(vertexIds.begin(), vertexIds.end());
+        return CElem(ids.begin(), ids.end());
     }
 
     void Face::addVertex(TKey i) {
-        vertexIds.push_back(i);
+        ids.push_back(i);
     }
 
     ostream& operator<<(ostream& out, const Face& obj) {
-        set<unsigned int> vertices(obj.vertexIds.begin(), obj.vertexIds.end());
+        set<unsigned int> vertices(obj.ids.begin(), obj.ids.end());
 //        set<unsigned int> edges(obj.edgeIds.begin(), obj.edgeIds.end());
         return out //<<"\033[34m"
 //                    << "\nedgeIds.size(): " << obj.edgeIds.size() << endl
 //                    << edges
-                    << "\n\nvertexIds.size(): " << obj.vertexIds.size()
+                    << "\n\nvertexIds.size(): " << obj.ids.size()
                     << endl
                     << vertices << endl << endl;
 //                    <<"\033[0m";
