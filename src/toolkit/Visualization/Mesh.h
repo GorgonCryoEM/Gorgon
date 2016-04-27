@@ -32,7 +32,7 @@ namespace Core {
             virtual TKey addMarchingFace(Vec3U face);
 
             void clear();
-            TKey addVertex(Vec3F vertex, TKey hashKey);
+            TKey addVertex(Vec3F vertex);
             Vec3F getVertexNormal(TKey vertexHash);
             Vec3F getFaceNormal(TKey faceHash);
             void draw(bool drawSurfaces, bool annotateSurfaces,
