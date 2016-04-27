@@ -400,18 +400,6 @@ namespace Protein_Morph {
         int v1 = vertex[1];
         int v2 = vertex[2];
 
-//        add to edges: edge
-//        add to vertices: edge IDs
-//        add to edges: vertex IDs
-        if(!isEdgePresent(v0, v1))
-            addEdge(v0, v1);
-
-        if(!isEdgePresent(v1, v2))
-            addEdge(v1, v2);
-
-        if(!isEdgePresent(v2, v0))
-            addEdge(v2, v0);
-
 //        add to faces: vertex Ids
         Face face;
         face.addVertex(v0);
