@@ -429,9 +429,9 @@ namespace Protein_Morph {
         addTriangle(Vec3U(v1, v3, v4));
     }
 
-    Vec3F NonManifoldMesh::getVertexNormal(int vertexId) {
+    Vec3F NonManifoldMesh::getVertexNormal(int id) {
         Vec3F normal(0, 0, 0);
-        Vertex vertex = vertices[vertexId];
+        Vertex vertex = vertices[id];
         CElem fs = vertex.getFaceHashes();
 
         for(CElem::iterator it=fs.begin(); it!=fs.end(); ++it)
@@ -441,8 +441,8 @@ namespace Protein_Morph {
         return normal;
     }
 
-    Vec3F NonManifoldMesh::getFaceNormal(int faceId) {
-        Face face = faces[faceId];
+    Vec3F NonManifoldMesh::getFaceNormal(int id) {
+        Face face = faces[id];
         Vec3F normal(1, 0, 0);
 
         CElem v = face.getVertices();
