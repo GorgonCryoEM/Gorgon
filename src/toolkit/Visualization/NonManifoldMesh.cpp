@@ -65,10 +65,10 @@ namespace Protein_Morph {
 
     ostream& operator<<(ostream& out, const Face& obj) {
         set<unsigned int> vertices(obj.vertexIds.begin(), obj.vertexIds.end());
-        set<unsigned int> edges(obj.edgeIds.begin(), obj.edgeIds.end());
+//        set<unsigned int> edges(obj.edgeIds.begin(), obj.edgeIds.end());
         return out //<<"\033[34m"
-                    << "\nedgeIds.size(): " << obj.edgeIds.size() << endl
-                    << edges
+//                    << "\nedgeIds.size(): " << obj.edgeIds.size() << endl
+//                    << edges
                     << "\n\nvertexIds.size(): " << obj.vertexIds.size()
                     << endl
                     << vertices << endl << endl;
