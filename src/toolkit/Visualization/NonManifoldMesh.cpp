@@ -127,25 +127,25 @@ namespace Protein_Morph {
         }
 
         //Adding Faces
-        int faceNeighbors[3][3][3] = {  {{1,0,0}, {1,0,1}, {0,0,1}},
-                                        {{1,0,0}, {1,1,0}, {0,1,0}},
-                                        {{0,1,0}, {0,1,1}, {0,0,1}}};
-        int indices[4];
+        int fns[3][3][3] = {{{1,0,0}, {1,0,1}, {0,0,1}},
+                            {{1,0,0}, {1,1,0}, {0,1,0}},
+                            {{0,1,0}, {0,1,1}, {0,0,1}}};
+        int inds[4];
         for(int x = 0; x < src.getSizeX()-1; x++) {
             for(int y = 0; y < src.getSizeY()-1; y++) {
                 for(int z = 0; z < src.getSizeZ()-1; z++) {
-                    int index = src.getIndex(x, y, z);
-                    if(vertexLocations[index] >= 0) {
+                    int ind = src.getIndex(x, y, z);
+                    if(vertexLocations[ind] >= 0) {
                         for(int i = 0; i < 3; i++) {
                             bool faceFound = true;
-                            indices[0] = vertexLocations[index];
+                            inds[0] = vertexLocations[ind];
                             for(int j = 0; j < 3; j++) {
-                                int index2 = src.getIndex(x+faceNeighbors[i][j][0], y+faceNeighbors[i][j][1], z+faceNeighbors[i][j][2]);
-                                indices[j+1] = vertexLocations[index2];
-                                faceFound = faceFound && vertexLocations[index2] >= 0;
+                                int ind2 = src.getIndex(x+fns[i][j][0], y+fns[i][j][1], z+fns[i][j][2]);
+                                inds[j+1] = vertexLocations[ind2];
+                                faceFound = faceFound && vertexLocations[ind2] >= 0;
                             }
                             if(faceFound) {
-                                addQuad(indices[0], indices[1], indices[2], indices[3]);
+                                addQuad(inds[0], inds[1], inds[2], inds[3]);
                             }
                         }
                     }
