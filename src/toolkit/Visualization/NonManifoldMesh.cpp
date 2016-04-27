@@ -101,7 +101,8 @@ namespace Protein_Morph {
         for(int x = 0; x < src.getSizeX(); x++) {
             for(int y = 0; y < src.getSizeY(); y++) {
                 for(int z = 0; z < src.getSizeZ(); z++) {
-                    int i = src.getIndex(x, y, z);
+                    Vec3I pos(x, y, z);
+                    int i = src.getIndex(pos);
                     lVertices[i] = -1;
                     int value = (int)round(src(i));
                     if(value > 0)
@@ -115,9 +116,10 @@ namespace Protein_Morph {
         for(int x = 0; x < src.getSizeX()-1; x++) {
             for(int y = 0; y < src.getSizeY()-1; y++) {
                 for(int z = 0; z < src.getSizeZ()-1; z++) {
-                    int i = src.getIndex(x, y, z);
+                    Vec3I pos(x, y, z);
+                    int i = src.getIndex(pos);
                     for(int k = 0; k < 3; k++) {
-                        int i2 = src.getIndex(x+ens[k][0], y+ens[k][1], z+ens[k][2]);
+                        int i2 = src.getIndex(pos+ens[k]);
                         if((lVertices[i] >= 0) && (lVertices[i2] >= 0)) {
                             addEdge(lVertices[i], lVertices[i2]);
                         }
@@ -134,13 +136,14 @@ namespace Protein_Morph {
         for(int x = 0; x < src.getSizeX()-1; x++) {
             for(int y = 0; y < src.getSizeY()-1; y++) {
                 for(int z = 0; z < src.getSizeZ()-1; z++) {
-                    int ind = src.getIndex(x, y, z);
+                    Vec3I pos(x, y, z);
+                    int ind = src.getIndex(pos);
                     if(lVertices[ind] >= 0) {
                         for(int i = 0; i < 3; i++) {
                             bool faceFound = true;
                             inds[0] = lVertices[ind];
                             for(int j = 0; j < 3; j++) {
-                                int ind2 = src.getIndex(x+fns[i][j][0], y+fns[i][j][1], z+fns[i][j][2]);
+                                int ind2 = src.getIndex(pos+fns[i][j]);
                                 inds[j+1] = lVertices[ind2];
                                 faceFound = faceFound && lVertices[ind2] >= 0;
                             }
