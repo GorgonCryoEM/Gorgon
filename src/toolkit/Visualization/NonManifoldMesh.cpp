@@ -364,23 +364,6 @@ namespace Protein_Morph {
         return edge;
     }
 
-    int NonManifoldMesh::getEdgeIndex(int v1, int v2) const {
-        int edgeId = -1;
-        Vertex vertex;
-        TV::const_iterator it = vertices.find(v1);
-        if(it!=vertices.end())
-            vertex = it->second;
-
-        for(int i = 0; i < vertex.sizeEdge(); i++) {
-            TE::const_iterator it = curves.find(vertex.edge(i));
-            if(it!=curves.end() && ((it->second).vertex(0) == v2 ||
-                                   (it->second).vertex(1) == v2))
-            {
-                edgeId = vertex.edge(i);
-            }
-        }
-        return edgeId;
-    }
 
     int NonManifoldMesh::addFace(Face face) {
         TKey id = faces.size();
