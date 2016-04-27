@@ -25,7 +25,7 @@ namespace Core {
         return addVertex(location, hashKey);
     }
 
-    TKey Mesh::addMarchingFace(Vec3U face) {
+    TKey Mesh::addFace(Vec3U face) {
         TKey faceHash = faceHashes.size();
         faceHashes.push_back(face);
         for (int i = 0; i < 3; ++i) {

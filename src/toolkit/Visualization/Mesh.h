@@ -29,7 +29,7 @@ namespace Core {
             virtual ~Mesh();
 
             virtual int addMarchingVertex(Vec3F location, int hashKey);
-            virtual TKey addMarchingFace(Vec3U face);
+            virtual TKey addFace(Vec3U face);
 
             void clear();
             TKey addVertex(Vec3F vertex, TKey hashKey);

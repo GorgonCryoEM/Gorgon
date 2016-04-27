@@ -368,7 +368,7 @@ namespace Protein_Morph {
         return id;
     }
 
-    TKey NonManifoldMesh::addMarchingFace(Vec3U vertex) {
+    TKey NonManifoldMesh::addFace(Vec3U vertex) {
         int v0 = vertex[0];
         int v1 = vertex[1];
         int v2 = vertex[2];
@@ -386,8 +386,8 @@ namespace Protein_Morph {
     }
 
     void NonManifoldMesh::addQuad(int v1, int v2, int v3, int v4) {
-        addMarchingFace(Vec3U(v1, v2, v3));
-        addMarchingFace(Vec3U(v1, v3, v4));
+        addFace(Vec3U(v1, v2, v3));
+        addFace(Vec3U(v1, v3, v4));
     }
 
     Vec3F NonManifoldMesh::getVertexNormal(int id) {
@@ -616,7 +616,7 @@ namespace Protein_Morph {
                         inFile >> faceNodes[i];
                     }
                     for(int i = 2; i < nFaceNodes; i++) {
-                        mesh.addMarchingFace(Vec3U(faceNodes[0], faceNodes[i-1], faceNodes[i]));
+                        mesh.addFace(Vec3U(faceNodes[0], faceNodes[i-1], faceNodes[i]));
                     }
                     break;
 

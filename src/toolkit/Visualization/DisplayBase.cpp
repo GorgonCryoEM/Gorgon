@@ -208,7 +208,7 @@ namespace Visualization {
                 triangleVertices[j] = vertexIds[iVertex];
             }
 
-            mesh.addMarchingFace(triangleVertices);
+            mesh.addFace(triangleVertices);
         }
     }
 
