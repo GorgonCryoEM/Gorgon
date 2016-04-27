@@ -9,7 +9,8 @@
 #define SRC_TOOLKIT_VISUALIZATION_MESH_H_
 
 #include <map>
-//#include <vector>
+#include <set>
+#include <vector>
 //#include <string>
 //#include "OpenGLUtils.h"
 #include "MathTools/Vector3.h"
@@ -20,6 +21,29 @@ using namespace std;
 using namespace GraphMatch;
 
 namespace Core {
+
+    template <class T, class U>
+    inline ostream & operator<<(ostream & out, const map<T, U> & obj) {
+        for(typename map<T, U>::const_iterator it = obj.begin();
+                it != obj.end(); ++it)
+
+                out<<"\t"<<it->first
+                    <<"\t"<<it->second
+                    <<endl;
+
+        return out;
+    }
+
+    template <class T>
+    inline ostream & operator<<(ostream & out, const set<T> & obj) {
+        for(typename set<T>::const_iterator it = obj.begin(); it != obj.end();
+                ++it)
+
+                out<<"\t"<<*it
+                    <<endl;
+
+        return out;
+    }
 
     typedef vector<TKey> CElem;
 
