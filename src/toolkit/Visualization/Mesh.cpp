@@ -29,24 +29,24 @@ namespace Core {
         TKey faceHash = faceHashes.size();
         faceHashes.push_back(face);
         for (int i = 0; i < 3; ++i) {
-            verticesB[face[i]].addFaceHash(faceHash);
+            vertices[face[i]].addFaceHash(faceHash);
         }
 
         return faceHash;
     }
 
     void Mesh::clear() {
-        verticesB.clear();
+        vertices.clear();
         faceHashes.clear();
     }
 
     TKey Mesh::addVertex(Vec3F vertex, TKey hashKey) {
-        verticesB[hashKey] = Vertex(vertex);
+        vertices[hashKey] = Vertex(vertex);
         return hashKey;
     }
 
     Vec3F Mesh::getVertexNormal(TKey vertexHash) {
-        Vertex vertex(verticesB[vertexHash]);
+        Vertex vertex(vertices[vertexHash]);
         vector<TKey> hashes(vertex.getFaceHashes());
 
         Vec3F normal = Vec3F(0, 0, 0);
@@ -61,7 +61,7 @@ namespace Core {
     Vec3F Mesh::getFaceNormal(TKey faceHash) {
         Vec3U face = faceHashes[faceHash];
         Vec3F normal =
-                (verticesB[face[1]] - verticesB[face[0]]) ^ (verticesB[face[2]] - verticesB[face[0]]);
+                (vertices[face[1]] - vertices[face[0]]) ^ (vertices[face[2]] - vertices[face[0]]);
 
         normal.normalize();
         return normal;
@@ -86,7 +86,7 @@ namespace Core {
                 if(fadeExtreme) {
                     for(unsigned int j = 0; j < 3; j++) {
                         int k = faceHashes[i][j];
-                        drawTriangle = drawTriangle && (verticesB[k] - center).length() <= radius;
+                        drawTriangle = drawTriangle && (vertices[k] - center).length() <= radius;
                     }
                 }
                 if(drawTriangle) {
@@ -94,7 +94,7 @@ namespace Core {
                         int k = faceHashes[i][j];
                         Vec3F normal = getVertexNormal(k);
                         glNormal3f(normal.X(), normal.Y(), normal.Z());
-                        glVertex3fv(verticesB[k].getValues());
+                        glVertex3fv(vertices[k].getValues());
                     }
                 }
                 glEnd();
@@ -110,13 +110,13 @@ namespace Core {
     void Mesh::save(string fileName) {
         FILE * outFile = fopen(fileName.c_str(), "wt");
         fprintf(outFile, "OFF\n");
-        fprintf(outFile, "%d %d %d\n", (int)verticesB.size(), (int)faceHashes.size(), 0);
+        fprintf(outFile, "%d %d %d\n", (int)vertices.size(), (int)faceHashes.size(), 0);
 
         map<TKey, int> indexedVertices;
         vector<Vec3F> vertexList;
 
         int index = 0;
-        for(MUV::iterator i = verticesB.begin(); i != verticesB.end(); ++i) {
+        for(MUV::iterator i = vertices.begin(); i != vertices.end(); ++i) {
             vertexList.push_back(i->second);
             indexedVertices[i->first] = index;
             index++;
