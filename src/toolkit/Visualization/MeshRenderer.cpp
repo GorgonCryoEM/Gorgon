@@ -90,9 +90,9 @@ namespace Visualization {
         r = radius;
         intersectionPoints.clear();
 
-        for(unsigned int i = 0; i < mesh.edges.size(); i++) {
-            p1 = mesh.vertices[mesh.edges[i].vertex(0)];
-            p2 = mesh.vertices[mesh.edges[i].vertex(1)];
+        for(unsigned int i = 0; i < mesh.curves.size(); i++) {
+            p1 = mesh.vertices[mesh.curves[i].vertex(0)];
+            p2 = mesh.vertices[mesh.curves[i].vertex(1)];
             x1 = p1.X();
             y1 = p1.Y();
             z1 = p1.Z();

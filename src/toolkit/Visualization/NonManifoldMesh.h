@@ -130,7 +130,7 @@ namespace Protein_Morph {
 
         public:
             TV vertices;
-            TE edges;
+            TE curves;
             TF faces;
 
             bool fromVolume;

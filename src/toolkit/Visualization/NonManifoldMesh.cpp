@@ -165,7 +165,7 @@ namespace Protein_Morph {
     void NonManifoldMesh::clear() {
         Mesh::clear();
         vertices.clear();
-        edges.clear();
+        curves.clear();
         faces.clear();
     }
 
@@ -193,8 +193,8 @@ namespace Protein_Morph {
             mapVertices[i] = vertices[i];
 
         map<unsigned int, Edge> mapEdges;
-        for(unsigned int i=0; i<edges.size(); ++i)
-            mapEdges[i] = edges[i];
+        for(unsigned int i=0; i<curves.size(); ++i)
+            mapEdges[i] = curves[i];
 
         map<unsigned int, Face> mapFaces;
         for(unsigned int i=0; i<faces.size(); ++i)
@@ -289,15 +289,15 @@ namespace Protein_Morph {
             glLineWidth(lineThickness);
             glEnable(GL_LINE_SMOOTH);
             glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-            for(unsigned int i = 0; i < edges.size(); i++) {
+            for(unsigned int i = 0; i < curves.size(); i++) {
 //                if(edges[i].size() == 0) {
                     if(annotateLines) {
                         glLoadName(i);
                     }
                     glBegin(GL_LINES);
-                    int k = edges[i].vertex(0);
+                    int k = curves[i].vertex(0);
                     glVertex3f(vertices[k][0], vertices[k][1], vertices[k][2]);
-                    k = edges[i].vertex(1);
+                    k = curves[i].vertex(1);
                     glVertex3f(vertices[k][0], vertices[k][1], vertices[k][2]);
                     glEnd();
 //                }
@@ -348,8 +348,8 @@ namespace Protein_Morph {
     }
 
     int NonManifoldMesh::addEdge(Edge edge) {
-        TKey id = edges.size();
-        edges[id] = edge;
+        TKey id = curves.size();
+        curves[id] = edge;
 
         return id;
     }
@@ -366,7 +366,7 @@ namespace Protein_Morph {
     bool NonManifoldMesh::isEdgePresent(int vertexId1, int vertexId2) {
         bool isPresent = false;
         for(unsigned int i = 0; (i < vertices[vertexId1].sizeEdge()) && !isPresent; i++) {
-            isPresent = ((int)edges[vertices[vertexId1].edge(i)].vertex(0) == vertexId2) || ((int)edges[vertices[vertexId1].edge(i)].vertex(1) == vertexId2);
+            isPresent = ((int)curves[vertices[vertexId1].edge(i)].vertex(0) == vertexId2) || ((int)curves[vertices[vertexId1].edge(i)].vertex(1) == vertexId2);
         }
 
         return isPresent;
@@ -380,8 +380,8 @@ namespace Protein_Morph {
             vertex = it->second;
 
         for(int i = 0; i < vertex.sizeEdge(); i++) {
-            TE::const_iterator it = edges.find(vertex.edge(i));
-            if(it!=edges.end() && ((it->second).vertex(0) == vertexId2 ||
+            TE::const_iterator it = curves.find(vertex.edge(i));
+            if(it!=curves.end() && ((it->second).vertex(0) == vertexId2 ||
                                    (it->second).vertex(1) == vertexId2))
             {
                 edgeId = vertex.edge(i);
@@ -471,7 +471,7 @@ namespace Protein_Morph {
             found = currentEdge == edge1Ix;
             if(!found) {
                 for(unsigned int v = 0; v < 2; v++) {
-                    TKey vertexIx = edges[currentEdge].vertex(v);
+                    TKey vertexIx = curves[currentEdge].vertex(v);
                     for(unsigned int e = 0; e < vertices[vertexIx].sizeEdge(); e++) {
                         unsigned int edgeIx = vertices[vertexIx].edge(e);
                         if(source.find(edgeIx) == source.end()) {
@@ -555,10 +555,10 @@ namespace Protein_Morph {
     vector<TKey> NonManifoldMesh::getNeighboringVertexIndices(TKey vertexIx) {
         vector<TKey> neighbors;
         for(unsigned int i = 0; i < vertices[vertexIx].sizeEdge(); i++) {
-            if(edges[vertices[vertexIx].edge(i)].vertex(0) == vertexIx) {
-                neighbors.push_back(edges[vertices[vertexIx].edge(i)].vertex(1));
+            if(curves[vertices[vertexIx].edge(i)].vertex(0) == vertexIx) {
+                neighbors.push_back(curves[vertices[vertexIx].edge(i)].vertex(1));
             } else {
-                neighbors.push_back(edges[vertices[vertexIx].edge(i)].vertex(0));
+                neighbors.push_back(curves[vertices[vertexIx].edge(i)].vertex(0));
             }
         }
         return neighbors;
@@ -593,9 +593,9 @@ namespace Protein_Morph {
 
         Volume vol(maxPosInt[0] - minPosInt[0]+1, maxPosInt[1] - minPosInt[1]+1, maxPosInt[2] - minPosInt[2]+1);
 
-        for(unsigned int i = 0;  i < edges.size(); i++) {
-            Vertex v1 = vertices[edges[i].vertex(0)];
-            Vertex v2 = vertices[edges[i].vertex(1)];
+        for(unsigned int i = 0;  i < curves.size(); i++) {
+            Vertex v1 = vertices[curves[i].vertex(0)];
+            Vertex v2 = vertices[curves[i].vertex(1)];
             vector<Vec3I> positions = Rasterizer::ScanConvertLineC8(v1.XInt(), v1.YInt(), v1.ZInt(), v2.XInt(), v2.YInt(), v2.ZInt());
             for(unsigned int j = 0; j < positions.size(); j++) {
                 vol(positions[j] - minPosInt) = 1.0;
@@ -676,7 +676,7 @@ namespace Protein_Morph {
         return out //<<"\033[34m"
                << "vertices.size(): "
                << obj.vertices.size()
-               << "\nedges.size(): " << obj.edges.size()
+               << "\nedges.size(): " << obj.curves.size()
                << "\nfaces.size(): "
                << obj.faces.size() << endl;
 //                      <<"\033[0m";
