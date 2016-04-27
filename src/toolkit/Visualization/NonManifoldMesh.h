@@ -83,8 +83,6 @@ namespace Protein_Morph {
             CElem vertexIds;
 
         public:
-            CEdge edges;
-
             void insert(Edge edge);
             CElem getVertices() const;
             CElem getEdges() const;
