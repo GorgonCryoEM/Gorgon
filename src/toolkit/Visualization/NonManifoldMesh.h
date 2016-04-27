@@ -83,10 +83,7 @@ namespace Protein_Morph {
 
         public:
             CElem getVertices() const;
-            CElem getEdges() const;
-            int size() const;
             void addVertex(TKey i);
-            void addEdge(TKey i);
 
             friend ostream& operator<<(ostream& out, const Face& obj);
     };
