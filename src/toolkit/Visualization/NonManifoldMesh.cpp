@@ -434,9 +434,9 @@ namespace Protein_Morph {
             found = currentEdge == id1;
             if(!found) {
                 for(unsigned int v = 0; v < 2; v++) {
-                    TKey vertexIx = curves[currentEdge].vertex(v);
-                    for(unsigned int e = 0; e < vertices[vertexIx].sizeEdge(); e++) {
-                        unsigned int id = vertices[vertexIx].edge(e);
+                    TKey i = curves[currentEdge].vertex(v);
+                    for(unsigned int e = 0; e < vertices[i].sizeEdge(); e++) {
+                        unsigned int id = vertices[i].edge(e);
                         if(src.find(id) == src.end()) {
                             src[id] = currentEdge;
                             q.push(id);
