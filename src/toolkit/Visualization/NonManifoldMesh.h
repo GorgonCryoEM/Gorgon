@@ -118,7 +118,6 @@ namespace Protein_Morph {
 
             TKey addTriangle(Vec3U vertexId);
             void addQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4);
-            bool isEdgePresent(int vertexId1, int vertexId2);
             bool isSurfaceVertex(int ix) const;
             int getClosestVertexIndex(Vec3F pos);
             vector<TKey> getPath(TKey edge0Ix, TKey edge1Ix);

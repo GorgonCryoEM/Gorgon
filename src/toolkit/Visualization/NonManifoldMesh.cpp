@@ -364,15 +364,6 @@ namespace Protein_Morph {
         return edge;
     }
 
-    bool NonManifoldMesh::isEdgePresent(int v1, int v2) {
-        bool isPresent = false;
-        for(unsigned int i = 0; (i < vertices[v1].sizeEdge()) && !isPresent; i++) {
-            isPresent = ((int)curves[vertices[v1].edge(i)].vertex(0) == v2) || ((int)curves[vertices[v1].edge(i)].vertex(1) == v2);
-        }
-
-        return isPresent;
-    }
-
     int NonManifoldMesh::getEdgeIndex(int v1, int v2) const {
         int edgeId = -1;
         Vertex vertex;
