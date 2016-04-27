@@ -397,28 +397,28 @@ namespace Protein_Morph {
         return id;
     }
 
-    TKey NonManifoldMesh::addTriangle(Vec3U vertexId) {
-        int vertexId1 = vertexId[0];
-        int vertexId2 = vertexId[1];
-        int vertexId3 = vertexId[2];
+    TKey NonManifoldMesh::addTriangle(Vec3U vertex) {
+        int v0 = vertex[0];
+        int v1 = vertex[1];
+        int v2 = vertex[2];
 
 //        add to edges: edge
 //        add to vertices: edge IDs
 //        add to edges: vertex IDs
-        if(!isEdgePresent(vertexId1, vertexId2))
-            addEdge(vertexId1, vertexId2);
+        if(!isEdgePresent(v0, v1))
+            addEdge(v0, v1);
 
-        if(!isEdgePresent(vertexId2, vertexId3))
-            addEdge(vertexId2, vertexId3);
+        if(!isEdgePresent(v1, v2))
+            addEdge(v1, v2);
 
-        if(!isEdgePresent(vertexId3, vertexId1))
-            addEdge(vertexId3, vertexId1);
+        if(!isEdgePresent(v2, v0))
+            addEdge(v2, v0);
 
 //        add to faces: vertex Ids
         Face face;
-        face.addVertex(vertexId1);
-        face.addVertex(vertexId2);
-        face.addVertex(vertexId3);
+        face.addVertex(v0);
+        face.addVertex(v1);
+        face.addVertex(v2);
 
 //        add to edges: face IDs
         int faceId = addFace(face);
