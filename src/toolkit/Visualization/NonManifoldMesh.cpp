@@ -7,7 +7,7 @@
 
 #include "NonManifoldMesh.h"
 
-namespace Protein_Morph {
+namespace Core {
 
     Edge::Edge()
             : ids(2)

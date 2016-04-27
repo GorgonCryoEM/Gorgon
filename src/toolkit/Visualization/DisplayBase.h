@@ -35,7 +35,7 @@
 using namespace std;
 
 //using namespace wustl_mm::GraySkeletonCPP;
-using namespace Protein_Morph;
+//using namespace Protein_Morph;
 //using namespace MathTools;
 //using namespace GraphMatch;
 //using namespace SkeletonMaker;

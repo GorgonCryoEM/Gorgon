@@ -34,6 +34,7 @@ using namespace GraphMatch;
 //using namespace MathTools;
 using namespace GraySkeletonCPP;
 //using namespace SkeletonMaker;
+using namespace Core;
 
 namespace Protein_Morph {
 

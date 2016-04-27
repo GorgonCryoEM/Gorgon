@@ -19,9 +19,8 @@ using namespace std;
 using namespace MathTools;
 using namespace Foundation;
 using namespace SkeletonMaker;
-using namespace Core;
 
-namespace Protein_Morph {
+namespace Core {
 
     template <class T, class U>
     inline ostream & operator<<(ostream & out, const map<T, U> & obj) {
@@ -41,17 +40,6 @@ namespace Protein_Morph {
                 ++it)
 
                 out<<"\t"<<*it
-                    <<endl;
-
-        return out;
-    }
-
-    template <class T>
-    inline ostream & operator<<(ostream & out, const vector<T> & obj) {
-        for(typename vector<T>::const_iterator it = obj.begin();
-                it != obj.end(); ++it)
-
-                out<<"\t\t\t"<<*it
                     <<endl;
 
         return out;

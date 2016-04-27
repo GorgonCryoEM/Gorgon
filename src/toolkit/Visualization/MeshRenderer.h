@@ -18,7 +18,7 @@
 #include "Display.h"
 #include <Foundation/StringUtils.h>
 
-using namespace Protein_Morph;
+using namespace Core;
 //using namespace GraySkeletonCPP;
 using namespace Foundation;
 using namespace SkeletonMaker;
