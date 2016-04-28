@@ -21,7 +21,7 @@ def main():
 
     app = QtGui.QApplication(sys.argv)
 
-    window = MainWindowForm('2.2.2')
+    window = MainWindowForm('2.2.2', args)
     
     window.resize(800, 600)
 #     window.move(300,50)
