@@ -10,7 +10,7 @@
 #define SRC_TOOLKIT_VISUALIZATION_VERTEX_H_
 
 #include "MathTools/Vector3.h"
-#include "Core/Output.h"
+#include "Core/IdList.h"
 
 using namespace GraphMatch;
 
@@ -18,18 +18,10 @@ namespace Core {
 
     typedef unsigned long long TKey;
 
-    class Vertex : public Vec3F {
+    class Vertex : public Vec3F, public IdList {
         public:
             Vertex();
             Vertex(Vec3F pos);
-
-            TKey addId(TKey id);
-            unsigned int sizeIds() const;
-            vector<TKey> getIds() const;
-            TKey id(int id) const;
-
-        private:
-            vector<TKey> ids;
 
             friend ostream& operator<<(ostream& out, const Vertex& obj);
     };

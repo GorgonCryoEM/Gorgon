@@ -17,28 +17,10 @@ namespace Core {
             : Vec3F(pos)
     {}
 
-    TKey Vertex::addId(TKey id) {
-        ids.push_back(id);
-        return id;
-    }
-
-    unsigned int Vertex::sizeIds() const {
-        return ids.size();
-    }
-
-    vector<TKey> Vertex::getIds() const {
-        return ids;
-    }
-
-    TKey Vertex::id(int id) const {
-        return ids[id];
-    }
-
     ostream& operator<<(ostream& out, const Vertex& obj) {
         return out//<<"\033[34m"
                 <<Vec3F(obj)
-                <<"\tedgeIds.size(): "<<obj.sizeIds()
-                <<endl<<obj.getIds()
+                <<IdList(obj)
                 <<endl;
 //                      <<"\033[0m";
     }
