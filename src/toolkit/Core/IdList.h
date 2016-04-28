@@ -20,8 +20,12 @@ namespace Core {
             IdList();
             virtual ~IdList();
 
+            IdList(TKey i1, TKey i2);
+
             CElem getIds() const;
             void addId(TKey i);
+            TKey id(int i) const;
+
         private:
             CElem ids;
 

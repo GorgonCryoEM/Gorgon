@@ -14,6 +14,7 @@
 #include "Core/volume.h"
 #include "GorgonGL.h"
 #include "Visualization/Rasterizer.h"
+#include "Core/IdList.h"
 
 using namespace std;
 using namespace MathTools;
@@ -22,25 +23,8 @@ using namespace SkeletonMaker;
 
 namespace Core {
 
-    typedef set<TKey> CKey;
-
-    class Edge {
-        private:
-            vector<TKey> ids;
-
-        public:
-            Edge();
-            Edge(TKey v1, TKey v2);
-            vector<TKey> getVertices() const;
-            CKey getVerticesSet() const;
-            TKey vertex(int i) const;
-
-            friend bool operator<(const Edge &l, const Edge &r);
-            friend ostream& operator<<(ostream& out, const Edge& obj);
-    };
-
     typedef map<TKey, Vertex > TV;
-    typedef map<TKey, Edge >   TE;
+    typedef map<TKey, IdList >   TE;
 
     class NonManifoldMesh : public Volume, public Mesh {
         public:
@@ -58,8 +42,8 @@ namespace Core {
 
             int addVertex(Vec3F location);
             int addFace(IdList face);
-            int addEdge(Edge edge);
-            Edge addEdge(int vertexId1, int vertexId2);
+            int addEdge(IdList edge);
+            IdList addEdge(int vertexId1, int vertexId2);
 
             Vec3F getVertexNormal(int vertexId);
             Vec3F getFaceNormal(int faceId);
