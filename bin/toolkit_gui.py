@@ -16,6 +16,8 @@ from ToolkitGui import MainWindowForm
 def main():
     parser = argparse.ArgumentParser(description='Gorgon Toolkit')
     
+    parser.add_argument('volume', action="store")
+    parser.add_argument('skeleton', action="store")
     args = parser.parse_args()
 
     app = QtGui.QApplication(sys.argv)
