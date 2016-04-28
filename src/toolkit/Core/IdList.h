@@ -25,8 +25,9 @@ namespace Core {
             CElem getIds() const;
             void addId(TKey i);
             TKey id(int i) const;
+            unsigned int sizeIds() const;
 
-        private:
+        protected:
             CElem ids;
 
             friend ostream& operator<<(ostream& out, const IdList& obj);

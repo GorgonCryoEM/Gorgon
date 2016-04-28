@@ -28,9 +28,12 @@ namespace Core {
         ids[1] = i2;
     }
 
-
     TKey IdList::id(int i) const {
         return ids[i];
+    }
+
+    unsigned int IdList::sizeIds() const {
+        return ids.size();
     }
 
     ostream& operator<<(ostream& out, const IdList& obj) {
