@@ -23,7 +23,7 @@ using namespace GraphMatch;
 
 namespace Core {
 
-    typedef map<TKey, IdList >   TF;
+    typedef vector<IdList >   TF;
     typedef Vector3<TKey> Vec3U;
 
     class Mesh {
@@ -32,6 +32,7 @@ namespace Core {
             virtual ~Mesh();
 
             virtual int addMarchingVertex(Vec3F loc, int id);
+            int addFace(IdList face);
             virtual TKey addFace(Vec3U face);
 
             void clear();
@@ -47,7 +48,7 @@ namespace Core {
             typedef map<TKey, Vertex> MUV;
 
             MUV vertices;
-            vector<Vec3U> faces;
+            TF faces;
 
             friend ostream & operator<<(ostream & out, const Mesh & obj) {
                 return out

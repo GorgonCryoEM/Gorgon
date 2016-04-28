@@ -25,9 +25,15 @@ namespace Core {
         return addVertex(loc, id);
     }
 
-    TKey Mesh::addFace(Vec3U face) {
-        TKey faceHash = faces.size();
+    int Mesh::addFace(IdList face) {
+        TKey id = faces.size();
         faces.push_back(face);
+
+        return id;
+    }
+
+    TKey Mesh::addFace(Vec3U face) {
+        TKey faceHash = addFace(face);
         for (int i = 0; i < 3; ++i) {
             vertices[face[i]].addId(faceHash);
         }
@@ -59,9 +65,11 @@ namespace Core {
     }
 
     Vec3F Mesh::getFaceNormal(TKey id) {
-        Vec3U face = faces[id];
+        IdList face = faces[id];
+        CElem v = face.getIds();
+
         Vec3F normal =
-                (vertices[face[1]] - vertices[face[0]]) ^ (vertices[face[2]] - vertices[face[0]]);
+                (vertices[v[1]] - vertices[v[0]]) ^ (vertices[v[2]] - vertices[v[0]]);
 
         normal.normalize();
         return normal;
@@ -77,21 +85,23 @@ namespace Core {
                 glPushName(0);
                 glPushName(0);
             }
-            for(unsigned int i = 0; i < faces.size(); i++) {
+            for(TF::iterator it=faces.begin(); it!=faces.end(); ++it) {
+                int i = distance(faces.begin(), it);
                 if(annotateSurfaces) {
                     glLoadName(i);
                 }
                 glBegin (GL_POLYGON);
                 bool drawTriangle = true;
+                CElem v = it->getIds();
                 if(fadeExtreme) {
-                    for(unsigned int j = 0; j < 3; j++) {
-                        int k = faces[i][j];
+                    for(CElem::iterator jt=v.begin(); jt!=v.end(); ++jt) {
+                        int k = (*jt);
                         drawTriangle = drawTriangle && (vertices[k] - center).length() <= radius;
                     }
                 }
                 if(drawTriangle) {
-                    for(unsigned int j = 0; j < 3; j++) {
-                        int k = faces[i][j];
+                    for(CElem::iterator jt=v.begin(); jt!=v.end(); ++jt) {
+                        int k = (*jt);
                         Vec3F normal = getVertexNormal(k);
                         glNormal3f(normal.X(), normal.Y(), normal.Z());
                         glVertex3fv(vertices[k].getValues());
@@ -128,9 +138,9 @@ namespace Core {
 
         for(unsigned int i = 0; i < faces.size(); i++) {
             fprintf(outFile, "3 %d %d %d\n",
-                    indexedVertices[faces[i][2]],
-                    indexedVertices[faces[i][1]],
-                    indexedVertices[faces[i][0]]);
+                    indexedVertices[faces[i].id(2)],
+                    indexedVertices[faces[i].id(1)],
+                    indexedVertices[faces[i].id(0)]);
         }
         fclose(outFile);
     }
