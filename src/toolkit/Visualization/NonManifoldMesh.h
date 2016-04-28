@@ -38,8 +38,6 @@ namespace Core {
                       bool disablePointLighting, int lineThickness,
                       bool smoothSurfaceNormals);
 
-            int addMarchingVertex(Vec3F location, int hashKey);
-
             int addVertex(Vec3F location);
             int addEdge(IdList edge);
             IdList addEdge(int vertexId1, int vertexId2);

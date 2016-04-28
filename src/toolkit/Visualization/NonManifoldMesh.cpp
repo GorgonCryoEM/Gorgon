@@ -104,8 +104,10 @@ namespace Core {
         faces.clear();
     }
 
-    int NonManifoldMesh::addMarchingVertex(Vec3F location, int hashKey) {
-        return addVertex(location);
+    int NonManifoldMesh::addVertex(Vec3F vertex) {
+        TKey id = vertices.size();
+
+        return addMarchingVertex(vertex, id);
     }
 
     void NonManifoldMesh::draw(bool drawSurfaceBorders, bool drawSurfaces,
@@ -269,13 +271,6 @@ namespace Core {
         glPopAttrib();
 
         glFlush();
-    }
-
-    int NonManifoldMesh::addVertex(Vec3F location) {
-        TKey id = vertices.size();
-        vertices[id] = Vertex(location);
-
-        return id;
     }
 
     int NonManifoldMesh::addEdge(IdList edge) {
