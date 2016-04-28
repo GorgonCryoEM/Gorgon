@@ -10,6 +10,7 @@
 #define SRC_TOOLKIT_VISUALIZATION_VERTEX_H_
 
 #include "MathTools/Vector3.h"
+#include "Core/Output.h"
 
 using namespace GraphMatch;
 
