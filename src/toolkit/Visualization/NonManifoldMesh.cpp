@@ -9,35 +9,6 @@
 
 namespace Core {
 
-    Edge::Edge()
-            : ids(2)
-    {}
-
-    Edge::Edge(TKey v1, TKey v2)
-            : ids(2)
-    {
-        ids[0] = v1;
-        ids[1] = v2;
-    }
-
-    vector<TKey> Edge::getIds() const {
-        return ids;
-    }
-
-    TKey Edge::id(int i) const {
-        return ids[i];
-    }
-
-    ostream& operator<<(ostream& out, const Edge& obj){
-//        set<unsigned int> faces(obj.faceIds.begin(), obj.faceIds.end());
-        return out//<<"\033[34m"
-                  <<"\tvertexIds: "<<obj.ids[0]<<"\t"<<obj.ids[1]<<endl
-//                  <<"faceIds.size(): "<<obj.faceIds.size()
-//                  <<faces
-                  <<endl;
-//                  <<"\033[0m";
-    }
-
     NonManifoldMesh::NonManifoldMesh()
             : fromVolume(false)
     {
@@ -152,7 +123,7 @@ namespace Core {
         for(unsigned int i=0; i<vertices.size(); ++i)
             mapVertices[i] = vertices[i];
 
-        map<unsigned int, Edge> mapEdges;
+        map<unsigned int, IdList> mapEdges;
         for(unsigned int i=0; i<curves.size(); ++i)
             mapEdges[i] = curves[i];
 
@@ -307,15 +278,15 @@ namespace Core {
         return id;
     }
 
-    int NonManifoldMesh::addEdge(Edge edge) {
+    int NonManifoldMesh::addEdge(IdList edge) {
         TKey id = curves.size();
         curves[id] = edge;
 
         return id;
     }
 
-    Edge NonManifoldMesh::addEdge(int v1, int v2) {
-        Edge edge(v1, v2);
+    IdList NonManifoldMesh::addEdge(int v1, int v2) {
+        IdList edge(v1, v2);
         int id = addEdge(edge);
         vertices[v1].addId(id);
         vertices[v2].addId(id);
