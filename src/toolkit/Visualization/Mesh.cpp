@@ -47,6 +47,10 @@ namespace Core {
         return id;
     }
 
+    MUV Mesh::getVertices() const {
+        return vertices;
+    }
+
     void Mesh::clear() {
         vertices.clear();
         faces.clear();

@@ -25,6 +25,7 @@ namespace Core {
 
     typedef vector<IdList >   TF;
     typedef Vector3<TKey> Vec3U;
+    typedef map<TKey, Vertex> MUV;
 
     class Mesh {
         public:
@@ -34,6 +35,7 @@ namespace Core {
             virtual int addMarchingVertex(Vec3F vertex, int id);
             int addFace(IdList face);
             virtual TKey addFace(Vec3U face);
+            MUV getVertices() const;
 
             void clear();
             Vec3F getVertexNormal(TKey id);
@@ -44,8 +46,6 @@ namespace Core {
             void save(string fileName);
 
         protected:
-            typedef map<TKey, Vertex> MUV;
-
             MUV vertices;
             TF faces;
 
