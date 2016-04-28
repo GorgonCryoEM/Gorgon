@@ -9,7 +9,6 @@ from OpenGL.GLUT import *
 import sys
 import argparse
 
-from libpytoolkit import *
 from ToolkitGui import MainWindowForm
 
 
