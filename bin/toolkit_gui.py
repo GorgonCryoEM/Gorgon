@@ -9,7 +9,6 @@ from OpenGL.GLUT import *
 import sys
 import argparse
 
-# from Explorer import MainWindowForm
 from ToolkitGui import MainWindowForm
 
 
@@ -22,13 +21,12 @@ def main():
 
     app = QtGui.QApplication(sys.argv)
 
-    window = MainWindowForm('2.2.2', args)
+    window = MainWindowForm('2.2.2')
     
     window.resize(800, 600)
 #     window.move(300,50)
     window.show()
     window.raise_()
-    window.load()
    
     sys.exit(app.exec_())
 
