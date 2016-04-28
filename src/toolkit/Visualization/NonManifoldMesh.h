@@ -22,8 +22,6 @@ using namespace SkeletonMaker;
 
 namespace Core {
 
-    typedef set<TKey> CKey;
-
     class Edge {
         private:
             vector<TKey> ids;
