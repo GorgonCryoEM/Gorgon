@@ -57,14 +57,13 @@ namespace Core {
     }
 
     Vec3F Mesh::getVertexNormal(TKey id) {
-        Vertex vertex(vertices[id]);
-        vector<TKey> hashes(vertex.getIds());
+        Vertex vertex = vertices[id];
+        CElem v = vertex.getIds();
 
-        Vec3F normal = Vec3F(0, 0, 0);
+        Vec3F normal(0, 0, 0);
+        for(CElem::iterator it=v.begin(); it!=v.end(); ++it)
+                normal += getFaceNormal(*it);
 
-        for(unsigned int i = 0; i < hashes.size(); i++) {
-            normal += getFaceNormal(hashes[i]);
-        }
         normal.normalize();
         return normal;
     }
@@ -73,8 +72,8 @@ namespace Core {
         IdList face = faces[id];
         CElem v = face.getIds();
 
-        Vec3F normal =
-                (vertices[v[1]] - vertices[v[0]]) ^ (vertices[v[2]] - vertices[v[0]]);
+        Vec3F normal = (vertices[v[1]] - vertices[v[0]])
+                     ^ (vertices[v[2]] - vertices[v[0]]);
 
         normal.normalize();
         return normal;

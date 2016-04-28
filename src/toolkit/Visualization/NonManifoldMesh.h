@@ -44,9 +44,6 @@ namespace Core {
             int addEdge(IdList edge);
             IdList addEdge(int vertexId1, int vertexId2);
 
-            Vec3F getVertexNormal(int vertexId);
-            Vec3F getFaceNormal(int faceId);
-
             void addQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4);
             bool isSurfaceVertex(int ix) const;
             int getClosestVertexIndex(Vec3F pos);

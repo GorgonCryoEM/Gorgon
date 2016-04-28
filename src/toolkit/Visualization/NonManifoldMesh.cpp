@@ -299,31 +299,6 @@ namespace Core {
         addFace(Vec3U(v1, v3, v4));
     }
 
-    Vec3F NonManifoldMesh::getVertexNormal(int id) {
-        Vec3F normal(0, 0, 0);
-        Vertex vertex = vertices[id];
-        CElem fs = vertex.getIds();
-
-        for(CElem::iterator it=fs.begin(); it!=fs.end(); ++it)
-                normal += getFaceNormal(*it);
-
-        normal.normalize();
-        return normal;
-    }
-
-    Vec3F NonManifoldMesh::getFaceNormal(int id) {
-        IdList face = faces[id];
-        Vec3F normal(1, 0, 0);
-
-        CElem v = face.getIds();
-        if(v.size() >= 3) {
-            normal = (vertices[v[1]] - vertices[v[0]])
-                    ^ (vertices[v[2]] - vertices[v[0]]);
-            normal.normalize();
-        }
-        return normal;
-    }
-
     vector<TKey> NonManifoldMesh::getPath(TKey id0, TKey id1) {
         vector<TKey> path;
         map<TKey, TKey> src;
