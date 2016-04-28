@@ -1,0 +1,345 @@
+<ui version="4.0" >
+ <class>DialogVolumeGrayscaleSkeletonization</class>
+ <widget class="QDialog" name="DialogVolumeGrayscaleSkeletonization" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>334</width>
+    <height>337</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Volume - Grayscale Skeletonization</string>
+  </property>
+  <layout class="QGridLayout" >
+   <item row="0" column="0" >
+    <widget class="QLabel" name="labelMethod" >
+     <property name="text" >
+      <string>Method:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1" colspan="2" >
+    <widget class="QComboBox" name="comboBoxMethod" >
+     <property name="whatsThis" >
+      <string>The skeletonization method to use</string>
+     </property>
+     <item>
+      <property name="text" >
+       <string>Abeysinghe, et al [2008]</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="1" column="1" colspan="2" >
+    <widget class="QTextBrowser" name="textCitation" >
+     <property name="enabled" >
+      <bool>true</bool>
+     </property>
+     <property name="whatsThis" >
+      <string>Paper discussing the skeletonization method</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0" >
+    <widget class="QLabel" name="labelStartDensity" >
+     <property name="text" >
+      <string>Starting Density:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1" >
+    <widget class="QSlider" name="horizontalSliderStartingDensity" >
+     <property name="whatsThis" >
+      <string>Picks the density to use when performing skeletonization</string>
+     </property>
+     <property name="maximum" >
+      <number>25500</number>
+     </property>
+     <property name="singleStep" >
+      <number>1</number>
+     </property>
+     <property name="pageStep" >
+      <number>10</number>
+     </property>
+     <property name="value" >
+      <number>12800</number>
+     </property>
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="tickPosition" >
+      <enum>QSlider::NoTicks</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="2" >
+    <widget class="QLabel" name="labelStartingDensityDisplay" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Minimum" hsizetype="Minimum" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize" >
+      <size>
+       <width>10</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize" >
+      <size>
+       <width>60</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="layoutDirection" >
+      <enum>Qt::RightToLeft</enum>
+     </property>
+     <property name="text" >
+      <string>128</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" >
+    <widget class="QLabel" name="labelStepSize" >
+     <property name="text" >
+      <string>Step Count:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1" >
+    <widget class="QSlider" name="horizontalSliderStepCount" >
+     <property name="whatsThis" >
+      <string>Picks the density to use when performing skeletonization</string>
+     </property>
+     <property name="maximum" >
+      <number>1000</number>
+     </property>
+     <property name="singleStep" >
+      <number>1</number>
+     </property>
+     <property name="pageStep" >
+      <number>10</number>
+     </property>
+     <property name="value" >
+      <number>250</number>
+     </property>
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="tickPosition" >
+      <enum>QSlider::NoTicks</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="2" >
+    <widget class="QLabel" name="labelStepSizeDisplay" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Minimum" hsizetype="Minimum" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize" >
+      <size>
+       <width>10</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize" >
+      <size>
+       <width>60</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="layoutDirection" >
+      <enum>Qt::RightToLeft</enum>
+     </property>
+     <property name="text" >
+      <string>250</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0" >
+    <widget class="QLabel" name="labelMinimumCurve" >
+     <property name="text" >
+      <string>Minimum Curve Length:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1" colspan="2" >
+    <widget class="QSpinBox" name="spinBoxMinCurve" >
+     <property name="maximum" >
+      <number>1000000</number>
+     </property>
+     <property name="value" >
+      <number>4</number>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0" >
+    <widget class="QLabel" name="labelMaximumCurve" >
+     <property name="text" >
+      <string>Minimum Surface Size:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="1" colspan="2" >
+    <widget class="QSpinBox" name="spinBoxMinSurface" >
+     <property name="maximum" >
+      <number>1000000</number>
+     </property>
+     <property name="value" >
+      <number>4</number>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0" >
+    <widget class="QLabel" name="labelCurveRadius" >
+     <property name="whatsThis" >
+      <string>The Radius to use when obtaining the structure tensor of a curve... The larger the radius, the more global information is used</string>
+     </property>
+     <property name="text" >
+      <string>Curve Radius:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="1" colspan="2" >
+    <widget class="QSpinBox" name="spinBoxCurveRadius" >
+     <property name="maximum" >
+      <number>10</number>
+     </property>
+     <property name="value" >
+      <number>2</number>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="0" >
+    <widget class="QLabel" name="labelCurveRadius_2" >
+     <property name="whatsThis" >
+      <string>The Radius to use when obtaining the structure tensor of a surface... The larger the radius, the more global information is used</string>
+     </property>
+     <property name="text" >
+      <string>Surface Radius:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="1" colspan="2" >
+    <widget class="QSpinBox" name="spinBoxSurfaceRadius" >
+     <property name="maximum" >
+      <number>10</number>
+     </property>
+     <property name="value" >
+      <number>2</number>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="0" >
+    <widget class="QLabel" name="labelCurveRadius_3" >
+     <property name="whatsThis" >
+      <string>The Radius to use when obtaining the direction of a skeletal element... The larger the radius, the more global information is used</string>
+     </property>
+     <property name="text" >
+      <string>Skeleton Radius:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="1" colspan="2" >
+    <widget class="QSpinBox" name="spinBoxSkeletonRadius" >
+     <property name="maximum" >
+      <number>10</number>
+     </property>
+     <property name="value" >
+      <number>4</number>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="0" colspan="2" >
+    <widget class="QCheckBox" name="checkBoxPreserveSkeleton" >
+     <property name="enabled" >
+      <bool>false</bool>
+     </property>
+     <property name="text" >
+      <string>Use current skeleton as base</string>
+     </property>
+    </widget>
+   </item>
+   <item row="10" column="1" colspan="2" >
+    <widget class="QDialogButtonBox" name="buttonBox" >
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons" >
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::NoButton|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>comboBoxMethod</tabstop>
+  <tabstop>textCitation</tabstop>
+  <tabstop>horizontalSliderStartingDensity</tabstop>
+  <tabstop>horizontalSliderStepCount</tabstop>
+  <tabstop>spinBoxMinCurve</tabstop>
+  <tabstop>spinBoxMinSurface</tabstop>
+  <tabstop>spinBoxCurveRadius</tabstop>
+  <tabstop>spinBoxSurfaceRadius</tabstop>
+  <tabstop>spinBoxSkeletonRadius</tabstop>
+  <tabstop>checkBoxPreserveSkeleton</tabstop>
+  <tabstop>buttonBox</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>DialogVolumeGrayscaleSkeletonization</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>345</x>
+     <y>290</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>DialogVolumeGrayscaleSkeletonization</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>413</x>
+     <y>296</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSliderStepCount</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>labelStepSizeDisplay</receiver>
+   <slot>setNum(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>274</x>
+     <y>131</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>450</x>
+     <y>132</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
