@@ -15,6 +15,7 @@
 //#include "OpenGLUtils.h"
 #include "MathTools/Vector3.h"
 #include "Vertex.h"
+#include "Core/IdList.h"
 
 using namespace std;
 //using namespace Foundation;
@@ -22,20 +23,7 @@ using namespace GraphMatch;
 
 namespace Core {
 
-    typedef vector<TKey> CElem;
-
-    class Face {
-        private:
-            CElem ids;
-
-        public:
-            CElem getVertices() const;
-            void addVertex(TKey i);
-
-            friend ostream& operator<<(ostream& out, const Face& obj);
-    };
-
-    typedef map<TKey, Face >   TF;
+    typedef map<TKey, IdList >   TF;
     typedef Vector3<TKey> Vec3U;
 
     class Mesh {

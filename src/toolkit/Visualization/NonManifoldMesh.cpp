@@ -173,7 +173,7 @@ namespace Core {
         for(unsigned int i=0; i<curves.size(); ++i)
             mapEdges[i] = curves[i];
 
-        map<unsigned int, Face> mapFaces;
+        map<unsigned int, IdList> mapFaces;
         for(unsigned int i=0; i<faces.size(); ++i)
             mapFaces[i] = faces[i];
 
@@ -196,7 +196,7 @@ namespace Core {
                 glColor4f(0.4, 0.7, 0.7, 0.6);
                 glBegin(GL_LINE_STRIP);
 
-                CElem v = faces[i].getVertices();
+                CElem v = faces[i].getIds();
                 for(CElem::iterator it=v.begin(); it!=v.end(); ++it) {
                     int k = *it;
                     float vals[3];
@@ -231,7 +231,7 @@ namespace Core {
                 glColor4f(1.2, 0.2, 0.2, 0.6);
                 glBegin(GL_POLYGON);
 
-                CElem v = faces[i].getVertices();
+                CElem v = faces[i].getIds();
                 for(CElem::iterator it=v.begin(); it!=v.end(); ++it) {
                     Vec3F normal;
                     if(smoothSurfaceNormals) {
@@ -341,7 +341,7 @@ namespace Core {
     }
 
 
-    int NonManifoldMesh::addFace(Face face) {
+    int NonManifoldMesh::addFace(IdList face) {
         TKey id = faces.size();
         faces[id] = face;
 
@@ -354,10 +354,10 @@ namespace Core {
         int v2 = vertex[2];
 
 //        add to faces: vertex Ids
-        Face face;
-        face.addVertex(v0);
-        face.addVertex(v1);
-        face.addVertex(v2);
+        IdList face;
+        face.addId(v0);
+        face.addId(v1);
+        face.addId(v2);
 
 //        add to edges: face IDs
         int faceId = addFace(face);
@@ -383,10 +383,10 @@ namespace Core {
     }
 
     Vec3F NonManifoldMesh::getFaceNormal(int id) {
-        Face face = faces[id];
+        IdList face = faces[id];
         Vec3F normal(1, 0, 0);
 
-        CElem v = face.getVertices();
+        CElem v = face.getIds();
         if(v.size() >= 3) {
             normal = (vertices[v[1]] - vertices[v[0]])
                     ^ (vertices[v[2]] - vertices[v[0]]);
@@ -435,10 +435,10 @@ namespace Core {
     }
 
     vector<Vec3F> NonManifoldMesh::sampleTriangle(int id, double step) {
-        Face face = faces[id];
+        IdList face = faces[id];
 
         vector<Vec3F> points;
-        CElem v = face.getVertices();
+        CElem v = face.getIds();
         if(v.size() != 3) {
             printf("ERROR: Sampling a polygon NOT a triangle!\n");
             return points;

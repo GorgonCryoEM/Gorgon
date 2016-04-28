@@ -15,26 +15,6 @@
 
 namespace Core {
 
-    CElem Face::getVertices() const {
-        return CElem(ids.begin(), ids.end());
-    }
-
-    void Face::addVertex(TKey i) {
-        ids.push_back(i);
-    }
-
-    ostream& operator<<(ostream& out, const Face& obj) {
-        set<unsigned int> vertices(obj.ids.begin(), obj.ids.end());
-//        set<unsigned int> edges(obj.edgeIds.begin(), obj.edgeIds.end());
-        return out //<<"\033[34m"
-//                    << "\nedgeIds.size(): " << obj.edgeIds.size() << endl
-//                    << edges
-                    << "\n\nvertexIds.size(): " << obj.ids.size()
-                    << endl
-                    << vertices << endl << endl;
-//                    <<"\033[0m";
-    }
-
     Mesh::Mesh() {
     }
 

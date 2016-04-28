@@ -57,7 +57,7 @@ namespace Core {
             int addMarchingVertex(Vec3F location, int hashKey);
 
             int addVertex(Vec3F location);
-            int addFace(Face face);
+            int addFace(IdList face);
             int addEdge(Edge edge);
             Edge addEdge(int vertexId1, int vertexId2);
 
