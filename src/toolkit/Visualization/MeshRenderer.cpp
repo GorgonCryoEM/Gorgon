@@ -90,9 +90,10 @@ namespace Visualization {
         r = radius;
         intersectionPoints.clear();
 
+        MUV vertices = mesh.getVertices();
         for(unsigned int i = 0; i < mesh.curves.size(); i++) {
-            p1 = mesh.vertices[mesh.curves[i].id(0)];
-            p2 = mesh.vertices[mesh.curves[i].id(1)];
+            p1 = vertices[mesh.curves[i].id(0)];
+            p2 = vertices[mesh.curves[i].id(1)];
             x1 = p1.X();
             y1 = p1.Y();
             z1 = p1.Z();

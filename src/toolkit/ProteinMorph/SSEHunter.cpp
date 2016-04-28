@@ -129,7 +129,8 @@ namespace Protein_Morph {
       cout<<"Checkpoint 21: i: "<<i<<endl;
       cout<<"skeleton:\n"<<skeleton<<endl;
 #endif
-            for (TV::const_iterator it=skeleton.vertices.begin(); it!=skeleton.vertices.end(); ++it) {
+            MUV vertices = skeleton.getVertices();
+            for (TV::const_iterator it=vertices.begin(); it!=vertices.end(); ++it) {
                 skeletonAtom = it->second;
                 Vec3F d = skeletonAtom - pAtomPosition;
                 float distance_squared = d.X()*d.X() + d.Y()*d.Y() + d.Z()*d.Z();

@@ -53,7 +53,6 @@ namespace Core {
             static NonManifoldMesh loadOffFile(string fileName);
 
         public:
-            TV vertices;
             TE curves;
 
             bool fromVolume;
