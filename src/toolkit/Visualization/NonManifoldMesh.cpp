@@ -24,25 +24,8 @@ namespace Core {
         return ids;
     }
 
-    CKey Edge::getVerticesSet() const {
-        return CKey(ids.begin(), ids.end());
-    }
-
     TKey Edge::id(int i) const {
         return ids[i];
-    }
-
-    bool operator<(const Edge &l, const Edge &r) {
-        vector<TKey> ll = l.ids;
-        vector<TKey> rr = r.ids;
-
-        if(ll.size() != 2 && rr.size() != 2)
-            throw "Edges have inconsistent size!";
-
-        sort(ll.begin(), ll.end());
-        sort(rr.begin(), rr.end());
-
-        return ll[0]<rr[0] && ll[1]<rr[1];
     }
 
     ostream& operator<<(ostream& out, const Edge& obj){
