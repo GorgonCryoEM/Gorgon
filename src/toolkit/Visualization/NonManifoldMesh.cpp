@@ -99,9 +99,7 @@ namespace Core {
 
     void NonManifoldMesh::clear() {
         Mesh::clear();
-        vertices.clear();
         curves.clear();
-        faces.clear();
     }
 
     int NonManifoldMesh::addVertex(Vec3F vertex) {
