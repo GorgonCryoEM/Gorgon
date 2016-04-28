@@ -31,9 +31,9 @@ namespace Core {
         public:
             Edge();
             Edge(TKey v1, TKey v2);
-            vector<TKey> getVertices() const;
+            vector<TKey> getIds() const;
             CKey getVerticesSet() const;
-            TKey vertex(int i) const;
+            TKey id(int i) const;
 
             friend bool operator<(const Edge &l, const Edge &r);
             friend ostream& operator<<(ostream& out, const Edge& obj);

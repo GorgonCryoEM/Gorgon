@@ -20,7 +20,7 @@ namespace Core {
         ids[1] = v2;
     }
 
-    vector<TKey> Edge::getVertices() const {
+    vector<TKey> Edge::getIds() const {
         return ids;
     }
 
@@ -28,7 +28,7 @@ namespace Core {
         return CKey(ids.begin(), ids.end());
     }
 
-    TKey Edge::vertex(int i) const {
+    TKey Edge::id(int i) const {
         return ids[i];
     }
 
@@ -272,9 +272,9 @@ namespace Core {
                         glLoadName(i);
                     }
                     glBegin(GL_LINES);
-                    int k = curves[i].vertex(0);
+                    int k = curves[i].id(0);
                     glVertex3f(vertices[k][0], vertices[k][1], vertices[k][2]);
-                    k = curves[i].vertex(1);
+                    k = curves[i].id(1);
                     glVertex3f(vertices[k][0], vertices[k][1], vertices[k][2]);
                     glEnd();
 //                }
@@ -410,7 +410,7 @@ namespace Core {
             found = currentEdge == id1;
             if(!found) {
                 for(unsigned int v = 0; v < 2; v++) {
-                    TKey i = curves[currentEdge].vertex(v);
+                    TKey i = curves[currentEdge].id(v);
                     for(unsigned int e = 0; e < vertices[i].sizeIds(); e++) {
                         unsigned int id = vertices[i].id(e);
                         if(src.find(id) == src.end()) {
@@ -494,10 +494,10 @@ namespace Core {
     vector<TKey> NonManifoldMesh::getNeighboringVertexIndices(TKey id) {
         vector<TKey> neighbors;
         for(unsigned int i = 0; i < vertices[id].sizeIds(); i++) {
-            if(curves[vertices[id].id(i)].vertex(0) == id) {
-                neighbors.push_back(curves[vertices[id].id(i)].vertex(1));
+            if(curves[vertices[id].id(i)].id(0) == id) {
+                neighbors.push_back(curves[vertices[id].id(i)].id(1));
             } else {
-                neighbors.push_back(curves[vertices[id].id(i)].vertex(0));
+                neighbors.push_back(curves[vertices[id].id(i)].id(0));
             }
         }
         return neighbors;
@@ -533,8 +533,8 @@ namespace Core {
         Volume vol(maxPosInt[0] - minPosInt[0]+1, maxPosInt[1] - minPosInt[1]+1, maxPosInt[2] - minPosInt[2]+1);
 
         for(unsigned int i = 0;  i < curves.size(); i++) {
-            Vertex v1 = vertices[curves[i].vertex(0)];
-            Vertex v2 = vertices[curves[i].vertex(1)];
+            Vertex v1 = vertices[curves[i].id(0)];
+            Vertex v2 = vertices[curves[i].id(1)];
             vector<Vec3I> positions = Rasterizer::ScanConvertLineC8(v1.XInt(), v1.YInt(), v1.ZInt(), v2.XInt(), v2.YInt(), v2.ZInt());
             for(unsigned int j = 0; j < positions.size(); j++) {
                 vol(positions[j] - minPosInt) = 1.0;
