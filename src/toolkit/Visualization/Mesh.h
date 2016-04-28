@@ -32,7 +32,7 @@ namespace Core {
             Mesh();
             virtual ~Mesh();
 
-            virtual int addMarchingVertex(Vec3F vertex, int id);
+            virtual int addVertex(Vec3F vertex, int id);
             int addFace(IdList face);
             virtual TKey addFace(Vec3U face);
             MUV getVertices() const;

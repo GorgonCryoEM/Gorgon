@@ -21,7 +21,7 @@ namespace Core {
     Mesh::~Mesh() {
     }
 
-    int Mesh::addMarchingVertex(Vec3F vertex, int id) {
+    int Mesh::addVertex(Vec3F vertex, int id) {
         vertices[id] = Vertex(vertex);
         return id;
     }

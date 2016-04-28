@@ -107,7 +107,7 @@ namespace Core {
     int NonManifoldMesh::addVertex(Vec3F vertex) {
         TKey id = vertices.size();
 
-        return addMarchingVertex(vertex, id);
+        return Mesh::addVertex(vertex, id);
     }
 
     void NonManifoldMesh::draw(bool drawSurfaceBorders, bool drawSurfaces,
