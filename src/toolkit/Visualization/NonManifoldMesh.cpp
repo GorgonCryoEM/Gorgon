@@ -294,31 +294,6 @@ namespace Core {
         return edge;
     }
 
-
-    int NonManifoldMesh::addFace(IdList face) {
-        TKey id = faces.size();
-        faces[id] = face;
-
-        return id;
-    }
-
-    TKey NonManifoldMesh::addFace(Vec3U vertex) {
-        int v0 = vertex[0];
-        int v1 = vertex[1];
-        int v2 = vertex[2];
-
-//        add to faces: vertex Ids
-        IdList face;
-        face.addId(v0);
-        face.addId(v1);
-        face.addId(v2);
-
-//        add to edges: face IDs
-        int faceId = addFace(face);
-
-        return faceId;
-    }
-
     void NonManifoldMesh::addQuad(int v1, int v2, int v3, int v4) {
         addFace(Vec3U(v1, v2, v3));
         addFace(Vec3U(v1, v3, v4));

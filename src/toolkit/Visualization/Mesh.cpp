@@ -32,13 +32,18 @@ namespace Core {
         return id;
     }
 
-    TKey Mesh::addFace(Vec3U face) {
-        TKey faceHash = addFace(face);
+    TKey Mesh::addFace(Vec3U vertex) {
+        IdList face;
         for (int i = 0; i < 3; ++i) {
-            vertices[face[i]].addId(faceHash);
+            face.addId(vertex[i]);
         }
 
-        return faceHash;
+        TKey id = addFace(face);
+        for (int i = 0; i < 3; ++i) {
+            vertices[vertex[i]].addId(id);
+        }
+
+        return id;
     }
 
     void Mesh::clear() {

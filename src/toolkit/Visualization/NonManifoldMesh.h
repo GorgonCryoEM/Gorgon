@@ -41,14 +41,12 @@ namespace Core {
             int addMarchingVertex(Vec3F location, int hashKey);
 
             int addVertex(Vec3F location);
-            int addFace(IdList face);
             int addEdge(IdList edge);
             IdList addEdge(int vertexId1, int vertexId2);
 
             Vec3F getVertexNormal(int vertexId);
             Vec3F getFaceNormal(int faceId);
 
-            TKey addFace(Vec3U vertexId);
             void addQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4);
             bool isSurfaceVertex(int ix) const;
             int getClosestVertexIndex(Vec3F pos);
@@ -62,7 +60,6 @@ namespace Core {
         public:
             TV vertices;
             TE curves;
-            TF faces;
 
             bool fromVolume;
 

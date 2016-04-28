@@ -44,7 +44,7 @@ namespace Core {
 
             void save(string fileName);
 
-        private:
+        protected:
             typedef map<TKey, Vertex> MUV;
 
             MUV vertices;
