@@ -21,8 +21,9 @@ namespace Core {
     Mesh::~Mesh() {
     }
 
-    int Mesh::addMarchingVertex(Vec3F loc, int id) {
-        return addVertex(loc, id);
+    int Mesh::addMarchingVertex(Vec3F vertex, int id) {
+        vertices[id] = Vertex(vertex);
+        return id;
     }
 
     int Mesh::addFace(IdList face) {
@@ -49,11 +50,6 @@ namespace Core {
     void Mesh::clear() {
         vertices.clear();
         faces.clear();
-    }
-
-    TKey Mesh::addVertex(Vec3F vertex, TKey id) {
-        vertices[id] = Vertex(vertex);
-        return id;
     }
 
     Vec3F Mesh::getVertexNormal(TKey id) {

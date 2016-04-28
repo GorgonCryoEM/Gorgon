@@ -31,12 +31,11 @@ namespace Core {
             Mesh();
             virtual ~Mesh();
 
-            virtual int addMarchingVertex(Vec3F loc, int id);
+            virtual int addMarchingVertex(Vec3F vertex, int id);
             int addFace(IdList face);
             virtual TKey addFace(Vec3U face);
 
             void clear();
-            TKey addVertex(Vec3F vertex, TKey id);
             Vec3F getVertexNormal(TKey id);
             Vec3F getFaceNormal(TKey faceHash);
             void draw(bool drawSurfaces, bool annotateSurfaces,
