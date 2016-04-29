@@ -27,6 +27,8 @@ def main():
 #     window.move(300,50)
     window.show()
     window.raise_()
+    
+    window.load()
    
     sys.exit(app.exec_())
 
