@@ -20,7 +20,6 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
         self.connect(self.viewer, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)
 
         self.createUI()
-        self.createActions()
 
     def createUI(self):
         self.setupUi(self)
@@ -77,9 +76,6 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
             self.viewer.emitModelLoaded()
             self.bringToFront()
                                                                                                                                         
-    def createActions(self):
-        self.detectSSEAct = self.displayAct
-
     def modelLoaded(self):
         #self.detectSSEAct.setEnabled(True)
         pass
