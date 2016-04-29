@@ -1,18 +1,11 @@
 from PyQt4 import QtCore, QtGui
 from ui_dialog_volume_binary_skeletonization import Ui_DialogVolumeBinarySkeletonization
-from base_dialog_widget import BaseDialogWidget
 
 
-class VolumeBinarySkeletonizationForm(BaseDialogWidget):
+class VolumeBinarySkeletonizationForm(QtGui.QDialog):
 
     def __init__(self, main, volumeViewer, parent=None):
-        BaseDialogWidget.__init__(self, main,
-                                  "&Binary Skeletonization",
-                                  "Apply binary skeletonization on the volume",
-                                  "perform_VolumeBinarySkeletonization",
-                                  "actions-volume-skeletonization-binary",
-                                  "actions-volume-skeletonization",
-                                  False, parent)
+        super(VolumeBinarySkeletonizationForm, self).__init__(volumeViewer)
         self.app = main
         self.viewer = volumeViewer
         self.connect(self.viewer, QtCore.SIGNAL("modelLoaded()"), self.modelLoaded)
@@ -76,7 +69,7 @@ class VolumeBinarySkeletonizationForm(BaseDialogWidget):
             self.close()
         else:
             QtGui.QMessageBox.critical(None, "Source volume unloaded", "A volume must be loaded to perform skeletonization", QtGui.QMessageBox.Ok, QtGui.QMessageBox.NoButton)
-        BaseDialogWidget.accept(self)
+        super(VolumeBinarySkeletonizationForm, self).accept()
 
     def loadSelf(self):
         self.ui.horizontalSliderIsoLevel.setValue(int(self.viewer.getIsoValue()*100))
