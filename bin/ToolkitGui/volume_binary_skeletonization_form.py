@@ -60,12 +60,17 @@ class VolumeBinarySkeletonizationForm(BaseDialogWidget):
         return self.ui.spinBoxMinSurface.value()
           
     def accept(self):
+        print "binary.... accept"
+        print self.viewer.loaded
         if(self.viewer.loaded):
             self.setCursor(QtCore.Qt.BusyCursor)
             method = self.getSkeletonizationMethod()
+            print method
             if(method == 0):
                 self.modelLoaded()
+                print "       Values:", self.getDensityThreshold(), self.getMinCurveLength(), self.getMinSurfaceSize()
                 skeleton = self.viewer.renderer.performBinarySkeletonizationJu2007(self.getDensityThreshold(), self.getMinCurveLength(), self.getMinSurfaceSize())
+                print "Skeleton after skeletonization: ", skeleton.getSize()
                 self.app.skeleton.loadVolume(skeleton)
             self.setCursor(QtCore.Qt.ArrowCursor)
             self.close()
