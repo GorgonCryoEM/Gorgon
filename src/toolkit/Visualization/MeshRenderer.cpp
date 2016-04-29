@@ -123,4 +123,15 @@ namespace Visualization {
         return intersectionPoints.size();
     }
 
+    void MeshRenderer::loadVolume(Volume src) {
+        mesh = NonManifoldMesh(src);
+//        #ifdef GORGON_DEBUG
+              cout<<"\033[32mDEBUG: File:   MeshRenderer.cpp"<<endl;
+              cout<<"DEBUG: Method: MeshRenderer::loadVolume(Volume)\033[0m"<<endl;
+              cout<<"src.getSize(): "<<src.getSize()<<endl;
+              cout<<"mesh.getSize(): "<<mesh.getSize()<<endl;
+//        #endif
+
+    }
+
 } /* namespace Visualization */
