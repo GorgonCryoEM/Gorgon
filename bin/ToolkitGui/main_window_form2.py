@@ -4,7 +4,7 @@ import sys, os
 from Explorer import Camera
 from Explorer.volume_viewer import VolumeViewer
 from Explorer.skeleton_viewer import SkeletonViewer
-from .volume_binary_skeletonization_form import VolumeBinarySkeletonizationForm
+from .volume_grayscale_skeletonization_form import VolumeGrayscaleSkeletonizationForm
 
 
 class MainWindowForm2(QtGui.QMainWindow):
@@ -22,7 +22,7 @@ class MainWindowForm2(QtGui.QMainWindow):
         self.mainCamera = Camera(self.scene, self)
         self.setCentralWidget(self.mainCamera)
         
-        self.form = VolumeBinarySkeletonizationForm(self, self.volume, self)
+        self.form = VolumeGrayscaleSkeletonizationForm(self, self.volume, self)
         self.form.show()
         
         self.setWindowTitle(self.tr("Gorgon Toolkit - v" + version))

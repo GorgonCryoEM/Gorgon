@@ -1,11 +1,9 @@
 from PyQt4 import QtCore, QtGui
 from ui_dialog_volume_grayscale_skeletonization import Ui_DialogVolumeGrayscaleSkeletonization
-from delayed_filter import DelayedFilter
-from base_dialog_widget import BaseDialogWidget
 import threading
 
 
-class VolumeGrayscaleSkeletonizationForm(BaseDialogWidget):
+class VolumeGrayscaleSkeletonizationForm(QtGui.QDialog):
 
     def __init__(self, main, volumeViewer, parent=None):
         BaseDialogWidget.__init__(self,
