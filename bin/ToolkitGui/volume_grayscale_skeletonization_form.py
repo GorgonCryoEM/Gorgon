@@ -1,8 +1,3 @@
-# Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
-# Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
-# Description:   A widget used to perform grayscale skeletonization on a volume 
-
-
 from PyQt4 import QtCore, QtGui
 from ui_dialog_volume_grayscale_skeletonization import Ui_DialogVolumeGrayscaleSkeletonization
 from delayed_filter import DelayedFilter
@@ -11,14 +6,15 @@ import threading
 
 
 class VolumeGrayscaleSkeletonizationForm(BaseDialogWidget):
+
     def __init__(self, main, volumeViewer, parent=None):
-        BaseDialogWidget.__init__(self, 
-                                  main, 
-                                  "&Grayscale Skeletonization", 
-                                  "Apply grayscale skeletonization on the volume", 
-                                  "perform_VolumeGrayscaleSkeletonization", 
-                                  "actions-volume-skeletonization-grayscale", 
-                                  "actions-volume-skeletonization", 
+        BaseDialogWidget.__init__(self,
+                                  main,
+                                  "&Grayscale Skeletonization",
+                                  "Apply grayscale skeletonization on the volume",
+                                  "perform_VolumeGrayscaleSkeletonization",
+                                  "actions-volume-skeletonization-grayscale",
+                                  "actions-volume-skeletonization",
                                   False,
                                   parent)
         self.app = main
@@ -32,15 +28,15 @@ class VolumeGrayscaleSkeletonizationForm(BaseDialogWidget):
         self.ui = Ui_DialogVolumeGrayscaleSkeletonization()
         self.ui.setupUi(self)
         self.connect(self.ui.horizontalSliderStartingDensity,QtCore.SIGNAL("valueChanged(int)"),self.startingDensityChanged)
-        self.connect(self.ui.comboBoxMethod, QtCore.SIGNAL("currentIndexChanged (int)"), self.methodChanged)                                            
+        self.connect(self.ui.comboBoxMethod, QtCore.SIGNAL("currentIndexChanged (int)"), self.methodChanged)
         self.methodChanged(0)
         
-    def createActions(self):       
-        self.displayAct.setEnabled(False)        
-        self.connect(self.displayAct, QtCore.SIGNAL("triggered()"), self.loadAndShow)        
+    def createActions(self):
+        self.displayAct.setEnabled(False)
+        self.connect(self.displayAct, QtCore.SIGNAL("triggered()"), self.loadAndShow)
   
     def createMenus(self):
-        self.app.menus.addAction("actions-volume-skeletonization-grayscale", self.app.actions.getAction("perform_VolumeGrayscaleSkeletonization"), "actions-volume-skeletonization")        
+        self.app.menus.addAction("actions-volume-skeletonization-grayscale", self.app.actions.getAction("perform_VolumeGrayscaleSkeletonization"), "actions-volume-skeletonization")
 
     def modelLoaded(self):
         maxDensity = self.viewer.renderer.getMaxDensity()
@@ -49,11 +45,10 @@ class VolumeGrayscaleSkeletonizationForm(BaseDialogWidget):
         self.ui.horizontalSliderStartingDensity.setMaximum(int(maxDensity*100))
         defaultDensity = (int(minDensity*100) + int(maxDensity*100.0)) / 2
         self.ui.horizontalSliderStartingDensity.setValue(defaultDensity)
-        self.displayAct.setEnabled(True)        
+        self.displayAct.setEnabled(True)
         
-    
     def modelUnloaded(self):
-        self.displayAct.setEnabled(False)                
+        self.displayAct.setEnabled(False)
         self.close()
 
     def startingDensityChanged(self, newLevel):
@@ -109,5 +104,5 @@ class VolumeGrayscaleSkeletonizationForm(BaseDialogWidget):
     def methodChanged(self, id):
         if(id == 0):
             self.ui.textCitation.setHtml(self.getCitationHtml("Segmentation-free skeletonization of grayscale volumes for shape understanding", "Sasakthi Abeysinghe, Matthew Baker, Wah Chiu and Tao Ju", "IEEE International Conference on Shape Modeling and Applications, 2008 (Accepted)"))
-        else :
+        else:
             self.ui.textCitation.setHtml("")
