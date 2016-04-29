@@ -9,6 +9,10 @@ class VolumeGrayscaleSkeletonizationForm(QtGui.QDialog):
         super(VolumeGrayscaleSkeletonizationForm, self).__init__(volumeViewer)
         self.app = main
         self.viewer = volumeViewer
+        dock = QtGui.QDockWidget("Grayscale", volumeViewer)
+        dock.setWidget(self)
+        dock.setAllowedAreas(QtCore.Qt.AllDockWidgetAreas)
+        self.app.addDockWidget(QtCore.Qt.LeftDockWidgetArea, dock)
         self.connect(self.viewer, QtCore.SIGNAL("modelLoaded()"), self.modelLoaded)
         self.connect(self.viewer, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)
         self.createUI()
