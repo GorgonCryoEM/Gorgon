@@ -8,7 +8,6 @@ class BaseDialogWidget(QtGui.QDialog):
         self.app = main
         self.setModal(isModal)
         self.createDisplayAction(title, hint, actionName)
-        self.createDisplayMenu(windowName, parentWindowName)
         
     def createDisplayAction(self, title, hint, actionName):
         self.displayAct = QtGui.QAction(self.tr(title + "..."), self)
@@ -16,7 +15,6 @@ class BaseDialogWidget(QtGui.QDialog):
         self.displayAct.setCheckable(True)
         self.displayAct.setChecked(False)
         self.connect(self.displayAct, QtCore.SIGNAL("triggered()"), self.toggleVisibility)
-        self.app.actions.addAction(actionName, self.displayAct)
         
     def createDisplayMenu(self, windowName, parentWindowName):
         self.app.menus.addAction(windowName, self.displayAct, parentWindowName)

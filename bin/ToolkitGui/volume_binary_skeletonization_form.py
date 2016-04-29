@@ -1,6 +1,5 @@
 from PyQt4 import QtCore, QtGui
 from ui_dialog_volume_binary_skeletonization import Ui_DialogVolumeBinarySkeletonization
-from delayed_filter import DelayedFilter
 from base_dialog_widget import BaseDialogWidget
 
 
