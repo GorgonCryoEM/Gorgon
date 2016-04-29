@@ -6,21 +6,12 @@ import threading
 class VolumeGrayscaleSkeletonizationForm(QtGui.QDialog):
 
     def __init__(self, main, volumeViewer, parent=None):
-        BaseDialogWidget.__init__(self,
-                                  main,
-                                  "&Grayscale Skeletonization",
-                                  "Apply grayscale skeletonization on the volume",
-                                  "perform_VolumeGrayscaleSkeletonization",
-                                  "actions-volume-skeletonization-grayscale",
-                                  "actions-volume-skeletonization",
-                                  False,
-                                  parent)
+        super(VolumeGrayscaleSkeletonizationForm, self).__init__(volumeViewer)
         self.app = main
         self.viewer = volumeViewer
         self.connect(self.viewer, QtCore.SIGNAL("modelLoaded()"), self.modelLoaded)
         self.connect(self.viewer, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)
         self.createUI()
-        self.createActions()
 
     def createUI(self):
         self.ui = Ui_DialogVolumeGrayscaleSkeletonization()
@@ -29,10 +20,6 @@ class VolumeGrayscaleSkeletonizationForm(QtGui.QDialog):
         self.connect(self.ui.comboBoxMethod, QtCore.SIGNAL("currentIndexChanged (int)"), self.methodChanged)
         self.methodChanged(0)
         
-    def createActions(self):
-        self.displayAct.setEnabled(False)
-        self.connect(self.displayAct, QtCore.SIGNAL("triggered()"), self.loadAndShow)
-  
     def createMenus(self):
         self.app.menus.addAction("actions-volume-skeletonization-grayscale", self.app.actions.getAction("perform_VolumeGrayscaleSkeletonization"), "actions-volume-skeletonization")
 
@@ -43,10 +30,8 @@ class VolumeGrayscaleSkeletonizationForm(QtGui.QDialog):
         self.ui.horizontalSliderStartingDensity.setMaximum(int(maxDensity*100))
         defaultDensity = (int(minDensity*100) + int(maxDensity*100.0)) / 2
         self.ui.horizontalSliderStartingDensity.setValue(defaultDensity)
-        self.displayAct.setEnabled(True)
         
     def modelUnloaded(self):
-        self.displayAct.setEnabled(False)
         self.close()
 
     def startingDensityChanged(self, newLevel):
@@ -81,12 +66,10 @@ class VolumeGrayscaleSkeletonizationForm(QtGui.QDialog):
             self.setCursor(QtCore.Qt.BusyCursor)
             method = self.getSkeletonizationMethod()
             if(method == 0):
-                if(self.app.viewers["skeleton"].loaded and self.ui.checkBoxPreserveSkeleton.isChecked()):
-                    skeletonRenderer = self.app.viewers["skeleton"].renderer
-                    skeleton = self.viewer.renderer.performPreservingGrayscaleSkeletonizationAbeysinghe2008(skeletonRenderer.getMesh(), self.getStartingDensity(), self.getStepCount(), self.getMinCurveLength(), self.getMinSurfaceSize(), self.getCurveRadius(), self.getSurfaceRadius(), self.getSkeletonRadius())
-                else:
-                    skeleton = self.viewer.renderer.performGrayscaleSkeletonizationAbeysinghe2008(self.getStartingDensity(), self.getStepCount(), self.getMinCurveLength(), self.getMinSurfaceSize(), self.getCurveRadius(), self.getSurfaceRadius(), self.getSkeletonRadius())
-                self.app.viewers["skeleton"].loadVolume(skeleton)
+                self.modelLoaded()
+                skeletonRenderer = self.app.skeleton
+                skeleton = self.viewer.renderer.performGrayscaleSkeletonizationAbeysinghe2008(self.getStartingDensity(), self.getStepCount(), self.getMinCurveLength(), self.getMinSurfaceSize(), self.getCurveRadius(), self.getSurfaceRadius(), self.getSkeletonRadius())
+                self.app.skeleton.loadVolume(skeleton)
             self.setCursor(QtCore.Qt.ArrowCursor)
             self.close()
         else:
