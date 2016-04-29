@@ -10,6 +10,7 @@ class VolumeBinarySkeletonizationForm(QtGui.QDialog):
         self.viewer = volumeViewer
         dock = QtGui.QDockWidget("Binary", volumeViewer)
         dock.setWidget(self)
+        dock.setAllowedAreas(QtCore.Qt.AllDockWidgetAreas)
         self.app.addDockWidget(QtCore.Qt.LeftDockWidgetArea, dock)
         self.connect(self.viewer, QtCore.SIGNAL("modelLoaded()"), self.modelLoaded)
         self.connect(self.viewer, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)
