@@ -11,7 +11,6 @@ class VolumeBinarySkeletonizationForm(QtGui.QDialog):
         self.connect(self.viewer, QtCore.SIGNAL("modelLoaded()"), self.modelLoaded)
         self.connect(self.viewer, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)
         self.createUI()
-        self.createActions()
 
     def createUI(self):
         self.ui = Ui_DialogVolumeBinarySkeletonization()
@@ -20,10 +19,6 @@ class VolumeBinarySkeletonizationForm(QtGui.QDialog):
         self.connect(self.ui.comboBoxMethod, QtCore.SIGNAL("currentIndexChanged (int)"), self.methodChanged)
         self.methodChanged(0)
         
-    def createActions(self):
-        self.displayAct.setEnabled(False)
-        self.connect(self.displayAct, QtCore.SIGNAL("triggered()"), self.loadSelf)
-        
     def modelLoaded(self):
         maxDensity = self.viewer.renderer.getMaxDensity()
         minDensity = self.viewer.renderer.getMinDensity()
@@ -31,10 +26,8 @@ class VolumeBinarySkeletonizationForm(QtGui.QDialog):
         self.ui.horizontalSliderIsoLevel.setMaximum(int(maxDensity*100))
         defaultDensity = (int(minDensity*100) + int(maxDensity*100.0)) / 2
         self.ui.horizontalSliderIsoLevel.setValue(defaultDensity)
-        self.displayAct.setEnabled(True)
     
     def modelUnloaded(self):
-        self.displayAct.setEnabled(False)
         self.close()
 
     def isoValueChanged(self, newLevel):
