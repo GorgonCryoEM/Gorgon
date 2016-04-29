@@ -10,6 +10,7 @@ import sys
 import argparse
 
 from ToolkitGui import MainWindowForm
+from ToolkitGui import MainWindowForm2
 
 
 def main():
@@ -21,14 +22,16 @@ def main():
 
     app = QtGui.QApplication(sys.argv)
 
-    window = MainWindowForm('2.2.2', args)
+    windows = [MainWindowForm('2.2.2', args), MainWindowForm2('2.2.3', args)]
+#     window = MainWindowForm('2.2.2', args)
     
-    window.resize(800, 600)
-#     window.move(300,50)
-    window.show()
-    window.raise_()
-    
-    window.load()
+    for window in windows:
+        window.resize(800, 600)
+    #     window.move(300,50)
+        window.show()
+        window.raise_()
+        
+        window.load()
    
     sys.exit(app.exec_())
 
