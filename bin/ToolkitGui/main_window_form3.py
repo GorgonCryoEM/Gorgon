@@ -4,13 +4,13 @@ import sys, os
 from Explorer import Camera
 from Explorer.volume_viewer import VolumeViewer
 from Explorer.skeleton_viewer import SkeletonViewer
-from .volume_grayscale_skeletonization_form import VolumeGrayscaleSkeletonizationForm
+from .volume_sse_builder_form import VolumeSSEBuilderForm
 
 
-class MainWindowForm2(QtGui.QMainWindow):
+class MainWindowForm3(QtGui.QMainWindow):
 
     def __init__(self, version, args):
-        super(MainWindowForm2, self).__init__()
+        super(MainWindowForm3, self).__init__()
         
         self.args = args
         self.menubar = self.menuBar()
@@ -22,7 +22,7 @@ class MainWindowForm2(QtGui.QMainWindow):
         self.mainCamera = Camera(self.scene, self)
         self.setCentralWidget(self.mainCamera)
         
-        self.form = VolumeGrayscaleSkeletonizationForm(self, self.volume, self)
+        self.form = VolumeSSEBuilderForm(self, self.volume, self)
         self.form.show()
         
         self.setWindowTitle(self.tr("Gorgon Toolkit - v" + version))
@@ -31,6 +31,7 @@ class MainWindowForm2(QtGui.QMainWindow):
         
     def load(self):
         self.volume.load(self.args.volume)
+        self.skeleton.load(self.args.skeleton)
         self.form.modelLoaded()
         
     def exitApplication(self):
