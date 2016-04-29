@@ -1,25 +1,21 @@
 from PyQt4 import QtCore, QtGui
 from ui_dialog_volume_sse_builder import Ui_DialogVolumeSSEBuilder
-from base_dock_widget import BaseDockWidget
-from sse_hunter_engine import SSEHunterEngine
-from auto_helix_builder_engine import AutoHelixBuilderEngine
+from Toolkit.sse.sse_hunter import pySSEHunter
+# from auto_helix_builder_engine import AutoHelixBuilderEngine
 
 
-class VolumeSSEBuilderForm(BaseDockWidget, Ui_DialogVolumeSSEBuilder):
+class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
         
     def __init__(self, main, viewer, parent=None):
-        BaseDockWidget.__init__(self,
-                                main,
-                                "Identify &SSEs",
-                                "Identify secondary structure elements",
-                                "detectSSE_Volume",
-                                "actions-sse-detectSSE",
-                                "actions-sse",
-                                QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea,
-                                QtCore.Qt.RightDockWidgetArea,
-                                parent)
+        QtGui.QDialog.__init__(self, viewer)
         self.app = main
         self.viewer = viewer
+        
+        dock = QtGui.QDockWidget("SSEBuilder", viewer)
+        dock.setWidget(self)
+        dock.setAllowedAreas(QtCore.Qt.AllDockWidgetAreas)
+        self.app.addDockWidget(QtCore.Qt.LeftDockWidgetArea, dock)
+
         self.connect(self.viewer, QtCore.SIGNAL("modelLoaded()"), self.modelLoaded)
         self.connect(self.viewer, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)
 
