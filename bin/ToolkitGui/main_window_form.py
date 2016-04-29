@@ -31,7 +31,7 @@ class MainWindowForm(QtGui.QMainWindow):
         
     def load(self):
         self.volume.load(self.args.volume)
-        self.skeleton.load(self.args.skeleton)
+        self.form.modelLoaded()
         
     def exitApplication(self):
         QtGui.qApp.closeAllWindows()

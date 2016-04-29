@@ -64,8 +64,9 @@ class VolumeBinarySkeletonizationForm(BaseDialogWidget):
             self.setCursor(QtCore.Qt.BusyCursor)
             method = self.getSkeletonizationMethod()
             if(method == 0):
+                self.modelLoaded()
                 skeleton = self.viewer.renderer.performBinarySkeletonizationJu2007(self.getDensityThreshold(), self.getMinCurveLength(), self.getMinSurfaceSize())
-                self.app.viewers["skeleton"].loadVolume(skeleton)
+                self.app.skeleton.loadVolume(skeleton)
             self.setCursor(QtCore.Qt.ArrowCursor)
             self.close()
         else:
