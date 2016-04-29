@@ -1,8 +1,3 @@
-# Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
-# Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
-# Description:   A widget to build SSEs from SSE Hunter results
-
-
 from PyQt4 import QtCore, QtGui
 from ui_dialog_volume_sse_builder import Ui_DialogVolumeSSEBuilder
 from base_dock_widget import BaseDockWidget
