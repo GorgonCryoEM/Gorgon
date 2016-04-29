@@ -1,12 +1,8 @@
-# Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
-# Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
-# Description:   A base class for dialog boxes triggered through an action
-
-
-
 from PyQt4 import QtCore, QtGui
 
+
 class BaseDialogWidget(QtGui.QDialog):
+
     def __init__(self, main, title, hint, actionName, windowName, parentWindowName, isModal, parent=None):
         QtGui.QDialog.__init__(self, parent)
         self.app = main
@@ -15,10 +11,10 @@ class BaseDialogWidget(QtGui.QDialog):
         self.createDisplayMenu(windowName, parentWindowName)
         
     def createDisplayAction(self, title, hint, actionName):
-        self.displayAct = QtGui.QAction(self.tr(title + "..."), self)        
+        self.displayAct = QtGui.QAction(self.tr(title + "..."), self)
         self.displayAct.setStatusTip(self.tr(hint))
         self.displayAct.setCheckable(True)
-        self.displayAct.setChecked(False)   
+        self.displayAct.setChecked(False)
         self.connect(self.displayAct, QtCore.SIGNAL("triggered()"), self.toggleVisibility)
         self.app.actions.addAction(actionName, self.displayAct)
         
@@ -29,7 +25,7 @@ class BaseDialogWidget(QtGui.QDialog):
         if(self.isVisible()):
             self.close()
         else:
-            self.show()        
+            self.show()
         
     def show(self):
         QtGui.QDialog.show(self)
