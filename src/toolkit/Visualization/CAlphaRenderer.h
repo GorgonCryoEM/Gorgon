@@ -56,11 +56,11 @@ namespace Visualization {
     */
     class HermiteCurve{
     public:
-        Vector3DFloat p0, p1, m0, m1;
+        Vec3F p0, p1, m0, m1;
 
-        void setCurve(Vector3DFloat pstart, Vector3DFloat pend, Vector3DFloat tstart, Vector3DFloat tend);
-        Vector3DFloat getPos(double t);
-        Vector3DFloat getTangent(double t);
+        void setCurve(Vec3F pstart, Vec3F pend, Vec3F tstart, Vec3F tend);
+        Vec3F getPos(double t);
+        Vec3F getTangent(double t);
     };
 
 
@@ -83,15 +83,15 @@ namespace Visualization {
             void ColorSSEHunterAtoms();
             int SelectionObjectCount();
             int SelectionAtomCount();
-            Vector3DFloat SelectionCenterOfMass();
-            bool SelectionRotate(Vector3DFloat centerOfMass, Vector3DFloat rotationAxis, float angle);
-            bool SelectionMove(Vector3DFloat moveDirection);
+            Vec3F SelectionCenterOfMass();
+            bool SelectionRotate(Vec3F centerOfMass, Vec3F rotationAxis, float angle);
+            bool SelectionMove(Vec3F moveDirection);
             bool SelectionClear();
             void SelectionToggle(int subsceneIndex, bool forceTrue, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
             void Unload();
             string GetSupportedLoadFileFormats();
             string GetSupportedSaveFileFormats();
-            Vector3DFloat Get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
+            Vec3F Get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
             void TransformAllAtomLocations(MatrixFloat transform);
             void UpdateBoundingBox();
 
@@ -137,19 +137,19 @@ namespace Visualization {
             bool CleanSecondaryStructures(); //empties the aHelices, bStrands and loops variables
             //what should really happen is that the code should check if it is
             //trying to reload the same one, and then if it did return false
-            vector<Vector3DFloat> CreatePointVector(PDBAtom first, PDBAtom last); // functionality mirrored in previously implemented method,
+            vector<Vec3F> CreatePointVector(PDBAtom first, PDBAtom last); // functionality mirrored in previously implemented method,
             // will try to refactor
-            vector<Vector3DFloat> LaplacianSmoothing(vector<Vector3DFloat> points, int steps); // applies Laplacian smoothing to a vector of
+            vector<Vec3F> LaplacianSmoothing(vector<Vec3F> points, int steps); // applies Laplacian smoothing to a vector of
             // Vector3DFloats
-            vector<Vector3DFloat> CreateStrandNormals(vector<Vector3DFloat> points, Vector3DFloat previous, Vector3DFloat next); // create line segment normals to be used in drawing Beta
+            vector<Vec3F> CreateStrandNormals(vector<Vec3F> points, Vec3F previous, Vec3F next); // create line segment normals to be used in drawing Beta
             // strands
-            void CreateHelixAxesTangentsAndPoints(vector<Vector3DFloat>& axes, vector<Vector3DFloat>& tangents, vector<Vector3DFloat>& interpPoints, vector<Vector3DFloat> points,
-                Vector3DFloat previous, Vector3DFloat next, double HELIX_ALPHA, double HELIX_BETA, double HELIX_HERMITE_FACTOR);
-            void DrawOpenBox(vector<Vector3DFloat> points, vector<Vector3DFloat> normals); // takes a vector of 8 points and draws a rectangular prism with two of its six sides not
+            void CreateHelixAxesTangentsAndPoints(vector<Vec3F>& axes, vector<Vec3F>& tangents, vector<Vec3F>& interpPoints, vector<Vec3F> points,
+                Vec3F previous, Vec3F next, double HELIX_ALPHA, double HELIX_BETA, double HELIX_HERMITE_FACTOR);
+            void DrawOpenBox(vector<Vec3F> points, vector<Vec3F> normals); // takes a vector of 8 points and draws a rectangular prism with two of its six sides not
             // filled in; the first 4 points are from the beggining edge of the box, with the second four
             // forming the end
-            void DrawTube(vector<Vector3DFloat> points, vector<Vector3DFloat> normals, int stacks, int slices);
-            vector<Vector3DFloat> InterpolateLoopPoints(vector<Vector3DFloat> points, Vector3DFloat previous, Vector3DFloat next, int NUM_SECTIONS); // creates interpolated points for loops
+            void DrawTube(vector<Vec3F> points, vector<Vec3F> normals, int stacks, int slices);
+            vector<Vec3F> InterpolateLoopPoints(vector<Vec3F> points, Vec3F previous, Vec3F next, int NUM_SECTIONS); // creates interpolated points for loops
             //vector<Vector3DFloat> InterpolateStrandPoints(vector<Vector3DFloat> points, Vector3DFloat previous, Vector3DFloat next, int NUM_SECTIONS);
             //vector<Vector3DFloat> InterpolateHelixPoints(vector<Vector3DFloat> points, Vector3DFloat previous, Vector3DFloat next, int NUM_SECTIONS);
 
@@ -164,7 +164,7 @@ namespace Visualization {
             void SetHelixCorrs( vector < int > flatCorrespondences);
             void SetSelectedSSEHelices(vector<int>);
             void ClearOtherHighlights();
-            void SetFeatureVecs(vector<Vector3DFloat> flatFeatureVecs);
+            void SetFeatureVecs(vector<Vec3F> flatFeatureVecs);
             void SetHelixColor(int helixNum, float r, float g, float b);
         private:
             void DrawBackboneModel(int subSceneIndex, bool selectEnabled);
@@ -189,7 +189,7 @@ namespace Visualization {
             vector<int> selectedLoopIndices;
             vector < boost::tuple<int, int> > corrs;
             vector<int> selectedSSEHelices;
-            vector< boost::tuple<Vector3DFloat, Vector3DFloat> > featureVecs;
+            vector< boost::tuple<Vec3F, Vec3F> > featureVecs;
 
             map<int,boost::tuple<float, float, float> > helixColors;
 

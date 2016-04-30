@@ -38,7 +38,7 @@ namespace Visualization {
         return &helices;
     }
 
-    void SSERenderer::AddHelix(Vector3DFloat p1, Vector3DFloat p2) {
+    void SSERenderer::AddHelix(Vec3F p1, Vec3F p2) {
 
         Shape * newHelix = Shape::CreateHelix(p1, p2, 2.5);
 
@@ -47,7 +47,7 @@ namespace Visualization {
     }
 
     void SSERenderer::FinalizeHelix() {
-        Vector3DFloat p1, p2;
+        Vec3F p1, p2;
         LinearSolver::FindBestFitLine(p1, p2, tempSSEPoints);
         AddHelix(p1, p2);
     }
@@ -56,7 +56,7 @@ namespace Visualization {
         tempSSEPoints.clear();
     }
 
-    void SSERenderer::AddSSEPoint(Vector3DFloat p) {
+    void SSERenderer::AddSSEPoint(Vec3F p) {
         tempSSEPoints.push_back(p);
     }
 
@@ -68,7 +68,7 @@ namespace Visualization {
 
 
         vector<int> vertexIxs;
-        Vector3DFloat center = Vector3DFloat(0,0,0);
+        Vec3F center = Vec3F(0,0,0);
 
         for(unsigned int i = 0; i < tempSSEPoints.size(); i++) {
             vertexIxs.push_back(sheetMesh->AddVertex(tempSSEPoints[i], false));
@@ -154,8 +154,8 @@ namespace Visualization {
 
                 if(helices[i]->GetSelected()) {
 
-                    Vector3DFloat corner1 = GetHelixCorner(i, 0);
-                    Vector3DFloat corner2 = GetHelixCorner(i, 1);
+                    Vec3F corner1 = GetHelixCorner(i, 0);
+                    Vec3F corner2 = GetHelixCorner(i, 1);
                     cout << "Drawing selected cylinder. Size of helix flips is " << helixFlips.size() << endl;
                     if(helixFlips.size()  > 0){
                         if(!helixFlips[i]){
@@ -178,8 +178,8 @@ namespace Visualization {
 
                 for(unsigned int j = 0; j < SSEIndices.size(); ++j){
                     if(SSEIndices[j] == i){
-                        Vector3DFloat corner1 = GetHelixCorner(i, 0);
-                        Vector3DFloat corner2 = GetHelixCorner(i, 1);
+                        Vec3F corner1 = GetHelixCorner(i, 0);
+                        Vec3F corner2 = GetHelixCorner(i, 1);
                         if(!helixFlips[i]){
                             OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
                             DrawSphere(corner2, 1.0);
@@ -240,7 +240,7 @@ namespace Visualization {
                 glPushAttrib(GL_LIGHTING_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
                 // end color code
                 glBegin(GL_POLYGON);
-                Vector3DFloat normal;
+                Vec3F normal;
                 for(unsigned int j = 0; j < sheetMesh->faces[i].vertexIds.size(); j++) {
                     normal = sheetMesh->GetVertexNormal(sheetMesh->faces[i].vertexIds[j]);
                     k = sheetMesh->GetVertexIndex(sheetMesh->faces[i].vertexIds[j]);
@@ -292,7 +292,7 @@ namespace Visualization {
                 glPushAttrib(GL_LIGHTING_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
                 // end color code
                 glBegin(GL_POLYGON);
-                Vector3DFloat normal;
+                Vec3F normal;
                 for(unsigned int j = 0; j < graphSheetMesh->faces[i].vertexIds.size(); j++) {
                     normal = graphSheetMesh->GetFaceNormal(i);
                     k = graphSheetMesh->GetVertexIndex(graphSheetMesh->faces[i].vertexIds[j]);
@@ -348,7 +348,7 @@ namespace Visualization {
                 fscanf(fin, "%f", &x2);
                 fscanf(fin, "%f", &y2);
                 fscanf(fin, "%f", &z2);
-                AddHelix(Vector3DFloat(x1, y1, z1), Vector3DFloat(x2, y2, z2));
+                AddHelix(Vec3F(x1, y1, z1), Vec3F(x2, y2, z2));
             }
         }
 
@@ -419,7 +419,7 @@ namespace Visualization {
             indices.clear();
             for(unsigned int j = 0; j < sheets[i]->polygonPoints.size(); j++) {
                 pt = sheets[i]->polygonPoints[j];
-                indices.push_back(sheetMesh->AddVertex(Vector3DFloat((float)pt[0], (float)pt[1], (float)pt[2])));
+                indices.push_back(sheetMesh->AddVertex(Vec3F((float)pt[0], (float)pt[1], (float)pt[2])));
             }
 
             for(unsigned int j = 0; j < sheets[i]->polygons.size(); j++) {
@@ -476,11 +476,11 @@ namespace Visualization {
         delete vol;
         // add offset to all points in new mesh
         for (unsigned int i = 0; i < thisSheetMesh->vertices.size(); i++) {
-            Vector3DFloat newpos = thisSheetMesh->vertices[i].position;
+            Vec3F newpos = thisSheetMesh->vertices[i].position;
             newpos.values[0] *= scalex;
             newpos.values[1] *= scaley;
             newpos.values[2] *= scalez;
-            thisSheetMesh->vertices[i].position = newpos + Vector3DFloat(xmin * scalex, ymin * scaley, zmin * scalez) + Vector3DFloat(offsetx, offsety, offsetz);
+            thisSheetMesh->vertices[i].position = newpos + Vec3F(xmin * scalex, ymin * scaley, zmin * scalez) + Vec3F(offsetx, offsety, offsetz);
         }
 
         // merge this mesh with the mesh containing other sheets
@@ -586,7 +586,7 @@ namespace Visualization {
         }
     }
 
-    bool SSERenderer::SelectionRotate(Vector3DFloat centerOfMass, Vector3DFloat rotationAxis, float angle) {
+    bool SSERenderer::SelectionRotate(Vec3F centerOfMass, Vec3F rotationAxis, float angle) {
         bool rotated = false;
         Point3 centerOfMassP3 = Point3(centerOfMass.X(), centerOfMass.Y(), centerOfMass.Z());
         Vector3 rotationV3 = Vector3(rotationAxis.X(), rotationAxis.Y(), rotationAxis.Z());
@@ -655,8 +655,8 @@ namespace Visualization {
         return count;
     }
 
-    Vector3DFloat SSERenderer::SelectionCenterOfMass(){
-        Vector3DFloat helixCenterOfMass = Vector3DFloat(0,0,0);
+    Vec3F SSERenderer::SelectionCenterOfMass(){
+        Vec3F helixCenterOfMass = Vec3F(0,0,0);
         Point3 helixCenter;
         int helixCount = 0;
 
@@ -664,16 +664,16 @@ namespace Visualization {
             if(helices[i]->GetSelected()) {
                 helixCount++;
                 helixCenter = helices[i]->GetCenter();
-                helixCenterOfMass = helixCenterOfMass + Vector3DFloat(helixCenter[0], helixCenter[1], helixCenter[2]);
+                helixCenterOfMass = helixCenterOfMass + Vec3F(helixCenter[0], helixCenter[1], helixCenter[2]);
             }
         }
 
         int totalCount = SelectionObjectCount();
         int sheetCount = totalCount - helixCount;
 
-        Vector3DFloat sheetsCenterOfMass = Vector3DFloat(0,0,0);
-        Vector3DFloat currentFaceCenterOfMass;
-        Vector3DFloat currentSheetCenterOfMass;
+        Vec3F sheetsCenterOfMass = Vec3F(0,0,0);
+        Vec3F currentFaceCenterOfMass;
+        Vec3F currentSheetCenterOfMass;
 
         if((sheetCount > 0) && (sheetMesh != NULL)) {
 
@@ -682,12 +682,12 @@ namespace Visualization {
 
             for(int j = 0; j <= this->sheetCount; j++) {
                 if(selectedSheets[j]) {
-                    currentSheetCenterOfMass = Vector3DFloat(0,0,0);
+                    currentSheetCenterOfMass = Vec3F(0,0,0);
                     currentSheetFaceCount = 0;
                     for(unsigned int i = 0; i < sheetMesh->faces.size(); i++) {
                         if(sheetMesh->faces[i].tag.id == j) {
                             currentSheetFaceCount++;
-                            currentFaceCenterOfMass = Vector3DFloat(0,0,0);
+                            currentFaceCenterOfMass = Vec3F(0,0,0);
                             for(unsigned int k = 0; k < sheetMesh->faces[i].vertexIds.size(); k++) {
                                 currentFaceCenterOfMass = currentFaceCenterOfMass + sheetMesh->vertices[sheetMesh->faces[i].vertexIds[k]].position;
                             }
@@ -702,7 +702,7 @@ namespace Visualization {
             }
         }
 
-        Vector3DFloat centerOfMass;
+        Vec3F centerOfMass;
         if(totalCount == 0) {
             centerOfMass = Renderer::SelectionCenterOfMass();
         } else if ((helixCount > 0) && (sheetCount > 0)) {
@@ -715,7 +715,7 @@ namespace Visualization {
         return centerOfMass;
     }
 
-    bool SSERenderer::SelectionMove(Vector3DFloat moveDirection) {
+    bool SSERenderer::SelectionMove(Vec3F moveDirection) {
         bool moved = false;
         for(unsigned int i = 0; i < helices.size(); i++) {
             if(helices[i]->GetSelected()) {
@@ -816,7 +816,7 @@ namespace Visualization {
     }
 
     void SSERenderer::SaveHelixFileSSE(FILE* fout) {
-        Vector3DFloat start, end;
+        Vec3F start, end;
         float helixLength;
         int intLength;
 
@@ -850,7 +850,7 @@ namespace Visualization {
     void SSERenderer::SaveSheetFileVRML(FILE* fout) {
 
         map<int, int> vertexIxs;
-        vector<Vector3DFloat> vertices;
+        vector<Vec3F> vertices;
         bool addVertex;
 
         NonManifoldMeshVertex<bool> tempVertex;
@@ -964,17 +964,17 @@ namespace Visualization {
         return "All Supported Formats(*.vrml *.wrl);; VRML models (*.vrml *.wrl)";
     }
 
-    Vector3DFloat SSERenderer::Get3DCoordinates(int subsceneIndex, int ix0, int ix1, int ix2, int ix3, int ix4) {
-        Vector3DFloat position;
+    Vec3F SSERenderer::Get3DCoordinates(int subsceneIndex, int ix0, int ix1, int ix2, int ix3, int ix4) {
+        Vec3F position;
         switch(subsceneIndex) {
             case(0):
                 if((ix0 >= 0) && (ix0 <= (int)helices.size())) {
                     Point3 pt = helices[ix0]->GetCenter();
-                    position = Vector3DFloat(pt[0], pt[1], pt[2]);
+                    position = Vec3F(pt[0], pt[1], pt[2]);
                 }
                 break;
             case(1):
-                position = Vector3DFloat(0,0,0);
+                position = Vec3F(0,0,0);
                 for(unsigned int i = 0; i < sheetMesh->faces.size(); i++) {
                     if(sheetMesh->faces[i].tag.id == ix0) {
                         for(unsigned int j = 0; j < sheetMesh->faces[i].vertexIds.size(); j++) {
@@ -985,7 +985,7 @@ namespace Visualization {
                 position = position * (1.0/(sheetMesh->faces.size() * 3.0));
                 break;
             default:
-                position = Vector3DFloat(0,0,0);
+                position = Vec3F(0,0,0);
                 break;
         }
         return position;
@@ -1054,7 +1054,7 @@ namespace Visualization {
         return helices.size();
     }
 
-    Vector3DFloat SSERenderer::GetHelixCorner(int helixIx, int cornerIx) {
+    Vec3F SSERenderer::GetHelixCorner(int helixIx, int cornerIx) {
         return helices[helixIx]->GetCornerCell3(cornerIx);
     }
 

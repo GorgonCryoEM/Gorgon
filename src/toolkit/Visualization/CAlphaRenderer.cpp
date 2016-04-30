@@ -9,14 +9,14 @@
 
 namespace Visualization {
 
-    void HermiteCurve::setCurve(Vector3DFloat pstart, Vector3DFloat pend, Vector3DFloat tstart, Vector3DFloat tend){
+    void HermiteCurve::setCurve(Vec3F pstart, Vec3F pend, Vec3F tstart, Vec3F tend){
         p0 = pstart;
         p1 = pend;
         m0 = tstart;
         m1 = tend;
     }
 
-    Vector3DFloat HermiteCurve::getPos(double t){
+    Vec3F HermiteCurve::getPos(double t){
         double tsquared = t*t;
         double tcubed = tsquared * t;
 
@@ -29,12 +29,12 @@ namespace Visualization {
         double yt = cp0*p0.Y() + cm0*m0.Y() + cp1*p1.Y() + cm1*m1.Y();
         double zt = cp0*p0.Z() + cm0*m0.Z() + cp1*p1.Z() + cm1*m1.Z();
 
-        return Vector3DFloat(xt, yt, zt);
+        return Vec3F(xt, yt, zt);
     }
 
     // I don't know how this method works, but it is a part of the entirely functional
     // molscript code - BC
-    Vector3DFloat HermiteCurve::getTangent(double t){
+    Vec3F HermiteCurve::getTangent(double t){
         double t2 = t * t;
         double cp0 = 6.0 * (t2 - t);
         double cp1 = 6.0 * (-t2 + t);
@@ -44,7 +44,7 @@ namespace Visualization {
         double vyt = p0.Y()*cp0 + p1.Y() * cp1 + m0.Y() * cm0 + m1.Y() * cm1;
         double vzt = p0.Z()*cp0 + p1.Z() * cp1 + m0.Z() * cm0 + m1.Z() * cm1;
 
-        return Vector3DFloat(vxt, vyt, vzt);
+        return Vec3F(vxt, vyt, vzt);
     }
     /**
     End Hermite Curve code
@@ -237,13 +237,13 @@ namespace Visualization {
 
                     PDBAtom firstAtom = atoms.find(currentSecel.atomHashes[0])->second;
                     PDBAtom lastAtom = atoms.find(currentSecel.atomHashes[currentSecel.atomHashes.size()-1])->second;
-                    Vector3DFloat preSecelAtomPos = atoms.find(firstAtom.GetPrevCAHash())->second.GetPosition();
-                    Vector3DFloat postSecelAtomPos = atoms.find(lastAtom.GetNextCAHash())->second.GetPosition();
+                    Vec3F preSecelAtomPos = atoms.find(firstAtom.GetPrevCAHash())->second.GetPosition();
+                    Vec3F postSecelAtomPos = atoms.find(lastAtom.GetNextCAHash())->second.GetPosition();
 
-                    vector<Vector3DFloat> points = CreatePointVector(firstAtom, lastAtom);
-                    vector<Vector3DFloat> tangents = vector<Vector3DFloat>(points);
-                    vector<Vector3DFloat> axes = vector<Vector3DFloat>(points);
-                    vector<Vector3DFloat> interpPoints = vector<Vector3DFloat>((points.size()-1)*NUM_SEGMENTS + 1);
+                    vector<Vec3F> points = CreatePointVector(firstAtom, lastAtom);
+                    vector<Vec3F> tangents = vector<Vec3F>(points);
+                    vector<Vec3F> axes = vector<Vec3F>(points);
+                    vector<Vec3F> interpPoints = vector<Vec3F>((points.size()-1)*NUM_SEGMENTS + 1);
                     int flatSlices = 2;
                     int rptsize = interpPoints.size()*4;
                     switch (renderingType){
@@ -257,13 +257,13 @@ namespace Visualization {
                             rptsize = interpPoints.size()*4;
                             break;
                     }
-                    vector<Vector3DFloat> renderingPoints(rptsize);
-                    vector<Vector3DFloat> renderingNormals(renderingPoints.size());
+                    vector<Vec3F> renderingPoints(rptsize);
+                    vector<Vec3F> renderingNormals(renderingPoints.size());
                     /*vector<Vector3DFloat> renderingPoints(interpPoints.size()*NUM_SLICES);
                     vector<Vector3DFloat> renderingNormals(renderingPoints.size());*/
 
                     HermiteCurve curve;
-                    Vector3DFloat m0, m1;
+                    Vec3F m0, m1;
 
                     CreateHelixAxesTangentsAndPoints(axes, tangents, interpPoints, points, preSecelAtomPos, postSecelAtomPos, HELIX_ALPHA, HELIX_BETA, HELIX_HERMITE_FACTOR);
 
@@ -275,23 +275,23 @@ namespace Visualization {
                         curve.setCurve(points[x], points[x+1], m0, m1);
 
                         // used in rendering a helix as glowing if selected
-                        vector<Vector3DFloat> selectedBoxPositions(8);
+                        vector<Vec3F> selectedBoxPositions(8);
 
                         float halfwidth = HELIX_WIDTH/2.0;
                         float halfthickness = LOOP_RADIUS;
-                        Vector3DFloat lastPos = points[x];
+                        Vec3F lastPos = points[x];
                         //int NUM_SECTIONS = 10;
                         for (int sect = 0; sect <= NUM_SEGMENTS; ++sect){
                             if(sect == 0 && x != 0){
                                 continue;
                             }
                             double tsect = ((double)sect)/((double)NUM_SEGMENTS);
-                            Vector3DFloat nextPos = curve.getPos(tsect);
+                            Vec3F nextPos = curve.getPos(tsect);
 
-                            Vector3DFloat currentAxis = axes[x]*(1.0-tsect) + axes[x+1]*tsect;
+                            Vec3F currentAxis = axes[x]*(1.0-tsect) + axes[x+1]*tsect;
                             currentAxis.Normalize();
 
-                            Vector3DFloat curnormal = curve.getTangent(tsect);
+                            Vec3F curnormal = curve.getTangent(tsect);
                             curnormal = curnormal^currentAxis;
                             curnormal.Normalize();
 
@@ -380,8 +380,8 @@ namespace Visualization {
                     }
 
                     glPopAttrib();
-                    Vector3DFloat pos1 = atoms[aHelices[i].atomHashes[0]].GetPosition();
-                    Vector3DFloat pos2 = atoms[aHelices[i].atomHashes[aHelices[i].atomHashes.size()-1]].GetPosition();
+                    Vec3F pos1 = atoms[aHelices[i].atomHashes[0]].GetPosition();
+                    Vec3F pos2 = atoms[aHelices[i].atomHashes[aHelices[i].atomHashes.size()-1]].GetPosition();
                     printf("Drawing PDB Spheres at PDB ID %d with end #1 [%f, %f, %f] and #2 [%f, %f, %f]\n", i+1, pos1.X(), pos1.Y(), pos1.Z(), pos2.X(), pos2.Y(), pos2.Z());
 
                     fflush(stdout);
@@ -410,7 +410,7 @@ namespace Visualization {
                 PDBAtom lastEnd;
 
                 HermiteCurve curve;
-                Vector3DFloat m0, m1, dir1, dir2;
+                Vec3F m0, m1, dir1, dir2;
 
                 glPushAttrib(GL_LIGHTING_BIT);
 
@@ -424,10 +424,10 @@ namespace Visualization {
                 if(currentSecel.atomHashes.size() > 0){
                     PDBAtom firstAtom = atoms.find(currentSecel.atomHashes[0])->second;
                     PDBAtom lastAtom = atoms.find(currentSecel.atomHashes[currentSecel.atomHashes.size()-1])->second;
-                    Vector3DFloat preSecelAtomPos = atoms.find(firstAtom.GetPrevCAHash())->second.GetPosition();
-                    Vector3DFloat postSecelAtomPos = atoms.find(lastAtom.GetNextCAHash())->second.GetPosition();
+                    Vec3F preSecelAtomPos = atoms.find(firstAtom.GetPrevCAHash())->second.GetPosition();
+                    Vec3F postSecelAtomPos = atoms.find(lastAtom.GetNextCAHash())->second.GetPosition();
 
-                    vector<Vector3DFloat> points = CreatePointVector(firstAtom, lastAtom);
+                    vector<Vec3F> points = CreatePointVector(firstAtom, lastAtom);
                     int num_interp_points = (points.size() - 1)*NUM_SEGMENTS + 1;
                     int num_rendering_points = num_interp_points*4;
                     switch (renderingType){
@@ -440,9 +440,9 @@ namespace Visualization {
                         default:
                             cout << "bstrands" << endl;
                     }
-                    vector<Vector3DFloat> renderingPoints(num_rendering_points);
-                    vector<Vector3DFloat> normals = CreateStrandNormals(points, preSecelAtomPos, postSecelAtomPos);
-                    vector<Vector3DFloat> renderingNormals(renderingPoints);
+                    vector<Vec3F> renderingPoints(num_rendering_points);
+                    vector<Vec3F> normals = CreateStrandNormals(points, preSecelAtomPos, postSecelAtomPos);
+                    vector<Vec3F> renderingNormals(renderingPoints);
                     double arrowhead_factor = 1.0;
                     //vector<Vector3DFloat> boxpositions(8);
                     //vector<Vector3DFloat> boxnormals(8);
@@ -491,10 +491,10 @@ namespace Visualization {
 
                         float WIDTH = 1.3;
                         float THICKNESS = LOOP_RADIUS;
-                        Vector3DFloat lastPos = points[i];
-                        Vector3DFloat direction = dir1;
-                        Vector3DFloat currentNormal = normals[i];
-                        Vector3DFloat side = currentNormal^direction;
+                        Vec3F lastPos = points[i];
+                        Vec3F direction = dir1;
+                        Vec3F currentNormal = normals[i];
+                        Vec3F side = currentNormal^direction;
                         side.Normalize();
 
                         for (int sect = 0; sect <= NUM_SEGMENTS; ++sect){
@@ -510,7 +510,7 @@ namespace Visualization {
                             currentNormal = normals[i]*(1.0 - tsect) + normals[i+1]*(tsect);
                             side = currentNormal^direction;
                             side.Normalize();
-                            Vector3DFloat nextPos = curve.getPos(tsect);
+                            Vec3F nextPos = curve.getPos(tsect);
 
                             switch(renderingType){
                                     case 0:
@@ -555,8 +555,8 @@ namespace Visualization {
                 if(currentSecel.selected == true){
                     glPushAttrib(GL_LIGHTING_BIT);
 
-                    Vector3DFloat pos1 = atoms[currentSecel.atomHashes[0]].GetPosition();
-                    Vector3DFloat pos2 = atoms[currentSecel.atomHashes[currentSecel.atomHashes.size()-1]].GetPosition();
+                    Vec3F pos1 = atoms[currentSecel.atomHashes[0]].GetPosition();
+                    Vec3F pos2 = atoms[currentSecel.atomHashes[currentSecel.atomHashes.size()-1]].GetPosition();
                     printf("Drawing PDB Spheres at PDB ID %d with end #1 [%f, %f, %f] and #2 [%f, %f, %f]\n", i+1, pos1.X(), pos1.Y(), pos1.Z(), pos2.X(), pos2.Y(), pos2.Z());
 
                     /*if(featureVecs.size() > 0){
@@ -590,7 +590,7 @@ namespace Visualization {
                 PDBAtom lastEnd;
 
                 HermiteCurve curve;
-                Vector3DFloat m0, m1;
+                Vec3F m0, m1;
 
                 double HERMITE_FACTOR = 0.5;
 
@@ -605,15 +605,15 @@ namespace Visualization {
                 if(currentSecel.atomHashes.size() > 1){
                     PDBAtom firstAtom = atoms.find(currentSecel.atomHashes[0])->second;
                     PDBAtom lastAtom = atoms.find(currentSecel.atomHashes[currentSecel.atomHashes.size()-1])->second;
-                    Vector3DFloat preSecelAtomPos = atoms.find(firstAtom.GetPrevCAHash())->second.GetPosition();
-                    Vector3DFloat postSecelAtomPos = atoms.find(lastAtom.GetNextCAHash())->second.GetPosition();
+                    Vec3F preSecelAtomPos = atoms.find(firstAtom.GetPrevCAHash())->second.GetPosition();
+                    Vec3F postSecelAtomPos = atoms.find(lastAtom.GetNextCAHash())->second.GetPosition();
 
-                    vector<Vector3DFloat> points = CreatePointVector(firstAtom, lastAtom);
-                    vector<Vector3DFloat> normals(points.size());
+                    vector<Vec3F> points = CreatePointVector(firstAtom, lastAtom);
+                    vector<Vec3F> normals(points.size());
                     normals = CreateStrandNormals(points, preSecelAtomPos, postSecelAtomPos);
 
                     // generate smoothed interpolated points
-                    vector<Vector3DFloat> interpolatedPoints = InterpolateLoopPoints(points, preSecelAtomPos, postSecelAtomPos, NUM_SEGMENTS);
+                    vector<Vec3F> interpolatedPoints = InterpolateLoopPoints(points, preSecelAtomPos, postSecelAtomPos, NUM_SEGMENTS);
                     int ptsize = interpolatedPoints.size();
 
                     // create vectors to hold the vertices and normals of our loop polygon
@@ -628,11 +628,11 @@ namespace Visualization {
                         default:
                             break;
                     }
-                    vector<Vector3DFloat> renderingPoints(renderingsize);
-                    vector<Vector3DFloat> renderingNormals(renderingPoints.size());
+                    vector<Vec3F> renderingPoints(renderingsize);
+                    vector<Vec3F> renderingNormals(renderingPoints.size());
 
-                    Vector3DFloat nextVector = interpolatedPoints[1]-interpolatedPoints[0];
-                    Vector3DFloat previousVector = preSecelAtomPos - interpolatedPoints[0];
+                    Vec3F nextVector = interpolatedPoints[1]-interpolatedPoints[0];
+                    Vec3F previousVector = preSecelAtomPos - interpolatedPoints[0];
                     if(previousVector.Length() < .001){
                         if(2 < interpolatedPoints.size()){
                             previousVector = interpolatedPoints[2] - interpolatedPoints[0];
@@ -640,14 +640,14 @@ namespace Visualization {
                             previousVector = postSecelAtomPos - interpolatedPoints[0];
                         }
                     }
-                    Vector3DFloat curAxis = nextVector^previousVector;
-                    Vector3DFloat curNormal = nextVector^curAxis;
+                    Vec3F curAxis = nextVector^previousVector;
+                    Vec3F curNormal = nextVector^curAxis;
                     curNormal.Normalize();
-                    Vector3DFloat curPos = interpolatedPoints[0];
+                    Vec3F curPos = interpolatedPoints[0];
                     nextVector.Normalize();
 
                     // generate first stack of points
-                    Vector3DFloat outward = normals[0] ^ (interpolatedPoints[1]-interpolatedPoints[0]);
+                    Vec3F outward = normals[0] ^ (interpolatedPoints[1]-interpolatedPoints[0]);
                     outward.Normalize();
                     switch (renderingType){
                         case 0:
@@ -658,7 +658,7 @@ namespace Visualization {
                             break;
                         case 1:
                             for(unsigned int k = 0; k < NUM_SLICES; ++k){
-                                Vector3DFloat outwardNormal = (curNormal.Rotate(nextVector, ((double)k)*2*PI/((double)NUM_SLICES)));
+                                Vec3F outwardNormal = (curNormal.Rotate(nextVector, ((double)k)*2*PI/((double)NUM_SLICES)));
                                 outwardNormal.Normalize();
                                 renderingPoints[k*(ptsize)] = curPos+outwardNormal*LOOP_RADIUS;
                                 renderingNormals[k*(ptsize)] = outwardNormal; //renderingPoints[j*(ptsize)]-curPos;
@@ -669,7 +669,7 @@ namespace Visualization {
                     }
 
                     for(unsigned int j = 1; j < ptsize; ++j){
-                        Vector3DFloat nextVector, previousVector;
+                        Vec3F nextVector, previousVector;
                         curPos = interpolatedPoints[j];
                         if(j == ptsize - 1){
                             nextVector = postSecelAtomPos - interpolatedPoints[j];
@@ -682,7 +682,7 @@ namespace Visualization {
                         } else {
                             previousVector = interpolatedPoints[j-1] - interpolatedPoints[j];
                         }
-                        Vector3DFloat newAxis = nextVector^previousVector;
+                        Vec3F newAxis = nextVector^previousVector;
                         if (newAxis.Length() < .0001){
                             int pix = j - 2;
                             int nix = j + 2;
@@ -705,14 +705,14 @@ namespace Visualization {
 
                         nextVector.Normalize();
 
-                        Vector3DFloat dirtemp;
+                        Vec3F dirtemp;
                         if (j + 1 < ptsize){
                             dirtemp = (interpolatedPoints[j+1] - interpolatedPoints[j]);
                         } else {
                             dirtemp = interpolatedPoints[j] - interpolatedPoints[j-1];
                         }
                         float tsect = ((float)(j%NUM_SEGMENTS))/((float)NUM_SEGMENTS);
-                        Vector3DFloat outward = (normals[j/NUM_SEGMENTS]*(1.0 - tsect) + normals[j/NUM_SEGMENTS + 1]*(tsect)) ^ dirtemp;
+                        Vec3F outward = (normals[j/NUM_SEGMENTS]*(1.0 - tsect) + normals[j/NUM_SEGMENTS + 1]*(tsect)) ^ dirtemp;
                         outward.Normalize();
                         switch(renderingType){
                             case 0:
@@ -723,7 +723,7 @@ namespace Visualization {
                                 break;
                             case 1:
                                 for(unsigned int k = 0; k < NUM_SLICES; ++k){
-                                    Vector3DFloat outwardNormal = (curNormal.Rotate(nextVector, ((double)k*2*PI)/NUM_SLICES));
+                                    Vec3F outwardNormal = (curNormal.Rotate(nextVector, ((double)k*2*PI)/NUM_SLICES));
                                     outwardNormal.Normalize();
                                     renderingPoints[j+k*(ptsize)] = curPos+outwardNormal*LOOP_RADIUS;
                                     renderingNormals[j+k*(ptsize)] = outwardNormal;
@@ -761,8 +761,8 @@ namespace Visualization {
                 if(currentSecel.selected == true){
                     glPushAttrib(GL_LIGHTING_BIT);
 
-                    Vector3DFloat pos1 = atoms[currentSecel.atomHashes[0]].GetPosition();
-                    Vector3DFloat pos2 = atoms[currentSecel.atomHashes[currentSecel.atomHashes.size()-1]].GetPosition();
+                    Vec3F pos1 = atoms[currentSecel.atomHashes[0]].GetPosition();
+                    Vec3F pos2 = atoms[currentSecel.atomHashes[currentSecel.atomHashes.size()-1]].GetPosition();
                     printf("Drawing PDB Spheres at PDB ID %d with end #1 [%f, %f, %f] and #2 [%f, %f, %f]\n", i+1, pos1.X(), pos1.Y(), pos1.Z(), pos2.X(), pos2.Y(), pos2.Z());
 
                     /*if(featureVecs.size() > 0){
@@ -832,7 +832,7 @@ namespace Visualization {
                 glPushName(1);
                 glPushName(0);
             }
-            Vector3DFloat v1, vc, v2;
+            Vec3F v1, vc, v2;
 
 
             for(int i=0; i < (int)sidechainBonds.size(); i++) {
@@ -1067,9 +1067,9 @@ namespace Visualization {
     }
 
 
-    Vector3DFloat CAlphaRenderer::SelectionCenterOfMass() {
+    Vec3F CAlphaRenderer::SelectionCenterOfMass() {
         int count = 0;
-        Vector3DFloat centerOfMass = Vector3DFloat(0,0,0);
+        Vec3F centerOfMass = Vec3F(0,0,0);
         for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {
             if(i->second.GetSelected()) {
                 count++;
@@ -1091,7 +1091,7 @@ namespace Visualization {
         return centerOfMass;
     }
 
-    bool CAlphaRenderer::SelectionRotate(Vector3DFloat centerOfMass, Vector3DFloat rotationAxis, float angle) {
+    bool CAlphaRenderer::SelectionRotate(Vec3F centerOfMass, Vec3F rotationAxis, float angle) {
         bool rotated = false;
         Vector3 centerOfMassP3 = Vector3(centerOfMass.X(), centerOfMass.Y(), centerOfMass.Z());
         Vector3 rotationV3 = Vector3(rotationAxis.X(), rotationAxis.Y(), rotationAxis.Z());
@@ -1099,18 +1099,18 @@ namespace Visualization {
         for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {
             if(i->second.GetSelected()) {
                 rotated = true;
-                Vector3DFloat move = centerOfMass - i->second.GetPosition();
+                Vec3F move = centerOfMass - i->second.GetPosition();
                 Vector3 moveV3 = Vector3(move.X(), move.Y(), move.Z());
                 Matrix4 rotMatrix = Matrix4::rotation(rotationV3, angle);
                 Vector3 newMove = rotMatrix * moveV3;
                 newMove = centerOfMassP3 - newMove;
-                i->second.SetPosition(Vector3DFloat(newMove[0], newMove[1], newMove[2]));
+                i->second.SetPosition(Vec3F(newMove[0], newMove[1], newMove[2]));
             }
         }
         return rotated;
     }
 
-    bool CAlphaRenderer::SelectionMove(Vector3DFloat moveDirection) {
+    bool CAlphaRenderer::SelectionMove(Vec3F moveDirection) {
         bool moved = false;
         for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {
             if(i->second.GetSelected()) {
@@ -1358,8 +1358,8 @@ namespace Visualization {
         sidechainBonds.erase(sidechainBonds.begin() + index);
     }
 
-    Vector3DFloat CAlphaRenderer::Get3DCoordinates(int subsceneIndex, int ix0, int ix1, int ix2, int ix3, int ix4) {
-        Vector3DFloat position;
+    Vec3F CAlphaRenderer::Get3DCoordinates(int subsceneIndex, int ix0, int ix1, int ix2, int ix3, int ix4) {
+        Vec3F position;
         switch(subsceneIndex) {
             case(0):
                 if((ix0 >= 0) && (ix0 <= (int)atoms.size())) {
@@ -1373,7 +1373,7 @@ namespace Visualization {
                 }
                 break;
             default:
-                position = Vector3DFloat(0,0,0);
+                position = Vec3F(0,0,0);
                 break;
         }
         return position;
@@ -1429,13 +1429,13 @@ namespace Visualization {
         }
     }
 
-    void CAlphaRenderer::SetFeatureVecs(vector<Vector3DFloat> flatFeatureVecs){
+    void CAlphaRenderer::SetFeatureVecs(vector<Vec3F> flatFeatureVecs){
         if(flatFeatureVecs.size() %2 != 0)
             return;
         else
             featureVecs.clear();
         for(int i=0; i < flatFeatureVecs.size(); i = i+2){
-            featureVecs.push_back(boost::tuple<Vector3DFloat, Vector3DFloat>(flatFeatureVecs[i], flatFeatureVecs[i+1]));
+            featureVecs.push_back(boost::tuple<Vec3F, Vec3F>(flatFeatureVecs[i], flatFeatureVecs[i+1]));
         }
 
     }
@@ -1454,8 +1454,8 @@ namespace Visualization {
     // starting with start and ending with end; it does not error check, so incorrectly
     // ordered points will break this method.  there are more efficient ways to handle this
     // functionality, but this seems simple and flexible enough
-    vector<Vector3DFloat> CAlphaRenderer::CreatePointVector(PDBAtom start, PDBAtom end){
-        vector<Vector3DFloat> points;
+    vector<Vec3F> CAlphaRenderer::CreatePointVector(PDBAtom start, PDBAtom end){
+        vector<Vec3F> points;
 
         PDBAtom current = start;
         while(current.GetHashKey() != end.GetHashKey()){
@@ -1473,9 +1473,9 @@ namespace Visualization {
     // implementation of Laplacian smoothing for a vector of Vector3DFloats (treats them like points)
     // creating copies of "points" twice seems unnecessary, but I am unsure about the performance cost,
     // so I am leaving it for simplicity of implementation
-    vector<Vector3DFloat> CAlphaRenderer::LaplacianSmoothing(vector<Vector3DFloat> points, int steps){
-        vector<Vector3DFloat> pointsTemp(points);
-        vector<Vector3DFloat> smoothedPoints(points);
+    vector<Vec3F> CAlphaRenderer::LaplacianSmoothing(vector<Vec3F> points, int steps){
+        vector<Vec3F> pointsTemp(points);
+        vector<Vec3F> smoothedPoints(points);
 
         for(int i = 0; i < steps; ++i){
             for(int j = 1; j < points.size()-1; ++j){
@@ -1488,12 +1488,12 @@ namespace Visualization {
     }
 
     // unsure of what behavior should be if points.size() < 3; in molscript the strand is skipped in this case
-    vector<Vector3DFloat> CAlphaRenderer::CreateStrandNormals(vector<Vector3DFloat> points, Vector3DFloat previous, Vector3DFloat next){
-        vector<Vector3DFloat> normals(points);
+    vector<Vec3F> CAlphaRenderer::CreateStrandNormals(vector<Vec3F> points, Vec3F previous, Vec3F next){
+        vector<Vec3F> normals(points);
         int ptsSize = points.size();
 
         for(int i = 1, length = ptsSize - 1; i < length; ++i){
-            Vector3DFloat newPos = (points[i-1] + points[i+1])*.5;
+            Vec3F newPos = (points[i-1] + points[i+1])*.5;
             normals[i] = points[i] - newPos;
             normals[i].Normalize();
         }
@@ -1516,7 +1516,7 @@ namespace Visualization {
         }
 
         // "smooth normals, one iteration" - molscript/graphics.c
-        vector<Vector3DFloat> smoothedNormals(normals);
+        vector<Vec3F> smoothedNormals(normals);
 
         for(int k = 1, size = ptsSize - 1; k < size; ++k){
             smoothedNormals[k] = normals[k-1] + normals[k] + normals[k+1];
@@ -1524,8 +1524,8 @@ namespace Visualization {
         }
 
         // "normals exactly perpendicular to strand" - molscript/graphics.c
-        Vector3DFloat direction = points[1] - points[0];
-        Vector3DFloat side = direction^smoothedNormals[0];
+        Vec3F direction = points[1] - points[0];
+        Vec3F side = direction^smoothedNormals[0];
         smoothedNormals[0] = side ^ direction;
         smoothedNormals[0].Normalize();
 
@@ -1543,16 +1543,16 @@ namespace Visualization {
         return smoothedNormals;
     }
 
-    void CAlphaRenderer::CreateHelixAxesTangentsAndPoints(vector<Vector3DFloat>& axes, vector<Vector3DFloat>& tangents, vector<Vector3DFloat>& interpPoints, std::vector<Vector3DFloat> points, Vector3DFloat previous, Vector3DFloat next, double HELIX_ALPHA, double HELIX_BETA, double HELIX_HERMITE_FACTOR){
+    void CAlphaRenderer::CreateHelixAxesTangentsAndPoints(vector<Vec3F>& axes, vector<Vec3F>& tangents, vector<Vec3F>& interpPoints, std::vector<Vec3F> points, Vec3F previous, Vec3F next, double HELIX_ALPHA, double HELIX_BETA, double HELIX_HERMITE_FACTOR){
         if(points.size() > 2){
 
             for(int i = 0; i < points.size() - 1; ++i){
 
                 if(i > 0){
-                    Vector3DFloat cvec = points[i+1] - points[i-1];
+                    Vec3F cvec = points[i+1] - points[i-1];
                     cvec.Normalize();
 
-                    Vector3DFloat rvec = (points[i]-points[i-1])^(points[i+1]-points[i]);
+                    Vec3F rvec = (points[i]-points[i-1])^(points[i+1]-points[i]);
                     rvec.Normalize();
 
                     axes[i] = rvec*sin(HELIX_ALPHA) + cvec*cos(HELIX_ALPHA);
@@ -1573,7 +1573,7 @@ namespace Visualization {
     }
 
     // method works like drawing the side of a cylinder with only one stack and 4 slices
-    void CAlphaRenderer::DrawOpenBox(std::vector<Vector3DFloat> points, std::vector<Vector3DFloat> normals){
+    void CAlphaRenderer::DrawOpenBox(std::vector<Vec3F> points, std::vector<Vec3F> normals){
         glBegin(GL_TRIANGLE_STRIP);
 
         for (int j = 0, runlength = points.size() + 2; j < runlength; ++j){
@@ -1587,7 +1587,7 @@ namespace Visualization {
 
 
     // renders a set of points and normals assuming that they are laid out like the side of a cylinder's points and normals
-    void CAlphaRenderer::DrawTube(std::vector<Vector3DFloat> points, std::vector<Vector3DFloat> normals, int stacks, int slices){
+    void CAlphaRenderer::DrawTube(std::vector<Vec3F> points, std::vector<Vec3F> normals, int stacks, int slices){
         //glLightModeli ( GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE );
         //glDisable(GL_CULL_FACE);
         switch (renderingType){
@@ -1617,10 +1617,10 @@ namespace Visualization {
         }
     }
 
-    vector<Vector3DFloat> CAlphaRenderer::InterpolateLoopPoints(std::vector<Vector3DFloat> points, Vector3DFloat previous, Vector3DFloat next, int NUM_SECTIONS){
+    vector<Vec3F> CAlphaRenderer::InterpolateLoopPoints(std::vector<Vec3F> points, Vec3F previous, Vec3F next, int NUM_SECTIONS){
         HermiteCurve curve;
-        Vector3DFloat m0, m1;
-        vector<Vector3DFloat> pointstemp(points);
+        Vec3F m0, m1;
+        vector<Vec3F> pointstemp(points);
         bool LAPLACIAN_SMOOTHING = true;
         int SMOOTHING_STEPS = 1;
         double HERMITE_FACTOR = 0.5;
@@ -1629,7 +1629,7 @@ namespace Visualization {
             pointstemp = LaplacianSmoothing(points, SMOOTHING_STEPS);
         }
 
-        vector<Vector3DFloat> interpolatedPoints((pointstemp.size()-1)*(NUM_SEGMENTS));
+        vector<Vec3F> interpolatedPoints((pointstemp.size()-1)*(NUM_SEGMENTS));
 
         for(unsigned int i = 0; i < points.size()-1; ++i){
             if(i == 0){
