@@ -5,6 +5,7 @@
 //#include <vector>
 //#include <MathTools/MathLib.h>
 #include "Core/GlobalConstants.h"
+#include "GraphMatch/Constants.h"
 
 //using namespace std;
 using namespace MathTools;
