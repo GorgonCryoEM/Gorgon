@@ -6,18 +6,20 @@ from Toolkit.sse.sse_hunter import pySSEHunter
 
 class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
         
-    def __init__(self, main, viewer, parent=None):
-        QtGui.QDialog.__init__(self, viewer)
+    def __init__(self, main, volume, skeleton, args, parent=None):
+        QtGui.QDialog.__init__(self, main)
         self.app = main
-        self.viewer = viewer
+        self.volume = volume
+        self.skeleton = skeleton
+        self.args = args
         
-        dock = QtGui.QDockWidget("SSEBuilder", viewer)
+        dock = QtGui.QDockWidget("SSEBuilder", volume)
         dock.setWidget(self)
         dock.setAllowedAreas(QtCore.Qt.AllDockWidgetAreas)
         self.app.addDockWidget(QtCore.Qt.LeftDockWidgetArea, dock)
 
-        self.connect(self.viewer, QtCore.SIGNAL("modelLoaded()"), self.modelLoaded)
-        self.connect(self.viewer, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)
+        self.connect(self.volume, QtCore.SIGNAL("modelLoaded()"), self.modelLoaded)
+        self.connect(self.volume, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)
 
         self.createUI()
         
@@ -134,21 +136,22 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
 
         #self.calphaViewer.runSSEHunter( threshold, resolution, correlationWeight, skeletonWeight, geometryWeight )
 
-        vol = self.app.viewers["volume"].renderer.getVolume()
-        skel = self.app.viewers["skeleton"].renderer.getMesh()
-        sseh = SSEHunterEngine(vol, skel, resolution, threshold)
-        patoms = sseh.getScoredAtoms(correlationWeight, skeletonWeight, geometryWeight)
+        vol  = self.app.volume.renderer.getVolume()
+        skel = self.app.skeleton.renderer.getMesh()
+#         sseh = pySSEHunter(vol, skel, resolution, threshold)
+        sseh = pySSEHunter(self.args.volume, self.args.skeleton, self.args.output)
+#         patoms = sseh.getScoredAtoms(correlationWeight, skeletonWeight, geometryWeight)
         
-        for pseudoatom in patoms:
-            self.calphaViewer.renderer.addAtom(pseudoatom)
+#         for pseudoatom in patoms:
+#             self.calphaViewer.renderer.addAtom(pseudoatom)
         
-        self.calphaViewer.renderer.colorSSEHunterAtoms()
-        self.calphaViewer.dirty = False
-        self.calphaViewer.loaded = True
-        self.calphaViewer.emitModelLoadedPreDraw()
-        self.calphaViewer.emitModelLoaded()
-        self.calphaViewer.emitViewerSetCenter()
-        self.connect(self.app.viewers["calpha"],  QtCore.SIGNAL("modelUnloaded()"), self.disableSavePseudoatoms)
+#         self.calphaViewer.renderer.colorSSEHunterAtoms()
+#         self.calphaViewer.dirty = False
+#         self.calphaViewer.loaded = True
+#         self.calphaViewer.emitModelLoadedPreDraw()
+#         self.calphaViewer.emitModelLoaded()
+#         self.calphaViewer.emitViewerSetCenter()
+#         self.connect(self.app.viewers["calpha"],  QtCore.SIGNAL("modelUnloaded()"), self.disableSavePseudoatoms)
         self.pushButtonSavePseudoatoms.setEnabled(True)
         self.bringToFront()
         

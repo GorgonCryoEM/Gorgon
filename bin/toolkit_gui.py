@@ -19,6 +19,7 @@ def main():
     
     parser.add_argument('volume', action="store")
     parser.add_argument('skeleton', action="store")
+    parser.add_argument('output', action="store")
     args = parser.parse_args()
 
     app = QtGui.QApplication(sys.argv)

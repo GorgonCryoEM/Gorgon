@@ -22,7 +22,7 @@ class MainWindowForm3(QtGui.QMainWindow):
         self.mainCamera = Camera(self.scene, self)
         self.setCentralWidget(self.mainCamera)
         
-        self.form = VolumeSSEBuilderForm(self, self.volume, self)
+        self.form = VolumeSSEBuilderForm(self, self.volume, self.skeleton, self.args)
         self.form.show()
         
         self.setWindowTitle(self.tr("Gorgon Toolkit - v" + version))
