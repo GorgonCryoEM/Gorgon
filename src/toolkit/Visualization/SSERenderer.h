@@ -15,7 +15,7 @@
 //#include <ProteinMorph/SheetGenerator.h>
 //#include <GraphMatch/StandardGraph.h>
 //#include <GraphMatch/SkeletonReader.h>
-//#include <GraphMatch/GeometricShape.h>
+#include <GraphMatch/Shape.h>
 //#include <GraphMatch/VectorMath.h>
 //#include <MathTools/LinearSolver.h>
 //#include <ProteinMorph/SSEFlexibleFitter.h>
@@ -41,7 +41,7 @@ namespace Visualization {
             SSERenderer();
             virtual ~SSERenderer();
 
-            vector<GeometricShape*> * GetHelices();
+            vector<Shape*> * GetHelices();
 
             void AddHelix(Vector3DFloat p1, Vector3DFloat p2);
             void StartNewSSE();
@@ -52,7 +52,7 @@ namespace Visualization {
             void LoadHelixFile(string fileName);
             void LoadSheetFile(string fileName);
             void Unload();
-            void LoadGraphSSE(int index, GeometricShape* sse, float offsetx, float offsety, float offsetz, float scalex, float scaley, float scalez);
+            void LoadGraphSSE(int index, Shape* sse, float offsetx, float offsety, float offsetz, float scalex, float scaley, float scalez);
             void UnloadGraphSSEs();
             void SetHelixColor(int index, float r, float g, float b, float a);
             void SetSheetColor(int index, float r, float g, float b, float a);
@@ -84,14 +84,14 @@ namespace Visualization {
             void SetSelectedPDBHelices(vector<int> indices);
             void ClearOtherHighlights();
         private:
-            void SheetListToMesh(vector<GeometricShape*> & sheets);
+            void SheetListToMesh(vector<Shape*> & sheets);
             void LoadHelixFileSSE(string fileName);
             void LoadHelixFileVRML(string fileName);
             void SaveHelixFileSSE(FILE* fout);
             void SaveHelixFileVRML(FILE* fout);
             void SaveSheetFileVRML(FILE* fout);
-            vector<GeometricShape*> helices;
-            vector<GeometricShape*> sheets;
+            vector<Shape*> helices;
+            vector<Shape*> sheets;
             NonManifoldMesh_SheetIds * sheetMesh;
             NonManifoldMesh_SheetIds * graphSheetMesh;
             int sheetCount;
