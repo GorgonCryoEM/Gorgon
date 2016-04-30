@@ -24,7 +24,7 @@
 //#include <ProteinMorph/SSECorrespondenceNode.h>
 //#include <vector>
 //#include <map>
-//#include <boost/tuple/tuple.hpp>
+#include <boost/tuple/tuple.hpp>
 
 //using namespace Protein_Morph;
 //using namespace GraySkeletonCPP;
@@ -32,7 +32,7 @@ using namespace GraphMatch;
 //using namespace MathTools;
 //using namespace SkeletonMaker;
 //using namespace std;
-//using namespace boost::tuples;
+using namespace boost::tuples;
 
 namespace Visualization {
 
