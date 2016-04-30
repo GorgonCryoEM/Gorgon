@@ -123,7 +123,7 @@ namespace Visualization {
                 }
             }
 
-            Point3 pt;
+            Point<double> pt;
             for(int i = 0; i < (int)helices.size(); i++) {
                 glPushAttrib(GL_LIGHTING_BIT);
                 if(isObjectSpecificColoring) {

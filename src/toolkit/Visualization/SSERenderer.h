@@ -11,6 +11,7 @@
 #include "Display.h"
 #include "MathTools/Vector3.h"
 #include "NonManifoldMesh.h"
+#include "Core/Point.h"
 
 //#include "Renderer.h"
 //#include "MeshRenderer.h"
@@ -33,6 +34,7 @@ using namespace GraphMatch;
 //using namespace SkeletonMaker;
 //using namespace std;
 using namespace boost::tuples;
+using namespace Core;
 
 namespace Visualization {
 
