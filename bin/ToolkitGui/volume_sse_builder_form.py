@@ -126,8 +126,8 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
                 atom.setSelected(False)
         
     def runSSEHunter(self, result):
-        self.calphaViewer = self.app.viewers["calpha"]
-        self.sseViewer = self.app.viewers["sse"]
+#         self.calphaViewer = self.app.viewers["calpha"]
+#         self.sseViewer = self.app.viewers["sse"]
         threshold = self.doubleSpinBoxThreshold.value()
         resolution = self.doubleSpinBoxResolution.value()
         correlationWeight = self.doubleSpinBoxCorrelation.value()
@@ -153,7 +153,7 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
 #         self.calphaViewer.emitViewerSetCenter()
 #         self.connect(self.app.viewers["calpha"],  QtCore.SIGNAL("modelUnloaded()"), self.disableSavePseudoatoms)
         self.pushButtonSavePseudoatoms.setEnabled(True)
-        self.bringToFront()
+#         self.bringToFront()
         
     def updateTotalScoreSSEHunterAtoms(self):
         self.calphaViewer.updateTotalScoreSSEHunterAtoms( self.doubleSpinBoxCorrelation.value(), self.doubleSpinBoxSkeleton.value(),
