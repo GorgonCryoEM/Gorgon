@@ -10,6 +10,7 @@
 
 #include "Display.h"
 #include "MathTools/Vector3.h"
+#include "NonManifoldMesh.h"
 
 //#include "Renderer.h"
 //#include "MeshRenderer.h"
@@ -93,8 +94,8 @@ namespace Visualization {
             void SaveSheetFileVRML(FILE* fout);
             vector<Shape*> helices;
             vector<Shape*> sheets;
-            NonManifoldMesh_SheetIds * sheetMesh;
-            NonManifoldMesh_SheetIds * graphSheetMesh;
+            NonManifoldMesh * sheetMesh;
+            NonManifoldMesh * graphSheetMesh;
             int sheetCount;
             int graphSheetCount;
             bool selectedSheets[256];

@@ -62,7 +62,7 @@ namespace Visualization {
 
     void SSERenderer::FinalizeSheet() {
         if(sheetMesh == NULL) {
-            sheetMesh = new NonManifoldMesh_SheetIds();
+            sheetMesh = new NonManifoldMesh();
             sheetCount = 0;
         }
 
@@ -403,7 +403,7 @@ namespace Visualization {
         if(sheetMesh != NULL) {
             delete sheetMesh;
         }
-        sheetMesh = new NonManifoldMesh_SheetIds();
+        sheetMesh = new NonManifoldMesh();
 
         Point3 pt;
         vector<int> indices;
@@ -485,7 +485,7 @@ namespace Visualization {
 
         // merge this mesh with the mesh containing other sheets
         if(graphSheetMesh == NULL) {
-            graphSheetMesh = new NonManifoldMesh_SheetIds();
+            graphSheetMesh = new NonManifoldMesh();
             graphSheetCount = 0;
         }
         if (thisSheetMesh->faceCount > 0) {
