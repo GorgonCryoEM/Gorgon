@@ -20,6 +20,8 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
         self.connect(self.viewer, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)
 
         self.createUI()
+        
+        self.enableDisableSSEHunter()
 
     def createUI(self):
         self.setupUi(self)
@@ -223,9 +225,10 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
         self.bringToFront()
         
     def enableDisableSSEHunter(self):
-        volumeViewer =  self.app.viewers["volume"]
-        skeletonViewer = self.app.viewers["skeleton"]
-        enabled = (volumeViewer.loaded and skeletonViewer.loaded)
+        volumeViewer   = self.app.volume
+        skeletonViewer = self.app.skeleton
+#         enabled = (volumeViewer.loaded and skeletonViewer.loaded)
+        enabled = True
         self.labelThreshold.setEnabled(enabled)
         self.labelVolumeResolution.setEnabled(enabled)
         self.labelSkeletonScore.setEnabled(enabled)
