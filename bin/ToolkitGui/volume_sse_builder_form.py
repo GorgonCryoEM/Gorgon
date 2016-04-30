@@ -39,10 +39,10 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
         self.connect(self.doubleSpinBoxCorrelation, QtCore.SIGNAL("valueChanged(double)"), self.updateTotalScoreSSEHunterAtoms)
         self.connect(self.doubleSpinBoxSkeleton, QtCore.SIGNAL("valueChanged(double)"), self.updateTotalScoreSSEHunterAtoms)
         self.connect(self.doubleSpinBoxGeometry, QtCore.SIGNAL("valueChanged(double)"), self.updateTotalScoreSSEHunterAtoms)
-        self.connect(self.app.viewers["volume"], QtCore.SIGNAL("modelLoaded()"), self.enableDisableSSEHunter)
-        self.connect(self.app.viewers["skeleton"], QtCore.SIGNAL("modelLoaded()"), self.enableDisableSSEHunter)
-        self.connect(self.app.viewers["volume"], QtCore.SIGNAL("modelUnloaded()"), self.enableDisableSSEHunter)
-        self.connect(self.app.viewers["skeleton"], QtCore.SIGNAL("modelUnloaded()"), self.enableDisableSSEHunter)
+        self.connect(self.app.volume, QtCore.SIGNAL("modelLoaded()"), self.enableDisableSSEHunter)
+        self.connect(self.app.skeleton, QtCore.SIGNAL("modelLoaded()"), self.enableDisableSSEHunter)
+        self.connect(self.app.volume, QtCore.SIGNAL("modelUnloaded()"), self.enableDisableSSEHunter)
+        self.connect(self.app.skeleton, QtCore.SIGNAL("modelUnloaded()"), self.enableDisableSSEHunter)
         
     def disableSavePseudoatoms(self):
         self.pushButtonSavePseudoatoms.setEnabled(False)
