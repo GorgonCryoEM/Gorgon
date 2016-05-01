@@ -59,7 +59,7 @@ namespace Visualization {
             CAlphaRenderer();
             virtual ~CAlphaRenderer();
 
-            void Draw(int subSceneIndex, bool selectEnabled);
+            void draw(int subSceneIndex, bool selectEnabled);
             void LoadFile(string fileName);
             void LoadSSEHunterFile(string fileName);
             bool SaveSSEHunterFile(string fileName);

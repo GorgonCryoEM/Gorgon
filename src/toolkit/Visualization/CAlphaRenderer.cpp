@@ -833,7 +833,7 @@ namespace Visualization {
         }
     }
 
-    void CAlphaRenderer::Draw(int subSceneIndex, bool selectEnabled) {
+    void CAlphaRenderer::draw(int subSceneIndex, bool selectEnabled) {
         switch(displayStyle) {
             case CALPHA_DISPLAY_STYLE_BACKBONE: // Backbone only
                 DrawBackboneModel(subSceneIndex, selectEnabled);
