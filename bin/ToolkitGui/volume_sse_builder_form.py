@@ -56,7 +56,7 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
         fileName = QtGui.QFileDialog.getSaveFileName(self, self.tr("Save Pseudoatoms"), "", self.tr("Protein Data Bank (PDB) Format (*.pdb)"))
         if not fileName.isEmpty():
             self.setCursor(QtCore.Qt.WaitCursor)
-            if not(self.app.viewers["calpha"].renderer.saveSSEHunterFile(str(fileName))):
+            if not(self.calphaViewer.renderer.saveSSEHunterFile(str(fileName))):
                 # TODO: Put a error message here telling the user that the save failed
                 pass
             self.setCursor(QtCore.Qt.ArrowCursor)
@@ -93,26 +93,23 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
 
     def dockVisibilityChanged(self, visible):
         BaseDockWidget.dockVisibilityChanged(self, visible)
-        self.app.viewers["calpha"].centerOnRMB = not visible
+        self.calphaViewer.centerOnRMB = not visible
         if(visible):
-            self.connect(self.app.viewers["calpha"], QtCore.SIGNAL("atomSelectionUpdated(PyQt_PyObject)"), self.atomSelectionChanged)
+            self.connect(self.calphaViewer, QtCore.SIGNAL("atomSelectionUpdated(PyQt_PyObject)"), self.atomSelectionChanged)
         else:
-            self.disconnect(self.app.viewers["calpha"], QtCore.SIGNAL("atomSelectionUpdated(PyQt_PyObject)"), self.atomSelectionChanged)
+            self.disconnect(self.calphaViewer, QtCore.SIGNAL("atomSelectionUpdated(PyQt_PyObject)"), self.atomSelectionChanged)
 
     def browseAtomScoreFile(self, result):
         pdbFile = QtGui.QFileDialog.getOpenFileName(self, self.tr("Load SSEHunter Results"), "", self.tr("PDB Files (*.pdb)"))
         if not pdbFile.isEmpty():
-            self.calphaViewer = self.app.viewers["calpha"]
             self.calphaViewer.loadSSEHunterData(pdbFile)
-            self.sseViewer = self.app.viewers["sse"]
             self.lineEditAtomScore.setText(pdbFile)
-            self.connect(self.app.viewers["calpha"],  QtCore.SIGNAL("modelUnloaded()"), self.disableSavePseudoatoms)
+            self.connect(self.calphaViewer,  QtCore.SIGNAL("modelUnloaded()"), self.disableSavePseudoatoms)
             self.pushButtonSavePseudoatoms.setEnabled(True)
         self.bringToFront()
         
     def autoBuildHelices(self):
         print "VolumeSSEBuilderForm.autoBuildHelices()"
-        self.calphaViewer = self.app.viewers["calpha"]
         patom_hashkeys = self.calphaViewer.renderer.getAtomHashes();
         patoms = [self.calphaViewer.renderer.getAtom(hashkey) for hashkey in patom_hashkeys]
         
@@ -129,8 +126,6 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
                 atom.setSelected(False)
         
     def runSSEHunter(self, result):
-#         self.calphaViewer = self.app.viewers["calpha"]
-#         self.sseViewer = self.app.viewers["sse"]
         threshold = self.doubleSpinBoxThreshold.value()
         resolution = self.doubleSpinBoxResolution.value()
         correlationWeight = self.doubleSpinBoxCorrelation.value()
@@ -154,7 +149,7 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
 #         self.calphaViewer.emitModelLoadedPreDraw()
 #         self.calphaViewer.emitModelLoaded()
 #         self.calphaViewer.emitViewerSetCenter()
-#         self.connect(self.app.viewers["calpha"],  QtCore.SIGNAL("modelUnloaded()"), self.disableSavePseudoatoms)
+#         self.connect(self.calphaViewer,  QtCore.SIGNAL("modelUnloaded()"), self.disableSavePseudoatoms)
         self.pushButtonSavePseudoatoms.setEnabled(True)
 #         self.bringToFront()
 
