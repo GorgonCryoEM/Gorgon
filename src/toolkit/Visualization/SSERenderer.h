@@ -72,7 +72,6 @@ namespace Visualization {
             string GetSupportedHelixSaveFileFormats();
             string GetSupportedSheetLoadFileFormats();
             string GetSupportedSheetSaveFileFormats();
-            Vec3F Get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
             void RemoveHelices();
             void RemoveSheets();
             int GetHelixCount();

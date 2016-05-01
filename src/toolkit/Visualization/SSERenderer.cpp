@@ -869,33 +869,6 @@ namespace Visualization {
         return "All Supported Formats(*.vrml *.wrl);; VRML models (*.vrml *.wrl)";
     }
 
-    Vec3F SSERenderer::Get3DCoordinates(int subsceneIndex, int ix0, int ix1, int ix2, int ix3, int ix4) {
-        Vec3F position;
-        switch(subsceneIndex) {
-            case(0):
-                if((ix0 >= 0) && (ix0 <= (int)helices.size())) {
-                    Point3 pt = helices[ix0]->GetCenter();
-                    position = Vec3F(pt[0], pt[1], pt[2]);
-                }
-                break;
-            case(1):
-                position = Vec3F(0,0,0);
-                for(unsigned int i = 0; i < sheetMesh->faces.size(); i++) {
-                    if(sheetMesh->faces[i].tag.id == ix0) {
-                        for(unsigned int j = 0; j < sheetMesh->faces[i].vertexIds.size(); j++) {
-                            position += sheetMesh->vertices[sheetMesh->faces[i].vertexIds[j]].position;
-                        }
-                    }
-                }
-                position = position * (1.0/(sheetMesh->faces.size() * 3.0));
-                break;
-            default:
-                position = Vec3F(0,0,0);
-                break;
-        }
-        return position;
-    }
-
     void SSERenderer::RemoveHelices() {
         helices.clear();
     }
