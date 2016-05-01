@@ -356,10 +356,8 @@ namespace Visualization {
         }
         sheetMesh = new NonManifoldMesh();
 
-        Point3 pt;
+        Vec3D pt;
         vector<int> indices;
-        SheetIdsAndSelect faceTag;
-        faceTag.selected = false;
 
         sheetCount = sheets.size();
         for(int i = 0; i <= sheetCount; i++) {
@@ -374,8 +372,12 @@ namespace Visualization {
             }
 
             for(unsigned int j = 0; j < sheets[i]->polygons.size(); j++) {
-                faceTag.id = i+1;
-                sheetMesh->AddTriangle(indices[sheets[i]->polygons[j].pointIndex1], indices[sheets[i]->polygons[j].pointIndex2], indices[sheets[i]->polygons[j].pointIndex3], NULL, faceTag);
+                Polygon pp = sheets[i]->polygons[j];
+                Vec3U ppp;
+                ppp[0] = indices[pp.pointIndex1];
+                ppp[1] = indices[pp.pointIndex2];
+                ppp[2] = indices[pp.pointIndex3];
+                sheetMesh->addFace(ppp);
             }
         }
         indices.clear();
