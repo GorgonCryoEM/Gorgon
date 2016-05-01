@@ -61,46 +61,6 @@ namespace Visualization {
         tempSSEPoints.push_back(p);
     }
 
-    void SSERenderer::FinalizeSheet() {
-        if(sheetMesh == NULL) {
-            sheetMesh = new NonManifoldMesh();
-            sheetCount = 0;
-        }
-
-
-        vector<int> vertexIxs;
-        Vec3F center = Vec3F(0,0,0);
-
-        for(unsigned int i = 0; i < tempSSEPoints.size(); i++) {
-            vertexIxs.push_back(sheetMesh->addVertex(tempSSEPoints[i]));
-            center+= tempSSEPoints[i];
-        }
-        if(tempSSEPoints.size() > 0) {
-            center = center * (1.0/(double)tempSSEPoints.size());
-        }
-
-        Shape * sheetShape = new Shape();
-        sheetShape->shapeType = GRAPHEDGE_SHEET;
-        sheetShape->SetCenter(center);
-
-        sheets.push_back(sheetShape);
-
-        sheetCount++;
-
-        SheetIdsAndSelect sheetTag;
-        sheetTag.id = sheetCount;
-        sheetTag.selected = false;
-
-
-        vector<SheetGeneratorTriangle> newTriangles = SheetGenerator::sheetGenerator(tempSSEPoints, vertexIxs);
-        for(unsigned int i = 0; i < newTriangles.size(); i++) {
-            sheetMesh->AddTriangle(newTriangles[i].a, newTriangles[i].b, newTriangles[i].c, NULL, sheetTag);
-        }
-
-        tempSSEPoints.clear();
-        UpdateBoundingBox();
-    }
-
     void SSERenderer::Draw(int subSceneIndex, bool selectEnabled) {
         GLfloat emissionColor[4] = {1.0, 1.0, 1.0, 1.0};
         GLfloat frontColor[4] = {1.0, 0.0, 0.0, 1.0};
