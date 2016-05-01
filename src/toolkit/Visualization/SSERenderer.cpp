@@ -189,14 +189,14 @@ namespace Visualization {
                 }
 
                 // color code
-                if(sheetMesh->faces[i].tag.id != prevSheet) {
-                    thisSheet = (int) (sheetMesh->faces[i].tag.id);
-                    sheets[thisSheet-1]->GetColor(colorR, colorG, colorB, colorA);
-                    prevSheet = thisSheet;
-                }
-                if(isObjectSpecificColoring) {
-                    OpenGLUtils::SetColor(colorR, colorG, colorB, colorA);
-                }
+//                if(sheetMesh->faces[i].tag.id != prevSheet) {
+//                    thisSheet = (int) (sheetMesh->faces[i].tag.id);
+//                    sheets[thisSheet-1]->GetColor(colorR, colorG, colorB, colorA);
+//                    prevSheet = thisSheet;
+//                }
+//                if(isObjectSpecificColoring) {
+//                    OpenGLUtils::SetColor(colorR, colorG, colorB, colorA);
+//                }
 
                 glPushAttrib(GL_LIGHTING_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
                 // end color code

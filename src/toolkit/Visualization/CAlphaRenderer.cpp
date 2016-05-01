@@ -869,7 +869,7 @@ namespace Visualization {
             for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {
                 glPushAttrib(GL_LIGHTING_BIT);
                 i->second.GetColor(r, g, b, a);
-                OpenGLUtils::SetColor(r,g,b,a);
+//                OpenGLUtils::SetColor(r,g,b,a);
                 drawSphere(i->second.GetPosition(), 0.1);
                 glPopAttrib();
             }
