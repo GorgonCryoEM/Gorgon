@@ -124,7 +124,7 @@ namespace Visualization {
                         glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
                         glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
                     } else {
-                        OpenGLUtils::SetColor(it->second.GetColorR(), it->second.GetColorG(), it->second.GetColorB(), it->second.GetColorA());
+//                        OpenGLUtils::SetColor(it->second.GetColorR(), it->second.GetColorG(), it->second.GetColorB(), it->second.GetColorA());
                     }
 
                     if(selectEnabled){
@@ -161,11 +161,11 @@ namespace Visualization {
                 }
                 float length = (atoms[bonds[i].GetAtom0Ix()].GetPosition() - atoms[bonds[i].GetAtom1Ix()].GetPosition()).length();
                 if(length > 4.2) {
-                    OpenGLUtils::SetColor(1.0, 0, 0, 1.0);
+//                    OpenGLUtils::SetColor(1.0, 0, 0, 1.0);
                 }
 
                 if(length < 3.3) {
-                    OpenGLUtils::SetColor(0, 0, 1.0, 1.0);
+//                    OpenGLUtils::SetColor(0, 0, 1.0, 1.0);
                 }
 
                 if(atoms[bonds[i].GetAtom0Ix()].GetVisible() && atoms[bonds[i].GetAtom1Ix()].GetVisible()) {
@@ -229,7 +229,7 @@ namespace Visualization {
                 iter = helixColors.find(i);
                 if(iter != helixColors.end()){
 
-                    OpenGLUtils::SetColor(get<0>(helixColors[i]), get<1>(helixColors[i]), get<2>(helixColors[i]), 1.0);
+//                    OpenGLUtils::SetColor(get<0>(helixColors[i]), get<1>(helixColors[i]), get<2>(helixColors[i]), 1.0);
                 }else{
                     //OpenGLUtils::SetColor(0.8,0.8,0.8,1.0);
                 }
@@ -369,14 +369,14 @@ namespace Visualization {
                     glPushAttrib(GL_LIGHTING_BIT);
 
                     if(featureVecs.size() > 0){
-                        OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
+//                        OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
                         drawSphere(featureVecs[i].get<0>(), 1.0);
-                        OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
+//                        OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
                         drawSphere(featureVecs[i].get<1>(), 1.0);
                     }else{
-                        OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
+//                        OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
                         drawSphere(atoms[aHelices[i].atomHashes[0]].GetPosition(), 1.0);
-                        OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
+//                        OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
                         drawSphere(atoms[aHelices[i].atomHashes[aHelices[i].atomHashes.size()-1]].GetPosition(), 1.0);
                     }
 
@@ -391,9 +391,9 @@ namespace Visualization {
                 for(unsigned int j = 0; j < PDBIndices.size(); ++j){
                     if(PDBIndices[j] == i){
                         glPushAttrib(GL_LIGHTING_BIT);
-                        OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
+//                        OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
                         drawSphere(atoms[aHelices[i].atomHashes[0]].GetPosition(), 1.0);
-                        OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
+//                        OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
                         drawSphere(atoms[aHelices[i].atomHashes[aHelices[i].atomHashes.size()-1]].GetPosition(), 1.0);
                         glPopAttrib();
                     }
@@ -566,9 +566,9 @@ namespace Visualization {
                     OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
                     drawSphere(featureVecs[i].get<1>(), 1.0);
                     }else{*/
-                    OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
+//                    OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
                     drawSphere(pos1, 1.0);
-                    OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
+//                    OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
                     drawSphere(pos2, 1.0);
                     /*}*/
 
@@ -739,8 +739,8 @@ namespace Visualization {
                     }
                     float r,g,b,a;
                     if(currentSecel.selected == true){
-                        OpenGLUtils::GetColor(r,g,b,a);
-                        OpenGLUtils::SetColor(hlt_r, hlt_g, hlt_b, hlt_a);
+//                        OpenGLUtils::GetColor(r,g,b,a);
+//                        OpenGLUtils::SetColor(hlt_r, hlt_g, hlt_b, hlt_a);
                     }
                     switch (renderingType){
                         case 0:
@@ -753,7 +753,7 @@ namespace Visualization {
                             cout << "shouldn't have reached loop drawtube default case" << endl;
                     }
                     if(currentSecel.selected == true){
-                        OpenGLUtils::SetColor(r,g,b,a);
+//                        OpenGLUtils::SetColor(r,g,b,a);
                     }
                 }
 
@@ -772,9 +772,9 @@ namespace Visualization {
                     OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
                     drawSphere(featureVecs[i].get<1>(), 1.0);
                     }else{*/
-                    OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
+//                    OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
                     drawSphere(pos1, 1.0);
-                    OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
+//                    OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
                     drawSphere(pos2, 1.0);
                     /*}*/
 
@@ -809,7 +809,7 @@ namespace Visualization {
                     glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
                 } else {
                     i->second.GetColor(r, g, b, a);
-                    OpenGLUtils::SetColor(r,g,b,a);
+//                    OpenGLUtils::SetColor(r,g,b,a);
                 }
 
                 if(selectEnabled){
@@ -852,10 +852,10 @@ namespace Visualization {
                     } else {
                         vc = (v1 + v2) * 0.5;
                         atoms[sidechainBonds[i].GetAtom0Ix()].GetColor(r, g, b, a);
-                        OpenGLUtils::SetColor(r,g,b,a);
+//                        OpenGLUtils::SetColor(r,g,b,a);
                         drawCylinder(v1, vc, 0.1, 6, 2);
                         atoms[sidechainBonds[i].GetAtom1Ix()].GetColor(r, g, b, a);
-                        OpenGLUtils::SetColor(r,g,b,a);
+//                        OpenGLUtils::SetColor(r,g,b,a);
                         drawCylinder(vc, v2, 0.1, 6, 2);
                     }
                 }
