@@ -180,12 +180,12 @@ namespace Visualization {
             for(unsigned int i = 0; i < sheetMesh->faces.size(); i++) {
 
                 glPushAttrib(GL_LIGHTING_BIT);
-                if(sheetMesh->faces[i].tag.selected) {
+//                if(sheetMesh->faces[i].tag.selected) {
                     glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
                     glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
-                }
+//                }
                 if(selectEnabled) {
-                    glLoadName(sheetMesh->faces[i].tag.id);
+                    glLoadName(i);
                 }
 
                 // color code
