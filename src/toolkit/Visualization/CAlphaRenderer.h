@@ -86,7 +86,6 @@ namespace Visualization {
             Vec3F SelectionCenterOfMass();
             bool SelectionRotate(Vec3F centerOfMass, Vec3F rotationAxis, float angle);
             bool SelectionMove(Vec3F moveDirection);
-            bool SelectionClear();
             void SelectionToggle(int subsceneIndex, bool forceTrue, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
             void Unload();
             string GetSupportedLoadFileFormats();

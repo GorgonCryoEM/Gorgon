@@ -1145,34 +1145,6 @@ namespace Visualization {
 
     }
 
-
-    bool CAlphaRenderer::SelectionClear() {
-        if(Renderer::SelectionClear()) {
-            for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {
-                i->second.SetSelected(false);
-            }
-
-            for(unsigned int i = 0; i < bonds.size(); i++) {
-                bonds[i].SetSelected(false);
-            }
-            for(unsigned int i = 0; i < aHelices.size(); i++) {
-                aHelices[i].selected = false;
-            }
-            for(unsigned int i = 0; i < bStrands.size(); ++i) {
-                bStrands[i].selected = false;
-            }
-            for(unsigned int i = 0; i < loops.size(); ++i) {
-                loops[i].selected = false;
-            }
-            selectedHelixIndices.clear();
-            selectedSSEHelices.clear();
-            selectedStrandIndices.clear();
-            selectedLoopIndices.clear();
-            return true;
-        }
-        return false;
-    }
-
     void CAlphaRenderer::ClearOtherHighlights(){
         selectedSSEHelices.clear();
     }
