@@ -86,7 +86,6 @@ namespace Visualization {
             void LoadHelixFileVRML(string fileName);
             void SaveHelixFileSSE(FILE* fout);
             void SaveHelixFileVRML(FILE* fout);
-            void SaveSheetFileVRML(FILE* fout);
             vector<Shape*> helices;
             vector<Shape*> sheets;
             NonManifoldMesh * sheetMesh;
