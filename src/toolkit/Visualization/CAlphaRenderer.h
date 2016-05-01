@@ -208,6 +208,8 @@ namespace Visualization {
             float LOOP_RADIUS;
 
             float hlt_r, hlt_g, hlt_b, hlt_a;
+
+            int displayStyle;
     };
 
 } /* namespace Visualization */
