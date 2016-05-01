@@ -261,7 +261,7 @@ namespace Visualization {
 
             glPushAttrib(GL_LIGHTING_BIT);
             glDisable(GL_LIGHTING);
-            OpenGLUtils::SetColor(0.0, 0.0, 0.0, 1.0);
+//            OpenGLUtils::SetColor(0.0, 0.0, 0.0, 1.0);
             for(unsigned int i = 0; i < graphSheetMesh->faces.size(); i++) {
                 glBegin(GL_LINE_LOOP);
                 for(unsigned int j = 0; j < graphSheetMesh->faces[i].vertexIds.size(); j++) {
