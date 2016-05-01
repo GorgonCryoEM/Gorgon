@@ -1551,26 +1551,4 @@ namespace Visualization {
         NUM_SLICES = slices;
     }
 
-    void CAlphaRenderer::setHltRValue(int col){
-        //hlt_r = ((double)col)/100.0;
-        hlt_r = ((double)col)/1000.0;
-        //thinRibbThickness = hlt_r;
-        cout << "hlt_r: " << hlt_r << endl;
-    }
-
-    void CAlphaRenderer::setHltGValue(int col){
-        hlt_g = ((double)col)/100.0;
-        cout << "hlt_g: " << hlt_g << endl;
-    }
-
-    void CAlphaRenderer::setHltBValue(int col){
-        hlt_b = ((double)col)/100.0;
-        cout << "hlt_b: " << hlt_b << endl;
-    }
-
-    void CAlphaRenderer::setHltAValue(int col){
-        hlt_a = ((double)col)/100.0;
-        cout << "hlt_a: " << hlt_a << endl;
-    }
-
 } /* namespace Visualization */

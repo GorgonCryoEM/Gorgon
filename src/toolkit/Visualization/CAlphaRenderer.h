@@ -136,13 +136,6 @@ namespace Visualization {
             //vector<Vector3DFloat> InterpolateStrandPoints(vector<Vector3DFloat> points, Vector3DFloat previous, Vector3DFloat next, int NUM_SECTIONS);
             //vector<Vector3DFloat> InterpolateHelixPoints(vector<Vector3DFloat> points, Vector3DFloat previous, Vector3DFloat next, int NUM_SECTIONS);
 
-            // for testing purposes only; allow changing of highlight color values
-            void setHltRValue(int col);
-            void setHltGValue(int col);
-            void setHltBValue(int col);
-            void setHltAValue(int col);
-
-
             vector<int> getSelectedHelixIndices();
             void setHelixCorrs( vector < int > flatCorrespondences);
             void setSelectedSSEHelices(vector<int>);
