@@ -903,7 +903,7 @@ namespace Visualization {
         sortedSerials.clear();
     }
 
-    void CAlphaRenderer::LoadSSEHunterFile(string fileName) {
+    void CAlphaRenderer::loadSSEHunterFile(string fileName) {
         Display::load(fileName);
         atoms.clear();
         bonds.clear();
