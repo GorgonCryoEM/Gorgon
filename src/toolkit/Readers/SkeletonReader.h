@@ -4,11 +4,12 @@
 #include <Readers/reader.h>
 #include <Core/volume.h>
 //#include <MathTools/BasicDefines.h>
-//#include "Shape.h"
+#include "GraphMatch/Shape.h"
 #include <vector>
 #include <queue>
 #include <list>
 //#include "Core/GlobalConstants.h"
+#include "GraphMatch/Graph.h"
 
 using namespace std;
 using namespace SkeletonMaker;
