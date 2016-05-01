@@ -96,7 +96,6 @@ namespace Visualization {
 
     PDBAtom * CAlphaRenderer::AddAtom(PDBAtom atom) {
         atoms[atom.GetHashKey()] = atom;
-        UpdateBoundingBox();
         return &atoms[atom.GetHashKey()];
     }
 
@@ -944,8 +943,6 @@ namespace Visualization {
             oldAtom = i;
         }
         sortedSerials.clear();
-        UpdateBoundingBox();
-
     }
 
     void CAlphaRenderer::LoadSSEHunterFile(string fileName) {
@@ -985,8 +982,6 @@ namespace Visualization {
 
             i->second.SetColor(r, g, b, 1.0f);
         }
-        UpdateBoundingBox();
-
     }
     bool CAlphaRenderer::SaveSSEHunterFile(string fileName) {
         return PDBReader::WriteAtomPositions(atoms, fileName);
@@ -1043,8 +1038,6 @@ namespace Visualization {
 
             i->second.SetColor(r, g, b, 1.0f);
         }
-
-        UpdateBoundingBox();
     }
 
     int CAlphaRenderer::SelectionObjectCount(){
@@ -1140,7 +1133,6 @@ namespace Visualization {
                 }
             }
         }
-        UpdateBoundingBox();
         return moved;
 
     }
@@ -1221,30 +1213,7 @@ namespace Visualization {
         atoms.clear();
         bonds.clear();
         sidechainBonds.clear();
-        UpdateBoundingBox();
     }
-
-    void CAlphaRenderer::UpdateBoundingBox() {
-        if(atoms.size() > 0) {
-            for(int i = 0; i < 3; i++) {
-                minPts[i] = atoms.begin()->second.GetPosition().values[i];
-                maxPts[i] = atoms.begin()->second.GetPosition().values[i];
-            }
-
-            for(AtomMapType::iterator j = atoms.begin(); j != atoms.end(); j++) {
-                for(int i = 0; i < 3; i++) {
-                    minPts[i] = min(minPts[i], j->second.GetPosition().values[i]);
-                    maxPts[i] = max(maxPts[i], j->second.GetPosition().values[i]);
-                }
-            }
-        } else {
-            for(int i = 0; i < 3; i++) {
-                minPts[i] = -0.5;
-                maxPts[i] = 0.5;
-            }
-        }
-    }
-
 
     string CAlphaRenderer::GetSupportedLoadFileFormats() {
         return "Atom Positions (*.pdb)";

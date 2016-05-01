@@ -92,7 +92,6 @@ namespace Visualization {
             string GetSupportedSaveFileFormats();
             Vec3F Get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
             void TransformAllAtomLocations(MatrixFloat transform);
-            void UpdateBoundingBox();
 
             // Controlling the atom vector
             PDBAtom * AddAtom(PDBAtom atom);
