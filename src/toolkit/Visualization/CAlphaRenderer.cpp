@@ -6,6 +6,7 @@
  */
 
 #include "CAlphaRenderer.h"
+#include "Shapes.h"
 
 namespace Visualization {
 
@@ -132,7 +133,7 @@ namespace Visualization {
                         glLoadName(static_cast<GLuint>( atomHashKeys.size() - 1)); // the index of the element just added
                     }
                     if(it->second.GetVisible()) {
-                        DrawSphere(it->second.GetPosition(), it->second.GetAtomRadius() * 0.3);
+                        drawSphere(it->second.GetPosition(), it->second.GetAtomRadius() * 0.3);
                     }
 
                     glPopAttrib();
@@ -168,7 +169,7 @@ namespace Visualization {
                 }
 
                 if(atoms[bonds[i].GetAtom0Ix()].GetVisible() && atoms[bonds[i].GetAtom1Ix()].GetVisible()) {
-                    DrawCylinder(atoms[bonds[i].GetAtom0Ix()].GetPosition(), atoms[bonds[i].GetAtom1Ix()].GetPosition(), 0.1, 10, 2);
+                    drawCylinder(atoms[bonds[i].GetAtom0Ix()].GetPosition(), atoms[bonds[i].GetAtom1Ix()].GetPosition(), 0.1, 10, 2);
                 }
                 glPopAttrib();
             }
@@ -179,7 +180,7 @@ namespace Visualization {
         } else if(subSceneIndex == 2) { // Drawing spheres to cover up the cylinder edges
             for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {
                 if(i->second.GetName() == "CA") {
-                    DrawSphere(i->second.GetPosition(), 0.1);
+                    drawSphere(i->second.GetPosition(), 0.1);
                 }
             }
         }
@@ -305,7 +306,7 @@ namespace Visualization {
                             //  renderingPoints[(x*NUM_SEGMENTS + sect) + y*interpPoints.size()] = nextPos + currentAxis*halfwidth*cos(y*2*PI/NUM_SLICES) + curnormal*halfthickness*sin(y*2*PI/NUM_SLICES);
                             //  renderingNormals[(x*NUM_SEGMENTS + sect) + y*interpPoints.size()] = currentAxis*halfwidth*cos(y*2*PI/NUM_SLICES)*sin(y*2*PI/NUM_SLICES)/(cos(y*2*PI/NUM_SLICES)+sin(y*2*PI/NUM_SLICES))
                             //      + (curnormal*halfthickness*sin(y*2*PI/NUM_SLICES)*cos(y*2*PI/NUM_SLICES))/(cos(y*2*PI/NUM_SLICES)+sin(y*2*PI/NUM_SLICES));
-                            //  renderingNormals[(x*NUM_SEGMENTS + sect) + y*interpPoints.size()].Normalize();
+                            //  renderingNormals[(x*NUM_SEGMENTS + sect) + y*interpPoints.size()].normalize();
                             //}
 
 
@@ -369,14 +370,14 @@ namespace Visualization {
 
                     if(featureVecs.size() > 0){
                         OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
-                        DrawSphere(featureVecs[i].get<0>(), 1.0);
+                        drawSphere(featureVecs[i].get<0>(), 1.0);
                         OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
-                        DrawSphere(featureVecs[i].get<1>(), 1.0);
+                        drawSphere(featureVecs[i].get<1>(), 1.0);
                     }else{
                         OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
-                        DrawSphere(atoms[aHelices[i].atomHashes[0]].GetPosition(), 1.0);
+                        drawSphere(atoms[aHelices[i].atomHashes[0]].GetPosition(), 1.0);
                         OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
-                        DrawSphere(atoms[aHelices[i].atomHashes[aHelices[i].atomHashes.size()-1]].GetPosition(), 1.0);
+                        drawSphere(atoms[aHelices[i].atomHashes[aHelices[i].atomHashes.size()-1]].GetPosition(), 1.0);
                     }
 
                     glPopAttrib();
@@ -391,9 +392,9 @@ namespace Visualization {
                     if(PDBIndices[j] == i){
                         glPushAttrib(GL_LIGHTING_BIT);
                         OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
-                        DrawSphere(atoms[aHelices[i].atomHashes[0]].GetPosition(), 1.0);
+                        drawSphere(atoms[aHelices[i].atomHashes[0]].GetPosition(), 1.0);
                         OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
-                        DrawSphere(atoms[aHelices[i].atomHashes[aHelices[i].atomHashes.size()-1]].GetPosition(), 1.0);
+                        drawSphere(atoms[aHelices[i].atomHashes[aHelices[i].atomHashes.size()-1]].GetPosition(), 1.0);
                         glPopAttrib();
                     }
                 }
@@ -475,7 +476,7 @@ namespace Visualization {
 
                         if(i == 0){
                             dir2 = points[1] - points[0];
-                            dir2.Normalize();
+                            dir2.normalize();
                         }
 
                         dir1 = dir2;
@@ -485,7 +486,7 @@ namespace Visualization {
                             dir2 = postSecelAtomPos - points[i];
                         }
 
-                        dir2.Normalize();
+                        dir2.normalize();
 
                         curve.setCurve(points[i], points[i+1], m0, m1);
 
@@ -495,7 +496,7 @@ namespace Visualization {
                         Vec3F direction = dir1;
                         Vec3F currentNormal = normals[i];
                         Vec3F side = currentNormal^direction;
-                        side.Normalize();
+                        side.normalize();
 
                         for (int sect = 0; sect <= NUM_SEGMENTS; ++sect){
                             if (sect == 0 && i != 0){
@@ -509,7 +510,7 @@ namespace Visualization {
                             direction = dir1*(1.0 - tsect) + dir2*tsect;
                             currentNormal = normals[i]*(1.0 - tsect) + normals[i+1]*(tsect);
                             side = currentNormal^direction;
-                            side.Normalize();
+                            side.normalize();
                             Vec3F nextPos = curve.getPos(tsect);
 
                             switch(renderingType){
@@ -561,14 +562,14 @@ namespace Visualization {
 
                     /*if(featureVecs.size() > 0){
                     OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
-                    DrawSphere(featureVecs[i].get<0>(), 1.0);
+                    drawSphere(featureVecs[i].get<0>(), 1.0);
                     OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
-                    DrawSphere(featureVecs[i].get<1>(), 1.0);
+                    drawSphere(featureVecs[i].get<1>(), 1.0);
                     }else{*/
                     OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
-                    DrawSphere(pos1, 1.0);
+                    drawSphere(pos1, 1.0);
                     OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
-                    DrawSphere(pos2, 1.0);
+                    drawSphere(pos2, 1.0);
                     /*}*/
 
                     glPopAttrib();
@@ -633,7 +634,7 @@ namespace Visualization {
 
                     Vec3F nextVector = interpolatedPoints[1]-interpolatedPoints[0];
                     Vec3F previousVector = preSecelAtomPos - interpolatedPoints[0];
-                    if(previousVector.Length() < .001){
+                    if(previousVector.length() < .001){
                         if(2 < interpolatedPoints.size()){
                             previousVector = interpolatedPoints[2] - interpolatedPoints[0];
                         } else {
@@ -642,13 +643,13 @@ namespace Visualization {
                     }
                     Vec3F curAxis = nextVector^previousVector;
                     Vec3F curNormal = nextVector^curAxis;
-                    curNormal.Normalize();
+                    curNormal.normalize();
                     Vec3F curPos = interpolatedPoints[0];
-                    nextVector.Normalize();
+                    nextVector.normalize();
 
                     // generate first stack of points
                     Vec3F outward = normals[0] ^ (interpolatedPoints[1]-interpolatedPoints[0]);
-                    outward.Normalize();
+                    outward.normalize();
                     switch (renderingType){
                         case 0:
                             for(unsigned int k = 0; k < 2; ++k){
@@ -658,8 +659,8 @@ namespace Visualization {
                             break;
                         case 1:
                             for(unsigned int k = 0; k < NUM_SLICES; ++k){
-                                Vec3F outwardNormal = (curNormal.Rotate(nextVector, ((double)k)*2*PI/((double)NUM_SLICES)));
-                                outwardNormal.Normalize();
+                                Vec3F outwardNormal = (curNormal.rotate(nextVector, ((double)k)*2*PI/((double)NUM_SLICES)));
+                                outwardNormal.normalize();
                                 renderingPoints[k*(ptsize)] = curPos+outwardNormal*LOOP_RADIUS;
                                 renderingNormals[k*(ptsize)] = outwardNormal; //renderingPoints[j*(ptsize)]-curPos;
                             }
@@ -683,7 +684,7 @@ namespace Visualization {
                             previousVector = interpolatedPoints[j-1] - interpolatedPoints[j];
                         }
                         Vec3F newAxis = nextVector^previousVector;
-                        if (newAxis.Length() < .0001){
+                        if (newAxis.length() < .0001){
                             int pix = j - 2;
                             int nix = j + 2;
                             if (pix < 0){
@@ -696,14 +697,14 @@ namespace Visualization {
                             newAxis = (interpolatedPoints[nix] - interpolatedPoints[j])^(interpolatedPoints[pix] - interpolatedPoints[j]);
                         }
                         curAxis = newAxis;
-                        double alpha = asin(curAxis.Length()/(nextVector.Length()*previousVector.Length()));
-                        curAxis.Normalize();
-                        curNormal.Normalize();
-                        if (nextVector.Length() > .001 && previousVector.Length() > .001){
-                            curNormal = curNormal.Rotate(curAxis, -1*alpha);
+                        double alpha = asin(curAxis.length()/(nextVector.length()*previousVector.length()));
+                        curAxis.normalize();
+                        curNormal.normalize();
+                        if (nextVector.length() > .001 && previousVector.length() > .001){
+                            curNormal = curNormal.rotate(curAxis, -1*alpha);
                         }
 
-                        nextVector.Normalize();
+                        nextVector.normalize();
 
                         Vec3F dirtemp;
                         if (j + 1 < ptsize){
@@ -713,7 +714,7 @@ namespace Visualization {
                         }
                         float tsect = ((float)(j%NUM_SEGMENTS))/((float)NUM_SEGMENTS);
                         Vec3F outward = (normals[j/NUM_SEGMENTS]*(1.0 - tsect) + normals[j/NUM_SEGMENTS + 1]*(tsect)) ^ dirtemp;
-                        outward.Normalize();
+                        outward.normalize();
                         switch(renderingType){
                             case 0:
                                 for(unsigned int k = 0; k < 2; ++k){
@@ -723,8 +724,8 @@ namespace Visualization {
                                 break;
                             case 1:
                                 for(unsigned int k = 0; k < NUM_SLICES; ++k){
-                                    Vec3F outwardNormal = (curNormal.Rotate(nextVector, ((double)k*2*PI)/NUM_SLICES));
-                                    outwardNormal.Normalize();
+                                    Vec3F outwardNormal = (curNormal.rotate(nextVector, ((double)k*2*PI)/NUM_SLICES));
+                                    outwardNormal.normalize();
                                     renderingPoints[j+k*(ptsize)] = curPos+outwardNormal*LOOP_RADIUS;
                                     renderingNormals[j+k*(ptsize)] = outwardNormal;
                                 }
@@ -767,14 +768,14 @@ namespace Visualization {
 
                     /*if(featureVecs.size() > 0){
                     OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
-                    DrawSphere(featureVecs[i].get<0>(), 1.0);
+                    drawSphere(featureVecs[i].get<0>(), 1.0);
                     OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
-                    DrawSphere(featureVecs[i].get<1>(), 1.0);
+                    drawSphere(featureVecs[i].get<1>(), 1.0);
                     }else{*/
                     OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
-                    DrawSphere(pos1, 1.0);
+                    drawSphere(pos1, 1.0);
                     OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
-                    DrawSphere(pos2, 1.0);
+                    drawSphere(pos2, 1.0);
                     /*}*/
 
                     glPopAttrib();
@@ -817,7 +818,7 @@ namespace Visualization {
                     glLoadName(static_cast<GLuint>(atomHashKeys.size() - 1)); // using the index of the element just added
                 }
                 if(i->second.GetVisible()) {
-                    DrawSphere(i->second.GetPosition(), i->second.GetAtomRadius() * 0.3);
+                    drawSphere(i->second.GetPosition(), i->second.GetAtomRadius() * 0.3);
                 }
 
                 glPopAttrib();
@@ -847,15 +848,15 @@ namespace Visualization {
                     if(sidechainBonds[i].GetSelected()) {
                         glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
                         glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
-                        DrawCylinder(v1, v2, 0.1, 6, 2);
+                        drawCylinder(v1, v2, 0.1, 6, 2);
                     } else {
                         vc = (v1 + v2) * 0.5;
                         atoms[sidechainBonds[i].GetAtom0Ix()].GetColor(r, g, b, a);
                         OpenGLUtils::SetColor(r,g,b,a);
-                        DrawCylinder(v1, vc, 0.1, 6, 2);
+                        drawCylinder(v1, vc, 0.1, 6, 2);
                         atoms[sidechainBonds[i].GetAtom1Ix()].GetColor(r, g, b, a);
                         OpenGLUtils::SetColor(r,g,b,a);
-                        DrawCylinder(vc, v2, 0.1, 6, 2);
+                        drawCylinder(vc, v2, 0.1, 6, 2);
                     }
                 }
                 glPopAttrib();
@@ -869,7 +870,7 @@ namespace Visualization {
                 glPushAttrib(GL_LIGHTING_BIT);
                 i->second.GetColor(r, g, b, a);
                 OpenGLUtils::SetColor(r,g,b,a);
-                DrawSphere(i->second.GetPosition(), 0.1);
+                drawSphere(i->second.GetPosition(), 0.1);
                 glPopAttrib();
             }
         }
@@ -1495,16 +1496,16 @@ namespace Visualization {
         for(int i = 1, length = ptsSize - 1; i < length; ++i){
             Vec3F newPos = (points[i-1] + points[i+1])*.5;
             normals[i] = points[i] - newPos;
-            normals[i].Normalize();
+            normals[i].normalize();
         }
 
         normals[0] = (points[1] + previous)*.5 - points[0];
-        if ((points[0] - previous).Length() < .0001){
+        if ((points[0] - previous).length() < .0001){
             normals[0] = normals[1];
         }
 
         normals[ptsSize - 1] = (points[ptsSize - 2] + next)*.5 - points[ptsSize - 1];
-        if ((points[ptsSize - 2] - next).Length() < .0001){
+        if ((points[ptsSize - 2] - next).length() < .0001){
             normals[ptsSize - 1] = normals[ptsSize - 2];
         }
 
@@ -1520,26 +1521,26 @@ namespace Visualization {
 
         for(int k = 1, size = ptsSize - 1; k < size; ++k){
             smoothedNormals[k] = normals[k-1] + normals[k] + normals[k+1];
-            smoothedNormals[k].Normalize();
+            smoothedNormals[k].normalize();
         }
 
         // "normals exactly perpendicular to strand" - molscript/graphics.c
         Vec3F direction = points[1] - points[0];
         Vec3F side = direction^smoothedNormals[0];
         smoothedNormals[0] = side ^ direction;
-        smoothedNormals[0].Normalize();
+        smoothedNormals[0].normalize();
 
         for(int i = 1, size = ptsSize - 1; i < size; ++i){
             direction = points[i+1] - points[i-1];
             side = direction^smoothedNormals[i];
             smoothedNormals[i] = side^direction;
-            smoothedNormals[i].Normalize();
+            smoothedNormals[i].normalize();
         }
 
         direction = points[ptsSize - 1] - points[ptsSize - 2];
         side = direction^smoothedNormals[ptsSize - 1];
         smoothedNormals[ptsSize - 1] = side^direction;
-        smoothedNormals[ptsSize - 1].Normalize();
+        smoothedNormals[ptsSize - 1].normalize();
         return smoothedNormals;
     }
 
@@ -1550,10 +1551,10 @@ namespace Visualization {
 
                 if(i > 0){
                     Vec3F cvec = points[i+1] - points[i-1];
-                    cvec.Normalize();
+                    cvec.normalize();
 
                     Vec3F rvec = (points[i]-points[i-1])^(points[i+1]-points[i]);
-                    rvec.Normalize();
+                    rvec.normalize();
 
                     axes[i] = rvec*sin(HELIX_ALPHA) + cvec*cos(HELIX_ALPHA);
                     tangents[i] = rvec*sin(HELIX_BETA) + cvec*cos(HELIX_BETA);
@@ -1564,10 +1565,10 @@ namespace Visualization {
             axes[axes.size()-1] = axes[axes.size()-2];
 
             tangents[0] = previous - points[1];
-            tangents[0].Normalize();
+            tangents[0].normalize();
             tangents[0] = tangents[0]*HELIX_HERMITE_FACTOR;
             tangents[tangents.size()-1] = next - points[points.size()-2];
-            tangents[tangents.size()-1].Normalize();
+            tangents[tangents.size()-1].normalize();
             tangents[tangents.size()-1] = tangents[tangents.size()-1]*HELIX_HERMITE_FACTOR;
         }
     }

@@ -6,6 +6,7 @@
  */
 
 #include "SSERenderer.h"
+#include "Shapes.h"
 
 namespace Visualization {
 
@@ -161,15 +162,15 @@ namespace Visualization {
                         if(!helixFlips[i]){
 
                             OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
-                            DrawSphere(corner2, 1.0);
+                            drawSphere(corner2, 1.0);
                             OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
-                            DrawSphere(corner1, 1.0);
+                            drawSphere(corner1, 1.0);
                             fflush(stdout);
                         }else{
                             OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
-                            DrawSphere(corner1, 1.0);
+                            drawSphere(corner1, 1.0);
                             OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
-                            DrawSphere(corner2, 1.0);
+                            drawSphere(corner2, 1.0);
                             fflush(stdout);
                         }
                     }
@@ -182,15 +183,15 @@ namespace Visualization {
                         Vec3F corner2 = GetHelixCorner(i, 1);
                         if(!helixFlips[i]){
                             OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
-                            DrawSphere(corner2, 1.0);
+                            drawSphere(corner2, 1.0);
                             OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
-                            DrawSphere(corner1, 1.0);
+                            drawSphere(corner1, 1.0);
                             fflush(stdout);
                         }else{
                             OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
-                            DrawSphere(corner1, 1.0);
+                            drawSphere(corner1, 1.0);
                             OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
-                            DrawSphere(corner2, 1.0);
+                            drawSphere(corner2, 1.0);
                             fflush(stdout);
                         }
                     }
