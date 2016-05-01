@@ -127,7 +127,7 @@ namespace Visualization {
             vector<Vec3F> createStrandNormals(vector<Vec3F> points, Vec3F previous, Vec3F next); // create line segment normals to be used in drawing Beta
             // strands
             void createHelixAxesTangentsAndPoints(vector<Vec3F>& axes, vector<Vec3F>& tangents, vector<Vec3F>& interpPoints, vector<Vec3F> points,
-                Vec3F previous, Vec3F next, double HELIX_ALPHA, double HELIX_BETA, double HELIX_HERMITE_FACTOR);
+                                                  Vec3F previous, Vec3F next, double HELIX_ALPHA, double HELIX_BETA, double HELIX_HERMITE_FACTOR);
             void drawOpenBox(vector<Vec3F> points, vector<Vec3F> normals); // takes a vector of 8 points and draws a rectangular prism with two of its six sides not
             // filled in; the first 4 points are from the beggining edge of the box, with the second four
             // forming the end
