@@ -370,7 +370,7 @@ namespace Visualization {
             indices.clear();
             for(unsigned int j = 0; j < sheets[i]->polygonPoints.size(); j++) {
                 pt = sheets[i]->polygonPoints[j];
-                indices.push_back(sheetMesh->AddVertex(Vec3F((float)pt[0], (float)pt[1], (float)pt[2])));
+                indices.push_back(sheetMesh->addVertex(Vec3F(pt[0], pt[1], pt[2])));
             }
 
             for(unsigned int j = 0; j < sheets[i]->polygons.size(); j++) {
@@ -467,7 +467,7 @@ namespace Visualization {
         for(unsigned int i = 0; i < helices.size(); i++) {
             end = helices[i]->GetCornerCell3(1);
             start = helices[i]->GetCornerCell3(2);
-            helixLength = (start-end).Length();
+            helixLength = (start-end).length();
             intLength = (int)ceil(helixLength / HELIX_LENGTH_TO_RESIDUE_RATIO);
 
             fprintf(fout, "ALPHA 'A%d' '%d' '%d' %d %f %f %f %f %f %f\n", i, i*100,i*100+(intLength-1), intLength, start.X(), start.Y(), start.Z(), end.X(), end.Y(), end.Z());
