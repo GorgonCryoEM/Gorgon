@@ -61,10 +61,6 @@ namespace Visualization {
             void SetSSEColor(int index, float r, float g, float b, float a);
             void SetSSEOrientationFlips(vector<bool>);
             bool SelectionRotate(Vec3F centerOfMass, Vec3F rotationAxis, float angle);
-            int SelectionObjectCount();
-            Vec3F SelectionCenterOfMass();
-            bool SelectionMove(Vec3F moveDirection);
-            bool SelectionClear();
             void SaveHelixFile(string fileName);
             string GetSupportedHelixLoadFileFormats();
             string GetSupportedHelixSaveFileFormats();
