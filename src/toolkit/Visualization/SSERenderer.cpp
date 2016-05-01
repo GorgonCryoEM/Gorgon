@@ -928,33 +928,6 @@ namespace Visualization {
         sheets.clear();
     }
 
-    void SSERenderer::RemoveSelectedSSEs() {
-        vector<Shape*> newHelices;
-        for(unsigned int i = 0; i < helices.size(); i++) {
-            if(helices[i]->GetSelected()) {
-                delete helices[i];
-            } else {
-                newHelices.push_back(helices[i]);
-            }
-        }
-        helices = newHelices;
-
-
-        vector<Shape*> newSheets;
-        for(int i = 0; i < (int)sheets.size(); i++) {
-            if(sheets[i]->GetSelected()) {
-                delete sheets[i];
-            } else {
-                newSheets.push_back(sheets[i]);
-            }
-        }
-        sheets = newSheets;
-        sheetCount = newSheets.size();
-
-        SheetListToMesh(sheets);
-        UpdateBoundingBox();
-    }
-
     int SSERenderer::GetHelixCount() {
         return helices.size();
     }
