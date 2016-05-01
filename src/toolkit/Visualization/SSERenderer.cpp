@@ -896,30 +896,6 @@ namespace Visualization {
         return position;
     }
 
-    void SSERenderer::FitSelectedSSEs(Volume * vol) {
-        SSEFlexibleFitter * fitter = new SSEFlexibleFitter(vol);
-
-        const double discretizationStep = 0.01;
-
-
-        for(unsigned int i = 0; i < helices.size(); i++) {
-            if(helices[i]->GetSelected()) {
-                fitter->FitHelix(helices[i], 0.005, 1.0/360.0, discretizationStep, 200);
-            }
-        }
-
-        /*if(sheetMesh != NULL) {
-            for(unsigned int i = 0; i <= sheetCount; i++) {
-                if(selectedSheets[i]) {
-                    fitter->FitSheet(i, sheetMesh, 0.005, 1.0/360.0, 0.1, 200);
-                }
-            }
-        } */
-
-        delete fitter;
-        UpdateBoundingBox();
-    }
-
     void SSERenderer::RemoveHelices() {
         helices.clear();
     }
