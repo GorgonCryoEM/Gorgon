@@ -686,36 +686,6 @@ namespace Visualization {
         selectedPDBHelices.clear();
     }
 
-    void SSERenderer::SelectionToggle(int subsceneIndex, bool forceTrue, int ix0, int ix1, int ix2, int ix3, int ix4) {
-        Renderer::SelectionToggle(subsceneIndex, forceTrue, ix0, ix1, ix2, ix3, ix4);
-        if((subsceneIndex == 0) && (ix0 >= 0) && (ix0 <= (int)helices.size())) {
-            if(forceTrue || !helices[ix0]->GetSelected())
-                selectedHelices.push_back(ix0);
-            helices[ix0]->SetSelected(forceTrue || !helices[ix0]->GetSelected());
-        }
-
-        if(subsceneIndex == 1) {
-            for(unsigned int i = 0; i < sheetMesh->faces.size(); i++) {
-                if(sheetMesh->faces[i].tag.id == ix0) {
-                    sheetMesh->faces[i].tag.selected = forceTrue || !sheetMesh->faces[i].tag.selected;
-                }
-            }
-
-            selectedSheets[ix0] = forceTrue || !selectedSheets[ix0];
-            sheets[ix0-1]->SetSelected(selectedSheets[ix0]);
-        }
-        if(subsceneIndex == 2) {
-            for(unsigned int i = 0; i < graphSheetMesh->faces.size(); i++) {
-                if(graphSheetMesh->faces[i].tag.id == ix0) {
-                    graphSheetMesh->faces[i].tag.selected = forceTrue || !graphSheetMesh->faces[i].tag.selected;
-                }
-            }
-
-            selectedGraphSheets[ix0] = forceTrue || !selectedGraphSheets[ix0];
-        }
-    }
-
-
     void SSERenderer::SaveHelixFileVRML(FILE* fout) {
         Shape::WriteToFile(this->helices, fout);
     }
