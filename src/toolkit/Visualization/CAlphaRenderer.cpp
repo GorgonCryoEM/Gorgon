@@ -1094,16 +1094,16 @@ namespace Visualization {
 
     bool CAlphaRenderer::SelectionRotate(Vec3F centerOfMass, Vec3F rotationAxis, float angle) {
         bool rotated = false;
-        Vector3 centerOfMassP3 = Vector3(centerOfMass.X(), centerOfMass.Y(), centerOfMass.Z());
-        Vector3 rotationV3 = Vector3(rotationAxis.X(), rotationAxis.Y(), rotationAxis.Z());
+        Vec3D centerOfMassP3(centerOfMass.X(), centerOfMass.Y(), centerOfMass.Z());
+        Vec3D rotationV3(rotationAxis.X(), rotationAxis.Y(), rotationAxis.Z());
 
         for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {
             if(i->second.GetSelected()) {
                 rotated = true;
                 Vec3F move = centerOfMass - i->second.GetPosition();
-                Vector3 moveV3 = Vector3(move.X(), move.Y(), move.Z());
+                Vec3D moveV3(move.X(), move.Y(), move.Z());
                 Matrix4 rotMatrix = Matrix4::rotation(rotationV3, angle);
-                Vector3 newMove = rotMatrix * moveV3;
+                Vec3D newMove = rotMatrix * moveV3;
                 newMove = centerOfMassP3 - newMove;
                 i->second.SetPosition(Vec3F(newMove[0], newMove[1], newMove[2]));
             }
