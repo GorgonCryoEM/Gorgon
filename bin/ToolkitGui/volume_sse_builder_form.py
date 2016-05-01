@@ -17,8 +17,8 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
         self.skeleton = skeleton
         self.args = args
         
-        self.calphaViewer = CAlphaViewer()
-        self.sseViewer    = SSEViewer()
+        self.calphaViewer = CAlphaViewer(self.app)
+        self.sseViewer    = SSEViewer(self.app)
         
         dock = QtGui.QDockWidget("SSEBuilder", volume)
         dock.setWidget(self)
@@ -108,7 +108,7 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
             self.lineEditAtomScore.setText(pdbFile)
             self.connect(self.calphaViewer,  QtCore.SIGNAL("modelUnloaded()"), self.disableSavePseudoatoms)
             self.pushButtonSavePseudoatoms.setEnabled(True)
-        self.bringToFront()
+#         self.bringToFront()
         
     def autoBuildHelices(self):
         print "VolumeSSEBuilderForm.autoBuildHelices()"
