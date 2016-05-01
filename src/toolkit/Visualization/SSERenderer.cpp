@@ -7,6 +7,7 @@
 
 #include "SSERenderer.h"
 #include "Shapes.h"
+#include "Foundation/StringUtils.h"
 
 namespace Visualization {
 
