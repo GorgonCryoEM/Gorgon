@@ -859,7 +859,7 @@ namespace Visualization {
         return NULL;
     }
 
-    void CAlphaRenderer::LoadFile(string fileName) {
+    void CAlphaRenderer::loadFile(string fileName) {
         Display::load(fileName);
         atoms.clear();
         bonds.clear();

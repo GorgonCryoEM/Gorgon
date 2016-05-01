@@ -60,7 +60,7 @@ namespace Visualization {
             virtual ~CAlphaRenderer();
 
             void draw(int subSceneIndex, bool selectEnabled);
-            void LoadFile(string fileName);
+            void loadFile(string fileName);
             void LoadSSEHunterFile(string fileName);
             bool SaveSSEHunterFile(string fileName);
 //          void GetSSEHunterAtoms(Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution, float threshold, float correlationCoeff, float skeletonCoeff, float geometryCoeff);
