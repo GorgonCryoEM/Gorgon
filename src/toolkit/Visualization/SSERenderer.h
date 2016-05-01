@@ -67,7 +67,6 @@ namespace Visualization {
             bool SelectionClear();
             void SelectionToggle(int subsceneIndex, bool forceTrue, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
             void SaveHelixFile(string fileName);
-            void SaveSheetFile(string fileName);
             string GetSupportedHelixLoadFileFormats();
             string GetSupportedHelixSaveFileFormats();
             string GetSupportedSheetLoadFileFormats();

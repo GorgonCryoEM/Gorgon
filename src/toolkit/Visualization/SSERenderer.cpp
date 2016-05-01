@@ -838,21 +838,6 @@ namespace Visualization {
 
     }
 
-    void SSERenderer::SaveSheetFile(string fileName) {
-        FILE* fout = fopen((char*)fileName.c_str(), "wt");
-        int pos = fileName.rfind(".") + 1;
-        string extension = fileName.substr(pos, fileName.length()-pos);
-
-        extension = StringUtils::StringToUpper(extension);
-
-        if(strcmp(extension.c_str(), "WRL") == 0) {
-            SaveSheetFileVRML(fout);
-        } else if(strcmp(extension.c_str(), "VRML") == 0) {
-            SaveSheetFileVRML(fout);
-        }
-        fclose(fout);
-    }
-
     string SSERenderer::GetSupportedHelixLoadFileFormats() {
         return "All Supported Formats(*.vrml *.wrl *.sse);; VRML models (*.vrml *.wrl);; SSEHunter annotations (*.sse)";
     }
