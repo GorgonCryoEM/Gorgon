@@ -18,10 +18,10 @@ public:
 	Matcher2Helix(int length, int node1, int node2);
 };
 
-Matcher2Helix::Matcher2Helix() {
+inline Matcher2Helix::Matcher2Helix() {
 };
 
-Matcher2Helix::Matcher2Helix(int length, int node1, int node2) {
+inline Matcher2Helix::Matcher2Helix(int length, int node1, int node2) {
 	this->length = length;
 	this->node1 = node1;
 	this->node2 = node2;

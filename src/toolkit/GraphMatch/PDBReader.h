@@ -33,7 +33,7 @@ namespace GraphMatch {
     };
 
     #ifdef GET_AMINO_SEQUENCE
-    string GetSingleLetterFromThree(string aminoAcid) {
+    inline string GetSingleLetterFromThree(string aminoAcid) {
         string result;
         if(aminoAcid == "ALA") {
             result = 'A';
@@ -83,7 +83,7 @@ namespace GraphMatch {
     }
     #endif
 
-    Graph * PDBReader::ReadFile(string fname) {
+    inline Graph * PDBReader::ReadFile(string fname) {
         ifstream fin(fname.c_str());
         if (!fin)
         {
@@ -298,7 +298,7 @@ namespace GraphMatch {
     }
 
 
-    map<unsigned long long, PDBAtom> PDBReader::ReadAtomPositions(string fileName) {
+    inline map<unsigned long long, PDBAtom> PDBReader::ReadAtomPositions(string fileName) {
         map<unsigned long long, PDBAtom> atomPositions;
 
         ifstream fin(fileName.c_str());
@@ -326,7 +326,7 @@ namespace GraphMatch {
         return atomPositions;
     }
 
-    string PDBReader::TrimString(string str) {
+    inline string PDBReader::TrimString(string str) {
         int startPos = 0;
         int endPos = str.size() - 1;
         for(int i = 0; i < endPos; i++) {
@@ -351,7 +351,7 @@ namespace GraphMatch {
         return outString;
     }
 
-    string PDBReader::GetString(string str, int start, int length) {
+    inline string PDBReader::GetString(string str, int start, int length) {
         string out;
         string temp;
         for(int i = 0; i < length; i++) {
@@ -364,7 +364,7 @@ namespace GraphMatch {
         return temp;
     }
 
-    int PDBReader::ToInt(string str) {
+    inline int PDBReader::ToInt(string str) {
         int value = 0;
         int sign = 1;
         for(int i = 0; i < (int)str.size(); i++) {
@@ -378,14 +378,14 @@ namespace GraphMatch {
         value /= 10;
         return value;
     }
-    int PDBReader::GetInt(string str, int start, int length) {
+    inline int PDBReader::GetInt(string str, int start, int length) {
         string substring = GetString(str, start, length);
         int value = ToInt(substring);
 
         // clean
         return value;
     }
-    bool PDBReader::WriteAtomPositions(map<unsigned long long, PDBAtom> &atoms, string fileName) {
+    inline bool PDBReader::WriteAtomPositions(map<unsigned long long, PDBAtom> &atoms, string fileName) {
         ofstream fout(fileName.c_str());
         if (!fout) {
             cout<<"Error reading output file "<<fileName<<".\n";
