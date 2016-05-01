@@ -224,25 +224,25 @@ namespace Visualization {
                 glPushAttrib(GL_LIGHTING_BIT);
                 glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
                 //glDisable(GL_LIGHTING);
-                if(graphSheetMesh->faces[i].tag.selected) {
+//                if(graphSheetMesh->faces[i].tag.selected) {
                     glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
                     glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
-                }
+//                }
                 if(selectEnabled) {
-                    glLoadName(graphSheetMesh->faces[i].tag.id);
+                    glLoadName(i);
                 }
 
                 // color code
-                if(graphSheetMesh->faces[i].tag.id != prevSheet) {
-                    //cout << "picking graph sheet color. i=" << i << ", id=" << (int) (graphSheetMesh->faces[i].tag.id) << endl;
-                    thisSheet = (int) (graphSheetMesh->faces[i].tag.id);
-                    sheets[thisSheet-1]->GetColor(colorR, colorG, colorB, colorA); // probably gets the wrong color.
-                    prevSheet = thisSheet;
-                }
+//                if(graphSheetMesh->faces[i].tag.id != prevSheet) {
+//                    //cout << "picking graph sheet color. i=" << i << ", id=" << (int) (graphSheetMesh->faces[i].tag.id) << endl;
+//                    thisSheet = (int) (graphSheetMesh->faces[i].tag.id);
+//                    sheets[thisSheet-1]->GetColor(colorR, colorG, colorB, colorA); // probably gets the wrong color.
+//                    prevSheet = thisSheet;
+//                }
 
-                if(isObjectSpecificColoring) {
-                    OpenGLUtils::SetColor(colorR, colorG, colorB, colorA);
-                }
+//                if(isObjectSpecificColoring) {
+//                    OpenGLUtils::SetColor(colorR, colorG, colorB, colorA);
+//                }
 
                 glPushAttrib(GL_LIGHTING_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
                 // end color code
