@@ -17,7 +17,7 @@
 //#include "MeshRenderer.h"
 //#include <ProteinMorph/SheetGenerator.h>
 //#include <GraphMatch/StandardGraph.h>
-//#include <GraphMatch/SkeletonReader.h>
+#include "Readers/SkeletonReader.h"
 #include <GraphMatch/Shape.h>
 //#include <GraphMatch/VectorMath.h>
 //#include <MathTools/LinearSolver.h>
