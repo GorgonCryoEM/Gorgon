@@ -409,24 +409,6 @@ namespace Visualization {
 
     }
 
-    void SSERenderer::SetHelixColor(int index, float r, float g, float b, float a) {
-        helices[index]->SetColor(r, g, b, a);
-    }
-
-    void SSERenderer::SetSheetColor(int index, float r, float g, float b, float a) {
-        sheets[index]->SetColor(r, g, b, a);
-    }
-
-    // set the color of an SSE. assumes that SSEs are indexed with helices first and sheets second.
-    void SSERenderer::SetSSEColor(int index, float r, float g, float b, float a) {
-        int numHelices = helices.size();
-        if (index < numHelices) {
-            helices[index]->SetColor(r, g, b, a);
-        } else {
-            sheets[index - numHelices]->SetColor(r, g, b, a);
-        }
-    }
-
     bool SSERenderer::SelectionRotate(Vec3F centerOfMass, Vec3F rotationAxis, float angle) {
         bool rotated = false;
         Point3 centerOfMassP3 = Point3(centerOfMass.X(), centerOfMass.Y(), centerOfMass.Z());

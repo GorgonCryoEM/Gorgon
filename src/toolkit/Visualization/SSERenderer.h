@@ -55,9 +55,6 @@ namespace Visualization {
             void LoadSheetFile(string fileName);
             void Unload();
             void UnloadGraphSSEs();
-            void SetHelixColor(int index, float r, float g, float b, float a);
-            void SetSheetColor(int index, float r, float g, float b, float a);
-            void SetSSEColor(int index, float r, float g, float b, float a);
             void SetSSEOrientationFlips(vector<bool>);
             bool SelectionRotate(Vec3F centerOfMass, Vec3F rotationAxis, float angle);
             void SaveHelixFile(string fileName);
