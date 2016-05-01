@@ -21,8 +21,8 @@ class CAlphaViewer(BaseViewer):
     DisplayStyleSideChain = 5
     
     def __init__(self, main, parent=None):
-        BaseViewer.__init__(self, main, parent)
         self.title = "C-Alpha"
+        super(CAlphaViewer, self).__init__(main, parent)
         self.shortTitle = "CAL"
         self.app.themes.addDefaultRGB("C-Alpha:Atom", 170, 170, 0, 255)
         self.app.themes.addDefaultRGB("C-Alpha:Bond", 120, 120, 170, 255)
