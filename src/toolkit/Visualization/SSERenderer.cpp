@@ -197,7 +197,7 @@ namespace Visualization {
                 glBegin(GL_POLYGON);
                 Vec3F normal;
                 for(unsigned int j = 0; j < sheetMesh->faces[i].vertexIds.size(); j++) {
-                    normal = sheetMesh->GetVertexNormal(sheetMesh->faces[i].vertexIds[j]);
+                    normal = sheetMesh->getVertexNormal(sheetMesh->faces[i].vertex(j));
                     k = sheetMesh->GetVertexIndex(sheetMesh->faces[i].vertexIds[j]);
                     glNormal3f(normal.X(), normal.Y(), normal.Z());
                     glVertex3fv(sheetMesh->vertices[k].position.values);
@@ -249,7 +249,7 @@ namespace Visualization {
                 glBegin(GL_POLYGON);
                 Vec3F normal;
                 for(unsigned int j = 0; j < graphSheetMesh->faces[i].vertexIds.size(); j++) {
-                    normal = graphSheetMesh->GetFaceNormal(i);
+                    normal = graphSheetMesh->getFaceNormal(i);
                     k = graphSheetMesh->GetVertexIndex(graphSheetMesh->faces[i].vertexIds[j]);
                     glNormal3f(normal.X(), normal.Y(), normal.Z());
                     glVertex3fv(graphSheetMesh->vertices[k].position.values);
