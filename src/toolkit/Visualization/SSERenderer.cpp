@@ -79,7 +79,7 @@ namespace Visualization {
         }
 
         Shape * sheetShape = new Shape();
-        sheetShape->ShapeType = GRAPHEDGE_SHEET;
+        sheetShape->shapeType = GRAPHEDGE_SHEET;
         sheetShape->SetCenter(center);
 
         sheets.push_back(sheetShape);

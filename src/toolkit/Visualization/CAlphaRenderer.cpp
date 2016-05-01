@@ -158,7 +158,7 @@ namespace Visualization {
                 if(selectEnabled){
                     glLoadName(i);
                 }
-                float length = (atoms[bonds[i].GetAtom0Ix()].GetPosition() - atoms[bonds[i].GetAtom1Ix()].GetPosition()).Length();
+                float length = (atoms[bonds[i].GetAtom0Ix()].GetPosition() - atoms[bonds[i].GetAtom1Ix()].GetPosition()).length();
                 if(length > 4.2) {
                     OpenGLUtils::SetColor(1.0, 0, 0, 1.0);
                 }
@@ -289,11 +289,11 @@ namespace Visualization {
                             Vec3F nextPos = curve.getPos(tsect);
 
                             Vec3F currentAxis = axes[x]*(1.0-tsect) + axes[x+1]*tsect;
-                            currentAxis.Normalize();
+                            currentAxis.normalize();
 
                             Vec3F curnormal = curve.getTangent(tsect);
                             curnormal = curnormal^currentAxis;
-                            curnormal.Normalize();
+                            curnormal.normalize();
 
                             if(x == 0){
                                 halfwidth = LOOP_RADIUS + (0.5 * HELIX_WIDTH - LOOP_RADIUS) * 0.5 * (-1*cos(PI*tsect) + 1.0);
@@ -314,7 +314,7 @@ namespace Visualization {
                                     for (int q = 0; q < flatSlices; ++q){
                                         renderingPoints[(x*NUM_SEGMENTS + sect) + q*interpPoints.size()] = nextPos + currentAxis*halfwidth*(q%3 == 0 ? -1 : 1); //+ curnormal*hlt_r*pow(-1.0, q/2);
                                         renderingNormals[(x*NUM_SEGMENTS + sect) + q*interpPoints.size()] = curnormal;//*(q%3 == 0 ? -1 : 1);
-                                        renderingNormals[(x*NUM_SEGMENTS + sect) + q*interpPoints.size()].Normalize();
+                                        renderingNormals[(x*NUM_SEGMENTS + sect) + q*interpPoints.size()].normalize();
                                     }
                                     break;
                                 case 1:
