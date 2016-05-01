@@ -12,13 +12,6 @@
 namespace Visualization {
 
     CAlphaRenderer::CAlphaRenderer() {
-        atoms.clear();
-        bonds.clear();
-        sidechainBonds.clear();
-        selectedHelixIndices.clear();
-        selectedStrandIndices.clear();
-        featureVecs.clear();
-
         NUM_SEGMENTS = 10;
         NUM_SLICES = 10;
         HELIX_HERMITE_FACTOR = 4.7;
@@ -39,13 +32,6 @@ namespace Visualization {
     }
 
     CAlphaRenderer::~CAlphaRenderer() {
-        atoms.clear();
-        bonds.clear();
-        sidechainBonds.clear();
-        selectedHelixIndices.clear();
-        selectedStrandIndices.clear();
-        selectedLoopIndices.clear();
-        featureVecs.clear();
     }
 
     vector<int> CAlphaRenderer::getSelectedHelixIndices(){
