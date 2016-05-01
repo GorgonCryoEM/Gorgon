@@ -171,41 +171,8 @@ namespace Visualization {
             GLfloat ambientMaterial[4];
             GLfloat specularMaterial[4];
             // end color code
-            for(unsigned int i = 0; i < sheetMesh->faces.size(); i++) {
-
-                glPushAttrib(GL_LIGHTING_BIT);
-//                if(sheetMesh->faces[i].tag.selected) {
-                    glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
-                    glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
 //                }
-                if(selectEnabled) {
-                    glLoadName(i);
-                }
-
-                // color code
-//                if(sheetMesh->faces[i].tag.id != prevSheet) {
-//                    thisSheet = (int) (sheetMesh->faces[i].tag.id);
-//                    sheets[thisSheet-1]->GetColor(colorR, colorG, colorB, colorA);
-//                    prevSheet = thisSheet;
 //                }
-//                if(isObjectSpecificColoring) {
-//                    OpenGLUtils::SetColor(colorR, colorG, colorB, colorA);
-//                }
-
-                glPushAttrib(GL_LIGHTING_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-                // end color code
-                glBegin(GL_POLYGON);
-                Vec3F normal;
-                for(unsigned int j = 0; j < sheetMesh->faces[i].vertexIds.size(); j++) {
-                    normal = sheetMesh->getVertexNormal(sheetMesh->faces[i].vertex(j));
-                    k = sheetMesh->GetVertexIndex(sheetMesh->faces[i].vertexIds[j]);
-                    glNormal3f(normal.X(), normal.Y(), normal.Z());
-                    glVertex3fv(sheetMesh->vertices[k].position.values);
-                }
-                glEnd();
-                glPopAttrib();
-                glPopAttrib(); // for color code
-            }
             if(selectEnabled) {
                 glPopName();
             }
@@ -220,56 +187,12 @@ namespace Visualization {
             int thisSheet;
             float colorR, colorG, colorB, colorA;
             // end color code
-            for(unsigned int i = 0; i < graphSheetMesh->faces.size(); i++) {
-                glPushAttrib(GL_LIGHTING_BIT);
-                glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
-                //glDisable(GL_LIGHTING);
-//                if(graphSheetMesh->faces[i].tag.selected) {
-                    glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
-                    glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
 //                }
-                if(selectEnabled) {
-                    glLoadName(i);
-                }
-
-                // color code
-//                if(graphSheetMesh->faces[i].tag.id != prevSheet) {
-//                    //cout << "picking graph sheet color. i=" << i << ", id=" << (int) (graphSheetMesh->faces[i].tag.id) << endl;
-//                    thisSheet = (int) (graphSheetMesh->faces[i].tag.id);
-//                    sheets[thisSheet-1]->GetColor(colorR, colorG, colorB, colorA); // probably gets the wrong color.
-//                    prevSheet = thisSheet;
 //                }
-
-//                if(isObjectSpecificColoring) {
-//                    OpenGLUtils::SetColor(colorR, colorG, colorB, colorA);
-//                }
-
-                glPushAttrib(GL_LIGHTING_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-                // end color code
-                glBegin(GL_POLYGON);
-                Vec3F normal;
-                for(unsigned int j = 0; j < graphSheetMesh->faces[i].vertexIds.size(); j++) {
-                    normal = graphSheetMesh->getFaceNormal(i);
-                    k = graphSheetMesh->GetVertexIndex(graphSheetMesh->faces[i].vertexIds[j]);
-                    glNormal3f(normal.X(), normal.Y(), normal.Z());
-                    glVertex3fv(graphSheetMesh->vertices[k].position.values);
-                }
-                glEnd();
-                glPopAttrib();
-                glPopAttrib(); // for color code
-            }
 
             glPushAttrib(GL_LIGHTING_BIT);
             glDisable(GL_LIGHTING);
 //            OpenGLUtils::SetColor(0.0, 0.0, 0.0, 1.0);
-            for(unsigned int i = 0; i < graphSheetMesh->faces.size(); i++) {
-                glBegin(GL_LINE_LOOP);
-                for(unsigned int j = 0; j < graphSheetMesh->faces[i].vertexIds.size(); j++) {
-                    k = graphSheetMesh->GetVertexIndex(graphSheetMesh->faces[i].vertexIds[j]);
-                    glVertex3fv(graphSheetMesh->vertices[k].position.values);
-                }
-                glEnd();
-            }
             glPopAttrib();
             // end graph-type sheet rendering code
 
