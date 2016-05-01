@@ -317,7 +317,7 @@ namespace Visualization {
     void SSERenderer::LoadHelixFile(string fileName) {
 
         if(sheetMesh == NULL) {
-            Renderer::LoadFile(fileName);
+            Display::load(fileName);
         }
         for(unsigned int i = 0; i < helices.size(); i++) {
             delete helices[i];
@@ -338,7 +338,7 @@ namespace Visualization {
 
     void SSERenderer::LoadSheetFile(string fileName) {
         if(helices.size() == 0) {
-            Renderer::LoadFile(fileName);
+            Display::load(fileName);
         }
         //vector<Shape *> sheets;
         sheets.clear();
@@ -382,7 +382,6 @@ namespace Visualization {
     }
 
     void SSERenderer::Unload() {
-        Renderer::Unload();
         for(unsigned int i = 0; i < helices.size(); i++) {
             delete helices[i];
         }
