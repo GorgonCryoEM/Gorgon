@@ -44,7 +44,6 @@ namespace Visualization {
         Shape * newHelix = Shape::CreateHelix(p1, p2, 2.5);
 
         helices.push_back(newHelix);
-        UpdateBoundingBox();
     }
 
     void SSERenderer::StartNewSSE() {
@@ -334,8 +333,6 @@ namespace Visualization {
         } else if(strcmp(extension.c_str(), "SSE") == 0) {
             LoadHelixFileSSE(fileName);
         }
-
-        UpdateBoundingBox();
     }
 
     void SSERenderer::LoadSheetFile(string fileName) {
@@ -350,8 +347,6 @@ namespace Visualization {
         SkeletonReader::ReadSheetFile((char *)fileName.c_str(), sheets);
 
         SheetListToMesh(sheets);
-
-        UpdateBoundingBox();
     }
 
     void SSERenderer::SheetListToMesh(vector<Shape*> & sheets) {
@@ -403,7 +398,6 @@ namespace Visualization {
             delete graphSheetMesh;
         }
         graphSheetMesh = NULL;
-        UpdateBoundingBox();
     }
 
     void SSERenderer::LoadGraphSSE(int index, Shape* sse, float offsetx, float offsety, float offsetz, float scalex, float scaley, float scalez) {
@@ -477,50 +471,6 @@ namespace Visualization {
         }
         graphSheetMesh = NULL;
 
-    }
-
-    void SSERenderer::UpdateBoundingBox() {
-        Point3 pt;
-        if(sheetMesh != NULL && sheetMesh->vertices.size() > 0) {
-            for(int i = 0; i < 3; i++) {
-                minPts[i] = sheetMesh->vertices[0].position.values[i];
-                maxPts[i] = sheetMesh->vertices[0].position.values[i];
-            }
-        } else if (helices.size() > 0) {
-            pt = helices[0]->GetWorldCoordinates(Point3(0,0.5,0));
-            for(int j = 0; j < 3; j++) {
-                minPts[j] = pt[j];
-                maxPts[j] = pt[j];
-            }
-        }
-
-        if(helices.size() > 0 || sheetMesh != NULL) {
-            for(unsigned int i = 0; i < helices.size(); i++) {
-                pt = helices[i]->GetWorldCoordinates(Point3(0,0.5,0));
-                for(int j = 0; j < 3; j++) {
-                    minPts[j] = min(minPts[j], (float)pt[j]);
-                    maxPts[j] = max(maxPts[j], (float)pt[j]);
-                }
-                pt = helices[i]->GetWorldCoordinates(Point3(0,-0.5,0));
-                for(int j = 0; j < 3; j++) {
-                    minPts[j] = min(minPts[j], (float)pt[j]);
-                    maxPts[j] = max(maxPts[j], (float)pt[j]);
-                }
-            }
-            if(sheetMesh != NULL) {
-                for(unsigned int i = 0; i < sheetMesh->vertices.size(); i++) {
-                    for(int j = 0; j < 3; j++) {
-                        minPts[j] = min(minPts[j], sheetMesh->vertices[i].position.values[j]);
-                        maxPts[j] = max(maxPts[j], sheetMesh->vertices[i].position.values[j]);
-                    }
-                }
-            }
-        } else {
-            for(int i = 0; i < 3; i++) {
-                minPts[i] = -0.5;
-                maxPts[i] = 0.5;
-            }
-        }
     }
 
     void SSERenderer::SetHelixColor(int index, float r, float g, float b, float a) {

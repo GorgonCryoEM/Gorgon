@@ -79,7 +79,6 @@ namespace Visualization {
             void RemoveSelectedSSEs();
             int GetHelixCount();
             Vec3F GetHelixCorner(int helixIx, int cornerIx);
-            void UpdateBoundingBox();
 
             vector<int> GetSelectedHelixIndices();
             void SetHelixCorrs(  vector < int > flatCorrespondences);
