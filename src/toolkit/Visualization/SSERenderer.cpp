@@ -411,19 +411,19 @@ namespace Visualization {
 
     bool SSERenderer::SelectionRotate(Vec3F centerOfMass, Vec3F rotationAxis, float angle) {
         bool rotated = false;
-        Point3 centerOfMassP3 = Point3(centerOfMass.X(), centerOfMass.Y(), centerOfMass.Z());
-        Vector3 rotationV3 = Vector3(rotationAxis.X(), rotationAxis.Y(), rotationAxis.Z());
+        Vec3D centerOfMassP3(centerOfMass.X(), centerOfMass.Y(), centerOfMass.Z());
+        Vec3D rotationV3(rotationAxis.X(), rotationAxis.Y(), rotationAxis.Z());
 
         for(unsigned int i = 0; i < helices.size(); i++) {
-            if(helices[i]->GetSelected()) {
+//            if(helices[i]->GetSelected()) {
                 rotated = true;
-                Vector3 move = centerOfMassP3 - helices[i]->GetCenter();
+                Vec3D move = centerOfMassP3 - helices[i]->GetCenter();
                 Matrix4 rotMatrix = Matrix4::rotation(rotationV3, angle);
-                Vector3 newMove = rotMatrix * move;
+                Vec3D newMove = rotMatrix * move;
                 helices[i]->SetCenter(centerOfMassP3 - newMove);
 
-                helices[i]->Rotate(Vector3(rotationAxis.X(), rotationAxis.Y(), rotationAxis.Z()), angle);
-            }
+                helices[i]->Rotate(rotationV3, angle);
+//            }
         }
 
         // I think the sheet center of mass is wrong!  Need to fix this
