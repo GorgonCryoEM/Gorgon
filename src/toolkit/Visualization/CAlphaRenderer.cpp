@@ -903,7 +903,7 @@ namespace Visualization {
     }
 
     void CAlphaRenderer::LoadFile(string fileName) {
-        Renderer::LoadFile(fileName);
+        Display::load(fileName);
         atoms.clear();
         bonds.clear();
         atoms = PDBReader::ReadAtomPositions(fileName);
@@ -949,7 +949,7 @@ namespace Visualization {
     }
 
     void CAlphaRenderer::LoadSSEHunterFile(string fileName) {
-        Renderer::LoadFile(fileName);
+        Display::load(fileName);
         atoms.clear();
         bonds.clear();
         atoms = PDBReader::ReadAtomPositions(fileName);
@@ -1085,7 +1085,7 @@ namespace Visualization {
             }
         }
         if(count == 0) {
-            centerOfMass = Renderer::SelectionCenterOfMass();
+            centerOfMass = Display::SelectionCenterOfMass();
         } else {
             centerOfMass = centerOfMass * (1.0f/(float)count);
         }
@@ -1178,7 +1178,7 @@ namespace Visualization {
     }
 
     void CAlphaRenderer::SelectionToggle(int subsceneIndex, bool forceTrue, int ix0, int ix1, int ix2, int ix3, int ix4) {
-        Renderer::SelectionToggle(subsceneIndex, forceTrue, ix0, ix1, ix2, ix3, ix4);
+        Display::SelectionToggle(subsceneIndex, forceTrue, ix0, ix1, ix2, ix3, ix4);
         AtomMapType::iterator it;
         PDBAtom * a;
         if (subsceneIndex == 0) {
