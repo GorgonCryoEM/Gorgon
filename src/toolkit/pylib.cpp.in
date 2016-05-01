@@ -12,6 +12,8 @@
 #include "Visualization/Display.h"
 #include "Core/MinMax.h"
 #include "Visualization/Shapes.h"
+#include "Visualization/CAlphaRenderer.h"
+#include "Visualization/SSERenderer.h"
 
 using namespace SkeletonMaker;
 using namespace Protein_Morph;
