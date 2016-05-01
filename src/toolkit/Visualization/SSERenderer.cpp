@@ -71,7 +71,7 @@ namespace Visualization {
         Vec3F center = Vec3F(0,0,0);
 
         for(unsigned int i = 0; i < tempSSEPoints.size(); i++) {
-            vertexIxs.push_back(sheetMesh->AddVertex(tempSSEPoints[i], false));
+            vertexIxs.push_back(sheetMesh->addVertex(tempSSEPoints[i]));
             center+= tempSSEPoints[i];
         }
         if(tempSSEPoints.size() > 0) {
