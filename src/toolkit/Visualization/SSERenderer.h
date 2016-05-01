@@ -54,7 +54,6 @@ namespace Visualization {
             void LoadHelixFile(string fileName);
             void LoadSheetFile(string fileName);
             void Unload();
-            void LoadGraphSSE(int index, Shape* sse, float offsetx, float offsety, float offsetz, float scalex, float scaley, float scalez);
             void UnloadGraphSSEs();
             void SetHelixColor(int index, float r, float g, float b, float a);
             void SetSheetColor(int index, float r, float g, float b, float a);
