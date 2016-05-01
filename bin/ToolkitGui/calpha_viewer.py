@@ -24,26 +24,26 @@ class CAlphaViewer(BaseViewer):
         self.title = "C-Alpha"
         super(CAlphaViewer, self).__init__(main, parent)
         self.shortTitle = "CAL"
-        self.app.themes.addDefaultRGB("C-Alpha:Atom", 170, 170, 0, 255)
-        self.app.themes.addDefaultRGB("C-Alpha:Bond", 120, 120, 170, 255)
-        self.app.themes.addDefaultRGB("C-Alpha:Helix", 0, 255, 0, 255)
-        self.app.themes.addDefaultRGB("C-Alpha:Strand", 128, 255, 255, 255)
-        self.app.themes.addDefaultRGB("C-Alpha:Loop", 255, 128, 0, 255)
-        self.app.themes.addDefaultRGB("C-Alpha:Carbon", 200, 200, 200, 255)
-        self.app.themes.addDefaultRGB("C-Alpha:Nitrogen", 0, 0, 255, 255)
-        self.app.themes.addDefaultRGB("C-Alpha:Oxygen", 255, 0, 0, 255)
-        self.app.themes.addDefaultRGB("C-Alpha:Sulphur", 255, 255, 0, 255)
-        self.app.themes.addDefaultRGB("C-Alpha:BoundingBox", 255, 255, 255, 255)
+#         self.app.themes.addDefaultRGB("C-Alpha:Atom", 170, 170, 0, 255)
+#         self.app.themes.addDefaultRGB("C-Alpha:Bond", 120, 120, 170, 255)
+#         self.app.themes.addDefaultRGB("C-Alpha:Helix", 0, 255, 0, 255)
+#         self.app.themes.addDefaultRGB("C-Alpha:Strand", 128, 255, 255, 255)
+#         self.app.themes.addDefaultRGB("C-Alpha:Loop", 255, 128, 0, 255)
+#         self.app.themes.addDefaultRGB("C-Alpha:Carbon", 200, 200, 200, 255)
+#         self.app.themes.addDefaultRGB("C-Alpha:Nitrogen", 0, 0, 255, 255)
+#         self.app.themes.addDefaultRGB("C-Alpha:Oxygen", 255, 0, 0, 255)
+#         self.app.themes.addDefaultRGB("C-Alpha:Sulphur", 255, 255, 0, 255)
+#         self.app.themes.addDefaultRGB("C-Alpha:BoundingBox", 255, 255, 255, 255)
         self.isClosedMesh = False
         self.centerOnRMB = True
         self.selectEnabled = True
         self.renderer = CAlphaRenderer()
         self.displayStyle = self.DisplayStyleBackbone
-        self.renderer.setDisplayStyle(self.displayStyle)
-        self.main_chain = Chain('', self.app)
+#         self.renderer.setDisplayStyle(self.displayStyle)
+#         self.main_chain = Chain('', self.app)
         self.structPred = None
         self.createUI()
-        self.app.viewers["calpha"] = self;
+#         self.app.viewers["calpha"] = self;
         self.atomsVisible = True
         self.bondsVisible = True
         self.helicesVisible = True
@@ -51,7 +51,7 @@ class CAlphaViewer(BaseViewer):
         self.loopsVisible = True
         #self.interpSegments = 10 # the number of segments interpolated per calpha atom when rendering ribbon diagrams
         #self.ribbonSlices = 10 # the number of slices used to render each segment of a ribbon diagram
-        self.initVisualizationOptions(AtomVisualizationForm(self.app, self))
+#         self.initVisualizationOptions(AtomVisualizationForm(self.app, self))
         self.loadedChains = []
         self.ribbonMouseMapping = {}
         self.ribbonMouseMapping[0] = {}
@@ -492,10 +492,11 @@ class CAlphaViewer(BaseViewer):
             self.emitModelChanged()
     
     def createUI(self):
-        self.createActions()
-        self.createMenus()
-        self.createChildWindows()
-        self.updateActionsAndMenus()
+        pass
+#         self.createActions()
+#         self.createMenus()
+#         self.createChildWindows()
+#         self.updateActionsAndMenus()
 
     def createChildWindows(self):
         self.manualAtomPlacer = CAlphaAtomPlacerForm(self.app, self, self.main_chain, self.structPred, self)

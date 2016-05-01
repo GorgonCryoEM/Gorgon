@@ -19,10 +19,10 @@ class SSEViewer(BaseViewer):
         self.title = "Secondary Structure Element"
         super(SSEViewer, self).__init__(main, parent)
         self.shortTitle = "SSE"
-        self.app.themes.addDefaultRGB("Secondary Structure Element:Model:0", 0, 180, 0, 255)
-        self.app.themes.addDefaultRGB("Secondary Structure Element:Model:1", 120, 185, 255, 255)
-        self.app.themes.addDefaultRGB("Secondary Structure Element:Model:2", 120, 185, 255, 255)
-        self.app.themes.addDefaultRGB("Secondary Structure Element:BoundingBox", 255, 255, 255, 255)
+#         self.app.themes.addDefaultRGB("Secondary Structure Element:Model:0", 0, 180, 0, 255)
+#         self.app.themes.addDefaultRGB("Secondary Structure Element:Model:1", 120, 185, 255, 255)
+#         self.app.themes.addDefaultRGB("Secondary Structure Element:Model:2", 120, 185, 255, 255)
+#         self.app.themes.addDefaultRGB("Secondary Structure Element:BoundingBox", 255, 255, 255, 255)
         self.isClosedMesh = False
         self.helixFileName = ""
         self.sheetFileName = ""
@@ -37,30 +37,31 @@ class SSEViewer(BaseViewer):
         self.app = main
         self.model2Visible = True
         self.model3Visible = False
-        self.initVisualizationOptions(ModelVisualizationForm(self.app, self))
-        self.visualizationOptions.ui.checkBoxModelVisible.setText("Show helices colored:")
-        self.visualizationOptions.ui.checkBoxModel2Visible.setText("Show sheets colored:")
-        self.visualizationOptions.ui.checkBoxModel2Visible.setVisible(True)
-        self.visualizationOptions.ui.pushButtonModel2Color.setVisible(True)
-        self.visualizationOptions.ui.checkBoxModel3Visible.setText("Show skeleton sheets colored:")
-        self.visualizationOptions.ui.checkBoxModel3Visible.setVisible(False)
-        self.visualizationOptions.ui.pushButtonModel3Color.setVisible(False)
+#         self.initVisualizationOptions(ModelVisualizationForm(self.app, self))
+#         self.visualizationOptions.ui.checkBoxModelVisible.setText("Show helices colored:")
+#         self.visualizationOptions.ui.checkBoxModel2Visible.setText("Show sheets colored:")
+#         self.visualizationOptions.ui.checkBoxModel2Visible.setVisible(True)
+#         self.visualizationOptions.ui.pushButtonModel2Color.setVisible(True)
+#         self.visualizationOptions.ui.checkBoxModel3Visible.setText("Show skeleton sheets colored:")
+#         self.visualizationOptions.ui.checkBoxModel3Visible.setVisible(False)
+#         self.visualizationOptions.ui.pushButtonModel3Color.setVisible(False)
         
         self.connect(self, QtCore.SIGNAL('elementSelected (int, int, int, int, int, int, QMouseEvent)'), self.updateCurrentMatch)
         
-        self.connect(self.app.viewers["volume"], QtCore.SIGNAL('modelLoaded()'), self.updateActionsAndMenus)
-        self.connect(self.app.viewers["volume"], QtCore.SIGNAL('modelUnloaded()'), self.updateActionsAndMenus)
-        self.connect(self, QtCore.SIGNAL('modelLoaded()'), self.updateActionsAndMenus)
-        self.connect(self, QtCore.SIGNAL('modelUnloaded()'), self.updateActionsAndMenus)
+#         self.connect(self.app.viewers["volume"], QtCore.SIGNAL('modelLoaded()'), self.updateActionsAndMenus)
+#         self.connect(self.app.viewers["volume"], QtCore.SIGNAL('modelUnloaded()'), self.updateActionsAndMenus)
+#         self.connect(self, QtCore.SIGNAL('modelLoaded()'), self.updateActionsAndMenus)
+#         self.connect(self, QtCore.SIGNAL('modelUnloaded()'), self.updateActionsAndMenus)
         
         self.selectedObjects = []
         self.correspondences = []
     
     def createUI(self):
-        self.createActions()
-        self.createMenus()
-        self.createChildWindows()
-        self.updateActionsAndMenus()
+        pass
+#         self.createActions()
+#         self.createMenus()
+#         self.createChildWindows()
+#         self.updateActionsAndMenus()
                   
     def createChildWindows(self):
         self.sseBuilder = VolumeSSEBuilderForm(self.app, self, self)
