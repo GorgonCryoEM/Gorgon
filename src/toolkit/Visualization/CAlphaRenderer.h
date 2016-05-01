@@ -62,97 +62,97 @@ namespace Visualization {
             void draw(int subSceneIndex, bool selectEnabled);
             void loadFile(string fileName);
             void loadSSEHunterFile(string fileName);
-            bool SaveSSEHunterFile(string fileName);
+            bool saveSSEHunterFile(string fileName);
 //          void GetSSEHunterAtoms(Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution, float threshold, float correlationCoeff, float skeletonCoeff, float geometryCoeff);
-            void UpdateTotalScoreSSEHunterAtoms(float correlationCoeff, float skeletonCoeff, float geometryCoeff);
-            void ColorSSEHunterAtoms();
-            int SelectionObjectCount();
-            int SelectionAtomCount();
-            Vec3F SelectionCenterOfMass();
-            bool SelectionRotate(Vec3F centerOfMass, Vec3F rotationAxis, float angle);
-            bool SelectionMove(Vec3F moveDirection);
-            void SelectionToggle(int subsceneIndex, bool forceTrue, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
-            void Unload();
-            string GetSupportedLoadFileFormats();
-            string GetSupportedSaveFileFormats();
-            Vec3F Get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
-            void TransformAllAtomLocations(MatrixFloat transform);
+            void updateTotalScoreSSEHunterAtoms(float correlationCoeff, float skeletonCoeff, float geometryCoeff);
+            void colorSSEHunterAtoms();
+            int selectionObjectCount();
+            int selectionAtomCount();
+            Vec3F selectionCenterOfMass();
+            bool selectionRotate(Vec3F centerOfMass, Vec3F rotationAxis, float angle);
+            bool selectionMove(Vec3F moveDirection);
+            void selectionToggle(int subsceneIndex, bool forceTrue, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
+            void unload();
+            string getSupportedLoadFileFormats();
+            string getSupportedSaveFileFormats();
+            Vec3F get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
+            void transformAllAtomLocations(MatrixFloat transform);
 
             // Controlling the atom vector
-            PDBAtom * AddAtom(PDBAtom atom);
-            PDBAtom * GetAtom(unsigned long long index);
-            PDBAtom * GetAtomFromHitStack(int subsceneIndex, bool forceTrue, int ix0, int ix1, int ix2, int ix3, int ix4);
-            PDBAtom * GetSelectedAtom(unsigned int selectionId);
-            void DeleteAtom(unsigned long long index);
-            int GetAtomCount();
-            vector<unsigned long long> GetAtomHashes();
+            PDBAtom * addAtom(PDBAtom atom);
+            PDBAtom * getAtom(unsigned long long index);
+            PDBAtom * getAtomFromHitStack(int subsceneIndex, bool forceTrue, int ix0, int ix1, int ix2, int ix3, int ix4);
+            PDBAtom * getSelectedAtom(unsigned int selectionId);
+            void deleteAtom(unsigned long long index);
+            int getAtomCount();
+            vector<unsigned long long> getAtomHashes();
 
             //Controlling the bond vector
-            void AddBond(PDBBond bond);
-            PDBBond * GetBond(int index);
-            int GetBondIndex(unsigned long long atom0, unsigned long long atom1);
-            void DeleteBond(int index);
-            int GetBondCount();
+            void addBond(PDBBond bond);
+            PDBBond * getBond(int index);
+            int getBondIndex(unsigned long long atom0, unsigned long long atom1);
+            void deleteBond(int index);
+            int getBondCount();
 
             //Controlling the bond vector
-            void AddSideChainBond(PDBBond bond);
-            PDBBond * GetSideChainBond(int index);
-            int GetSideChainBondIndex(unsigned long long atom0, unsigned long long atom1);
-            void DeleteSideChainBond(int index);
-            int GetSideChainBondCount();
+            void addSideChainBond(PDBBond bond);
+            PDBBond * getSideChainBond(int index);
+            int getSideChainBondIndex(unsigned long long atom0, unsigned long long atom1);
+            void deleteSideChainBond(int index);
+            int getSideChainBondCount();
 
-            void SetNumSegments(int segments);
-            void SetNumSlices(int slices);
+            void setNumSegments(int segments);
+            void setNumSlices(int slices);
 
-            int StartHelix(); //StartHelix creates a new helix element in aHelices and returns its index
-            void AddHelixElement(int, unsigned long long); //adds a helix element to the helix indexed at param 1
+            int startHelix(); //StartHelix creates a new helix element in aHelices and returns its index
+            void addHelixElement(int, unsigned long long); //adds a helix element to the helix indexed at param 1
 
-            int StartStrand(); //StartStrand creates a new strand element in bStrands and returns its index
-            void AddStrandElement(int, unsigned long long); //adds a strand element to the strand indexed at param 1
+            int startStrand(); //StartStrand creates a new strand element in bStrands and returns its index
+            void addStrandElement(int, unsigned long long); //adds a strand element to the strand indexed at param 1
 
-            int StartLoop(); //StartLoop creates a new strand element in loops and returns its index
-            void AddLoopElement(int, unsigned long long); //adds a loop element to the loop indexed at param 1
+            int startLoop(); //StartLoop creates a new strand element in loops and returns its index
+            void addLoopElement(int, unsigned long long); //adds a loop element to the loop indexed at param 1
 
             //void DrawHelices();
             //void DrawStrands();
             //void DrawLoops();
 
-            bool CleanSecondaryStructures(); //empties the aHelices, bStrands and loops variables
+            bool cleanSecondaryStructures(); //empties the aHelices, bStrands and loops variables
             //what should really happen is that the code should check if it is
             //trying to reload the same one, and then if it did return false
-            vector<Vec3F> CreatePointVector(PDBAtom first, PDBAtom last); // functionality mirrored in previously implemented method,
+            vector<Vec3F> createPointVector(PDBAtom first, PDBAtom last); // functionality mirrored in previously implemented method,
             // will try to refactor
-            vector<Vec3F> LaplacianSmoothing(vector<Vec3F> points, int steps); // applies Laplacian smoothing to a vector of
+            vector<Vec3F> laplacianSmoothing(vector<Vec3F> points, int steps); // applies Laplacian smoothing to a vector of
             // Vector3DFloats
-            vector<Vec3F> CreateStrandNormals(vector<Vec3F> points, Vec3F previous, Vec3F next); // create line segment normals to be used in drawing Beta
+            vector<Vec3F> createStrandNormals(vector<Vec3F> points, Vec3F previous, Vec3F next); // create line segment normals to be used in drawing Beta
             // strands
-            void CreateHelixAxesTangentsAndPoints(vector<Vec3F>& axes, vector<Vec3F>& tangents, vector<Vec3F>& interpPoints, vector<Vec3F> points,
+            void createHelixAxesTangentsAndPoints(vector<Vec3F>& axes, vector<Vec3F>& tangents, vector<Vec3F>& interpPoints, vector<Vec3F> points,
                 Vec3F previous, Vec3F next, double HELIX_ALPHA, double HELIX_BETA, double HELIX_HERMITE_FACTOR);
-            void DrawOpenBox(vector<Vec3F> points, vector<Vec3F> normals); // takes a vector of 8 points and draws a rectangular prism with two of its six sides not
+            void drawOpenBox(vector<Vec3F> points, vector<Vec3F> normals); // takes a vector of 8 points and draws a rectangular prism with two of its six sides not
             // filled in; the first 4 points are from the beggining edge of the box, with the second four
             // forming the end
-            void DrawTube(vector<Vec3F> points, vector<Vec3F> normals, int stacks, int slices);
-            vector<Vec3F> InterpolateLoopPoints(vector<Vec3F> points, Vec3F previous, Vec3F next, int NUM_SECTIONS); // creates interpolated points for loops
+            void drawTube(vector<Vec3F> points, vector<Vec3F> normals, int stacks, int slices);
+            vector<Vec3F> interpolateLoopPoints(vector<Vec3F> points, Vec3F previous, Vec3F next, int NUM_SECTIONS); // creates interpolated points for loops
             //vector<Vector3DFloat> InterpolateStrandPoints(vector<Vector3DFloat> points, Vector3DFloat previous, Vector3DFloat next, int NUM_SECTIONS);
             //vector<Vector3DFloat> InterpolateHelixPoints(vector<Vector3DFloat> points, Vector3DFloat previous, Vector3DFloat next, int NUM_SECTIONS);
 
             // for testing purposes only; allow changing of highlight color values
-            void SetHltRValue(int col);
-            void SetHltGValue(int col);
-            void SetHltBValue(int col);
-            void SetHltAValue(int col);
+            void setHltRValue(int col);
+            void setHltGValue(int col);
+            void setHltBValue(int col);
+            void setHltAValue(int col);
 
 
-            vector<int> GetSelectedHelixIndices();
-            void SetHelixCorrs( vector < int > flatCorrespondences);
-            void SetSelectedSSEHelices(vector<int>);
-            void ClearOtherHighlights();
-            void SetFeatureVecs(vector<Vec3F> flatFeatureVecs);
-            void SetHelixColor(int helixNum, float r, float g, float b);
+            vector<int> getSelectedHelixIndices();
+            void setHelixCorrs( vector < int > flatCorrespondences);
+            void setSelectedSSEHelices(vector<int>);
+            void clearOtherHighlights();
+            void setFeatureVecs(vector<Vec3F> flatFeatureVecs);
+            void setHelixColor(int helixNum, float r, float g, float b);
         private:
-            void DrawBackboneModel(int subSceneIndex, bool selectEnabled);
-            void DrawRibbonModel(int subSceneIndex, bool selectEnabled);
-            void DrawSideChainModel(int subSceneIndex, bool selectEnabled);
+            void drawBackboneModel(int subSceneIndex, bool selectEnabled);
+            void drawRibbonModel(int subSceneIndex, bool selectEnabled);
+            void drawSideChainModel(int subSceneIndex, bool selectEnabled);
         private:
             AtomMapType atoms;
 
