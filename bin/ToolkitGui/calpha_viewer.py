@@ -2,12 +2,12 @@ from PyQt4 import QtGui, QtCore, QtOpenGL
 from libpytoolkit import CAlphaRenderer
 from Explorer.base_viewer import BaseViewer
 from .calpha_choose_chain_to_load_form import CAlphaChooseChainToLoadForm
-# from calpha_atom_placer_form import CAlphaAtomPlacerForm
+from .calpha_atom_placer_form import CAlphaAtomPlacerForm
 # from calpha_sequence_dock import CAlphaSequenceDock
-# from seq_model.Chain import Chain
+from Toolkit.sse.seq_model.Chain import Chain
 # from atom_visualization_form import AtomVisualizationForm
 # from correspondence.StructurePrediction import StructurePrediction
-# from .calpha_choose_chain_model import CAlphaChooseChainModel
+from .calpha_choose_chain_model import CAlphaChooseChainModel
 # from calpha_flexible_fitting_form import CAlphaFlexibleFittingForm
 
 from OpenGL.GL import *
@@ -41,7 +41,7 @@ class CAlphaViewer(BaseViewer):
         self.renderer = CAlphaRenderer()
         self.displayStyle = self.DisplayStyleBackbone
 #         self.renderer.setDisplayStyle(self.displayStyle)
-#         self.main_chain = Chain('', self.app)
+        self.main_chain = Chain('', self.app)
         self.structPred = None
         self.createUI()
 #         self.app.viewers["calpha"] = self;
@@ -58,9 +58,6 @@ class CAlphaViewer(BaseViewer):
         self.ribbonMouseMapping[0] = {}
         self.ribbonMouseMapping[1] = {}
         self.ribbonMouseMapping[2] = {}
-        
-        #self.connect(self, QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.centerOnSelectedAtoms)
-        self.connect(self, QtCore.SIGNAL("elementClicked (int, int, int, int, int, int, QMouseEvent)"), self.processElementClick)
       
    # Overridden
     def initializeGLDisplayType(self):
@@ -104,43 +101,6 @@ class CAlphaViewer(BaseViewer):
         return visibility
           
     # Overridden
-    def emitElementClicked(self, hitStack, event):
-        if (self.displayStyle == self.DisplayStyleRibbon):
-            sseData = self.formatRibbonHitstack(hitStack)
-            self.emit(QtCore.SIGNAL("ribbonClicked (int, PyQt_PyObject, PyQt_PyObject, QMouseEvent)"), sseData[0], sseData[1], sseData[2], event)
-        else:
-            BaseViewer.emitElementClicked(self, hitStack, event)
-
-    # Overridden
-    def emitElementSelected(self, hitStack, event):
-        if (self.displayStyle == self.DisplayStyleRibbon):
-            sseData = self.formatRibbonHitstack(hitStack)
-            self.emit(QtCore.SIGNAL("ribbonSelected (int, PyQt_PyObject, PyQt_PyObject, QMouseEvent)"), sseData[0], sseData[1], sseData[2], event)
-        else:
-            BaseViewer.emitElementSelected(self, hitStack, event)
-        
-    # Overridden
-    def emitElementMouseOver(self, hitStack, event):
-        if (self.displayStyle == self.DisplayStyleRibbon):
-            sseData = self.formatRibbonHitstack(hitStack)
-            self.emit(QtCore.SIGNAL("ribbonMouseOver (int, PyQt_PyObject, PyQt_PyObject, QMouseEvent)"), sseData[0], sseData[1], sseData[2], event)
-        else:
-            BaseViewer.emitElementMouseOver(self, hitStack, event)
-
-    def formatRibbonHitstack(self, hitStack):
-        sseData = [-1, " "," "]
-        if(len(hitStack) <= 2):
-            subsceneIx = hitStack[0]
-            sseData[0] = subsceneIx
-            if(subsceneIx == 0):
-                sseData[1] = self.ribbonMouseMapping[0][hitStack[1]]
-            if (subsceneIx == 1):
-                sseData[1] = self.ribbonMouseMapping[1][hitStack[1]][0]
-                sseData[2] = self.ribbonMouseMapping[1][hitStack[1]][1]
-            elif (subsceneIx == 2):
-                sseData[1] = self.ribbonMouseMapping[2][hitStack[1]]
-        return sseData
-                   
     def setAtomColorsAndVisibility(self, displayStyle):
         if displayStyle == self.DisplayStyleBackbone:
             self.setAllAtomColor(self.getAtomColor())
@@ -319,78 +279,6 @@ class CAlphaViewer(BaseViewer):
                         if atomName[0] == molecule[0]:
                             atom.setColor(color.redF(), color.greenF(), color.blueF(), color.alphaF())
                 
-    def setAtomColor(self, color):
-        self.app.themes.addColor(self.title + ":" + "Atom", color)
-        self.setAllAtomColor(color)
-        self.emitModelChanged()
-        
-    def setBondColor(self, color):
-        oldColor = self.getBondColor()
-        self.app.themes.addColor(self.title + ":" + "Bond", color)
-        self.repaintCamera2(oldColor, color)
-                
-    def setHelixColor(self, color):
-        oldColor = self.getHelixColor()
-        self.app.themes.addColor(self.title + ":" + "Helix", color)
-        self.repaintCamera2(oldColor, color)
-                
-    def setStrandColor(self, color):
-        oldColor = self.getStrandColor()
-        self.app.themes.addColor(self.title + ":" + "Strand", color)
-        self.repaintCamera2(oldColor, color)
-                
-    def setLoopColor(self, color):
-        oldColor = self.getLoopColor()
-        self.app.themes.addColor(self.title + ":" + "Loop", color)
-        self.repaintCamera2(oldColor, color)
-                
-    def setCarbonColor(self, color):
-        self.app.themes.addColor(self.title + ":" + "Carbon", color)
-        self.setSpecificAtomColor('C', color)
-        self.emitModelChanged()
-        
-    def setNitrogenColor(self, color):
-        self.app.themes.addColor(self.title + ":" + "Nitrogen", color)
-        self.setSpecificAtomColor('N', color)
-        self.emitModelChanged()
-        
-    def setOxygenColor(self, color):
-        self.app.themes.addColor(self.title + ":" + "Oxygen", color)
-        self.setSpecificAtomColor('O', color)
-        self.emitModelChanged()
-        
-    def setSulphurColor(self, color):
-        self.app.themes.addColor(self.title + ":" + "Sulphur", color)
-        self.setSpecificAtomColor('S', color)
-        self.emitModelChanged()
-        
-    def getAtomColor(self):
-        return self.app.themes.getColor(self.title + ":" + "Atom" )
-        
-    def getBondColor(self):
-        return self.app.themes.getColor(self.title + ":" + "Bond" )
-        
-    def getHelixColor(self):
-        return self.app.themes.getColor(self.title + ":" + "Helix" )
-        
-    def getStrandColor(self):
-        return self.app.themes.getColor(self.title + ":" + "Strand" )
-        
-    def getLoopColor(self):
-        return self.app.themes.getColor(self.title + ":" + "Loop" )
-        
-    def getCarbonColor(self):
-        return self.app.themes.getColor(self.title + ":" + "Carbon" )
-        
-    def getNitrogenColor(self):
-        return self.app.themes.getColor(self.title + ":" + "Nitrogen" )
-        
-    def getOxygenColor(self):
-        return self.app.themes.getColor(self.title + ":" + "Oxygen" )
-        
-    def getSulphurColor(self):
-        return self.app.themes.getColor(self.title + ":" + "Sulphur" )
-            
     def setAtomVisibility(self, visible):
         self.atomsVisible = visible
         self.repaintCamera()
@@ -462,50 +350,13 @@ class CAlphaViewer(BaseViewer):
             self.emitModelChanged()
     
     def createUI(self):
-        pass
-#         self.createActions()
-#         self.createMenus()
-#         self.createChildWindows()
-#         self.updateActionsAndMenus()
+        self.createChildWindows()
 
     def createChildWindows(self):
         self.manualAtomPlacer = CAlphaAtomPlacerForm(self.app, self, self.main_chain, self.structPred, self)
         self.chooseChainModel = CAlphaChooseChainModel(self.app, self)
-        self.flexibleFitter = CAlphaFlexibleFittingForm(self.app, self)
+#         self.flexibleFitter = CAlphaFlexibleFittingForm(self.app, self)
         
-    def createActions(self):
-        openAct = QtGui.QAction(self.tr("C-&Alpha Atoms..."), self)
-        openAct.setShortcut(self.tr("Ctrl+A"))
-        openAct.setStatusTip(self.tr("Load a C-Alpha atom file"))
-        self.connect(openAct, QtCore.SIGNAL("triggered()"), self.loadData)
-        self.app.actions.addAction("load_CAlpha", openAct)
-        
-        openSeqAct = QtGui.QAction(self.tr('Se&quence and SSE prediction'), self)
-        openSeqAct.setShortcut(self.tr('Ctrl+U'))
-        openSeqAct.setStatusTip(self.tr('Load a sequence possibly with SSE predictions'))
-        self.connect(openSeqAct, QtCore.SIGNAL('triggered()'), self.loadSeq)
-        self.app.actions.addAction('load_sequence', openSeqAct)
-        
-        saveAct = QtGui.QAction(self.tr("C-&Alpha Atoms..."), self)
-        saveAct.setStatusTip(self.tr("Save a C-Alpha atom file"))
-        self.connect(saveAct, QtCore.SIGNAL("triggered()"), self.saveData)
-        self.app.actions.addAction("save_CAlpha", saveAct)
-        
-        exportAct = QtGui.QAction(self.tr('Atoms to &PDB...'), self)
-        exportAct.setStatusTip(self.tr('Export a PDB file with no placeholder atoms'))
-        self.connect(exportAct, QtCore.SIGNAL('triggered()'), self.exportData)
-        self.app.actions.addAction('export_CAlpha', exportAct)
-        
-        closeAct = QtGui.QAction(self.tr("C-&Alpha Atoms"), self)
-        closeAct.setStatusTip(self.tr("Close the loaded C-Alpha atom file"))
-        self.connect(closeAct, QtCore.SIGNAL("triggered()"), self.unloadData)
-        self.app.actions.addAction("unload_CAlpha", closeAct)
-        
-        seqDockAct = QtGui.QAction(self.tr("Semi-&automatic Atom Placement..."), self)
-        seqDockAct.setStatusTip(self.tr("Perform partly automated atom placement"))
-        seqDockAct.setCheckable(True)
-        seqDockAct.setChecked(False)
-
         def showDock():
             loaded = True
             if not self.structPred:
@@ -514,8 +365,8 @@ class CAlphaViewer(BaseViewer):
                 self.main_chain = self.structPred.chain
             if loaded:
                 CAlphaSequenceDock.changeDockVisibility(self.app, self, self.structPred, self.main_chain)
-        self.connect(seqDockAct, QtCore.SIGNAL("triggered()"), showDock)
-        self.app.actions.addAction("seqDock", seqDockAct)
+#         self.connect(seqDockAct, QtCore.SIGNAL("triggered()"), showDock)
+#         self.app.actions.addAction("seqDock", seqDockAct)
     
     def loadSSEHunterData(self, fileName):
         if(self.loaded):
@@ -625,32 +476,6 @@ This function loads a SEQ file and creates a StructurePrediction object.
         self.main_chain.setSelection([], None, None, None)
         self.emitAtomSelectionUpdated(self.main_chain.getSelection())
 
-    def processElementClick(self, *argv):
-        """
-In response to a click on a C-alpha element, this updates the selected
-residues in the Chain object.
-        """
-        if argv[0]: #argv[0] is 0 for a click on an atom
-            return
-        hits = argv[:-1]
-        event = argv[-1]
-        if event.button() == QtCore.Qt.LeftButton:
-            if event.modifiers() & QtCore.Qt.CTRL: #Multiple selection mode
-                atom = CAlphaRenderer.getAtomFromHitStack(self.renderer, hits[0], False, *hits[1:])
-                if atom.getResSeq() in self.main_chain.getSelection():
-                    self.main_chain.setSelection(removeOne=atom.getResSeq())
-                else:
-                    self.main_chain.setSelection(addOne=atom.getResSeq())
-                print self.main_chain.getSelection()
-            else:
-                atom = CAlphaRenderer.getAtomFromHitStack(self.renderer, hits[0], True, *hits[1:])
-                print 'Residue #:', atom.getResSeq()
-                self.main_chain.setSelection([atom.getResSeq()])
-            self.emitAtomSelectionUpdated(self.main_chain.getSelection())
-                
-        if event.button() == QtCore.Qt.RightButton and self.centerOnRMB:
-            self.centerOnSelectedAtoms(argv[0], argv[1], argv[2], argv[3], argv[4], argv[5], argv[6])
-            
     def exportData(self):
         """
 This saves the current chain model to a PDB file with no "ATOM" lines
@@ -685,12 +510,5 @@ starting residue number).
             self.dirty = False
             self.setCursor(QtCore.Qt.ArrowCursor)
     
-    def updateActionsAndMenus(self):
-        """
-If a C-alpha model is loaded, this enables relevent actions.
-        """
-        self.app.actions.getAction("save_CAlpha").setEnabled(self.loaded)
-        self.app.actions.getAction("unload_CAlpha").setEnabled(self.loaded)
-        
     def emitAtomSelectionUpdated(self, selection):
         self.emit(QtCore.SIGNAL("atomSelectionUpdated(PyQt_PyObject)"), selection)
