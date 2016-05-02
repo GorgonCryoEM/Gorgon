@@ -168,7 +168,7 @@ namespace Visualization {
                     glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
                     glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
                 }
-                map<int, boost::tuple<float,float,float> >::iterator iter = helixColors.begin();
+                map<int, Vec3F >::iterator iter = helixColors.begin();
                 iter = helixColors.find(i);
                 if(iter != helixColors.end()){
 
@@ -1333,7 +1333,7 @@ namespace Visualization {
     void CAlphaRenderer::setHelixColor(int helixNum, float r, float g, float b){
         cout << "setting helix color " << helixNum << " to (" << r << ", " << g << ", " << b << ")" <<endl;
         helixColors.erase(helixNum);
-        helixColors.insert(pair<int, boost::tuple<float, float, float> >(helixNum, boost::tuple<float, float, float>(r,g,b)));
+        helixColors.insert(make_pair(helixNum, Vec3F(r,g,b)));
     }
 
     // creates a vector of Vector3DFloats that represents the locations of all the PDBAtoms

@@ -167,7 +167,7 @@ namespace Visualization {
             vector<int> selectedSSEHelices;
             vector< pair<Vec3F, Vec3F> > featureVecs;
 
-            map<int,boost::tuple<float, float, float> > helixColors;
+            map<int, Vec3F> helixColors;
 
             int renderingType;
             float thinRibbThickness;
