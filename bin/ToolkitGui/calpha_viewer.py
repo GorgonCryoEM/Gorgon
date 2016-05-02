@@ -43,7 +43,7 @@ class CAlphaViewer(BaseViewer):
 #         self.renderer.setDisplayStyle(self.displayStyle)
         self.main_chain = Chain('', self.app)
         self.structPred = None
-        self.createUI()
+#         self.createUI()
 #         self.app.viewers["calpha"] = self;
         self.atomsVisible = True
         self.bondsVisible = True
@@ -354,7 +354,7 @@ class CAlphaViewer(BaseViewer):
 
     def createChildWindows(self):
         self.manualAtomPlacer = CAlphaAtomPlacerForm(self.app, self, self.main_chain, self.structPred, self)
-        self.chooseChainModel = CAlphaChooseChainModel(self.app, self)
+#         self.chooseChainModel = CAlphaChooseChainModel(self.app, self)
 #         self.flexibleFitter = CAlphaFlexibleFittingForm(self.app, self)
         
         def showDock():
@@ -419,15 +419,15 @@ class CAlphaViewer(BaseViewer):
                         atom = renderer.addAtom(atom)
                         mychain[i].addAtomObject(atom)
                                        
-        self.fileName = 'pseudoatoms.pdb'
+        self.fileName = QtCore.QString('pseudoatoms.pdb')
         fileNameTemp = self.fileName
         self.whichChainID = None
         filename = unicode(self.fileName)
         if filename.split('.')[-1].lower() == 'pdb':
             dlg = CAlphaChooseChainToLoadForm(unicode(self.fileName))
             if dlg.exec_():
-                self.whichChainID = dlg.whichChainID
-                if not self.fileName:
+                self.whichChainID = 'ALL'
+                if not self.fileName.isEmpty():
                     if(self.loaded):
                         self.unloadData()
                         
@@ -441,7 +441,7 @@ class CAlphaViewer(BaseViewer):
                         mychain = Chain.load(str(self.fileName), qparent=self.app, whichChainID = self.whichChainID)
                         setupChain(mychain)
         
-#                     if not self.loaded:
+    #                     if not self.loaded:
                     self.dirty = False
                     self.loaded = True
                     self.setAtomColorsAndVisibility(self.displayStyle)
@@ -449,6 +449,8 @@ class CAlphaViewer(BaseViewer):
                     self.emitModelLoaded()
                     self.emitViewerSetCenter()
                     self.modelChanged()
+        
+        print "self.renderer.getAtomCount(): ", self.renderer.getAtomCount()
     
     def unloadData(self):
         #overwriting the function in base viewer
