@@ -32,7 +32,7 @@ class SSEViewer(BaseViewer):
         self.sheetLoaded = False
         self.renderer = SSERenderer()
         self.correspondenceEngine = SSEEngine()
-        self.createUI()
+#         self.createUI()
         self.selectEnabled = True
         self.app = main
         self.model2Visible = True
@@ -57,11 +57,7 @@ class SSEViewer(BaseViewer):
         self.correspondences = []
     
     def createUI(self):
-        pass
-#         self.createActions()
-#         self.createMenus()
-#         self.createChildWindows()
-#         self.updateActionsAndMenus()
+        self.createChildWindows()
                   
     def createChildWindows(self):
         self.sseBuilder = VolumeSSEBuilderForm(self.app, self, self)
