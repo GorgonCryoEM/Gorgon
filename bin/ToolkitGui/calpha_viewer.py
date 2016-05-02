@@ -25,16 +25,17 @@ class CAlphaViewer(BaseViewer):
         super(CAlphaViewer, self).__init__(main, parent)
         self.shortTitle = "CAL"
         self.app = main
-#         self.app.themes.addDefaultRGB("C-Alpha:Atom", 170, 170, 0, 255)
-#         self.app.themes.addDefaultRGB("C-Alpha:Bond", 120, 120, 170, 255)
-#         self.app.themes.addDefaultRGB("C-Alpha:Helix", 0, 255, 0, 255)
-#         self.app.themes.addDefaultRGB("C-Alpha:Strand", 128, 255, 255, 255)
-#         self.app.themes.addDefaultRGB("C-Alpha:Loop", 255, 128, 0, 255)
-#         self.app.themes.addDefaultRGB("C-Alpha:Carbon", 200, 200, 200, 255)
-#         self.app.themes.addDefaultRGB("C-Alpha:Nitrogen", 0, 0, 255, 255)
-#         self.app.themes.addDefaultRGB("C-Alpha:Oxygen", 255, 0, 0, 255)
-#         self.app.themes.addDefaultRGB("C-Alpha:Sulphur", 255, 255, 0, 255)
-#         self.app.themes.addDefaultRGB("C-Alpha:BoundingBox", 255, 255, 255, 255)
+        self.colors = {}
+        self.colors["C-Alpha:Atom"       ] = QtGui.QColor( 170, 170, 0, 255)
+        self.colors["C-Alpha:Bond"       ] = QtGui.QColor( 120, 120, 170, 255)
+        self.colors["C-Alpha:Helix"      ] = QtGui.QColor( 0, 255, 0, 255)
+        self.colors["C-Alpha:Strand"     ] = QtGui.QColor( 128, 255, 255, 255)
+        self.colors["C-Alpha:Loop"       ] = QtGui.QColor( 255, 128, 0, 255)
+        self.colors["C-Alpha:Carbon"     ] = QtGui.QColor( 200, 200, 200, 255)
+        self.colors["C-Alpha:Nitrogen"   ] = QtGui.QColor( 0, 0, 255, 255)
+        self.colors["C-Alpha:Oxygen"     ] = QtGui.QColor( 255, 0, 0, 255)
+        self.colors["C-Alpha:Sulphur"    ] = QtGui.QColor( 255, 255, 0, 255)
+        self.colors["C-Alpha:BoundingBox"] = QtGui.QColor( 255, 255, 255, 255)
         self.isClosedMesh = False
         self.centerOnRMB = True
         self.selectEnabled = True
@@ -279,6 +280,78 @@ class CAlphaViewer(BaseViewer):
                         if atomName[0] == molecule[0]:
                             atom.setColor(color.redF(), color.greenF(), color.blueF(), color.alphaF())
                 
+    def setAtomColor(self, color):
+        self.app.themes.addColor(self.title + ":" + "Atom", color)
+        self.setAllAtomColor(color)
+        self.emitModelChanged()
+        
+    def setBondColor(self, color):
+        oldColor = self.getBondColor()
+        self.app.themes.addColor(self.title + ":" + "Bond", color)
+        self.repaintCamera2(oldColor, color)
+                
+    def setHelixColor(self, color):
+        oldColor = self.getHelixColor()
+        self.app.themes.addColor(self.title + ":" + "Helix", color)
+        self.repaintCamera2(oldColor, color)
+                
+    def setStrandColor(self, color):
+        oldColor = self.getStrandColor()
+        self.app.themes.addColor(self.title + ":" + "Strand", color)
+        self.repaintCamera2(oldColor, color)
+                
+    def setLoopColor(self, color):
+        oldColor = self.getLoopColor()
+        self.app.themes.addColor(self.title + ":" + "Loop", color)
+        self.repaintCamera2(oldColor, color)
+                
+    def setCarbonColor(self, color):
+        self.app.themes.addColor(self.title + ":" + "Carbon", color)
+        self.setSpecificAtomColor('C', color)
+        self.emitModelChanged()
+        
+    def setNitrogenColor(self, color):
+        self.app.themes.addColor(self.title + ":" + "Nitrogen", color)
+        self.setSpecificAtomColor('N', color)
+        self.emitModelChanged()
+        
+    def setOxygenColor(self, color):
+        self.app.themes.addColor(self.title + ":" + "Oxygen", color)
+        self.setSpecificAtomColor('O', color)
+        self.emitModelChanged()
+        
+    def setSulphurColor(self, color):
+        self.app.themes.addColor(self.title + ":" + "Sulphur", color)
+        self.setSpecificAtomColor('S', color)
+        self.emitModelChanged()
+        
+    def getAtomColor(self):
+        return self.colors[self.title + ":" + "Atom" ]
+        
+    def getBondColor(self):
+        return self.colors[self.title + ":" + "Bond" ]
+        
+    def getHelixColor(self):
+        return self.colors[self.title + ":" + "Helix" ]
+        
+    def getStrandColor(self):
+        return self.colors[self.title + ":" + "Strand" ]
+        
+    def getLoopColor(self):
+        return self.colors[self.title + ":" + "Loop" ]
+        
+    def getCarbonColor(self):
+        return self.colors[self.title + ":" + "Carbon" ]
+        
+    def getNitrogenColor(self):
+        return self.colors[self.title + ":" + "Nitrogen" ]
+        
+    def getOxygenColor(self):
+        return self.colors[self.title + ":" + "Oxygen" ]
+        
+    def getSulphurColor(self):
+        return self.colors[self.title + ":" + "Sulphur" ]
+            
     def setAtomVisibility(self, visible):
         self.atomsVisible = visible
         self.repaintCamera()
@@ -445,9 +518,9 @@ class CAlphaViewer(BaseViewer):
                     self.dirty = False
                     self.loaded = True
                     self.setAtomColorsAndVisibility(self.displayStyle)
-                    self.emitModelLoadedPreDraw()
-                    self.emitModelLoaded()
-                    self.emitViewerSetCenter()
+#                     self.emitModelLoadedPreDraw()
+#                     self.emitModelLoaded()
+#                     self.emitViewerSetCenter()
                     self.modelChanged()
         
         print "self.renderer.getAtomCount(): ", self.renderer.getAtomCount()
