@@ -154,23 +154,6 @@ class CAlphaViewer(BaseViewer):
                 sseData[1] = self.ribbonMouseMapping[2][hitStack[1]]
         return sseData
                    
-    # the following four methods for testing purposes only
-    def setHltR(self, col):
-        self.renderer.setHltRValue(col)
-        self.emitModelChanged()
-
-    def setHltG(self, col):
-        self.renderer.setHltGValue(col)
-        self.emitModelChanged()
-        
-    def setHltB(self, col):
-        self.renderer.setHltBValue(col)
-        self.emitModelChanged()
-        
-    def setHltA(self, col):
-        self.renderer.setHltAValue(col)
-        self.emitModelChanged()
-
     def setAtomColorsAndVisibility(self, displayStyle):
         if displayStyle == self.DisplayStyleBackbone:
             self.setAllAtomColor(self.getAtomColor())
@@ -649,15 +632,6 @@ This function loads a SEQ file and creates a StructurePrediction object.
         else:
             return False
     
-    def createMenus(self):
-        self.app.menus.addAction("file-open-calpha", self.app.actions.getAction("load_CAlpha"), "file-open")
-        self.app.menus.addAction('file-open-sequence', self.app.actions.getAction('load_sequence'), 'file-open')
-        self.app.menus.addAction("file-save-calpha", self.app.actions.getAction("save_CAlpha"), "file-save")
-        self.app.menus.addAction("file-export-calpha", self.app.actions.getAction("export_CAlpha"), "file-export")
-        self.app.menus.addAction("file-close-calpha", self.app.actions.getAction("unload_CAlpha"), "file-close")
-        self.app.menus.addMenu("actions-calpha", self.tr("C-&Alpha Atoms"), "actions")
-        self.app.menus.addAction("showSeqDock", self.app.actions.getAction("seqDock"), "actions-calpha")
-
     def clearSelection(self):
         BaseViewer.clearSelection(self)
         self.main_chain.setSelection([], None, None, None)
