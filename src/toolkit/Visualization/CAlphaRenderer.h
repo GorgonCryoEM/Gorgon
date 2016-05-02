@@ -163,7 +163,7 @@ namespace Visualization {
             //vector<int> selectedSecelIndices; //unsure if I can just keep track of secels as one structure or not
             vector<int> selectedStrandIndices;
             vector<int> selectedLoopIndices;
-            vector < boost::tuple<int, int> > corrs;
+            vector < pair<int, int> > corrs;
             vector<int> selectedSSEHelices;
             vector< boost::tuple<Vec3F, Vec3F> > featureVecs;
 

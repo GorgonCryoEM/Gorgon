@@ -147,10 +147,10 @@ namespace Visualization {
 
             //if(subSceneIndex == 0){
             for(unsigned int i = 0; i < corrs.size(); ++i){
-                int SSEIndex = get<1> (corrs[i]);
+                int SSEIndex = corrs[i].second;
                 for(unsigned int k = 0; k < selectedSSEHelices.size(); ++k){
                     if(selectedSSEHelices[k] == SSEIndex){
-                        PDBIndices.push_back( get<0>( corrs[i]) );
+                        PDBIndices.push_back(corrs[i].first);
                     }
                 }
             }
@@ -1311,7 +1311,7 @@ namespace Visualization {
         else
             corrs.clear();
         for(int i=0; i < flatCorrespondences.size(); i = i+2){
-            corrs.push_back(boost::tuple<int, int>(flatCorrespondences[i], flatCorrespondences[i+1]));
+            corrs.push_back(make_pair(flatCorrespondences[i], flatCorrespondences[i+1]));
         }
     }
 
