@@ -146,9 +146,9 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
         self.calphaViewer.renderer.colorSSEHunterAtoms()
         self.calphaViewer.dirty = False
         self.calphaViewer.loaded = True
-        self.calphaViewer.emitModelLoadedPreDraw()
-        self.calphaViewer.emitModelLoaded()
-        self.calphaViewer.emitViewerSetCenter()
+#         self.calphaViewer.emitModelLoadedPreDraw()
+        self.calphaViewer.modelChanged()
+#         self.calphaViewer.emitViewerSetCenter()
 #         self.connect(self.calphaViewer,  QtCore.SIGNAL("modelUnloaded()"), self.disableSavePseudoatoms)
         self.pushButtonSavePseudoatoms.setEnabled(True)
 #         self.bringToFront()
