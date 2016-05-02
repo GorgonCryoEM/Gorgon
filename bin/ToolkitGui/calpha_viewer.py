@@ -63,22 +63,7 @@ class CAlphaViewer(BaseViewer):
       
    # Overridden
     def initializeGLDisplayType(self):
-        glPushAttrib(GL_LIGHTING_BIT | GL_ENABLE_BIT)
-        if(self.isClosedMesh):
-            glEnable(GL_CULL_FACE)
-        else:
-            glDisable(GL_CULL_FACE)
-            
-        if(self.twoWayLighting):
-            glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
-        else:
-            glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
-            
-        #glDisable(GL_CULL_FACE)
-        glEnable(GL_LIGHTING)
-        
-        glEnable (GL_BLEND);
-        glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        super(CAlphaViewer, self).initializeGLDisplayType()
         
         glPolygonMode(GL_FRONT, GL_FILL)
         glPolygonMode(GL_BACK, GL_FILL)
