@@ -18,17 +18,17 @@ class MainWindowForm3(QtGui.QMainWindow):
         self.menubar = self.menuBar()
         self.docksMenu = self.menubar.addMenu('&Docks')
         
-        self.volume = VolumeViewer(self)
-        self.skeleton = SkeletonViewer(self)
+        self.volumeViewer = VolumeViewer(self)
+        self.skeletonViewer = SkeletonViewer(self)
         self.calphaViewer = CAlphaViewer(self)
         self.sseViewer    = SSEViewer(self)
         
-        self.scene = [self.volume, self.skeleton, self.calphaViewer, self.sseViewer]
+        self.scene = [self.volumeViewer, self.skeletonViewer, self.calphaViewer, self.sseViewer]
         
         self.mainCamera = Camera(self.scene, self)
         self.setCentralWidget(self.mainCamera)
         
-        self.form = VolumeSSEBuilderForm(self, self.volume, self.skeleton, self.args)
+        self.form = VolumeSSEBuilderForm(self, self.volumeViewer, self.skeletonViewer, self.args)
         self.form.show()
         
         self.setWindowTitle(self.tr("Gorgon Toolkit - v" + version))
@@ -36,8 +36,8 @@ class MainWindowForm3(QtGui.QMainWindow):
         self.setWindowIcon(QtGui.QIcon(pathname + '/gorgon.ico'))
         
     def load(self):
-        self.volume.load(self.args.volume)
-        self.skeleton.load(self.args.skeleton)
+        self.volumeViewer.load(self.args.volume)
+        self.skeletonViewer.load(self.args.skeleton)
         self.form.modelLoaded()
         
     def exitApplication(self):

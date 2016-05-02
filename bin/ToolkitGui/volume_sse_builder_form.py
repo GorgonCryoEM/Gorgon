@@ -13,8 +13,8 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
     def __init__(self, main, volume, skeleton, args, parent=None):
         QtGui.QDialog.__init__(self, main)
         self.app = main
-        self.volume = volume
-        self.skeleton = skeleton
+        self.volumeViewer = volume
+        self.skeletonViewer = skeleton
         self.args = args
         self.calphaViewer = self.app.calphaViewer
         
@@ -23,8 +23,8 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
         dock.setAllowedAreas(QtCore.Qt.AllDockWidgetAreas)
         self.app.addDockWidget(QtCore.Qt.LeftDockWidgetArea, dock)
 
-        self.connect(self.volume, QtCore.SIGNAL("modelLoaded()"), self.modelLoaded)
-        self.connect(self.volume, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)
+        self.connect(self.volumeViewer, QtCore.SIGNAL("modelLoaded()"), self.modelLoaded)
+        self.connect(self.volumeViewer, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)
 
         self.createUI()
         
@@ -44,10 +44,10 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
 #         self.connect(self.doubleSpinBoxCorrelation, QtCore.SIGNAL("valueChanged(double)"), self.updateTotalScoreSSEHunterAtoms)
 #         self.connect(self.doubleSpinBoxSkeleton, QtCore.SIGNAL("valueChanged(double)"), self.updateTotalScoreSSEHunterAtoms)
 #         self.connect(self.doubleSpinBoxGeometry, QtCore.SIGNAL("valueChanged(double)"), self.updateTotalScoreSSEHunterAtoms)
-        self.connect(self.app.volume, QtCore.SIGNAL("modelLoaded()"), self.enableDisableSSEHunter)
-        self.connect(self.app.skeleton, QtCore.SIGNAL("modelLoaded()"), self.enableDisableSSEHunter)
-        self.connect(self.app.volume, QtCore.SIGNAL("modelUnloaded()"), self.enableDisableSSEHunter)
-        self.connect(self.app.skeleton, QtCore.SIGNAL("modelUnloaded()"), self.enableDisableSSEHunter)
+        self.connect(self.app.volumeViewer, QtCore.SIGNAL("modelLoaded()"), self.enableDisableSSEHunter)
+        self.connect(self.app.skeletonViewer, QtCore.SIGNAL("modelLoaded()"), self.enableDisableSSEHunter)
+        self.connect(self.app.volumeViewer, QtCore.SIGNAL("modelUnloaded()"), self.enableDisableSSEHunter)
+        self.connect(self.app.skeletonViewer, QtCore.SIGNAL("modelUnloaded()"), self.enableDisableSSEHunter)
         
     def disableSavePseudoatoms(self):
         self.pushButtonSavePseudoatoms.setEnabled(False)
@@ -134,8 +134,8 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
 
         #self.calphaViewer.runSSEHunter( threshold, resolution, correlationWeight, skeletonWeight, geometryWeight )
 
-#         vol  = self.app.volume.renderer.getVolume()
-#         skel = self.app.skeleton.renderer.getMesh()
+#         vol  = self.app.volumeViewer.renderer.getVolume()
+#         skel = self.app.skeletonViewer.renderer.getMesh()
 #         sseh = SSEHunter(vol, skel, resolution, threshold)
         sseh = pySSEHunter(self.args.volume, self.args.skeleton, self.args.output, False)
         patoms = sseh.getScoredAtoms(correlationWeight, skeletonWeight, geometryWeight)
@@ -154,8 +154,8 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
 #         self.bringToFront()
 
     def enableDisableSSEHunter(self):
-        volumeViewer   = self.app.volume
-        skeletonViewer = self.app.skeleton
+        volumeViewer   = self.app.volumeViewer
+        skeletonViewer = self.app.skeletonViewer
 #         enabled = (volumeViewer.loaded and skeletonViewer.loaded)
         enabled = True
         self.labelThreshold.setEnabled(enabled)
