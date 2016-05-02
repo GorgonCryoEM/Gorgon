@@ -821,17 +821,17 @@ namespace Visualization {
     }
 
     void CAlphaRenderer::draw(int subSceneIndex, bool selectEnabled) {
-        switch(displayStyle) {
-            case CALPHA_DISPLAY_STYLE_BACKBONE: // Backbone only
+//        switch(displayStyle) {
+//            case CALPHA_DISPLAY_STYLE_BACKBONE: // Backbone only
                 drawBackboneModel(subSceneIndex, selectEnabled);
-                break;
-            case CALPHA_DISPLAY_STYLE_RIBBON: // Ribbon mode
+//                break;
+//            case CALPHA_DISPLAY_STYLE_RIBBON: // Ribbon mode
                 drawRibbonModel(subSceneIndex, selectEnabled);
-                break;
-            case CALPHA_DISPLAY_STYLE_SIDE_CHAIN: // Side chains
+//                break;
+//            case CALPHA_DISPLAY_STYLE_SIDE_CHAIN: // Side chains
                 drawSideChainModel(subSceneIndex, selectEnabled);
-                break;
-        }
+//                break;
+//        }
     }
 
     PDBAtom * CAlphaRenderer::getAtomFromHitStack(int subsceneIndex, bool forceTrue, int ix0, int ix1, int ix2, int ix3, int ix4) {
