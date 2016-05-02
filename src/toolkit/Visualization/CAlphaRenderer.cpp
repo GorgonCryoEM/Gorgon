@@ -891,7 +891,7 @@ namespace Visualization {
     }
 
     void CAlphaRenderer::loadSSEHunterFile(string fileName) {
-        Display::load(fileName);
+//        Display::load(fileName);
         atoms.clear();
         bonds.clear();
         atoms = PDBReader::ReadAtomPositions(fileName);

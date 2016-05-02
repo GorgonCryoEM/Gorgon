@@ -137,7 +137,8 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
 #         vol  = self.app.volumeViewer.renderer.getVolume()
 #         skel = self.app.skeletonViewer.renderer.getMesh()
 #         sseh = SSEHunter(vol, skel, resolution, threshold)
-#         self.calphaViewer.renderer.loadFile('pseudoatoms.pdb')
+#         patoms = self.calphaViewer.loadSSEHunterData('pseudoatoms.pdb')
+#         self.calphaViewer.loadData()
         sseh = pySSEHunter(self.args.volume, self.args.skeleton, self.args.output, False)
         patoms = sseh.getScoredAtoms(correlationWeight, skeletonWeight, geometryWeight)
         

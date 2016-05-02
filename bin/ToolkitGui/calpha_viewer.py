@@ -1,13 +1,13 @@
 from PyQt4 import QtGui, QtCore, QtOpenGL
 from libpytoolkit import CAlphaRenderer
 from Explorer.base_viewer import BaseViewer
-# from calpha_choose_chain_to_load_form import CAlphaChooseChainToLoadForm
+from .calpha_choose_chain_to_load_form import CAlphaChooseChainToLoadForm
 # from calpha_atom_placer_form import CAlphaAtomPlacerForm
 # from calpha_sequence_dock import CAlphaSequenceDock
 # from seq_model.Chain import Chain
 # from atom_visualization_form import AtomVisualizationForm
 # from correspondence.StructurePrediction import StructurePrediction
-# from calpha_choose_chain_model import CAlphaChooseChainModel
+# from .calpha_choose_chain_model import CAlphaChooseChainModel
 # from calpha_flexible_fitting_form import CAlphaFlexibleFittingForm
 
 from OpenGL.GL import *
@@ -100,6 +100,7 @@ class CAlphaViewer(BaseViewer):
             visibility = [self.atomsVisible, self.bondsVisible, self.bondsVisible and (not self.atomsVisible)]
         else:
             visibility = [False, False, False]
+        visibility = [True, True, True]
         return visibility
           
     # Overridden
@@ -526,9 +527,10 @@ class CAlphaViewer(BaseViewer):
         
         self.dirty = False
         self.loaded = True
-        self.emitModelLoadedPreDraw()
-        self.emitModelLoaded()
-        self.emitViewerSetCenter()
+#         self.emitModelLoadedPreDraw()
+#         self.emitModelLoaded()
+#         self.emitViewerSetCenter()
+        self.modelChanged()
         
     def runSSEHunter(self, threshold, resolution, correlationCoefficient, skeletonCoefficient, geometryCoefficient):
         if(self.loaded):
@@ -566,8 +568,7 @@ class CAlphaViewer(BaseViewer):
                         atom = renderer.addAtom(atom)
                         mychain[i].addAtomObject(atom)
                                        
-        self.fileName = QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Data"), "",
-                            self.tr('Atom Positions (*.pdb)\nFASTA (*.fas *.fa *.fasta)'))
+        self.fileName = 'pseudoatoms.pdb'
         fileNameTemp = self.fileName
         self.whichChainID = None
         filename = unicode(self.fileName)
@@ -575,7 +576,7 @@ class CAlphaViewer(BaseViewer):
             dlg = CAlphaChooseChainToLoadForm(unicode(self.fileName))
             if dlg.exec_():
                 self.whichChainID = dlg.whichChainID
-                if not self.fileName.isEmpty():
+                if not self.fileName:
                     if(self.loaded):
                         self.unloadData()
                         
@@ -589,13 +590,14 @@ class CAlphaViewer(BaseViewer):
                         mychain = Chain.load(str(self.fileName), qparent=self.app, whichChainID = self.whichChainID)
                         setupChain(mychain)
         
-                    if not self.loaded:
-                        self.dirty = False
-                        self.loaded = True
-                        self.setAtomColorsAndVisibility(self.displayStyle)
-                        self.emitModelLoadedPreDraw()
-                        self.emitModelLoaded()
-                        self.emitViewerSetCenter()
+#                     if not self.loaded:
+                    self.dirty = False
+                    self.loaded = True
+                    self.setAtomColorsAndVisibility(self.displayStyle)
+                    self.emitModelLoadedPreDraw()
+                    self.emitModelLoaded()
+                    self.emitViewerSetCenter()
+                    self.modelChanged()
     
     def unloadData(self):
         #overwriting the function in base viewer
