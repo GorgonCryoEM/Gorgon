@@ -313,9 +313,9 @@ namespace Visualization {
 
                     if(featureVecs.size() > 0){
 //                        OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
-                        drawSphere(featureVecs[i].get<0>(), 1.0);
+                        drawSphere(featureVecs[i].first, 1.0);
 //                        OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
-                        drawSphere(featureVecs[i].get<1>(), 1.0);
+                        drawSphere(featureVecs[i].second, 1.0);
                     }else{
 //                        OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
                         drawSphere(atoms[aHelices[i].atomHashes[0]].GetPosition(), 1.0);
@@ -1321,7 +1321,7 @@ namespace Visualization {
         else
             featureVecs.clear();
         for(int i=0; i < flatFeatureVecs.size(); i = i+2){
-            featureVecs.push_back(boost::tuple<Vec3F, Vec3F>(flatFeatureVecs[i], flatFeatureVecs[i+1]));
+            featureVecs.push_back(make_pair(flatFeatureVecs[i], flatFeatureVecs[i+1]));
         }
 
     }

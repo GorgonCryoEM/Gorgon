@@ -165,7 +165,7 @@ namespace Visualization {
             vector<int> selectedLoopIndices;
             vector < pair<int, int> > corrs;
             vector<int> selectedSSEHelices;
-            vector< boost::tuple<Vec3F, Vec3F> > featureVecs;
+            vector< pair<Vec3F, Vec3F> > featureVecs;
 
             map<int,boost::tuple<float, float, float> > helixColors;
 
