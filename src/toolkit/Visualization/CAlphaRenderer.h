@@ -22,13 +22,11 @@
 //#include <map>
 //#include <list>
 #include <MathTools/VectorMath.h>
-#include <boost/tuple/tuple.hpp>
 
 //using namespace std;
 //using namespace Protein_Morph;
 //using namespace GraphMatch;
 //using namespace SkeletonMaker;
-using namespace boost::tuples;
 
 namespace Visualization {
 
