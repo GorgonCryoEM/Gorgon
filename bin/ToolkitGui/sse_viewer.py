@@ -123,25 +123,6 @@ class SSEViewer(BaseViewer):
             self.dirty = False
             self.setCursor(QtCore.Qt.ArrowCursor)
 
-    def getSessionInfo(self, sessionManager):
-        info = BaseViewer.getSessionInfo(self, sessionManager)
-        info.extend(sessionManager.getRemarkLines(self.shortTitle, "HELIX_LOADED", self.helixLoaded))
-        info.extend(sessionManager.getRemarkLines(self.shortTitle, "HELIX_FILE", self.helixFileName))
-        info.extend(sessionManager.getRemarkLines(self.shortTitle, "SHEET_LOADED", self.sheetLoaded))
-        info.extend(sessionManager.getRemarkLines(self.shortTitle, "SHEET_FILE", self.sheetFileName))
-        return info
-                       
-    def loadSessionInfo(self, sessionManager, sessionProperties):
-        BaseViewer.loadSessionInfo(self, sessionManager, sessionProperties)
-        self.helixLoaded = sessionManager.getProperty(sessionProperties, self.shortTitle, "HELIX_LOADED")
-        if self.helixLoaded:
-            self.helixFileName = sessionManager.getProperty(sessionProperties, self.shortTitle, "HELIX_FILE")
-            self.loadHelixDataFromFile(self.helixFileName)
-        self.sheetLoaded = sessionManager.getProperty(sessionProperties, self.shortTitle, "SHEET_LOADED")
-        if self.sheetLoaded:
-            self.sheetFileName = sessionManager.getProperty(sessionProperties, self.shortTitle, "SHEET_FILE")
-            self.loadSheetDataFromFile(self.sheetFileName)
-
     def unloadData(self):
         self.loaded = False
         self.helixLoaded = False
@@ -158,55 +139,6 @@ class SSEViewer(BaseViewer):
             if self.correspondenceEngine.getSkeletonSSE(i).isSheet():
                 self.renderer.loadGraphSSE(i, self.correspondenceEngine.getSkeletonSSE(i), offsetx, offsety, offsetz, scalex, scaley, scalez)
 
-    def createActions(self):
-        openHelixAct = QtGui.QAction(self.tr("&Helix Annotations"), self)
-        openHelixAct.setShortcut(self.tr("Ctrl+H"))
-        openHelixAct.setStatusTip(self.tr("Load a helix file"))
-        self.connect(openHelixAct, QtCore.SIGNAL("triggered()"), self.loadHelixData)
-        self.app.actions.addAction("load_SSE_Helix", openHelixAct)
-
-        openSheetAct = QtGui.QAction(self.tr("&Sheet Annotations"), self)
-        openSheetAct.setShortcut(self.tr("Ctrl+S"))
-        openSheetAct.setStatusTip(self.tr("Load a sheet file"))
-        self.connect(openSheetAct, QtCore.SIGNAL("triggered()"), self.loadSheetData)
-        self.app.actions.addAction("load_SSE_Sheet", openSheetAct)
-
-        saveHelixAct = QtGui.QAction(self.tr("&Helix Annotations..."), self)
-        saveHelixAct.setStatusTip(self.tr("Save helix annotations"))
-        self.connect(saveHelixAct, QtCore.SIGNAL("triggered()"), self.saveHelixData)
-        self.app.actions.addAction("save_SSE_Helix", saveHelixAct)
-
-        saveSheetAct = QtGui.QAction(self.tr("&Sheet Annotations..."), self)
-        saveSheetAct.setStatusTip(self.tr("Save sheet annotations"))
-        self.connect(saveSheetAct, QtCore.SIGNAL("triggered()"), self.saveSheetData)
-        self.app.actions.addAction("save_SSE_Sheet", saveSheetAct)
-                       
-        closeAct = QtGui.QAction(self.tr("SSE Annotations"), self)
-        closeAct.setStatusTip(self.tr("Close the loaded secondary structure element file"))
-        self.connect(closeAct, QtCore.SIGNAL("triggered()"), self.unloadData)
-        self.app.actions.addAction("unload_SSE", closeAct)
-
-        fitAct = QtGui.QAction(self.tr("Fit Selected Helices"), self)
-        fitAct.setShortcut(self.tr("Ctrl+F"))
-        fitAct.setStatusTip(self.tr("Fit the selected Helices into the density"))
-        self.connect(fitAct, QtCore.SIGNAL("triggered()"), self.fitSelectedSSEs)
-        self.app.actions.addAction("fit_SSE_Helix", fitAct)
-                        
-    def createMenus(self):
-        self.app.menus.addAction("file-open-helix", self.app.actions.getAction("load_SSE_Helix"), "file-open")
-        self.app.menus.addAction("file-open-sheet", self.app.actions.getAction("load_SSE_Sheet"), "file-open")
-        self.app.menus.addAction("file-save-helix", self.app.actions.getAction("save_SSE_Helix"), "file-save");
-        self.app.menus.addAction("file-save-sheet", self.app.actions.getAction("save_SSE_Sheet"), "file-save");
-        self.app.menus.addAction("file-close-sse", self.app.actions.getAction("unload_SSE"), "file-close");
-        self.app.menus.addMenu("actions-sse", self.tr("Secondary Structure &Element"), "actions");
-        self.app.menus.addAction("actions-sse-fit-helix", self.app.actions.getAction("fit_SSE_Helix"), "actions-sse");
-                   
-    def updateActionsAndMenus(self):
-        self.app.actions.getAction("unload_SSE").setEnabled(self.loaded)
-        self.app.actions.getAction("save_SSE_Helix").setEnabled(self.helixLoaded)
-        self.app.actions.getAction("save_SSE_Sheet").setEnabled(self.sheetLoaded)
-        self.app.actions.getAction("fit_SSE_Helix").setEnabled(self.loaded and self.app.viewers["volume"].loaded)
-    
     def updateCurrentMatch(self, sseType, sseIndex):
         # When an element is selected in this viewer, if that item is a helix,
         # this sets self.currentMatch to the observed, predicted match for that
