@@ -5,6 +5,8 @@ from Explorer import Camera
 from Explorer.volume_viewer import VolumeViewer
 from Explorer.skeleton_viewer import SkeletonViewer
 from .volume_sse_builder_form import VolumeSSEBuilderForm
+from .calpha_viewer import CAlphaViewer
+from .sse_viewer import SSEViewer
 
 
 class MainWindowForm3(QtGui.QMainWindow):
@@ -18,7 +20,11 @@ class MainWindowForm3(QtGui.QMainWindow):
         
         self.volume = VolumeViewer(self)
         self.skeleton = SkeletonViewer(self)
-        self.scene = [self.volume, self.skeleton]
+        self.calphaViewer = CAlphaViewer(self)
+        self.sseViewer    = SSEViewer(self)
+        
+        self.scene = [self.volume, self.skeleton, self.calphaViewer, self.sseViewer]
+        
         self.mainCamera = Camera(self.scene, self)
         self.setCentralWidget(self.mainCamera)
         
