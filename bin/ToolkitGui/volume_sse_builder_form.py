@@ -17,6 +17,7 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
         self.skeletonViewer = skeleton
         self.args = args
         self.calphaViewer = self.app.calphaViewer
+        self.sseViewer = self.app.sseViewer
         
         dock = QtGui.QDockWidget("SSEBuilder", volume)
         dock.setWidget(self)
