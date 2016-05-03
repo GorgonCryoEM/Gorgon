@@ -15,12 +15,52 @@
 #include "Visualization/CAlphaRenderer.h"
 #include "Visualization/SSERenderer.h"
 #include "MathTools/LinearSolver.h"
+#include <boost/python/to_python_converter.hpp>
 
 using namespace SkeletonMaker;
 using namespace Protein_Morph;
 using namespace Visualization;
 
 using namespace boost::python;
+namespace python = boost::python;
+
+
+
+template <class T>
+struct vector_from_python {
+    vector_from_python() {
+        python::converter::registry::push_back(&convertible, &construct, python::type_id<vector<T> >());
+    }
+
+    static void* convertible(PyObject* obj_ptr) {
+        if (!(PyList_Check(obj_ptr) || PyTuple_Check(obj_ptr) || PyIter_Check(obj_ptr)  || PyRange_Check(obj_ptr))) {
+            return 0;
+        }
+        return obj_ptr;
+    }
+
+
+    static void construct(PyObject* obj_ptr, python::converter::rvalue_from_python_stage1_data* data) {
+        void* storage = ((python::converter::rvalue_from_python_storage<vector<T> >*)data)->storage.bytes;
+        new (storage) vector<T>();
+        data->convertible = storage;
+        vector<T>& result = *((vector<T>*) storage);
+        python::handle<> obj_iter(PyObject_GetIter(obj_ptr));
+        while(1) {
+            python::handle<> py_elem_hdl(python::allow_null(PyIter_Next(obj_iter.get())));
+            if (PyErr_Occurred()) {
+                python::throw_error_already_set();
+            }
+            if (!py_elem_hdl.get()) {
+                break;
+            }
+
+            python::object py_elem_obj(py_elem_hdl);
+            python::extract<T> elem_proxy(py_elem_obj);
+            result.push_back(elem_proxy());
+        }
+    }
+};
 
 BOOST_PYTHON_MODULE(@current_pylib@)
 {
@@ -51,8 +91,8 @@ BOOST_PYTHON_MODULE(@current_pylib@)
 //
 //    vector_from_python<unsigned long long>();
 
-//    vector_from_python<Vec3F>();
-//    vector_from_python< std::vector<Vec3F> >();
+    vector_from_python<Vec3F>();
+    vector_from_python< std::vector<Vec3F> >();
 //
 //
 ////  tuple3_to_python<Vec3I>();
