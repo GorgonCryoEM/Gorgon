@@ -14,6 +14,7 @@
 #include "Visualization/Shapes.h"
 #include "Visualization/CAlphaRenderer.h"
 #include "Visualization/SSERenderer.h"
+#include "MathTools/LinearSolver.h"
 
 using namespace SkeletonMaker;
 using namespace Protein_Morph;
@@ -618,4 +619,10 @@ BOOST_PYTHON_MODULE(@current_pylib@)
         .def("setMax", &MinMax::setMax)
     ;
 
+    class_<LinearSolver>("LinearSolver")
+        .def("findBestFitLine", &LinearSolver::FindBestFitLine)
+        .staticmethod("findBestFitLine")
+        .def("sumDistSqrd", LinearSolver::SumDistSqrd)
+        .staticmethod("sumDistSqrd")
+    ;
 }
