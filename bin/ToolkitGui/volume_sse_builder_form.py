@@ -121,6 +121,7 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
         auto_helix_builder = AutoHelixBuilderEngine(patoms, score_thresh, pt_line_dist_thresh)
         helix_list = auto_helix_builder.get_helix_list()
         print helix_list
+        print "helix_list szie: ", len(helix_list)
         for helix in helix_list:
             for atom in helix:
                 atom.setSelected(True)
