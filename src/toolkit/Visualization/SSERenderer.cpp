@@ -88,18 +88,18 @@ namespace Visualization {
             Point<double> pt;
             for(int i = 0; i < (int)helices.size(); i++) {
                 glPushAttrib(GL_LIGHTING_BIT);
-//                if(isObjectSpecificColoring) {
-//                    helices[i]->GetColor(colorR, colorG, colorB, colorA);
-//                    OpenGLUtils::SetColor(colorR, colorG, colorB, colorA);
+                if(isObjectSpecificColoring) {
+                    helices[i]->GetColor(colorR, colorG, colorB, colorA);
+                    OpenGLUtils::SetColor(colorR, colorG, colorB, colorA);
 
-//                }
+                }
 
-//                if(helices[i]->GetSelected()) {
+                if(helices[i]->GetSelected()) {
 
                     glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
                     glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
 
-//                }
+                }
                 glPushMatrix();
                 glMultMatrixd(helices[i]->GetWorldToObjectMatrix().mat);
                 glRotated(90, 1, 0, 0);
