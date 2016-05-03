@@ -33,6 +33,9 @@ BOOST_PYTHON_MODULE(@current_pylib@)
     class_<std::vector<unsigned long long> >("std::vector<unsigned long long>")
             .def(vector_indexing_suite<std::vector<unsigned long long> >() );
 
+    class_<std::vector<Vec3F> >("std::vector<GraphMatch::Vector3<float> >")
+            .def(vector_indexing_suite<std::vector<Vec3F> >() );
+
 //    class_<std::vector<int> >("std::vector<int>")
 //            .def(vector_indexing_suite<std::vector<int> >() );
 //    class_<std::vector<std::vector<int> > >("std::vector<std::vector<int> >")
