@@ -9,6 +9,7 @@
 #include "Shapes.h"
 #include "Foundation/StringUtils.h"
 #include "MathTools/LinearSolver.h"
+#include "Foundation/OpenGLUtils.h"
 
 namespace Visualization {
 
@@ -114,7 +115,7 @@ namespace Visualization {
                 glPopMatrix();
                 glPopAttrib();
 
-//                if(helices[i]->GetSelected()) {
+                if(helices[i]->GetSelected()) {
 
                     Vec3F corner1 = GetHelixCorner(i, 0);
                     Vec3F corner2 = GetHelixCorner(i, 1);
@@ -122,20 +123,20 @@ namespace Visualization {
                     if(helixFlips.size()  > 0){
                         if(!helixFlips[i]){
 
-//                            OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
+                            OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
                             drawSphere(corner2, 1.0);
-//                            OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
+                            OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
                             drawSphere(corner1, 1.0);
                             fflush(stdout);
                         }else{
-//                            OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
+                            OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
                             drawSphere(corner1, 1.0);
-//                            OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
+                            OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
                             drawSphere(corner2, 1.0);
                             fflush(stdout);
                         }
                     }
-//                }
+                }
 
 
                 for(unsigned int j = 0; j < SSEIndices.size(); ++j){
@@ -143,15 +144,15 @@ namespace Visualization {
                         Vec3F corner1 = GetHelixCorner(i, 0);
                         Vec3F corner2 = GetHelixCorner(i, 1);
                         if(!helixFlips[i]){
-//                            OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
+                            OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
                             drawSphere(corner2, 1.0);
-//                            OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
+                            OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
                             drawSphere(corner1, 1.0);
                             fflush(stdout);
                         }else{
-//                            OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
+                            OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
                             drawSphere(corner1, 1.0);
-//                            OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
+                            OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
                             drawSphere(corner2, 1.0);
                             fflush(stdout);
                         }
@@ -199,7 +200,7 @@ namespace Visualization {
 
             glPushAttrib(GL_LIGHTING_BIT);
             glDisable(GL_LIGHTING);
-//            OpenGLUtils::SetColor(0.0, 0.0, 0.0, 1.0);
+            OpenGLUtils::SetColor(0.0, 0.0, 0.0, 1.0);
             glPopAttrib();
             // end graph-type sheet rendering code
 
