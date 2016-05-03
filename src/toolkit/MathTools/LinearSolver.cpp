@@ -6,11 +6,12 @@
  */
 
 #include "LinearSolver.h"
+#include "Matlab.h"
 
 namespace MathTools {
 
-    void LinearSolver::FindBestFitLine(Vector3DFloat & pt1, Vector3DFloat & pt2, vector<Vector3DFloat> pts) {
-        Vector3DFloat avg = Vector3DFloat(0,0,0);
+    void LinearSolver::FindBestFitLine(Vec3F & pt1, Vec3F & pt2, vector<Vec3F> pts) {
+        Vec3F avg = Vec3F(0,0,0);
         for(unsigned int i = 0; i < pts.size(); i++) {
             avg += pts[i];
         }
@@ -19,7 +20,7 @@ namespace MathTools {
         }
 
         float sX2 = 0, sY2 = 0, sZ2 = 0, sXY = 0, sXZ = 0, sYZ = 0;
-        Vector3DFloat dp;
+        Vec3F dp;
         for(unsigned int i = 0; i < pts.size(); i++) {
             dp = pts[i] - avg;
             sX2 += (dp.X() * dp.X());
@@ -30,20 +31,20 @@ namespace MathTools {
             sYZ += (dp.Y() * dp.Z());
         }
 
-        EigenVectorsAndValues3D eigenInfo;
-        eigenInfo.structureTensor[0][0] = sX2;
-        eigenInfo.structureTensor[0][1] = sXY;
-        eigenInfo.structureTensor[0][2] = sXZ;
-        eigenInfo.structureTensor[1][0] = sXY;
-        eigenInfo.structureTensor[1][1] = sY2;
-        eigenInfo.structureTensor[1][2] = sYZ;
-        eigenInfo.structureTensor[2][0] = sXZ;
-        eigenInfo.structureTensor[2][1] = sYZ;
-        eigenInfo.structureTensor[2][2] = sZ2;
-        MatlabWrapper wrapper;
+        Eigen3D eigenInfo;
+        eigenInfo.tensor[0][0] = sX2;
+        eigenInfo.tensor[0][1] = sXY;
+        eigenInfo.tensor[0][2] = sXZ;
+        eigenInfo.tensor[1][0] = sXY;
+        eigenInfo.tensor[1][1] = sY2;
+        eigenInfo.tensor[1][2] = sYZ;
+        eigenInfo.tensor[2][0] = sXZ;
+        eigenInfo.tensor[2][1] = sYZ;
+        eigenInfo.tensor[2][2] = sZ2;
+        Matlab wrapper;
         wrapper.EigenAnalysis(eigenInfo);
 
-        Vector3DFloat n = Vector3DFloat(eigenInfo.eigenVectors[0][0], eigenInfo.eigenVectors[0][1], eigenInfo.eigenVectors[0][2]);
+        Vec3F n = Vec3F(eigenInfo.vecs[0][0], eigenInfo.vecs[0][1], eigenInfo.vecs[0][2]);
 
         float maxT = MIN_FLOAT;
         float minT = MAX_FLOAT;
@@ -63,10 +64,10 @@ namespace MathTools {
 
     }
 
-    double LinearSolver::SumDistSqrd(Vector3DFloat pt1, Vector3DFloat pt2, vector<Vector3DFloat> pts) {
-        Vector3DFloat lineDirection = pt2 - pt1;
-        lineDirection = lineDirection * (1/lineDirection.Length());
-        Vector3DFloat vect;
+    double LinearSolver::SumDistSqrd(Vec3F pt1, Vec3F pt2, vector<Vec3F> pts) {
+        Vec3F lineDirection = pt2 - pt1;
+        lineDirection = lineDirection * (1/lineDirection.length());
+        Vec3F vect;
         double totalDistSqrd = 0;
         for (unsigned int i=0; i < pts.size(); i++) {
             vect = pts[i] - pt1;
@@ -77,14 +78,14 @@ namespace MathTools {
     }
 
 
-    MatrixFloat LinearSolver::FindRotationTranslation(vector<Vector3DFloat> l1, vector<Vector3DFloat> l2) {
+    MatrixFloat LinearSolver::FindRotationTranslation(vector<Vec3F> l1, vector<Vec3F> l2) {
         if(l1.size() != l2.size()) {
             printf("Error! Cannot find rotation and translation for point lists with different sizes\n");
             exit(0);
         }
 
-        Vector3DFloat c1 = Vector3DFloat(0,0,0);
-        Vector3DFloat c2 = Vector3DFloat(0,0,0);
+        Vec3F c1 = Vec3F(0,0,0);
+        Vec3F c2 = Vec3F(0,0,0);
 
         unsigned int n = l1.size();
 
@@ -98,7 +99,7 @@ namespace MathTools {
         MatrixFloat m1 = MatrixFloat(n, 3);
         MatrixFloat m2 = MatrixFloat(n, 3);
 
-        Vector3DFloat v1, v2;
+        Vec3F v1, v2;
         for(unsigned int i = 0; i < n; i++) {
             v1 = l1[i] - c1;
             m1.SetValue(v1.X(), i, 0);
@@ -132,9 +133,9 @@ namespace MathTools {
         MatrixFloat t2 = MatrixFloat::Identity(4);
         MatrixFloat t3 = MatrixFloat::Identity(4);
         for(unsigned int i = 0; i < 3; i++) {
-            t1.SetValue(-c1.values[i], i, 3);
-            t2.SetValue(c1.values[i], i, 3);
-            t3.SetValue(c2.values[i] - c1.values[i], i, 3);
+            t1.SetValue(-c1[i], i, 3);
+            t2.SetValue( c1[i], i, 3);
+            t3.SetValue( c2[i] - c1[i], i, 3);
         }
 
         MatrixFloat transform = t3 * t2 * rot4 * t1;
