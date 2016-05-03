@@ -47,6 +47,12 @@ namespace Visualization {
         helices.push_back(newHelix);
     }
 
+    void SSERenderer::FinalizeHelix() {
+        Vec3F p1, p2;
+        LinearSolver::FindBestFitLine(p1, p2, tempSSEPoints);
+        AddHelix(p1, p2);
+    }
+
     void SSERenderer::StartNewSSE() {
         tempSSEPoints.clear();
     }
