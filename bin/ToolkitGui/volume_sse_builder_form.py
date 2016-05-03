@@ -34,6 +34,8 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
         self.setupUi(self)
         
         self.connect(self.pushButtonBrowseAtomScore, QtCore.SIGNAL("clicked (bool)"), self.browseAtomScoreFile)
+        self.connect(self.pushButtonSelectionToHelix, QtCore.SIGNAL("clicked (bool)"), self.selectionToHelix)
+        self.connect(self.pushButtonSelectionToSheet, QtCore.SIGNAL("clicked (bool)"), self.selectionToSheet)
         self.connect(self.pushButtonRemoveSSE, QtCore.SIGNAL("clicked (bool)"), self.removeSSE)
         self.connect(self.pushButtonSSEHunter, QtCore.SIGNAL("clicked (bool)"), self.runSSEHunter)
         self.connect(self.pushButtonLoadVolume, QtCore.SIGNAL("clicked (bool)"), self.loadVolume)
@@ -41,9 +43,9 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
         self.connect(self.pushButtonLoadSkeleton, QtCore.SIGNAL("clicked (bool)"), self.loadSkeleton)
         self.connect(self.pushButtonAddHelices, QtCore.SIGNAL("clicked (bool)"), self.autoBuildHelices)
         self.connect(self.pushButtonRemoveHelices, QtCore.SIGNAL("clicked (bool)"), self.removeHelices)
-#         self.connect(self.doubleSpinBoxCorrelation, QtCore.SIGNAL("valueChanged(double)"), self.updateTotalScoreSSEHunterAtoms)
-#         self.connect(self.doubleSpinBoxSkeleton, QtCore.SIGNAL("valueChanged(double)"), self.updateTotalScoreSSEHunterAtoms)
-#         self.connect(self.doubleSpinBoxGeometry, QtCore.SIGNAL("valueChanged(double)"), self.updateTotalScoreSSEHunterAtoms)
+        self.connect(self.doubleSpinBoxCorrelation, QtCore.SIGNAL("valueChanged(double)"), self.updateTotalScoreSSEHunterAtoms)
+        self.connect(self.doubleSpinBoxSkeleton, QtCore.SIGNAL("valueChanged(double)"), self.updateTotalScoreSSEHunterAtoms)
+        self.connect(self.doubleSpinBoxGeometry, QtCore.SIGNAL("valueChanged(double)"), self.updateTotalScoreSSEHunterAtoms)
         self.connect(self.app.volumeViewer, QtCore.SIGNAL("modelLoaded()"), self.enableDisableSSEHunter)
         self.connect(self.app.skeletonViewer, QtCore.SIGNAL("modelLoaded()"), self.enableDisableSSEHunter)
         self.connect(self.app.volumeViewer, QtCore.SIGNAL("modelUnloaded()"), self.enableDisableSSEHunter)
@@ -154,7 +156,79 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
 #         self.connect(self.calphaViewer,  QtCore.SIGNAL("modelUnloaded()"), self.disableSavePseudoatoms)
         self.pushButtonSavePseudoatoms.setEnabled(True)
 #         self.bringToFront()
+        
+    def updateTotalScoreSSEHunterAtoms(self):
+        self.calphaViewer.updateTotalScoreSSEHunterAtoms( self.doubleSpinBoxCorrelation.value(), self.doubleSpinBoxSkeleton.value(),
+            self.doubleSpinBoxGeometry.value() )
+        
+    def atomSelectionChanged(self, selection):
+        self.tableWidgetSelection.clearContents()
+        self.calphaViewer = self.app.viewers["calpha"]
+        atomCnt = self.calphaViewer.renderer.selectionAtomCount()
+        self.tableWidgetSelection.setRowCount(atomCnt)
+        
+        for i in range(atomCnt):
+            atom = self.calphaViewer.renderer.getSelectedAtom(i)
+            self.tableWidgetSelection.setItem(i, 0, QtGui.QTableWidgetItem(str(atom.getResSeq())))
+            self.tableWidgetSelection.setItem(i, 1, QtGui.QTableWidgetItem(str(atom.getTempFactor())))
 
+    def getHelixEnds(self, atoms):
+        distance = 0
+        ends = []
+        for pt1 in atoms:
+            pos1 = pt1.getPosition()
+            for pt2 in atoms:
+                pos2 = pt2.getPosition()
+                atomDist = (pos2 - pos1).length()
+                if(atomDist > distance):
+                    distance = atomDist
+                    ends = [pos1, pos2]
+        return ends
+                
+    def selectionToHelix(self, result):
+        self.pushAtomsToEngine()
+            
+        self.sseViewer.renderer.finalizeHelix()
+        
+        if(self.sseViewer.loaded):
+            self.sseViewer.helixLoaded = True
+            self.sseViewer.dirty = True
+            self.sseViewer.emitModelChanged()
+        else:
+            self.sseViewer.loaded = True
+            self.sseViewer.helixLoaded = True
+            self.sseViewer.dirty = True
+            self.sseViewer.emitModelLoadedPreDraw()
+            self.sseViewer.emitModelLoaded()
+        self.bringToFront()
+    
+    def pushAtomsToEngine(self):
+        atomCnt = self.calphaViewer.renderer.selectionAtomCount()
+        
+        self.sseViewer.renderer.startNewSSE();
+        
+        for i in range(atomCnt):
+            atom = self.calphaViewer.renderer.getSelectedAtom(i)
+            position = atom.getPosition()
+            self.sseViewer.renderer.addSSEPoint(position)
+        
+    def selectionToSheet(self, result):
+        self.pushAtomsToEngine()
+            
+        self.sseViewer.renderer.finalizeSheet()
+        
+        if(self.sseViewer.loaded):
+            self.sseViewer.sheetLoaded = True
+            self.sseViewer.dirty = True
+            self.sseViewer.emitModelChanged()
+        else:
+            self.sseViewer.loaded = True
+            self.sseViewer.sheetLoaded = True
+            self.sseViewer.dirty = True
+            self.sseViewer.emitModelLoadedPreDraw()
+            self.sseViewer.emitModelLoaded()
+        self.bringToFront()
+        
     def enableDisableSSEHunter(self):
         volumeViewer   = self.app.volumeViewer
         skeletonViewer = self.app.skeletonViewer
