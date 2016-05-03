@@ -1,6 +1,6 @@
 from math import *
 # from libpyGORGON import PDBAtom, Vector3DFloat, LinearSolver
-from libpytoolkit import PDBAtom #, Vec3F
+from libpytoolkit import PDBAtom, LinearSolver, Vec3F
 from Explorer import Vec3
 
 
