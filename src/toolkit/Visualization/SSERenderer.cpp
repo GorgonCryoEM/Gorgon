@@ -8,6 +8,7 @@
 #include "SSERenderer.h"
 #include "Shapes.h"
 #include "Foundation/StringUtils.h"
+#include "MathTools/LinearSolver.h"
 
 namespace Visualization {
 
