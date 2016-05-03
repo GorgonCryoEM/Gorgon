@@ -1,6 +1,7 @@
 from math import *
 # from libpyGORGON import PDBAtom, Vector3DFloat, LinearSolver
-from libpytoolkit import PDBAtom, Vec3F
+from libpytoolkit import PDBAtom #, Vec3F
+from Explorer import Vec3
 
 
 class AutoHelixBuilderEngine:
@@ -116,8 +117,8 @@ class AutoHelixBuilderEngine:
         return atoms_in_cell
 
     def is_linear(self, atom_list):
-        start_pt = Vector3DFloat(0,0,0)
-        end_pt = Vector3DFloat(0,0,0)
+        start_pt = Vec3(0,0,0)
+        end_pt = Vec3(0,0,0)
         positions = [atom.getPosition() for atom in atom_list]
         LinearSolver.findBestFitLine(start_pt, end_pt, positions)
         avg_ortho_distance = sqrt( LinearSolver.sumDistSqrd(start_pt, end_pt, positions) ) / len(positions)
