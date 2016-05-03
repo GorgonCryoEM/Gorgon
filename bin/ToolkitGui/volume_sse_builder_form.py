@@ -74,11 +74,11 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
 
     def removeHelices(self):
         self.viewer.renderer.removeHelices()
-        self.viewer.emitModelChanged()
+        self.viewer.modelChanged()
         
     def removeSheets(self):
         self.viewer.renderer.removeSheets()
-        self.viewer.emitModelChanged()
+        self.viewer.modelChanged()
         
     def removeSSE(self, temp):
         if(QtGui.QMessageBox.question(self, "Remove Selected SSEs?", "This will remove the selected SSEs. Are you sure?", "Yes", "Cancel") == 0):
@@ -194,14 +194,13 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
         if(self.sseViewer.loaded):
             self.sseViewer.helixLoaded = True
             self.sseViewer.dirty = True
-            self.sseViewer.emitModelChanged()
+            self.sseViewer.modelChanged()
         else:
             self.sseViewer.loaded = True
             self.sseViewer.helixLoaded = True
             self.sseViewer.dirty = True
-            self.sseViewer.emitModelLoadedPreDraw()
-            self.sseViewer.emitModelLoaded()
-        self.bringToFront()
+            self.sseViewer.modelChanged()
+#         self.bringToFront()
     
     def pushAtomsToEngine(self):
         atomCnt = self.calphaViewer.renderer.selectionAtomCount()
@@ -221,7 +220,7 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
         if(self.sseViewer.loaded):
             self.sseViewer.sheetLoaded = True
             self.sseViewer.dirty = True
-            self.sseViewer.emitModelChanged()
+            self.sseViewer.modelChanged()
         else:
             self.sseViewer.loaded = True
             self.sseViewer.sheetLoaded = True
