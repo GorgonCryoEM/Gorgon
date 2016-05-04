@@ -4,15 +4,15 @@ import sys, os
 from Explorer import Camera
 from Explorer.volume_viewer import VolumeViewer
 from Explorer.skeleton_viewer import SkeletonViewer
-from .volume_sse_builder_form import VolumeSSEBuilderForm
+from .sse_helix_correspondence_finder_form import SSEHelixCorrespondenceFinderForm
 from .calpha_viewer import CAlphaViewer
 from .sse_viewer import SSEViewer
 
 
-class MainWindowForm3(QtGui.QMainWindow):
+class MainWindowForm4(QtGui.QMainWindow):
 
     def __init__(self, version, args):
-        super(MainWindowForm3, self).__init__()
+        super(MainWindowForm4, self).__init__()
         
         self.args = args
         self.menubar = self.menuBar()
@@ -28,7 +28,7 @@ class MainWindowForm3(QtGui.QMainWindow):
         self.mainCamera = Camera(self.scene, self)
         self.setCentralWidget(self.mainCamera)
         
-        self.form = VolumeSSEBuilderForm(self, self.volumeViewer, self.skeletonViewer, self.args)
+        self.form = SSEHelixCorrespondenceFinderForm(self)
         self.form.show()
         
         self.setWindowTitle(self.tr("Gorgon Toolkit - v" + version))
