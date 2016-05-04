@@ -18,12 +18,12 @@ class MainWindowForm4(QtGui.QMainWindow):
         self.menubar = self.menuBar()
         self.docksMenu = self.menubar.addMenu('&Docks')
         
-#         self.volumeViewer = VolumeViewer(self)
+        self.volumeViewer = VolumeViewer(self)
         self.skeletonViewer = SkeletonViewer(self)
         self.calphaViewer = CAlphaViewer(self)
         self.sseViewer    = SSEViewer(self)
         
-        self.scene = [self.skeletonViewer, self.calphaViewer, self.sseViewer]
+        self.scene = [self.volumeViewer, self.skeletonViewer, self.calphaViewer, self.sseViewer]
         
         self.mainCamera = Camera(self.scene, self)
         self.setCentralWidget(self.mainCamera)
@@ -36,6 +36,7 @@ class MainWindowForm4(QtGui.QMainWindow):
         self.setWindowIcon(QtGui.QIcon(pathname + '/gorgon.ico'))
         
     def load(self):
+        self.volumeViewer.load(self.args.volume)
         self.skeletonViewer.load(self.args.skeleton)
         self.form.viewer.sequenceFileName = QtCore.QString('groel-segment.seq')
         self.form.viewer.helixFileName    = QtCore.QString('helices-densityMap.wrl')
