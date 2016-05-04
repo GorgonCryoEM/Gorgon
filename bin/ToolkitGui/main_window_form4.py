@@ -45,6 +45,7 @@ class MainWindowForm4(QtGui.QMainWindow):
         self.form.ui.lineEditHelixLocationFile.setText(self.form.viewer.helixFileName)
 #         self.form.lineEditSheetLocationFile.setText()
         self.form.checkOk()
+        self.form.accept()
 
 #         self.form.viewer.sheetFileName    = QtCore.QString('groel-segment.seq')
 #         self.volumeViewer.load(self.args.volume)
