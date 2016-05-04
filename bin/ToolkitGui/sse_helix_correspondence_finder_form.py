@@ -217,8 +217,6 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
     
     def loadWidget(self):
         BaseDockWidget.loadWidget(self)
-        if(self.app.actions.getAction("perform_SSEFindHelixCorrespondences").isChecked()):
-            self.loadDefaults()
             
     def dockVisibilityChanged(self, visible):
         BaseDockWidget.dockVisibilityChanged(self, visible)
@@ -829,7 +827,6 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
                 
     def reject(self):
         self.executed = False
-        self.app.actions.getAction("perform_SSEFindHelixCorrespondences").trigger()
             
     def getIndexedSheetColor(self, index, size):
         """returns a color for sheet 'index' out of 'size' sheets. colors will be orange or red."""
