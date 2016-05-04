@@ -87,6 +87,8 @@ namespace Visualization {
             }
 
             Point<double> pt;
+            cout<<"helices.size(): "<<helices.size()<<endl;
+
             for(int i = 0; i < (int)helices.size(); i++) {
                 glPushAttrib(GL_LIGHTING_BIT);
                 if(helices[i]->isObjectSpecificColoring) {
@@ -115,6 +117,7 @@ namespace Visualization {
                 glPopMatrix();
                 glPopAttrib();
 
+                cout<<"helices["<<i<<"]->GetSelected(): "<<helices[i]->GetSelected()<<endl;
                 if(helices[i]->GetSelected()) {
 
                     Vec3F corner1 = GetHelixCorner(i, 0);
