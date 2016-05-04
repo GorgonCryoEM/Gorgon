@@ -1020,8 +1020,8 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
                 if(not notMissing.has_key(i)):
                     self.viewer.renderer.setHelixColor(i, 0.5, 0.5, 0.5, 1.0)
                 
-        self.viewer.correspondenceEngine.setVisibleCorrespondence(correspondenceIndex)
-        self.viewer.correspondenceLibrary.setCurrentCorrespondenceIndex(correspondenceIndex)
+#         self.viewer.correspondenceEngine.setVisibleCorrespondence(correspondenceIndex)
+#         self.viewer.correspondenceLibrary.setCurrentCorrespondenceIndex(correspondenceIndex)
         self.viewer.modelChanged()
         self.loadingCorrespondance = False
         
