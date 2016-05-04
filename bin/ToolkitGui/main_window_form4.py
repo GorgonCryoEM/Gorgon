@@ -36,9 +36,19 @@ class MainWindowForm4(QtGui.QMainWindow):
         self.setWindowIcon(QtGui.QIcon(pathname + '/gorgon.ico'))
         
     def load(self):
-        self.volumeViewer.load(self.args.volume)
         self.skeletonViewer.load(self.args.skeleton)
-        self.form.modelLoaded()
+        self.form.viewer.sequenceFileName = QtCore.QString('groel-segment.seq')
+        self.form.viewer.helixFileName    = QtCore.QString('helices-densityMap.wrl')
+        
+        self.form.ui.lineEditSkeletonFile.setText(self.args.skeleton)
+        self.form.ui.lineEditSequenceFile.setText(self.form.viewer.sequenceFileName)
+        self.form.ui.lineEditHelixLocationFile.setText(self.form.viewer.helixFileName)
+#         self.form.lineEditSheetLocationFile.setText()
+        self.form.checkOk()
+
+#         self.form.viewer.sheetFileName    = QtCore.QString('groel-segment.seq')
+#         self.volumeViewer.load(self.args.volume)
+#         self.form.modelLoaded()
         
     def exitApplication(self):
         QtGui.qApp.closeAllWindows()
