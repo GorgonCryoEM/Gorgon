@@ -52,6 +52,7 @@ namespace GraphMatch {
         void GetColor(float & r, float & g, float & b, float & a);
         void SetSelected(bool selected);
 
+        virtual void setObjectSpecificColoring(bool objectSpecific);
 
         Vec3D GetWorldCoordinates(Vec3D point);
         Point3Pair GetCornerCell(int node);
@@ -72,6 +73,7 @@ namespace GraphMatch {
         vector<Polygon> polygons;
         Vec3F internalToRealScale;
         Vec3F internalToRealOrigin;
+        bool isObjectSpecificColoring;
 
     private:
         Matrix4 worldToObject;
@@ -100,6 +102,7 @@ namespace GraphMatch {
         colorA = 1.0f;
         selected = false;
 
+        isObjectSpecificColoring = false;
     }
 
     inline bool Shape::GetSelected() {
@@ -121,6 +124,10 @@ namespace GraphMatch {
         } else {
             return IsInsidePolygon(newPoint);
         }
+    }
+
+    inline void Shape::setObjectSpecificColoring(bool objectSpecific) {
+        isObjectSpecificColoring = objectSpecific;
     }
 
     inline bool Shape::IsInsideShape(Vec3F p) {

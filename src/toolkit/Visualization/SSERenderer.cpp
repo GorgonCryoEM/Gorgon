@@ -89,7 +89,7 @@ namespace Visualization {
             Point<double> pt;
             for(int i = 0; i < (int)helices.size(); i++) {
                 glPushAttrib(GL_LIGHTING_BIT);
-                if(isObjectSpecificColoring) {
+                if(helices[i]->isObjectSpecificColoring) {
                     helices[i]->GetColor(colorR, colorG, colorB, colorA);
                     OpenGLUtils::SetColor(colorR, colorG, colorB, colorA);
 
