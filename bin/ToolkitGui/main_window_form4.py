@@ -18,12 +18,12 @@ class MainWindowForm4(QtGui.QMainWindow):
         self.menubar = self.menuBar()
         self.docksMenu = self.menubar.addMenu('&Docks')
         
-        self.volumeViewer = VolumeViewer(self)
+#         self.volumeViewer = VolumeViewer(self)
         self.skeletonViewer = SkeletonViewer(self)
         self.calphaViewer = CAlphaViewer(self)
         self.sseViewer    = SSEViewer(self)
         
-        self.scene = [self.volumeViewer, self.skeletonViewer, self.calphaViewer, self.sseViewer]
+        self.scene = [self.skeletonViewer, self.calphaViewer, self.sseViewer]
         
         self.mainCamera = Camera(self.scene, self)
         self.setCentralWidget(self.mainCamera)
