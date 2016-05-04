@@ -35,7 +35,6 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
         self.colors["CorrespondenceFinder:BackboneTrace"] = QtGui.QColor(255, 255, 255, 255)
         self.viewer = self.app.sseViewer
         self.createUI()
-        self.createActions()
         self.loadingCorrespondance = False
         self.userConstraints = {}
         self.constraintActions = {}
@@ -277,10 +276,6 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
         if(not self.viewer.loaded) and self.app.actions.getAction("perform_SSEFindHelixCorrespondences").isChecked():
             self.app.actions.getAction("perform_SSEFindHelixCorrespondences").trigger()
         
-    def createActions(self):
-        self.corrAct = self.displayAct
-        self.connect(self.displayAct, QtCore.SIGNAL("toggled (bool)"), self.visibilityChanged)
-    
     def visibilityChanged(self, visible):
         self.viewer.renderer.setObjectSpecificColoring(visible)
         if(not visible):
