@@ -977,14 +977,14 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
                                                                    "\n   (" + str(int(matchPercentage)) + "%)"  )
                     cellItemObserved.setBackgroundColor(color)
                     self.ui.tableWidgetCorrespondenceList.setItem(sseRow, 1, cellItemObserved)
-                    if match.observed.sseType == 'helix':
-                        # color is stored in two places: the renderer and the correspondence engine. update both.
-                        self.viewer.renderer.setHelixColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
-                        self.viewer.correspondenceEngine.setSSEColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
-
-                    if match.observed.sseType == 'sheet':
-                        self.viewer.renderer.setSSEColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
-                        self.viewer.correspondenceEngine.setSSEColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
+#                     if match.observed.sseType == 'helix':
+#                         # color is stored in two places: the renderer and the correspondence engine. update both.
+#                         self.viewer.renderer.setHelixColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
+#                         self.viewer.correspondenceEngine.setSSEColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
+#
+#                     if match.observed.sseType == 'sheet':
+#                         self.viewer.renderer.setSSEColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
+#                         self.viewer.correspondenceEngine.setSSEColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
 
                     notMissing[match.observed.label] = True
             
@@ -1016,9 +1016,9 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
             self.ui.tableWidgetCorrespondenceList.setVerticalHeaderLabels(rowLabels)
             
             observedHelices = self.viewer.correspondenceLibrary.structureObservation.helixDict
-            for i in range(len(observedHelices)):
-                if(not notMissing.has_key(i)):
-                    self.viewer.renderer.setHelixColor(i, 0.5, 0.5, 0.5, 1.0)
+#             for i in range(len(observedHelices)):
+#                 if(not notMissing.has_key(i)):
+#                     self.viewer.renderer.setHelixColor(i, 0.5, 0.5, 0.5, 1.0)
                 
 #         self.viewer.correspondenceEngine.setVisibleCorrespondence(correspondenceIndex)
 #         self.viewer.correspondenceLibrary.setCurrentCorrespondenceIndex(correspondenceIndex)
