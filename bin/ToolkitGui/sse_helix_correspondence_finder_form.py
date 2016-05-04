@@ -269,10 +269,6 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
     def missingSheetChanged(self, checked):
         """Called when the missing helices checkbox is checked."""
         self.ui.spinBoxMissingSheetCount.setEnabled(checked)
-
-    def modelChanged(self):
-        if(not self.viewer.loaded) and self.app.actions.getAction("perform_SSEFindHelixCorrespondences").isChecked():
-            self.app.actions.getAction("perform_SSEFindHelixCorrespondences").trigger()
         
     def visibilityChanged(self, visible):
         self.viewer.renderer.setObjectSpecificColoring(visible)
