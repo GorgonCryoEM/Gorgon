@@ -222,12 +222,12 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
             
     def dockVisibilityChanged(self, visible):
         BaseDockWidget.dockVisibilityChanged(self, visible)
-        self.app.skeletonViewer.emitModelChanged()
+        self.app.skeletonViewer.modelChanged()
 
     def fullGraphVisibilityChanged(self, visible):
         """Called when the visibility checkbox is checked."""
         # to render again
-        self.viewer.emitModelChanged()
+        self.viewer.modelChanged()
     
     def skeletonVisibilityChanged(self, visible):
         """Called when the show skeleton checkbox is checked."""
@@ -235,26 +235,26 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
         self.app.skeletonViewer.visualizationOptions.ui.checkBoxModel2Visible.setChecked(visible)
         self.app.skeletonViewer.visualizationOptions.ui.checkBoxModel3Visible.setChecked(visible)
         # to render again
-        self.viewer.emitModelChanged()
+        self.viewer.modelChanged()
             
     def sheetVisibilityChanged(self, visible):
         """Called when the show sheet checkbox is checked."""
         #self.visualizationOptions.ui.checkBoxModel2Visible.setChecked(visible)
         self.app.sseViewer.visualizationOptions.ui.checkBoxModel2Visible.setChecked(visible)
         # to render again
-        self.viewer.emitModelChanged()
+        self.viewer.modelChanged()
 
     def graphSheetVisibilityChanged(self, visible):
         """Called when the show graph sheet checkbox is checked."""
         self.app.sseViewer.visualizationOptions.ui.checkBoxModel3Visible.setChecked(visible)
         # to render again
-        self.viewer.emitModelChanged()
+        self.viewer.modelChanged()
 
     def helixVisibilityChanged(self, visible):
         """Called when the show helix checkbox is checked."""
         self.app.sseViewer.visualizationOptions.ui.checkBoxModelVisible.setChecked(visible)
         # to render again
-        self.viewer.emitModelChanged()
+        self.viewer.modelChanged()
             
     def sheetIncludeChanged(self, include):
         """Called when the include sheets checkbox is checked."""
@@ -286,7 +286,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
             self.viewer.visualizationOptions.ui.pushButtonModel3Color.setVisible(True)
             self.viewer.visualizationOptions.ui.checkBoxModel3Visible.setVisible(True)
             self.viewer.visualizationOptions.ui.checkBoxModel3Visible.setChecked(self.ui.checkBoxShowSheetColors.isChecked())
-        self.viewer.emitModelChanged()
+        self.viewer.modelChanged()
       
     def loadSettings(self):
         
@@ -1050,7 +1050,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
         self.setConstants()
         self.checkOk()
         self.viewer.makeSheetSurfaces(self.app.skeletonViewer.renderer.getOriginX(), self.app.skeletonViewer.renderer.getOriginY(), self.app.skeletonViewer.renderer.getOriginZ(), self.app.skeletonViewer.renderer.getSpacingX(), self.app.skeletonViewer.renderer.getSpacingY(), self.app.skeletonViewer.renderer.getSpacingZ())
-        self.viewer.emitModelChanged()
+        self.viewer.modelChanged()
         print "correspondence index after rebuilding is "
         print self.ui.comboBoxCorrespondences.currentIndex()
         
