@@ -28,25 +28,25 @@ class MainWindowForm4(QtGui.QMainWindow):
         self.mainCamera = Camera(self.scene, self)
         self.setCentralWidget(self.mainCamera)
         
-        self.form = SSEHelixCorrespondenceFinderForm(self)
-        self.form.show()
-        
         self.setWindowTitle(self.tr("Gorgon Toolkit - v" + version))
         pathname = os.path.abspath(os.path.dirname(sys.argv[0]))
         self.setWindowIcon(QtGui.QIcon(pathname + '/gorgon.ico'))
         
     def load(self):
+        self.form = self.sseViewer.helixCorrespondanceFinder
+        self.form.show()
+        
         self.volumeViewer.load(self.args.volume)
-        self.skeletonViewer.load(self.args.skeleton)
-        self.form.viewer.sequenceFileName = QtCore.QString('groel-segment.seq')
-        self.form.viewer.helixFileName    = QtCore.QString('helices-densityMap.wrl')
+#         self.skeletonViewer.load(self.args.skeleton)
+#         self.form.viewer.sequenceFileName = QtCore.QString('groel-segment.seq')
+#         self.form.viewer.helixFileName    = QtCore.QString('helices-densityMap.wrl')
         
         self.form.ui.lineEditSkeletonFile.setText(self.args.skeleton)
-        self.form.ui.lineEditSequenceFile.setText(self.form.viewer.sequenceFileName)
-        self.form.ui.lineEditHelixLocationFile.setText(self.form.viewer.helixFileName)
+        self.form.ui.lineEditSequenceFile.setText('groel-segment.seq')
+        self.form.ui.lineEditHelixLocationFile.setText('helices-densityMap.wrl')
 #         self.form.lineEditSheetLocationFile.setText()
         self.form.checkOk()
-        self.form.accept()
+#         self.form.accept()
 
 #         self.form.viewer.sheetFileName    = QtCore.QString('groel-segment.seq')
 #         self.volumeViewer.load(self.args.volume)

@@ -85,6 +85,8 @@ namespace Visualization {
                     }
                 }
             }
+            cout<<"selectedPDBHelices.size(): "<<selectedPDBHelices.size()<<endl;
+            cout<<"SSEIndices.size(): "<<SSEIndices.size()<<endl;
 
             Point<double> pt;
             cout<<"helices.size(): "<<helices.size()<<endl;
@@ -97,12 +99,12 @@ namespace Visualization {
 
                 }
 
-                if(helices[i]->GetSelected()) {
+//                if(helices[i]->GetSelected()) {
 
                     glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
                     glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
 
-                }
+//                }
                 glPushMatrix();
                 glMultMatrixd(helices[i]->GetWorldToObjectMatrix().mat);
                 glRotated(90, 1, 0, 0);
@@ -118,7 +120,7 @@ namespace Visualization {
                 glPopAttrib();
 
                 cout<<"helices["<<i<<"]->GetSelected(): "<<helices[i]->GetSelected()<<endl;
-                if(helices[i]->GetSelected()) {
+//                if(helices[i]->GetSelected()) {
 
                     Vec3F corner1 = GetHelixCorner(i, 0);
                     Vec3F corner2 = GetHelixCorner(i, 1);
@@ -139,7 +141,7 @@ namespace Visualization {
                             fflush(stdout);
                         }
                     }
-                }
+//                }
 
 
                 for(unsigned int j = 0; j < SSEIndices.size(); ++j){
@@ -242,6 +244,8 @@ namespace Visualization {
         }
 
         fclose(fin);
+        cout<<"       SSERenderer::LoadHelixFileSSE"<<endl;
+        cout<<"helices.size(): "<<helices.size()<<endl;
     }
 
     void SSERenderer::LoadHelixFileVRML(string fileName) {

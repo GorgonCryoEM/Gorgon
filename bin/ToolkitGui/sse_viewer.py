@@ -2,8 +2,8 @@ from PyQt4 import QtGui, QtCore, QtOpenGL
 from libpytoolkit import SSERenderer, SSEEngine
 from Explorer.base_viewer import BaseViewer
 # from sse_sequence_predictor_form import SSESequencePredictorForm
-# from sse_helix_correspondence_finder_form import SSEHelixCorrespondenceFinderForm
-# from model_visualization_form import ModelVisualizationForm
+from .sse_helix_correspondence_finder_form import SSEHelixCorrespondenceFinderForm
+# from .model_visualization_form import ModelVisualizationForm
 # from libpyGORGON import SSECorrespondenceEngine, SSECorrespondenceResult
 # from .volume_sse_builder_form import VolumeSSEBuilderForm
 from Toolkit import SSEHelixCorrespondence
@@ -17,6 +17,7 @@ class SSEViewer(BaseViewer):
 
     def __init__(self, main, parent=None):
         self.title = "Secondary Structure Element"
+        self.app = main
         super(SSEViewer, self).__init__(main, parent)
         self.shortTitle = "SSE"
 #         self.app.themes.addDefaultRGB("Secondary Structure Element:Model:0", 0, 180, 0, 255)
@@ -32,11 +33,12 @@ class SSEViewer(BaseViewer):
         self.sheetLoaded = False
         self.renderer = SSERenderer()
         self.correspondenceEngine = SSEEngine()
-#         self.createUI()
+        self.createUI()
         self.selectEnabled = True
-        self.app = main
         self.model2Visible = True
         self.model3Visible = False
+        self.loaded = True
+        self.modelVisible = True
 #         self.initVisualizationOptions(ModelVisualizationForm(self.app, self))
 #         self.visualizationOptions.ui.checkBoxModelVisible.setText("Show helices colored:")
 #         self.visualizationOptions.ui.checkBoxModel2Visible.setText("Show sheets colored:")
@@ -60,9 +62,9 @@ class SSEViewer(BaseViewer):
         self.createChildWindows()
                   
     def createChildWindows(self):
-        self.sseBuilder = VolumeSSEBuilderForm(self.app, self, self)
-        self.sequencePredictor = SSESequencePredictorForm(self.app, self, self)
-        self.helixCorrespondanceFinder = SSEHelixCorrespondenceFinderForm(self.app, self, self)
+#         self.sseBuilder = VolumeSSEBuilderForm(self.app, self, self)
+#         self.sequencePredictor = SSESequencePredictorForm(self.app, self, self)
+        self.helixCorrespondanceFinder = SSEHelixCorrespondenceFinderForm(self.app, self)
         
     def loadHelixDataFromFile(self, fileName):
         self.setCursor(QtCore.Qt.WaitCursor)
@@ -70,7 +72,7 @@ class SSEViewer(BaseViewer):
             self.renderer.loadHelixFile(str(fileName))
             self.loaded = True
             self.helixLoaded = True
-            self.emitModelLoaded()
+            self.modelChanged()
             self.emitViewerSetCenter()
         except:
             QtGui.QMessageBox.critical(self, "Unable to load data file", "The file might be corrupt, or the format may not be supported.", "Ok")
@@ -90,7 +92,7 @@ class SSEViewer(BaseViewer):
             self.renderer.loadSheetFile(str(fileName))
             self.loaded = True
             self.sheetLoaded = True
-            self.emitModelLoaded()
+            self.modelChanged()
             self.emitViewerSetCenter()
         except:
             QtGui.QMessageBox.critical(self, "Unable to load data file", "The file might be corrupt, or the format may not be supported.", "Ok")
