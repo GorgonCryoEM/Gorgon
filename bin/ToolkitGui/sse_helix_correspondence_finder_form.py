@@ -1019,7 +1019,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
     def drawOverlay(self):
         if self.executed and self.corrAct.isChecked():
             glPushAttrib(GL_LIGHTING_BIT)
-            self.viewer.setMaterials(self.app.themes.getColor("CorrespondenceFinder:BackboneTrace"))
+            self.viewer.setMaterials(self.colors["CorrespondenceFinder:BackboneTrace"])
             # calls Draw method of c++ SSECorrespondenceEngine object
             self.viewer.correspondenceEngine.draw(0)
             glPopAttrib()
@@ -1030,7 +1030,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
             for i in range(self.viewer.correspondenceEngine.getSkeletonSSECount()):
                 color = self.getIndexedHelixColor(i, self.viewer.correspondenceEngine.getSkeletonSSECount())
             glPushAttrib(GL_LIGHTING_BIT)
-            self.viewer.setMaterials(self.app.themes.getColor("CorrespondenceFinder:BackboneTrace"))
+            self.viewer.setMaterials(self.colors["CorrespondenceFinder:BackboneTrace"])
             self.viewer.correspondenceEngine.drawAllPaths(0,self.ui.checkBoxShowAllPaths.isChecked(),self.ui.checkBoxShowHelixCorners.isChecked(),self.ui.checkBoxShowSheetCorners.isChecked(),False)
             glPopAttrib()
             
