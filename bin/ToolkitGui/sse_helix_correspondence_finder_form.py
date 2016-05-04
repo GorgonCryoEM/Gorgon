@@ -825,7 +825,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
             self.viewer.correspondenceLibrary.correspondenceList.append(self.lastCorrespondence)
 
         self.populateComboBox(self.viewer.correspondenceLibrary)
-        self.viewer.emitModelChanged()
+        self.viewer.modelChanged()
         self.ui.tabWidget.setCurrentIndex(4)
         print "done with search"
                 
@@ -1022,7 +1022,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
                 
         self.viewer.correspondenceEngine.setVisibleCorrespondence(correspondenceIndex)
         self.viewer.correspondenceLibrary.setCurrentCorrespondenceIndex(correspondenceIndex)
-        self.viewer.emitModelChanged()
+        self.viewer.modelChanged()
         self.loadingCorrespondance = False
         
     def drawOverlay(self):
