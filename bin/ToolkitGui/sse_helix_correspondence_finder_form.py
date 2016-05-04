@@ -67,7 +67,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
         self.connect(self.ui.checkBoxIncludeSheets, QtCore.SIGNAL("toggled (bool)"), self.sheetIncludeChanged)
         self.connect(self.ui.checkBoxMissingSheets, QtCore.SIGNAL("toggled (bool)"), self.missingSheetChanged)
         self.connect(self.ui.checkBoxMissingHelices, QtCore.SIGNAL("toggled (bool)"), self.missingHelixChanged)
-        self.connect(self.app.viewers["skeleton"], QtCore.SIGNAL("modelDrawing()"), self.drawOverlay)
+        self.connect(self.app.skeletonViewer, QtCore.SIGNAL("modelDrawing()"), self.drawOverlay)
         self.ui.tableWidgetCorrespondenceList.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.connect(self.ui.tableWidgetCorrespondenceList, QtCore.SIGNAL("customContextMenuRequested (const QPoint&)"), self.customMenuRequested)
         self.connect(self.viewer, QtCore.SIGNAL("elementClicked (int, int, int, int, int, int, QMouseEvent)"), self.sseClicked)
@@ -80,8 +80,8 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
         self.ui.lineEditHelixLengthFile.setText("")
         self.ui.lineEditHelixLocationFile.setText(self.viewer.helixFileName)
         self.ui.lineEditSheetLocationFile.setText(self.viewer.sheetFileName)
-        self.ui.lineEditSkeletonFile.setText(self.app.viewers["skeleton"].fileName)
-        self.ui.lineEditSequenceFile.setText(self.app.viewers["calpha"].fileName)        
+        self.ui.lineEditSkeletonFile.setText(self.app.skeletonViewer.fileName)
+        self.ui.lineEditSequenceFile.setText(self.app.calphaViewer.fileName)
         self.ui.lineEditSettingsFile.setText("")
         self.loadDefaultParams()
 
@@ -95,11 +95,11 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
         #max sheet distance
         #sheet self-loop length
 
-        self.ui.checkBoxShowSkeleton.setChecked(self.app.viewers['skeleton'].visualizationOptions.ui.checkBoxModelVisible.isChecked())
-        self.ui.checkBoxShowHelices.setChecked(self.app.viewers['sse'].visualizationOptions.ui.checkBoxModelVisible.isChecked())
+        self.ui.checkBoxShowSkeleton.setChecked(self.app.skeletonViewer.visualizationOptions.ui.checkBoxModelVisible.isChecked())
+        self.ui.checkBoxShowHelices.setChecked(self.app.sseViewer.visualizationOptions.ui.checkBoxModelVisible.isChecked())
         self.ui.checkBoxShowHelixCorners.setChecked(False)
-        self.ui.checkBoxShowSheets.setChecked(self.app.viewers['sse'].visualizationOptions.ui.checkBoxModel2Visible.isChecked())
-        self.ui.checkBoxShowSheetColors.setChecked(self.app.viewers['sse'].visualizationOptions.ui.checkBoxModel3Visible.isChecked())
+        self.ui.checkBoxShowSheets.setChecked(self.app.sseViewer.visualizationOptions.ui.checkBoxModel2Visible.isChecked())
+        self.ui.checkBoxShowSheetColors.setChecked(self.app.sseViewer.visualizationOptions.ui.checkBoxModel3Visible.isChecked())
         self.ui.checkBoxShowSheetCorners.setChecked(False)
         self.ui.checkBoxShowAllPaths.setChecked(False)
 
@@ -154,8 +154,8 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
         self.bringToFront()
 
     def getSkeletonFile(self):
-        self.app.viewers["skeleton"].loadData()
-        self.ui.lineEditSkeletonFile.setText(self.app.viewers["skeleton"].fileName)
+        self.app.skeletonViewer.loadData()
+        self.ui.lineEditSkeletonFile.setText(self.app.skeletonViewer.fileName)
         self.checkOk()
         self.bringToFront()
         
@@ -208,7 +208,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
             self.viewer.correspondenceLibrary.correspondenceList = self.populateEmptyResults(self.viewer.correspondenceLibrary)
             print "correspondenceList has length " + str(len(self.viewer.correspondenceLibrary.correspondenceList))
             self.populateComboBox(self.viewer.correspondenceLibrary)
-            self.viewer.makeSheetSurfaces(self.app.viewers['skeleton'].renderer.getOriginX(), self.app.viewers['skeleton'].renderer.getOriginY(), self.app.viewers['skeleton'].renderer.getOriginZ(), self.app.viewers['skeleton'].renderer.getSpacingX(), self.app.viewers['skeleton'].renderer.getSpacingY(), self.app.viewers['skeleton'].renderer.getSpacingZ())
+            self.viewer.makeSheetSurfaces(self.app.skeletonViewer.renderer.getOriginX(), self.app.skeletonViewer.renderer.getOriginY(), self.app.skeletonViewer.renderer.getOriginZ(), self.app.skeletonViewer.renderer.getSpacingX(), self.app.skeletonViewer.renderer.getSpacingY(), self.app.skeletonViewer.renderer.getSpacingZ())
             if(allLoaded):
                 self.ui.tabWidget.setCurrentIndex(1)
         else:
@@ -223,7 +223,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
             
     def dockVisibilityChanged(self, visible):
         BaseDockWidget.dockVisibilityChanged(self, visible)
-        self.app.viewers['skeleton'].emitModelChanged()
+        self.app.skeletonViewer.emitModelChanged()
 
     def fullGraphVisibilityChanged(self, visible):
         """Called when the visibility checkbox is checked."""
@@ -232,28 +232,28 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
     
     def skeletonVisibilityChanged(self, visible):
         """Called when the show skeleton checkbox is checked."""
-        self.app.viewers['skeleton'].visualizationOptions.ui.checkBoxModelVisible.setChecked(visible)
-        self.app.viewers['skeleton'].visualizationOptions.ui.checkBoxModel2Visible.setChecked(visible)
-        self.app.viewers['skeleton'].visualizationOptions.ui.checkBoxModel3Visible.setChecked(visible)
+        self.app.skeletonViewer.visualizationOptions.ui.checkBoxModelVisible.setChecked(visible)
+        self.app.skeletonViewer.visualizationOptions.ui.checkBoxModel2Visible.setChecked(visible)
+        self.app.skeletonViewer.visualizationOptions.ui.checkBoxModel3Visible.setChecked(visible)
         # to render again
         self.viewer.emitModelChanged()
             
     def sheetVisibilityChanged(self, visible):
         """Called when the show sheet checkbox is checked."""
         #self.visualizationOptions.ui.checkBoxModel2Visible.setChecked(visible)
-        self.app.viewers['sse'].visualizationOptions.ui.checkBoxModel2Visible.setChecked(visible)
+        self.app.sseViewer.visualizationOptions.ui.checkBoxModel2Visible.setChecked(visible)
         # to render again
         self.viewer.emitModelChanged()
 
     def graphSheetVisibilityChanged(self, visible):
         """Called when the show graph sheet checkbox is checked."""
-        self.app.viewers['sse'].visualizationOptions.ui.checkBoxModel3Visible.setChecked(visible)
+        self.app.sseViewer.visualizationOptions.ui.checkBoxModel3Visible.setChecked(visible)
         # to render again
         self.viewer.emitModelChanged()
 
     def helixVisibilityChanged(self, visible):
         """Called when the show helix checkbox is checked."""
-        self.app.viewers['sse'].visualizationOptions.ui.checkBoxModelVisible.setChecked(visible)
+        self.app.sseViewer.visualizationOptions.ui.checkBoxModelVisible.setChecked(visible)
         # to render again
         self.viewer.emitModelChanged()
             
@@ -366,7 +366,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
             self.ui.lineEditSheetLocationFile.setText(sheetFilePath)
     
             # load skeleton file and store the filename
-            self.app.viewers["skeleton"].loadDataFromFile(skeletonFilePath)
+            self.app.skeletonViewer.loadDataFromFile(skeletonFilePath)
             self.ui.lineEditSkeletonFile.setText(skeletonFilePath)
     
             # store helix length filename
@@ -721,9 +721,9 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
         includeStrands = self.viewer.correspondenceEngine.getConstantInt("INCLUDE_STRANDS")
         structPred = StructurePrediction.load(self.sequenceFileName, self.app, includeStrands)
         print "after calling StructurePrediction.load"
-        cAlphaViewer = self.app.viewers['calpha']
-        sseViewer = self.app.viewers['sse']
-        skeletonViewer = self.app.viewers['skeleton']
+        cAlphaViewer = self.app.calphaViewer
+        sseViewer = self.app.sseViewer
+        skeletonViewer = self.app.skeletonViewer
         cAlphaViewer.structPred = structPred
 
         def vector3DFloatToTuple(v3df):
@@ -1054,7 +1054,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
         print self.ui.comboBoxCorrespondences.currentIndex()
         self.setConstants()
         self.checkOk()
-        self.viewer.makeSheetSurfaces(self.app.viewers['skeleton'].renderer.getOriginX(), self.app.viewers['skeleton'].renderer.getOriginY(), self.app.viewers['skeleton'].renderer.getOriginZ(), self.app.viewers['skeleton'].renderer.getSpacingX(), self.app.viewers['skeleton'].renderer.getSpacingY(), self.app.viewers['skeleton'].renderer.getSpacingZ())
+        self.viewer.makeSheetSurfaces(self.app.skeletonViewer.renderer.getOriginX(), self.app.skeletonViewer.renderer.getOriginY(), self.app.skeletonViewer.renderer.getOriginZ(), self.app.skeletonViewer.renderer.getSpacingX(), self.app.skeletonViewer.renderer.getSpacingY(), self.app.skeletonViewer.renderer.getSpacingZ())
         self.viewer.emitModelChanged()
         print "correspondence index after rebuilding is "
         print self.ui.comboBoxCorrespondences.currentIndex()
@@ -1313,8 +1313,8 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
         
         library = self.viewer.correspondenceLibrary
         engine = self.viewer.correspondenceEngine
-        skeletonViewer = self.app.viewers["skeleton"]
-        calphaViewer = self.app.viewers["calpha"]
+        skeletonViewer = self.app.skeletonViewer
+        calphaViewer = self.app.calphaViewer
 
         def tupleToVector3DFloat(pt):
             return Vector3DFloat(pt[0], pt[1], pt[2])
@@ -1347,7 +1347,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
             correspondenceElement.setIdAttribute("RANK")
             correspondenceElement.setAttribute("GORGON_SCORE", str(corr.score))
 
-            engine.initializePathFinder(self.app.viewers["skeleton"].renderer.getMesh())
+            engine.initializePathFinder(self.app.skeletonViewer.renderer.getMesh())
             
             helixRadius = vectorDistance(cAlphaToSkeleton([2.5, 0,0]), cAlphaToSkeleton([0,0,0])) # Finding the size of 2.5 Angstroms in skeleton space
             
