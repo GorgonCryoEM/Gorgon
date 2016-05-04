@@ -371,7 +371,7 @@ class Camera(QtOpenGL.QGLWidget):
                     self.scene[sceneId].processMouseClick(minNames, e, False)
             else:                                           # Single selection mode
                 for i in range(len(self.scene)):
-                    self.scene[i].emitModelChanged()
+                    self.scene[i].modelChanged()
                 
                 for i in range(len(self.scene)):
                     if (i == sceneId):
