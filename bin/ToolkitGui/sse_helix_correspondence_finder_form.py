@@ -271,15 +271,15 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
         self.ui.spinBoxMissingSheetCount.setEnabled(checked)
         
     def visibilityChanged(self, visible):
-        self.viewer.renderer.setObjectSpecificColoring(visible)
-        if(not visible):
-            self.viewer.visualizationOptions.ui.checkBoxModel3Visible.setChecked(False)
-            self.viewer.visualizationOptions.ui.checkBoxModel3Visible.setVisible(False)
-            self.viewer.visualizationOptions.ui.pushButtonModel3Color.setVisible(False)
-        else:
-            self.viewer.visualizationOptions.ui.pushButtonModel3Color.setVisible(True)
-            self.viewer.visualizationOptions.ui.checkBoxModel3Visible.setVisible(True)
-            self.viewer.visualizationOptions.ui.checkBoxModel3Visible.setChecked(self.ui.checkBoxShowSheetColors.isChecked())
+        self.viewer.renderer.setObjectSpecificColoring(True)
+#         if(not visible):
+#             self.viewer.visualizationOptions.ui.checkBoxModel3Visible.setChecked(False)
+#             self.viewer.visualizationOptions.ui.checkBoxModel3Visible.setVisible(False)
+#             self.viewer.visualizationOptions.ui.pushButtonModel3Color.setVisible(False)
+#         else:
+#             self.viewer.visualizationOptions.ui.pushButtonModel3Color.setVisible(True)
+#             self.viewer.visualizationOptions.ui.checkBoxModel3Visible.setVisible(True)
+#             self.viewer.visualizationOptions.ui.checkBoxModel3Visible.setChecked(self.ui.checkBoxShowSheetColors.isChecked())
         self.viewer.modelChanged()
       
     def loadSettings(self):
