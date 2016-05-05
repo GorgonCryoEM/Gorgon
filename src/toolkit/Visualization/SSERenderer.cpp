@@ -15,8 +15,6 @@ namespace Visualization {
 
     SSERenderer::SSERenderer() {
         helices.clear();
-        sheetMesh = NULL;
-        graphSheetMesh = NULL;
         sheetCount = 0;
         graphSheetCount = 0;
         selectedHelices.clear();
@@ -28,9 +26,6 @@ namespace Visualization {
         }
         for(unsigned int i = 0; i < sheets.size(); i++) {
             delete sheets[i];
-        }
-        if(sheetMesh != NULL) {
-            delete sheetMesh;
         }
     }
 
@@ -170,7 +165,7 @@ namespace Visualization {
             }
 
         }
-        else if((subSceneIndex == 1) && (sheetMesh != NULL)) {
+        else if(subSceneIndex == 1) {
 
             int k;
             if(selectEnabled) {
@@ -190,7 +185,7 @@ namespace Visualization {
                 glPopName();
             }
         }
-        else if((subSceneIndex == 2) && (graphSheetMesh != NULL)) {
+        else if(subSceneIndex == 2) {
             int k;
             if(selectEnabled) {
                 glPushName(0);
@@ -282,19 +277,13 @@ namespace Visualization {
         }
         //vector<Shape *> sheets;
         sheets.clear();
-        if(sheetMesh != NULL) {
-            delete sheetMesh;
-        }
         SkeletonReader::ReadSheetFile((char *)fileName.c_str(), sheets);
 
         SheetListToMesh(sheets);
     }
 
     void SSERenderer::SheetListToMesh(vector<Shape*> & sheets) {
-        if(sheetMesh != NULL) {
-            delete sheetMesh;
-        }
-        sheetMesh = new NonManifoldMesh();
+        sheetMesh = NonManifoldMesh();
 
         Vec3D pt;
         vector<int> indices;
@@ -308,7 +297,7 @@ namespace Visualization {
             indices.clear();
             for(unsigned int j = 0; j < sheets[i]->polygonPoints.size(); j++) {
                 pt = sheets[i]->polygonPoints[j];
-                indices.push_back(sheetMesh->addVertex(Vec3F(pt[0], pt[1], pt[2])));
+                indices.push_back(sheetMesh.addVertex(Vec3F(pt[0], pt[1], pt[2])));
             }
 
             for(unsigned int j = 0; j < sheets[i]->polygons.size(); j++) {
@@ -317,7 +306,7 @@ namespace Visualization {
                 ppp[0] = indices[pp.pointIndex1];
                 ppp[1] = indices[pp.pointIndex2];
                 ppp[2] = indices[pp.pointIndex3];
-                sheetMesh->addFace(ppp);
+                sheetMesh.addFace(ppp);
             }
         }
         indices.clear();
@@ -332,23 +321,10 @@ namespace Visualization {
             delete sheets[i];
         }
         sheets.clear();
-        if(sheetMesh != NULL) {
-            delete sheetMesh;
-        }
-        sheetMesh = NULL;
-        if(graphSheetMesh != NULL) {
-            delete graphSheetMesh;
-        }
-        graphSheetMesh = NULL;
     }
 
     void SSERenderer::UnloadGraphSSEs() {
         graphSheetCount = 0;
-        if(graphSheetMesh != NULL) {
-            delete graphSheetMesh;
-        }
-        graphSheetMesh = NULL;
-
     }
 
     void SSERenderer::SetHelixColor(int index, float r, float g, float b, float a) {

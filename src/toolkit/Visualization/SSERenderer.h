@@ -81,8 +81,8 @@ namespace Visualization {
             void SaveHelixFileVRML(FILE* fout);
             vector<Shape*> helices;
             vector<Shape*> sheets;
-            NonManifoldMesh * sheetMesh;
-            NonManifoldMesh * graphSheetMesh;
+            NonManifoldMesh sheetMesh;
+            NonManifoldMesh graphSheetMesh;
             int sheetCount;
             int graphSheetCount;
             bool selectedSheets[256];
