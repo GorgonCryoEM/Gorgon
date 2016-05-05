@@ -253,13 +253,15 @@ namespace Visualization {
     }
 
     void SSERenderer::LoadHelixFile(string fileName) {
-
-        if(sheetMesh == NULL) {
-            Display::load(fileName);
-        }
         for(unsigned int i = 0; i < helices.size(); i++) {
             delete helices[i];
         }
+//        #ifdef GORGON_DEBUG
+              cout<<"\033[32mDEBUG: File:   SSERenderer.cpp"<<endl;
+              cout<<"DEBUG: Method: SSERenderer::LoadHelixFile(string)\033[0m"<<endl;
+              cout<<"YAY"<<endl;
+//        #endif
+
         helices.clear();
 
         int pos = fileName.rfind(".") + 1;

@@ -25,6 +25,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
         QtGui.QDialog.__init__(self, main)
         
         self.app = main
+#         self.viewer = self.app.sseViewer
         dock = QtGui.QDockWidget("SSEHelixCorrespondenceFinder", self.app)
         dock.setWidget(self)
         dock.setAllowedAreas(QtCore.Qt.AllDockWidgetAreas)
@@ -33,7 +34,6 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
         self.executed = False
         self.colors = {}
         self.colors["CorrespondenceFinder:BackboneTrace"] = QtGui.QColor(255, 255, 255, 255)
-        self.viewer = self.parent
         self.createUI()
         self.loadingCorrespondance = False
         self.userConstraints = {}
@@ -138,25 +138,25 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
     def getHelixLengthFile(self):
         self.ui.lineEditHelixLengthFile.setText(self.openFile("Load Helix Length File", "SSE Hunter results (*.sse)"))
         self.checkOk()
-        self.bringToFront()
+#         self.bringToFront()
 
     def getHelixLocationFile(self):
         self.viewer.loadHelixData()
         self.ui.lineEditHelixLocationFile.setText(self.viewer.helixFileName)
         self.checkOk()
-        self.bringToFront()
+#         self.bringToFront()
 
     def getSheetLocationFile(self):
         self.viewer.loadSheetData()
         self.ui.lineEditSheetLocationFile.setText(self.viewer.sheetFileName)
         self.checkOk()
-        self.bringToFront()
+#         self.bringToFront()
 
     def getSkeletonFile(self):
         self.app.skeletonViewer.loadData()
         self.ui.lineEditSkeletonFile.setText(self.app.skeletonViewer.fileName)
         self.checkOk()
-        self.bringToFront()
+#         self.bringToFront()
         
     def getSequenceFile(self):
         """
@@ -164,7 +164,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
         """
         self.ui.lineEditSequenceFile.setText(self.openFile("Load Sequence File", "Sequence with SSE predictions (*.seq)\nPDB Helix Annotations (*.pdb)"))
         self.checkOk()
-        self.bringToFront()
+#         self.bringToFront()
 
     def getSettingsFile(self):
         """
@@ -172,7 +172,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
         """
         self.ui.lineEditSettingsFile.setText(self.openFile("Load Settings File", "Settings File (*.txt)"))
         self.loadSettings()
-        self.bringToFront()
+#         self.bringToFront()
         
     def checkOk(self):
         """
@@ -209,73 +209,6 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
         print "correspondence index at end is " + str(self.ui.comboBoxCorrespondences.currentIndex())
         print "end checkOk"
     
-#     def loadWidget(self):
-#         BaseDockWidget.loadWidget(self)
-            
-    def dockVisibilityChanged(self, visible):
-        BaseDockWidget.dockVisibilityChanged(self, visible)
-        self.app.skeletonViewer.modelChanged()
-
-    def fullGraphVisibilityChanged(self, visible):
-        """Called when the visibility checkbox is checked."""
-        # to render again
-        self.viewer.modelChanged()
-    
-    def skeletonVisibilityChanged(self, visible):
-        """Called when the show skeleton checkbox is checked."""
-        self.app.skeletonViewer.visualizationOptions.ui.checkBoxModelVisible.setChecked(visible)
-        self.app.skeletonViewer.visualizationOptions.ui.checkBoxModel2Visible.setChecked(visible)
-        self.app.skeletonViewer.visualizationOptions.ui.checkBoxModel3Visible.setChecked(visible)
-        # to render again
-        self.viewer.modelChanged()
-            
-    def sheetVisibilityChanged(self, visible):
-        """Called when the show sheet checkbox is checked."""
-        #self.visualizationOptions.ui.checkBoxModel2Visible.setChecked(visible)
-        self.app.sseViewer.visualizationOptions.ui.checkBoxModel2Visible.setChecked(visible)
-        # to render again
-        self.viewer.modelChanged()
-
-    def graphSheetVisibilityChanged(self, visible):
-        """Called when the show graph sheet checkbox is checked."""
-        self.app.sseViewer.visualizationOptions.ui.checkBoxModel3Visible.setChecked(visible)
-        # to render again
-        self.viewer.modelChanged()
-
-    def helixVisibilityChanged(self, visible):
-        """Called when the show helix checkbox is checked."""
-        self.app.sseViewer.visualizationOptions.ui.checkBoxModelVisible.setChecked(visible)
-        # to render again
-        self.viewer.modelChanged()
-            
-    def sheetIncludeChanged(self, include):
-        """Called when the include sheets checkbox is checked."""
-        self.ui.doubleSpinBoxSheetImportance.setEnabled(include)
-        self.ui.doubleSpinBoxSheetMissingPenalty.setEnabled(include)
-        self.ui.doubleSpinBoxSheetMissingPenaltyScaled.setEnabled(include)
-        self.ui.checkBoxMissingSheets.setEnabled(include)
-        self.ui.spinBoxMissingSheetCount.setEnabled(include and self.ui.checkBoxMissingSheets.isChecked())
-
-    def missingHelixChanged(self, checked):
-        """Called when the missing helices checkbox is checked."""
-        self.ui.spinBoxMissingHelixCount.setEnabled(checked)
-
-    def missingSheetChanged(self, checked):
-        """Called when the missing helices checkbox is checked."""
-        self.ui.spinBoxMissingSheetCount.setEnabled(checked)
-        
-    def visibilityChanged(self, visible):
-        self.viewer.renderer.setObjectSpecificColoring(True)
-#         if(not visible):
-#             self.viewer.visualizationOptions.ui.checkBoxModel3Visible.setChecked(False)
-#             self.viewer.visualizationOptions.ui.checkBoxModel3Visible.setVisible(False)
-#             self.viewer.visualizationOptions.ui.pushButtonModel3Color.setVisible(False)
-#         else:
-#             self.viewer.visualizationOptions.ui.pushButtonModel3Color.setVisible(True)
-#             self.viewer.visualizationOptions.ui.checkBoxModel3Visible.setVisible(True)
-#             self.viewer.visualizationOptions.ui.checkBoxModel3Visible.setChecked(self.ui.checkBoxShowSheetColors.isChecked())
-        self.viewer.modelChanged()
-      
     def loadSettings(self):
         
         if (not(self.ui.lineEditSettingsFile.text().isEmpty())):
@@ -365,59 +298,59 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
     def setConstants(self):
         #Data Sources tab
         #self.viewer.correspondenceEngine.setConstant("SSE_FILE_NAME", str(self.ui.lineEditHelixLengthFile.text()))
-#         self.viewer.correspondenceEngine.setConstant("VRML_HELIX_FILE_NAME", str(self.ui.lineEditHelixLocationFile.text()))
-#         self.viewer.correspondenceEngine.setConstant("VRML_SHEET_FILE_NAME", str(self.ui.lineEditSheetLocationFile.text()))
-#         self.viewer.correspondenceEngine.setConstant("MRC_FILE_NAME", str(self.ui.lineEditSkeletonFile.text()))
+        self.viewer.correspondenceEngine.setConstant("VRML_HELIX_FILE_NAME", str(self.ui.lineEditHelixLocationFile.text()))
+        self.viewer.correspondenceEngine.setConstant("VRML_SHEET_FILE_NAME", str(self.ui.lineEditSheetLocationFile.text()))
+        self.viewer.correspondenceEngine.setConstant("MRC_FILE_NAME", str(self.ui.lineEditSkeletonFile.text()))
         self.sequenceFileName = str(self.ui.lineEditSequenceFile.text())
-#         self.viewer.correspondenceEngine.setConstant("SEQUENCE_FILE_NAME", self.sequenceFileName)
-#         if self.sequenceFileName.split('.')[-1].lower() == 'pdb':
-#             self.viewer.correspondenceEngine.setConstant("SEQUENCE_FILE_TYPE", "PDB")
-#         elif self.sequenceFileName.split('.')[-1].lower() == 'seq':
-#             self.viewer.correspondenceEngine.setConstant("SEQUENCE_FILE_TYPE", "SEQ")
+        self.viewer.correspondenceEngine.setConstant("SEQUENCE_FILE_NAME", self.sequenceFileName)
+        if self.sequenceFileName.split('.')[-1].lower() == 'pdb':
+            self.viewer.correspondenceEngine.setConstant("SEQUENCE_FILE_TYPE", "PDB")
+        elif self.sequenceFileName.split('.')[-1].lower() == 'seq':
+            self.viewer.correspondenceEngine.setConstant("SEQUENCE_FILE_TYPE", "SEQ")
         
         #Graph Settings tab
-#         self.viewer.correspondenceEngine.setConstantInt("BORDER_MARGIN_THRESHOLD", self.ui.spinBoxBorderMarginThreshold.value())
-#         self.viewer.correspondenceEngine.setConstant("EUCLIDEAN_DISTANCE_THRESHOLD", self.ui.doubleSpinBoxEuclideanDistance.value())
-#         self.viewer.correspondenceEngine.setConstant("MAXIMUM_DISTANCE_SHEET_SKELETON", self.ui.doubleSpinBoxMaxSheetDistance.value())
-#         self.viewer.correspondenceEngine.setConstantInt("MINIMUM_SHEET_SIZE", self.ui.spinBoxMinSheetSize.value())
-#         self.viewer.correspondenceEngine.setConstant("SHEET_SELF_LOOP_LENGTH", self.ui.doubleSpinBoxSheetSelfLoopLength.value())
-#         self.viewer.correspondenceEngine.setConstant("SHEET_MERGE_THRESHOLD", self.ui.doubleSpinBoxSheetMergeThreshold.value())
-#         if (self.ui.checkBoxIncludeStrands.isChecked()):
-#             self.viewer.correspondenceEngine.setConstantInt("INCLUDE_STRANDS", 1)
-#         else:
-#             self.viewer.correspondenceEngine.setConstantInt("INCLUDE_STRANDS", 0)
-#
-#         #Matching Settings tab
-#         self.viewer.correspondenceEngine.setConstant("EUCLIDEAN_VOXEL_TO_PDB_RATIO", self.ui.doubleSpinBoxEuclideanToPDBRatio.value())
-#         if(self.ui.radioButtonAbsoluteDifference.isChecked()):
-#             self.viewer.correspondenceEngine.setConstantInt("COST_FUNCTION", 1)
-#         elif (self.ui.radioButtonNormalizedDifference.isChecked()):
-#             self.viewer.correspondenceEngine.setConstantInt("COST_FUNCTION", 2)
-#         else:
-#             self.viewer.correspondenceEngine.setConstantInt("COST_FUNCTION", 3)
-#
-#         self.viewer.correspondenceEngine.setConstant("LOOP_WEIGHT_COEFFICIENT", self.ui.doubleSpinBoxLoopImportance.value())
-#         self.viewer.correspondenceEngine.setConstant("EUCLIDEAN_LOOP_PENALTY", self.ui.doubleSpinBoxEuclideanLoopUsedPenalty.value())
-#
-#         self.viewer.correspondenceEngine.setConstant("HELIX_WEIGHT_COEFFICIENT", self.ui.doubleSpinBoxHelixImportance.value())
-#         if(self.ui.checkBoxMissingHelices.isChecked()):
-#             self.viewer.correspondenceEngine.setConstantInt("MISSING_HELIX_COUNT", self.ui.spinBoxMissingHelixCount.value())
-#         else:
-#             self.viewer.correspondenceEngine.setConstantInt("MISSING_HELIX_COUNT", -1)
-#         self.viewer.correspondenceEngine.setConstant("MISSING_HELIX_PENALTY", self.ui.doubleSpinBoxHelixMissingPenalty.value())
-#         self.viewer.correspondenceEngine.setConstant("MISSING_HELIX_PENALTY_SCALED", self.ui.doubleSpinBoxHelixMissingPenaltyScaled.value())
-#         self.viewer.correspondenceEngine.setConstant("START_END_MISSING_HELIX_PENALTY", self.ui.doubleSpinBoxEndHelixMissingPenalty.value())
-#
-#         self.viewer.correspondenceEngine.setConstant("SHEET_WEIGHT_COEFFICIENT", self.ui.doubleSpinBoxSheetImportance.value())
-#         if(self.ui.checkBoxMissingSheets.isChecked()):
-#             self.viewer.correspondenceEngine.setConstantInt("MISSING_SHEET_COUNT", self.ui.spinBoxMissingSheetCount.value())
-#         else:
-#             self.viewer.correspondenceEngine.setConstantInt("MISSING_SHEET_COUNT", -1)
-#         self.viewer.correspondenceEngine.setConstant("MISSING_SHEET_PENALTY", self.ui.doubleSpinBoxSheetMissingPenalty.value())
-#         self.viewer.correspondenceEngine.setConstant("MISSING_SHEET_PENALTY_SCALED", self.ui.doubleSpinBoxSheetMissingPenaltyScaled.value())
-#
-#         # no longer needed?
-#         self.viewer.correspondenceEngine.setConstantBool("NORMALIZE_GRAPHS", True)
+        self.viewer.correspondenceEngine.setConstantInt("BORDER_MARGIN_THRESHOLD", self.ui.spinBoxBorderMarginThreshold.value())
+        self.viewer.correspondenceEngine.setConstant("EUCLIDEAN_DISTANCE_THRESHOLD", self.ui.doubleSpinBoxEuclideanDistance.value())
+        self.viewer.correspondenceEngine.setConstant("MAXIMUM_DISTANCE_SHEET_SKELETON", self.ui.doubleSpinBoxMaxSheetDistance.value())
+        self.viewer.correspondenceEngine.setConstantInt("MINIMUM_SHEET_SIZE", self.ui.spinBoxMinSheetSize.value())
+        self.viewer.correspondenceEngine.setConstant("SHEET_SELF_LOOP_LENGTH", self.ui.doubleSpinBoxSheetSelfLoopLength.value())
+        self.viewer.correspondenceEngine.setConstant("SHEET_MERGE_THRESHOLD", self.ui.doubleSpinBoxSheetMergeThreshold.value())
+        if (self.ui.checkBoxIncludeStrands.isChecked()):
+            self.viewer.correspondenceEngine.setConstantInt("INCLUDE_STRANDS", 1)
+        else:
+            self.viewer.correspondenceEngine.setConstantInt("INCLUDE_STRANDS", 0)
+
+        #Matching Settings tab
+        self.viewer.correspondenceEngine.setConstant("EUCLIDEAN_VOXEL_TO_PDB_RATIO", self.ui.doubleSpinBoxEuclideanToPDBRatio.value())
+        if(self.ui.radioButtonAbsoluteDifference.isChecked()):
+            self.viewer.correspondenceEngine.setConstantInt("COST_FUNCTION", 1)
+        elif (self.ui.radioButtonNormalizedDifference.isChecked()):
+            self.viewer.correspondenceEngine.setConstantInt("COST_FUNCTION", 2)
+        else:
+            self.viewer.correspondenceEngine.setConstantInt("COST_FUNCTION", 3)
+
+        self.viewer.correspondenceEngine.setConstant("LOOP_WEIGHT_COEFFICIENT", self.ui.doubleSpinBoxLoopImportance.value())
+        self.viewer.correspondenceEngine.setConstant("EUCLIDEAN_LOOP_PENALTY", self.ui.doubleSpinBoxEuclideanLoopUsedPenalty.value())
+
+        self.viewer.correspondenceEngine.setConstant("HELIX_WEIGHT_COEFFICIENT", self.ui.doubleSpinBoxHelixImportance.value())
+        if(self.ui.checkBoxMissingHelices.isChecked()):
+            self.viewer.correspondenceEngine.setConstantInt("MISSING_HELIX_COUNT", self.ui.spinBoxMissingHelixCount.value())
+        else:
+            self.viewer.correspondenceEngine.setConstantInt("MISSING_HELIX_COUNT", -1)
+        self.viewer.correspondenceEngine.setConstant("MISSING_HELIX_PENALTY", self.ui.doubleSpinBoxHelixMissingPenalty.value())
+        self.viewer.correspondenceEngine.setConstant("MISSING_HELIX_PENALTY_SCALED", self.ui.doubleSpinBoxHelixMissingPenaltyScaled.value())
+        self.viewer.correspondenceEngine.setConstant("START_END_MISSING_HELIX_PENALTY", self.ui.doubleSpinBoxEndHelixMissingPenalty.value())
+        
+        self.viewer.correspondenceEngine.setConstant("SHEET_WEIGHT_COEFFICIENT", self.ui.doubleSpinBoxSheetImportance.value())
+        if(self.ui.checkBoxMissingSheets.isChecked()):
+            self.viewer.correspondenceEngine.setConstantInt("MISSING_SHEET_COUNT", self.ui.spinBoxMissingSheetCount.value())
+        else:
+            self.viewer.correspondenceEngine.setConstantInt("MISSING_SHEET_COUNT", -1)
+        self.viewer.correspondenceEngine.setConstant("MISSING_SHEET_PENALTY", self.ui.doubleSpinBoxSheetMissingPenalty.value())
+        self.viewer.correspondenceEngine.setConstant("MISSING_SHEET_PENALTY_SCALED", self.ui.doubleSpinBoxSheetMissingPenaltyScaled.value())
+        
+        # no longer needed?
+        self.viewer.correspondenceEngine.setConstantBool("NORMALIZE_GRAPHS", True)
 
         #Tab 4 User Constraints
         # comment out the constraint clearing so that constraints can be loaded from settings files
@@ -430,22 +363,22 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
             for i in range(len(corr.matchList)):
                 match = corr.matchList[i]
                 self.userConstraints[i] = match.constrained
-#                 if match.predicted.type == 'helix':
-#                     if match.constrained:
-#                         if(match.observed):
-#                             self.viewer.correspondenceEngine.setHelixConstraint(predictedGraphNode, 2*match.observed.label + 1)
-#                         else:
-#                             self.viewer.correspondenceEngine.setHelixConstraint(predictedGraphNode, -1)
-#                 if match.predicted.type == 'strand':
-#                     if(not self.ui.checkBoxIncludeSheets.isChecked()):
-#                         self.userConstraints[i]=False # clear all strand constraints
-#                         match.constrained = False     # clear all strand constraints
-#                         self.viewer.correspondenceEngine.setNodeConstraint(predictedGraphNode, -1)
-#                     elif(match.constrained):
-#                         if(match.observed):
-#                             self.viewer.correspondenceEngine.setNodeConstraint(predictedGraphNode, match.observed.label + nObservedHelices + 1)
-#                         else:
-#                             self.viewer.correspondenceEngine.setNodeConstraint(predictedGraphNode, -1)
+                if match.predicted.type == 'helix':
+                    if match.constrained:
+                        if(match.observed):
+                            self.viewer.correspondenceEngine.setHelixConstraint(predictedGraphNode, 2*match.observed.label + 1)
+                        else:
+                            self.viewer.correspondenceEngine.setHelixConstraint(predictedGraphNode, -1)
+                if match.predicted.type == 'strand':
+                    if(not self.ui.checkBoxIncludeSheets.isChecked()):
+                        self.userConstraints[i]=False # clear all strand constraints
+                        match.constrained = False     # clear all strand constraints
+                        self.viewer.correspondenceEngine.setNodeConstraint(predictedGraphNode, -1)
+                    elif(match.constrained):
+                        if(match.observed):
+                            self.viewer.correspondenceEngine.setNodeConstraint(predictedGraphNode, match.observed.label + nObservedHelices + 1)
+                        else:
+                            self.viewer.correspondenceEngine.setNodeConstraint(predictedGraphNode, -1)
                 if (match.predicted.type) == 'strand':
                     predictedGraphNode += 1
                 if (match.predicted.type) == 'helix':
@@ -815,9 +748,6 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
         self.ui.tabWidget.setCurrentIndex(4)
         print "done with search"
                 
-    def reject(self):
-        self.executed = False
-            
     def getIndexedSheetColor(self, index, size):
         """returns a color for sheet 'index' out of 'size' sheets. colors will be orange or red."""
         # start and end are between 0 and 1
@@ -1101,326 +1031,3 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
             constrainAction.setEnabled(True)
             self.connect(constrainAction, QtCore.SIGNAL("triggered()"), self.constrainObservedHelix(-1))
             self.ui.tableWidgetCorrespondenceList.addAction(constrainAction)
-
-    def customMenuRequested(self, point):
-        self.createActionsForCell(self.ui.tableWidgetCorrespondenceList.currentRow(), self.ui.tableWidgetCorrespondenceList.currentColumn())
-        if(len(self.ui.tableWidgetCorrespondenceList.actions()) > 0):
-            menu = QtGui.QMenu()
-            for act in self.ui.tableWidgetCorrespondenceList.actions()[:]:
-                menu.addAction(act)
-            menu.exec_(self.ui.tableWidgetCorrespondenceList.mapToGlobal(point), self.ui.tableWidgetCorrespondenceList.actions()[0])
-
-    def constrainSSE(self, pred, obs, dir):
-        correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
-        if(correspondenceIndex >= 0):
-            corr = self.viewer.correspondenceLibrary.correspondenceList[correspondenceIndex]
-            match = corr.matchList[pred]
-            match.constrained = True
-            if(obs == -1):
-                match.observed = None
-            else:
-                if match.predicted.type == 'helix':
-                    match.observed = self.viewer.correspondenceLibrary.structureObservation.helixDict[obs-1]
-                    if (dir == 1):
-                        match.directionConstrained = True
-                        match.direction = Match.FORWARD
-                    elif (dir == -1):
-                        match.directionConstrained = True
-                        match.direction = Match.REVERSE
-                    else:
-                        match.directionConstrained = False
-                            
-                if match.predicted.type == 'strand':
-                    match.observed = self.viewer.correspondenceLibrary.structureObservation.sheetDict[obs-1]
-                
-        self.selectCorrespondence(correspondenceIndex)
-
-    def constrainObservedHelix(self, i):
-        def constrainObservedHelix_i():
-            correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
-            if(correspondenceIndex >= 0):
-                corr = self.viewer.correspondenceLibrary.correspondenceList[correspondenceIndex]
-
-                # clear old constraints involving helix i
-                for j in range(len(corr.matchList)):
-                    match = corr.matchList[j]
-                    if(match and match.observed and (match.observed.label == i)):
-                        match.observed = None
-                
-                match = corr.matchList[self.selectedRow]
-                match.constrained = True
-                if(i == -1):
-                    match.observed = None
-                else:
-                    match.observed = self.viewer.correspondenceLibrary.structureObservation.helixDict[i]
-            self.selectCorrespondence(correspondenceIndex)
-        return constrainObservedHelix_i
-
-    def constrainObservedSheet(self, i):
-        def constrainObservedSheet_i():
-            numH = len(self.viewer.correspondenceLibrary.structureObservation.helixDict)
-            correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
-            if(correspondenceIndex >= 0):
-                corr = self.viewer.correspondenceLibrary.correspondenceList[correspondenceIndex]
-                match = corr.matchList[self.selectedRow]
-                match.constrained = True
-                if(i == -1):
-                    match.observed = None
-                else:
-                    match.observed = self.viewer.correspondenceLibrary.structureObservation.sheetDict[i]
-            self.selectCorrespondence(correspondenceIndex)
-        return constrainObservedSheet_i
-
-    def constrainPredictedHelix(self, predicted, observed, constrain):
-        def constrainPredictedHelix_po():
-            correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
-            if(correspondenceIndex >= 0):
-                corr = self.viewer.correspondenceLibrary.correspondenceList[correspondenceIndex]
-                for j in range(len(corr.matchList)):
-                    match = corr.matchList[j]
-                    if(match and match.observed and (match.observed.label == observed)):
-                        match.observed = None
-                        match.constrained = False
-                    if(match and match.predicted and match.predicted.type == 'helix' and match.predicted.serialNo == predicted):
-                        newMatch = match
-                match = newMatch
-                match.constrained = constrain
-                match.observed = self.viewer.correspondenceLibrary.structureObservation.helixDict[observed]
-            self.selectCorrespondence(correspondenceIndex)
-        return constrainPredictedHelix_po
-    
-    def constrainPredictedStrand(self, predicted, observed, constrain):
-        def constrainPredictedStrand_po():
-            correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
-            if(correspondenceIndex >= 0):
-                corr = self.viewer.correspondenceLibrary.correspondenceList[correspondenceIndex]
-                match = corr.matchList[predicted]
-                match.observed = self.viewer.correspondenceLibrary.structureObservation.sheetDict[observed]
-                match.constrained = constrain # add or remove constraint
-            self.selectCorrespondence(correspondenceIndex)
-        return constrainPredictedStrand_po
-    
-    def sseClicked(self, hit0, hit1, hit2, hit3, hit4, hit5, event):
-        if(self.isVisible() and self.dataLoaded and ((hit0 == 0) or (hit0 == 1) or (hit0 == 2)) and (hit1 >= 0)):
-            observedType = hit0
-            observedSSE = hit1
-            constrained = {}
-            match = None
-            matchKey = 0
-            matchKeys = []
-            correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
-            numH = len(self.viewer.correspondenceLibrary.structureObservation.helixDict)
-            if(correspondenceIndex >= 0):
-                corr = self.viewer.correspondenceLibrary.correspondenceList[correspondenceIndex]
-                for i in range(len(corr.matchList)):
-                    m = corr.matchList[i]
-                    if(m.constrained):
-                        constrained[m.predicted.serialNo] = True
-                    # find the index of the selected helix in the correspondence list
-                    if observedType==0 and m.observed and m.observed.sseType == 'helix':
-                        if(m.observed.label == observedSSE):
-                            match = m
-                            matchKey = i
-                            matchKeys.append(i)
-                    # find the index of the selected sheet in the correspondence list
-                    if observedType==2 and m.observed and m.observed.sseType == 'sheet':
-                        if(m.observed.label-numH+1 == observedSSE):
-                            match = m
-                            matchKey = i
-                            matchKeys.append(i)
-                    
-            self.ui.tableWidgetCorrespondenceList.setRangeSelected(QtGui.QTableWidgetSelectionRange(0, 0, self.ui.tableWidgetCorrespondenceList.rowCount()-1, 2), False)
-            if(match):
-                self.ui.tableWidgetCorrespondenceList.setRangeSelected(QtGui.QTableWidgetSelectionRange(0, 0, self.ui.tableWidgetCorrespondenceList.rowCount()-1, 2), False)
-                self.ui.tableWidgetCorrespondenceList.setRangeSelected(QtGui.QTableWidgetSelectionRange(matchKey*2, 0, matchKey*2, 2),True)
-                for matchItem in matchKeys:
-                    self.ui.tableWidgetCorrespondenceList.setRangeSelected(QtGui.QTableWidgetSelectionRange(matchItem*2, 0, matchItem*2, 2),True)
-                    
-            if(self.app.mainCamera.mouseRightPressed):
-                predictedHelices = self.viewer.correspondenceLibrary.structurePrediction.helixDict
-                predictedStrands = self.viewer.correspondenceLibrary.structurePrediction.strandDict
-                predictedSSEs = self.viewer.correspondenceLibrary.structurePrediction.secelDict
-                menu = QtGui.QMenu(self.tr("Constrain observed SSE " + str(observedSSE+1)))
-                i_h = 0
-                i_s = 0
-                for i in range(len(predictedSSEs)):
-                    if observedType==0 and predictedSSEs[i].type == 'helix':
-                        constrainAction = QtGui.QAction(self.tr("Sequence #" + str(i+1) + ": Predicted helix " + str(predictedHelices[i_h].serialNo)), self)
-
-                        # bold if already selected
-                        if corr.matchList[i].observed and corr.matchList[i].observed.label == observedSSE:
-                            font=constrainAction.font()
-                            font.setBold(True)
-                            constrainAction.setFont(font)
-                        
-                        # checked if already constrained
-                        constrainAction.setCheckable(True)
-                        if(match and match.observed):
-                            constrainAction.setChecked(corr.matchList[i].constrained and corr.matchList[i].observed!=None and corr.matchList[i].observed.label == observedSSE)
-                        else:
-                            constrainAction.setChecked(False)
-
-                        # checkable if not constrained to another helix
-                        constrainAction.setEnabled( (not corr.matchList[i].constrained) or (corr.matchList[i].observed!=None and corr.matchList[i].observed.label == observedSSE) )
-                        self.connect(constrainAction, QtCore.SIGNAL("triggered()"), self.constrainPredictedHelix(predictedHelices[i_h].serialNo, observedSSE, not constrainAction.isChecked()))
-                        menu.addAction(constrainAction)
-                        i_h += 1
-                
-                    if observedType==2 and predictedSSEs[i].type == 'strand' and self.ui.checkBoxIncludeSheets.isChecked():
-                        constrainAction = QtGui.QAction(self.tr("Sequence #" + str(i+1) + ": Predicted strand " + str(predictedStrands[i_s].serialNo)), self)
-
-                        # bold if already selected
-                        if corr.matchList[i].observed and corr.matchList[i].observed.label-numH == observedSSE-1:
-                            font=constrainAction.font()
-                            font.setBold(True)
-                            constrainAction.setFont(font)
-                        
-                        # checked if already constrained
-                        constrainAction.setCheckable(True)
-                        if(match and match.observed):
-                            constrainAction.setChecked(corr.matchList[i].constrained and corr.matchList[i].observed!=None and corr.matchList[i].observed.label-numH == observedSSE-1)
-                        else:
-                            constrainAction.setChecked(False)
-
-                        # checkable if not constrained to another sheet
-                        constrainAction.setEnabled( (not corr.matchList[i].constrained) or (corr.matchList[i].observed!=None and corr.matchList[i].observed.label-numH == observedSSE-1) )
-                        self.connect(constrainAction, QtCore.SIGNAL("triggered()"), self.constrainPredictedStrand(i, observedSSE-1, not constrainAction.isChecked()))
-                        menu.addAction(constrainAction)
-                        i_s += 1
-                
-                menu.exec_(self.app.mainCamera.mapToGlobal(self.app.mainCamera.mouseDownPoint))
-                self.app.mainCamera.updateGL()
-
-    def exportToRosettaFile(self, fileName):
-        
-        library = self.viewer.correspondenceLibrary
-        engine = self.viewer.correspondenceEngine
-        skeletonViewer = self.app.skeletonViewer
-        calphaViewer = self.app.calphaViewer
-
-        def tupleToVector3DFloat(pt):
-            return Vector3DFloat(pt[0], pt[1], pt[2])
-
-        def vector3DFloatToTuple(pt):
-            return [pt.x(), pt.y(), pt.z()]
-
-        def cAlphaToSkeleton(pt):
-            return skeletonViewer.worldToObjectCoordinates(calphaViewer.objectToWorldCoordinates(pt))
-        
-        def skeletonToCAlpha(pt):
-            return calphaViewer.worldToObjectCoordinates(skeletonViewer.objectToWorldCoordinates(pt))
-            
-        doc = xml.dom.minidom.Document()
-        gorgonModelListElement = doc.createElement("GORGON_MODEL_LIST")
-        
-        sequenceElement = doc.createElement("SEQUENCE")
-        sequenceElement.setAttribute("FIRST_RESIDUE_NO", str(library.structurePrediction.chain.getFirstResidueIndex()))
-        residueList = doc.createTextNode(library.structurePrediction.chain.getSequence())
-        sequenceElement.appendChild(residueList)
-        gorgonModelListElement.appendChild(sequenceElement)
-        
-        correspondenceListElement = doc.createElement("CORRESPONDENCE_LIST")
-        
-        for i in range(len(library.correspondenceList)):
-            corr = library.correspondenceList[i]
-            
-            correspondenceElement = doc.createElement("CORRESPONDENCE")
-            correspondenceElement.setAttribute("RANK", str(i+1))
-            correspondenceElement.setIdAttribute("RANK")
-            correspondenceElement.setAttribute("GORGON_SCORE", str(corr.score))
-
-            engine.initializePathFinder(self.app.skeletonViewer.renderer.getMesh())
-            
-            helixRadius = vectorDistance(cAlphaToSkeleton([2.5, 0,0]), cAlphaToSkeleton([0,0,0])) # Finding the size of 2.5 Angstroms in skeleton space
-            
-            for i in range(len(corr.matchList)):
-                match = corr.matchList[i]
-                if(match.observed):
-                    if(match.observed.sseType == 'helix'):
-                        sseElement = doc.createElement("SECONDARY_STRUCTURE")
-                        
-                        startTag = "START_COORDINATE"
-                        endTag = "END_COORDINATE"
-                        if(match.direction != Match.FORWARD):
-                            startTag, endTag = endTag, startTag
-                        
-                        startCoordinateElement = doc.createElement(startTag)
-                        startCoordinateElement.setAttribute("X", str(match.observed.beginningCoord[0]))
-                        startCoordinateElement.setAttribute("Y", str(match.observed.beginningCoord[1]))
-                        startCoordinateElement.setAttribute("Z", str(match.observed.beginningCoord[2]))
-                        sseElement.appendChild(startCoordinateElement)
-                        
-                        endCoordinateElement = doc.createElement(endTag)
-                        endCoordinateElement.setAttribute("X", str(match.observed.endCoord[0]))
-                        endCoordinateElement.setAttribute("Y", str(match.observed.endCoord[1]))
-                        endCoordinateElement.setAttribute("Z", str(match.observed.endCoord[2]))
-                        sseElement.appendChild(endCoordinateElement)
-                        
-                        sseElement.setAttribute("SSE_TYPE", "ALPHA_HELIX")
-                        sseElement.setAttribute("START_RESIDUE", str(match.predicted.startIndex))
-                        sseElement.setAttribute("END_RESIDUE", str(match.predicted.stopIndex))
-                                                                                                    
-                        correspondenceElement.appendChild(sseElement)
-                        if(match.direction == Match.FORWARD):
-                            engine.initializePathHelix(i, tupleToVector3DFloat(cAlphaToSkeleton(match.observed.endCoord)), tupleToVector3DFloat(cAlphaToSkeleton(match.observed.beginningCoord)), helixRadius)
-                        else:
-                            engine.initializePathHelix(i, tupleToVector3DFloat(cAlphaToSkeleton(match.observed.beginningCoord)), tupleToVector3DFloat(cAlphaToSkeleton(match.observed.endCoord)), helixRadius)
-                                
-                    elif (match.observed.sseType == 'sheet'):
-                        pass;
-         
-            for i in range(1, len(corr.matchList)):
-                if ((corr.matchList[i-1].observed) and
-                    (corr.matchList[i].observed) and
-                    (corr.matchList[i-1].predicted.stopIndex+1 <= corr.matchList[i].predicted.startIndex-1)):
-                    sseElement = doc.createElement("SECONDARY_STRUCTURE")
-                    sseElement.setAttribute("SSE_TYPE", "LOOP")
-                    sseElement.setAttribute("START_RESIDUE", str(corr.matchList[i-1].predicted.stopIndex+1))
-                    sseElement.setAttribute("END_RESIDUE", str(corr.matchList[i].predicted.startIndex-1))
-                    
-                    engine.getPathSpace(i-1, False, i, True)
-                    vertexListElement = doc.createElement("VERTEX_LIST")
-                    
-                    for j in range(engine.getPathVertexCount()):
-                        vertex = skeletonToCAlpha(vector3DFloatToTuple(engine.getPathVertex(j)))
-                        vertexElement = doc.createElement("VERTEX")
-                        vertexElement.setAttribute("ID", str(j))
-                        vertexElement.setIdAttribute("ID")
-                        vertexElement.setAttribute("X", str(vertex[0]))
-                        vertexElement.setAttribute("Y", str(vertex[1]))
-                        vertexElement.setAttribute("Z", str(vertex[2]))
-                        vertexListElement.appendChild(vertexElement)
-                                        
-                    sseElement.appendChild(vertexListElement)
-                    
-                    edgeListElement = doc.createElement("EDGE_LIST")
-                    for j in range(engine.getPathEdgeCount()):
-                        ix0 = engine.getEdgeVertexIndex(j, 0)
-                        ix1 = engine.getEdgeVertexIndex(j, 1)
-                        edgeElement = doc.createElement("EDGE")
-                        edgeElement.setAttribute("VERTEX_1_INDEX", str(ix0))
-                        edgeElement.setAttribute("VERTEX_2_INDEX", str(ix1))
-                        edgeListElement.appendChild(edgeElement)
-                    
-                    engine.clearPathSpace()
-                    sseElement.appendChild(edgeListElement)
-                    
-                    correspondenceElement.appendChild(sseElement)
-         
-            engine.clearPathFinder()
-           
-            correspondenceListElement.appendChild(correspondenceElement)
-        
-        gorgonModelListElement.appendChild(correspondenceListElement)
-        doc.appendChild(gorgonModelListElement)
-                
-        outFile = open(fileName, "w")
-        outFile.writelines(doc.toprettyxml())
-        outFile.close()
-        
-    def exportToRosetta(self):
-        rosettaFile = QtGui.QFileDialog.getSaveFileName(self, self.tr("Export to Rosetta"), "", "Correspondence Export Files (*.xml)")
-        if not rosettaFile.isEmpty():
-            self.setCursor(QtCore.Qt.WaitCursor)
-            self.exportToRosettaFile(rosettaFile)
-            self.setCursor(QtCore.Qt.ArrowCursor)
