@@ -6,7 +6,7 @@ from .calpha_atom_placer_form import CAlphaAtomPlacerForm
 # from calpha_sequence_dock import CAlphaSequenceDock
 from Toolkit.sse.seq_model.Chain import Chain
 # from atom_visualization_form import AtomVisualizationForm
-# from correspondence.StructurePrediction import StructurePrediction
+from Toolkit.sse.correspondence.StructurePrediction import StructurePrediction
 from .calpha_choose_chain_model import CAlphaChooseChainModel
 # from calpha_flexible_fitting_form import CAlphaFlexibleFittingForm
 
