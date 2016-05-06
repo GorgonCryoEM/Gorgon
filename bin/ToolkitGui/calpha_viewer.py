@@ -533,13 +533,13 @@ class CAlphaViewer(BaseViewer):
         self.loadedChains = []
         BaseViewer.unloadData(self)
     
-    def loadSeq(self):
+    def loadSeq(self, fileName):
         """
 This function loads a SEQ file and creates a StructurePrediction object.
         """
-        fileName = QtGui.QFileDialog.getOpenFileName( self, self.tr('Open Sequence'), '',
-                                            self.tr('Sequence possibly with SSE predictions (*.seq)') )
-        fileName = str(fileName)
+#         fileName = QtGui.QFileDialog.getOpenFileName( self, self.tr('Open Sequence'), '',
+#                                             self.tr('Sequence possibly with SSE predictions (*.seq)') )
+#         fileName = str(fileName)
         if fileName:
             self.structPred = StructurePrediction.load(fileName, self.app)
             return True
