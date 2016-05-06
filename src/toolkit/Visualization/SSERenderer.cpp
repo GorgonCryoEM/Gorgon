@@ -244,7 +244,7 @@ namespace Visualization {
     }
 
     void SSERenderer::LoadHelixFileVRML(string fileName) {
-        SkeletonReader::ReadHelixFile((char *)fileName.c_str(), NULL, helices);
+        SkeletonReader::ReadHelixFile(fileName, "", helices);
     }
 
     void SSERenderer::LoadHelixFile(string fileName) {
