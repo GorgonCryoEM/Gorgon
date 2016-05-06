@@ -34,6 +34,7 @@ class MainWindowForm4(QtGui.QMainWindow):
         
     def load(self):
         self.form = self.sseViewer.helixCorrespondanceFinder
+        self.sseViewer.helixCorrespondanceFinder.viewer = self.sseViewer
 #         self.form.show()
 #
         self.volumeViewer.load(self.args.volume)
