@@ -38,7 +38,7 @@ class MainWindowForm4(QtGui.QMainWindow):
 #
         self.volumeViewer.load(self.args.volume)
         self.skeletonViewer.load(self.args.skeleton)
-#         self.calphaViewer.loadSeq()
+        self.calphaViewer.loadSeq('groel-segment.seq')
 #         self.sseViewer.loadHelixDataFromFile('groel-segment.seq')
 #         self.sseViewer.loadHelixData()
 #         self.sseViewer.helixCorrespondanceFinder.viewer = self.sseViewer
