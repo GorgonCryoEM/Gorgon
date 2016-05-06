@@ -73,7 +73,6 @@ class SSEViewer(BaseViewer):
             self.loaded = True
             self.helixLoaded = True
             self.modelChanged()
-            self.emitViewerSetCenter()
         except:
             QtGui.QMessageBox.critical(self, "Unable to load data file", "The file might be corrupt, or the format may not be supported.", "Ok")
 
@@ -93,7 +92,6 @@ class SSEViewer(BaseViewer):
             self.loaded = True
             self.sheetLoaded = True
             self.modelChanged()
-            self.emitViewerSetCenter()
         except:
             QtGui.QMessageBox.critical(self, "Unable to load data file", "The file might be corrupt, or the format may not be supported.", "Ok")
             self.loaded = False
