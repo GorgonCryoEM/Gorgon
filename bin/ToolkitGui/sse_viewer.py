@@ -166,7 +166,7 @@ class SSEViewer(BaseViewer):
 
     def fitSelectedSSEs(self):
         self.app.mainCamera.setCursor(QtCore.Qt.BusyCursor)
-        self.renderer.fitSelectedSSEs(self.app.viewers["volume"].renderer.getVolume())
+        self.renderer.fitSelectedSSEs(self.app.volumeViewer.renderer.getVolume())
         self.emitModelChanged()
         self.app.mainCamera.setCursor(QtCore.Qt.ArrowCursor)
         
@@ -175,7 +175,7 @@ class SSEViewer(BaseViewer):
         
     # Overridden
     def emitElementClicked(self, hitStack, event):
-        if (self.app.viewers["calpha"].displayStyle == self.app.viewers["calpha"].DisplayStyleRibbon):
+        if (self.app.calphaViewer.displayStyle == self.app.calphaViewer.DisplayStyleRibbon):
             if(self.app.mainCamera.mouseRightPressed and hitStack[0] == 0):
                 self.emit(QtCore.SIGNAL("SSERightClicked(PyQt_PyObject, PyQt_PyObject, QMouseEvent)"), hitStack[0], hitStack[1], event)
         else:

@@ -461,8 +461,8 @@ class CAlphaViewer(BaseViewer):
             self.unloadData()
         self.fileName = ""
         
-        volumeViewer = self.app.viewers["volume"]
-        skeletonViewer = self.app.viewers["skeleton"]
+        volumeViewer = self.app.volumeViewer
+        skeletonViewer = self.app.skeletonViewer
         self.renderer.getSSEHunterAtoms(volumeViewer.renderer.getVolume(), skeletonViewer.renderer.getMesh(), resolution, threshold, correlationCoefficient, skeletonCoefficient, geometryCoefficient)
 
         self.dirty = False
