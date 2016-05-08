@@ -46,9 +46,9 @@ class CAlphaStructureEditor(QtGui.QWidget):
         self.connect(self.helixAcceptButton, QtCore.SIGNAL('clicked()'), self.helixCreateCAhelix)
         if self.parentWidget().parentWidget().app:
             self.updateCurrentMatch() #In case an observed helix is already selected
-            self.CAlphaViewer = self.app.viewers['calpha']
-            self.connect(self.app.viewers['sse'], QtCore.SIGNAL("SSE selected"), self.updateCurrentMatch)
-            self.connect(self.app.viewers["calpha"], QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.posUpdateValues)
+            self.CAlphaViewer = self.app.calphaViewer
+            self.connect(self.app.sseViewer, QtCore.SIGNAL("SSE selected"), self.updateCurrentMatch)
+            self.connect(self.app.sseViewer, QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.posUpdateValues)
             self.connect(self.posMoveDict['x'], QtCore.SIGNAL('valueChanged(double)'), self.posMoveCM_x)
             self.connect(self.posMoveDict['y'], QtCore.SIGNAL('valueChanged(double)'), self.posMoveCM_y)
             self.connect(self.posMoveDict['z'], QtCore.SIGNAL('valueChanged(double)'), self.posMoveCM_z)
@@ -56,8 +56,8 @@ class CAlphaStructureEditor(QtGui.QWidget):
             self.connect(self.posMoveDict['pitch'], QtCore.SIGNAL('valueChanged(int)'), self.posRotateCM_pitch)
             self.connect(self.posMoveDict['yaw'], QtCore.SIGNAL('valueChanged(int)'), self.posRotateCM_yaw)
             self.connect(self.removeButton, QtCore.SIGNAL('clicked()'), self.removeSelectedAtoms)
-            self.connect(self.app.viewers['volume'], QtCore.SIGNAL("modelLoaded()"), self.updateLoopEditorEnables)
-            self.connect(self.app.viewers['volume'], QtCore.SIGNAL("modelUnloaded()"), self.updateLoopEditorEnables)
+            self.connect(self.app.volumeViewer, QtCore.SIGNAL("modelLoaded()"), self.updateLoopEditorEnables)
+            self.connect(self.app.volumeViewer, QtCore.SIGNAL("modelUnloaded()"), self.updateLoopEditorEnables)
       
     def atomChoosePossibleAtom(self, choiceNum):
         """
@@ -86,7 +86,7 @@ if the user clicks accept.
         self.atomEnableTabElements(False)
         self.possibleAtomsList = []
         #self.parentWidget()=>CAlphaSequenceWidget, self.parentWidget().parentWidget() => CAlphaSequenceDock
-        skeletonViewer = self.parentWidget().parentWidget().app.viewers['skeleton']
+        skeletonViewer = self.parentWidget().parentWidget().app.skeletonViewer
         meshRenderer = skeletonViewer.renderer
         radius = float( self.atomicCAdoubleSpinBox.value() )
         resNum = int( str(self.atomicResNumbers[0].text()) )
@@ -284,9 +284,9 @@ given by self.helixNtermSpinBox and self.helixCtermSpinBox.
         """
         startIndex = self.helixNtermSpinBox.value()
         stopIndex = self.helixCtermSpinBox.value()
-        observedHelix = self.app.viewers['sse'].currentMatch.observed
-        direction = self.app.viewers['sse'].currentMatch.direction #Forward=0, Reverse=1
-        predHelix = self.app.viewers['sse'].currentMatch.predicted
+        observedHelix = self.app.sseViewer.currentMatch.observed
+        direction = self.app.sseViewer.currentMatch.direction #Forward=0, Reverse=1
+        predHelix = self.app.sseViewer.currentMatch.predicted
         if observedHelix.__class__.__name__ != 'ObservedHelix':
             raise TypeError, observedHelix.__class__.__name__
             
@@ -308,7 +308,7 @@ given by self.helixNtermSpinBox and self.helixCtermSpinBox.
             coord1 = vectorAdd(structPredCoord1, endMoveVector)
             coord2 = vectorAdd(structPredCoord2, startMoveVector)
                 
-        command = CAlphaStructureEditorCommandPlaceHelix(self.currentChainModel, predHelix, startIndex, stopIndex, coord1, coord2, self, self.app.viewers['sse'].currentMatch.predicted, description = "Create C-alpha helix")
+        command = CAlphaStructureEditorCommandPlaceHelix(self.currentChainModel, predHelix, startIndex, stopIndex, coord1, coord2, self, self.app.sseViewer.currentMatch.predicted, description = "Create C-alpha helix")
         self.undoStack.push(command)
         self.bringToFront()
         
@@ -531,7 +531,7 @@ screen.
 This updates the spin boxes to show the C-alpha coordinates of the 
 selection's geometric center.
         """
-        cAlphaRenderer = self.app.viewers['calpha'].renderer
+        cAlphaRenderer = self.app.calphaViewer.renderer
         cm = cAlphaRenderer.selectionCenterOfMass()
         self.x = cm.x()
         self.y = cm.y()
@@ -717,7 +717,7 @@ be the current residue for the atomic editor.
             self.helixCtermSpinBox.setValue(0)
     
     def updateLoopEditorEnables(self):
-        volumeViewer = self.app.viewers['volume']
+        volumeViewer = self.app.volumeViewer
         
         self.loopVolumeLoadButton.setVisible(not volumeViewer.loaded)
         if(volumeViewer.loaded):
@@ -911,7 +911,7 @@ be the current residue for the atomic editor.
         self.updateLoopEditorEnables()
         
     def loadLoopVolume(self):
-        self.app.viewers['volume'].loadData()
+        self.app.volumeViewer.loadData()
         self.bringToFront()
         
     def setupPositionTab(self):
@@ -1074,7 +1074,7 @@ This uses the SSE viewer's currentMatch attribute to find the start and
 stop indices for the current secel.  It uses this to set the Nterm and 
 Cterm spin boxes in the helix editor.  
         """
-        sseViewer = self.app.viewers['sse']
+        sseViewer = self.app.sseViewer
         if not sseViewer.currentMatch:
             return
         startIx = sseViewer.currentMatch.predicted.startIndex
