@@ -1,6 +1,6 @@
 from PyQt4 import Qt,QtGui,QtCore
-from calpha_sequence_widget import CAlphaSequenceWidget
-from calpha_sequence_error import CAlphaSequenceError
+from .calpha_sequence_widget import CAlphaSequenceWidget
+# from calpha_sequence_error import CAlphaSequenceError
 
 
 class CAlphaSequenceDock(QtGui.QDockWidget):

@@ -1,13 +1,14 @@
 from PyQt4 import QtGui, QtCore
-from libpyGORGON import PDBAtom, PDBBond, Vector3DFloat
-from calpha_interactive_loop_builder import CAlphaInteractiveLoopBuilder
-from seq_model.findHelixCalphas import helixEndpointsToCAlphaPositions
-from seq_model.Helix import Helix
-import math
-from vector_lib import *
-from calpha_structure_editor_command_place_helix import CAlphaStructureEditorCommandPlaceHelix
-from calpha_structure_editor_command_atom_placement import CAlphaStructureEditorCommandAtomPlacement
-from calpha_structure_editor_command_change_position import CAlphaStructureEditorCommandChangePosition
+# from libpyGORGON import PDBAtom, PDBBond, Vector3DFloat
+# from libpytoolkit import PDBAtom, PDBBond, Vector3DFloat
+# from calpha_interactive_loop_builder import CAlphaInteractiveLoopBuilder
+# from seq_model.findHelixCalphas import helixEndpointsToCAlphaPositions
+# from seq_model.Helix import Helix
+# import math
+# from vector_lib import *
+# from calpha_structure_editor_command_place_helix import CAlphaStructureEditorCommandPlaceHelix
+# from calpha_structure_editor_command_atom_placement import CAlphaStructureEditorCommandAtomPlacement
+# from calpha_structure_editor_command_change_position import CAlphaStructureEditorCommandChangePosition
 
 
 class CAlphaStructureEditor(QtGui.QWidget):
