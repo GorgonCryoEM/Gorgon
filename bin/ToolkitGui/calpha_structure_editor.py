@@ -76,7 +76,7 @@ if the user clicks accept.
             return
             
         atomToDisplay.setColor(0, 1, 1, 1)
-        viewer.emitModelChanged()
+        viewer.modelChanged()
         self.previouslySelectedPossibleAtom = atomToDisplay
 
     def atomEnableTabElements(self, enable):
@@ -181,7 +181,7 @@ if the user clicks accept.
                     
                 atom.setVisible(self.tabWidget.currentWidget() is self.atomicTab)
             self.atomEnableTabElements(True)
-            self.parentWidget().parentWidget().viewer.emitModelChanged()
+            self.parentWidget().parentWidget().viewer.modelChanged()
     
     def atomForwardBackwardChange(self):
         """
@@ -271,7 +271,7 @@ This is used for not-yet-implemented and non-applicable widgets.
             atom.setVisible(isAtomicTab)
             
         if(len(self.possibleAtomsList) > 0):
-            self.CAlphaViewer.emitModelChanged()
+            self.CAlphaViewer.modelChanged()
         
         #self.undoButton.setEnabled(isAtomicTab or isHelixTab or isPositionTab)
         #self.redoButton.setEnabled(isAtomicTab or isHelixTab or isPositionTab)
@@ -412,7 +412,7 @@ bonds are created only if the length of the new bond would be <= 4.2 A.
                     stopBond.setAtom0Ix(atomStop0.getHashKey())
                     stopBond.setAtom1Ix(atomStop1.getHashKey())
                     renderer.addBond(stopBond)
-            self.CAlphaViewer.emitModelChanged()
+            self.CAlphaViewer.modelChanged()
         else:
             raise ValueError, len(helices)
             
@@ -642,7 +642,7 @@ This increases the position editor's yaw spin box by 3.
                 res.clearAtom('CA')
                 self.CAlphaViewer.renderer.deleteAtom(atom.getHashKey())
                 del atom
-        self.CAlphaViewer.emitModelChanged()
+        self.CAlphaViewer.modelChanged()
 
     def renderMockSidechains(self,  chain):
         """
@@ -683,7 +683,7 @@ be the current residue for the atomic editor.
                 continue
             else:
                 viewer.renderer.deleteAtom(atom.getHashKey())
-        viewer.emitModelChanged()
+        viewer.modelChanged()
         self.possbileAtomsList = []
         self.atomJustAdded = None
         self.previouslySelectedPossibleAtom = None

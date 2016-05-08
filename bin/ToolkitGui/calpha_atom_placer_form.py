@@ -160,7 +160,7 @@ class CAlphaAtomPlacerForm(QtGui.QDialog):
                 viewer.emitModelLoadedPreDraw()
                 viewer.emitModelLoaded()
             else:
-                viewer.emitModelChanged()
+                viewer.modelChanged()
         self.bringToFront()
         
     def updateResName(self, index):

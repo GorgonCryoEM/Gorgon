@@ -168,4 +168,4 @@ by radius and residue type indicated by color.
         else:
             self.seqWidget.structureEditor.clearMockSidechains(self.currentChainModel)
                 
-        viewer.emitModelChanged()
+        viewer.modelChanged()

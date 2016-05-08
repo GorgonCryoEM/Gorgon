@@ -74,7 +74,7 @@ class CAlphaViewer(BaseViewer):
             self.displayStyle = style
             self.renderer.setDisplayStyle(self.displayStyle)
             self.setAtomColorsAndVisibility(self.displayStyle)
-            self.emitModelChanged()
+            self.modelChanged()
 
     #Overridden
     def getDrawColors(self):
@@ -283,7 +283,7 @@ class CAlphaViewer(BaseViewer):
     def setAtomColor(self, color):
         self.app.themes.addColor(self.title + ":" + "Atom", color)
         self.setAllAtomColor(color)
-        self.emitModelChanged()
+        self.modelChanged()
         
     def setBondColor(self, color):
         oldColor = self.getBondColor()
@@ -308,22 +308,22 @@ class CAlphaViewer(BaseViewer):
     def setCarbonColor(self, color):
         self.app.themes.addColor(self.title + ":" + "Carbon", color)
         self.setSpecificAtomColor('C', color)
-        self.emitModelChanged()
+        self.modelChanged()
         
     def setNitrogenColor(self, color):
         self.app.themes.addColor(self.title + ":" + "Nitrogen", color)
         self.setSpecificAtomColor('N', color)
-        self.emitModelChanged()
+        self.modelChanged()
         
     def setOxygenColor(self, color):
         self.app.themes.addColor(self.title + ":" + "Oxygen", color)
         self.setSpecificAtomColor('O', color)
-        self.emitModelChanged()
+        self.modelChanged()
         
     def setSulphurColor(self, color):
         self.app.themes.addColor(self.title + ":" + "Sulphur", color)
         self.setSpecificAtomColor('S', color)
-        self.emitModelChanged()
+        self.modelChanged()
         
     def getAtomColor(self):
         return self.colors[self.title + ":" + "Atom" ]
@@ -363,25 +363,25 @@ class CAlphaViewer(BaseViewer):
     def setHelixVisibility(self, visible):
         self.helicesVisible = visible
         self.setAtomColorsAndVisibility(self.displayStyle)
-        self.emitModelChanged()
+        self.modelChanged()
     
     def setLoopVisibility(self, visible):
         self.loopsVisible = visible
         self.setAtomColorsAndVisibility(self.displayStyle)
-        self.emitModelChanged()
+        self.modelChanged()
     
     def setStrandVisibility(self, visible):
         self.strandsVisible = visible
         self.setAtomColorsAndVisibility(self.displayStyle)
-        self.emitModelChanged()
+        self.modelChanged()
     
     def setSegments(self, num_segments):
         self.renderer.setNumSegments(num_segments)
-        self.emitModelChanged()
+        self.modelChanged()
         
     def setSlices(self, num_slices):
         self.renderer.setNumSlices(num_slices)
-        self.emitModelChanged()
+        self.modelChanged()
     
     def centerOnSelectedAtoms(self, *argv):
         # This centers the CAMERA on the last selected atom.
@@ -420,7 +420,7 @@ class CAlphaViewer(BaseViewer):
             y = pos.y()*self.renderer.getSpacingY() + self.renderer.getOriginY()
             z = pos.z()*self.renderer.getSpacingZ() + self.renderer.getOriginZ()
             self.app.mainCamera.setCenter( x, y, z )
-            self.emitModelChanged()
+            self.modelChanged()
     
     def createUI(self):
         self.createChildWindows()
@@ -473,7 +473,7 @@ class CAlphaViewer(BaseViewer):
         
     def updateTotalScoreSSEHunterAtoms(self, correlationCoefficient, skeletonCoefficient, geometryCoefficient):
         self.renderer.updateTotalScoreSSEHunterAtoms(correlationCoefficient, skeletonCoefficient, geometryCoefficient)
-        self.emitModelChanged()
+        self.modelChanged()
         
     def loadData(self):
         #Overwriting the function in BaseViewer

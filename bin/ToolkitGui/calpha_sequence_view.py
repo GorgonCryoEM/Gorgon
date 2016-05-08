@@ -347,7 +347,7 @@ adding a list of residues to the selection.
         selectedAtom.setSelected(True)
         
     viewer.centerOnSelectedAtoms()
-    viewer.emitModelChanged()
+    viewer.modelChanged()
     
   def updateSequenceSelection(self):
     '''
@@ -358,7 +358,7 @@ CAlphaSequenceView.
     selection = self.currentChainModel.getSelection()
     self.structurePrediction.chain.setSelection(selection)
     dock = self.parentWidget().parentWidget().parentWidget().parentWidget()
-    dock.viewer.emitModelChanged()
+    dock.viewer.modelChanged()
     
   def setFont(self, newFont):
     self.fontName=newFont

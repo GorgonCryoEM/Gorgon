@@ -74,7 +74,7 @@ class CAlphaInteractiveLoopBuilder(VolumeManualSkeletonizationForm):
         pass
     
     def skeletonChanged(self):
-        self.calphaViewer.emitModelChanged()
+        self.calphaViewer.modelChanged()
     
     def processClickRay(self, rayWorld, rayWidth, eyeWorld, event):
         ray = self.viewer.worldVectorToObjectCoordinates(rayWorld)
@@ -91,10 +91,10 @@ class CAlphaInteractiveLoopBuilder(VolumeManualSkeletonizationForm):
             elif(event.modifiers() & QtCore.Qt.CTRL):
                 self.engine.selectEndSeed(medialnessRatio, smoothnessRatio)
                 self.engine.selectStartSeedRay(ray[0], ray[1], ray[2], eye[0], eye[1], eye[2], rayWidth, medialnessRatio, smoothnessRatio)
-                self.skeletonViewer.emitModelChanged()
+                self.skeletonViewer.modelChanged()
             elif (event.modifiers() & QtCore.Qt.ALT):
                 self.engine.selectEndSeed(medialnessRatio, smoothnessRatio)
-                self.skeletonViewer.emitModelChanged()
+                self.skeletonViewer.modelChanged()
     
     def setLoopAtoms(self, startIndex, endIndex):
         
@@ -140,7 +140,7 @@ class CAlphaInteractiveLoopBuilder(VolumeManualSkeletonizationForm):
             self.calphaViewer.loaded = True
             self.calphaViewer.emitModelLoaded()
         else:
-            self.calphaViewer.emitModelChanged()
+            self.calphaViewer.modelChanged()
 
     def drawOverlay(self):
         if self.started:

@@ -167,7 +167,7 @@ class SSEViewer(BaseViewer):
     def fitSelectedSSEs(self):
         self.app.mainCamera.setCursor(QtCore.Qt.BusyCursor)
         self.renderer.fitSelectedSSEs(self.app.volumeViewer.renderer.getVolume())
-        self.emitModelChanged()
+        self.modelChanged()
         self.app.mainCamera.setCursor(QtCore.Qt.ArrowCursor)
         
     def updateCorrespondences(self, corrs):
