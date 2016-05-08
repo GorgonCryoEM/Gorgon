@@ -13,8 +13,8 @@ class CAlphaSequenceDock(QtGui.QDockWidget):
         self.structurePrediction = structurePrediction
         self.app = main
         self.viewer=viewer
-        self.skeletonViewer = self.app.viewers["skeleton"]
-        self.sseViewer = self.app.viewers["sse"]
+        self.skeletonViewer = self.app.skeletonViewer
+        self.sseViewer = self.app.sseViewer
         self.seqWidget = CAlphaSequenceWidget( structurePrediction, currentChainModel, self, self)
         self.setWidget(self.seqWidget)
         self.createActions()
@@ -22,8 +22,8 @@ class CAlphaSequenceDock(QtGui.QDockWidget):
         self.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea)
         self.connect(self.seqWidget.structureEditor.mockSidechainsCheckBox,  QtCore.SIGNAL('stateChanged(int)'),  self.toggleMockSideChains)
         if main:
-            self.connect(self.app.viewers["calpha"], QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.updateFromViewerSelection)
-            self.connect(self.app.viewers["sse"], QtCore.SIGNAL("SSE selected"), self.updateFromSSESelection)
+            self.connect(self.app.calphaViewer, QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.updateFromViewerSelection)
+            self.connect(self.app.sseViewer, QtCore.SIGNAL("SSE selected"), self.updateFromSSESelection)
     
     @classmethod
     def changeDockVisibility(cls, main, viewer, structurePrediction, currentChainModel):
