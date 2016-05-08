@@ -59,6 +59,7 @@ class CAlphaViewer(BaseViewer):
         self.ribbonMouseMapping[0] = {}
         self.ribbonMouseMapping[1] = {}
         self.ribbonMouseMapping[2] = {}
+        self.createActions()
       
    # Overridden
     def initializeGLDisplayType(self):
@@ -430,6 +431,13 @@ class CAlphaViewer(BaseViewer):
 #         self.chooseChainModel = CAlphaChooseChainModel(self.app, self)
 #         self.flexibleFitter = CAlphaFlexibleFittingForm(self.app, self)
         
+    def createActions(self):
+        seqDockAct = QtGui.QAction(self.tr("Semi-&automatic Atom Placement..."), self)
+        seqDockAct.setStatusTip(self.tr("Perform partly automated atom placement"))
+        seqDockAct.setCheckable(True)
+        seqDockAct.setChecked(False)
+        self.app.docksMenu.addAction(seqDockAct)
+
         def showDock():
             loaded = True
             if not self.structPred:
@@ -438,7 +446,7 @@ class CAlphaViewer(BaseViewer):
                 self.main_chain = self.structPred.chain
             if loaded:
                 CAlphaSequenceDock.changeDockVisibility(self.app, self, self.structPred, self.main_chain)
-#         self.connect(seqDockAct, QtCore.SIGNAL("triggered()"), showDock)
+        self.connect(seqDockAct, QtCore.SIGNAL("triggered()"), showDock)
 #         self.app.actions.addAction("seqDock", seqDockAct)
     
     def loadSSEHunterData(self, fileName):

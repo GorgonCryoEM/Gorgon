@@ -40,7 +40,7 @@ class CAlphaSequenceDock(QtGui.QDockWidget):
                 currentChainModel[i] = res
                 
         if cls.__dock:
-            if cls.__dock.app.actions.getAction("seqDock").isChecked():
+            if cls.__dock.app.docksMenu.getAction("seqDock").isChecked():
                 try:
                     CAlphaSequenceDock.checkPredictionVsModel(structurePrediction, currentChainModel)
                 except CAlphaSequenceError:
@@ -117,7 +117,7 @@ If the chain model's sequence is not a subset of the structure
         seqDockAct.setCheckable(True)
         seqDockAct.setChecked(False)
         self.connect(seqDockAct, QtCore.SIGNAL("triggered()"), CAlphaSequenceDock.changeDockVisibility)
-        self.app.actions.addAction("perform_autoAtomPlacement", seqDockAct)
+        self.app.docksMenu.addAction(seqDockAct)
     
     def changeCurrentChainModel(self, currentChainModel):
         '''
