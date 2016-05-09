@@ -132,8 +132,8 @@ namespace SkeletonMaker {
 
         virtual void load(string fileName);
         virtual void save(string fileName);
-        Volume * PerformBinarySkeletonizationJu2007(double threshold, int minCurveSize, int minSurfaceSize);
-        Volume * PerformGrayscaleSkeletonizationAbeysinghe2008(
+        Volume PerformBinarySkeletonizationJu2007(double threshold, int minCurveSize, int minSurfaceSize);
+        Volume PerformGrayscaleSkeletonizationAbeysinghe2008(
                 double startDensity, int stepCount, int minCurveSize,
                 int minSurfaceSize, int curveRadius, int surfaceRadius,
                 int skeletonSmoothenRadius);

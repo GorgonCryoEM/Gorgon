@@ -2848,11 +2848,11 @@ void Volume::save(string fileName) {
     }
 }
 
-Volume * Volume::PerformBinarySkeletonizationJu2007(double threshold,
+Volume Volume::PerformBinarySkeletonizationJu2007(double threshold,
                                                     int minCurveSize,
                                                     int minSurfaceSize)
 {
-    Skeletonizer * skeletonizer = new Skeletonizer(0, 0, 0,
+    Skeletonizer skeletonizer(getOriginX(), getOriginY(), getOriginZ(),
             DEFAULT_SKELETON_DIRECTION_RADIUS);
 //#ifdef GORGON_DEBUG
     cout<<"DEBUG: File:   Volume.h"<<endl;
@@ -2860,10 +2860,10 @@ Volume * Volume::PerformBinarySkeletonizationJu2007(double threshold,
     cout<<getSize()<<endl;
 //#endif
 
-    Volume * outputVol = skeletonizer->PerformPureJuSkeletonization(*this, "",
+    Volume outputVol = *skeletonizer.PerformPureJuSkeletonization(*this, "",
             threshold, minCurveSize, minSurfaceSize);
-    delete skeletonizer;
-    cout<<"outputVol->getNonZeroVoxelCount(): "<<outputVol->getNonZeroVoxelCount()<<endl;
+
+    cout<<"outputVol->getNonZeroVoxelCount(): "<<outputVol.getNonZeroVoxelCount()<<endl;
     cout<<"\t"<<threshold
             <<"\t"<<minCurveSize
             <<"\t"<<minSurfaceSize
@@ -2871,31 +2871,27 @@ Volume * Volume::PerformBinarySkeletonizationJu2007(double threshold,
 //#ifdef GORGON_DEBUG
     cout<<"DEBUG: File:   Volume.h"<<endl;
     cout<<"DEBUG: Method: Volume::PerformBinarySkeletonizationJu2007"<<endl;
-    cout<<"outputVol->getSize(): "<<outputVol->getSize()<<endl;
+    cout<<"outputVol->getSize(): "<<outputVol.getSize()<<endl;
 //#endif
 
     return outputVol;
 }
 
-Volume * Volume::PerformGrayscaleSkeletonizationAbeysinghe2008(
+Volume Volume::PerformGrayscaleSkeletonizationAbeysinghe2008(
         double startDensity, int stepCount, int minCurveSize,
         int minSurfaceSize, int curveRadius, int surfaceRadius,
         int skeletonRadius)
 {
     double stepSize = (getMax() - startDensity) / stepCount;
     if(!isZero(stepSize)) {
-        Skeletonizer * skeletonizer = new Skeletonizer(0,
+        Skeletonizer skeletonizer(0,
                 curveRadius, surfaceRadius, skeletonRadius);
-        Volume * outputVol =
-                skeletonizer->PerformImmersionSkeletonizationAndPruning(*this,
+        Volume outputVol =
+                *skeletonizer.PerformImmersionSkeletonizationAndPruning(*this,
                         NULL, startDensity, getMax(), stepSize, 0, 0,
                         minCurveSize, minSurfaceSize, 0, 0, "", true, 1.0,
                         DEFAULT_PRUNE_THRESHOLD, DEFAULT_PRUNE_THRESHOLD);
-        delete skeletonizer;
         return outputVol;
-    }
-    else {
-        return NULL;
     }
 }
 
