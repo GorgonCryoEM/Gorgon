@@ -11,7 +11,7 @@
 namespace Visualization {
 
     RendererBase::RendererBase()
-            : IsoSurface((Volume)(*this))
+            : IsoSurface((*this), surfaceMesh)
     {}
 
     void RendererBase::load(string fileName) {

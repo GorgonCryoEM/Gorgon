@@ -9,7 +9,8 @@
 #define SRC_TOOLKIT_VISUALIZATION_RENDERERBASE_H_
 
 #include "IsoSurface.h"
-#include <Core/volume.h>
+#include "Core/volume.h"
+#include "Visualization/Mesh.h"
 
 using namespace Core;
 
@@ -26,6 +27,9 @@ namespace Visualization {
 
             virtual float getMinPos(int i) const;
             virtual float getMaxPos(int i) const;
+
+        protected:
+            Mesh surfaceMesh;
     };
 }
 

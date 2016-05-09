@@ -9,8 +9,8 @@
 
 namespace Visualization {
 
-    IsoSurface::IsoSurface(const Volume & vol)
-            : DisplayType(vol), surfaceMesh(Mesh())
+    IsoSurface::IsoSurface(const Volume & vol, Mesh & mesh)
+            : DisplayType(vol), surfaceMesh(mesh)
     {
         displayRadius = 1;
         _useDisplayRadius = false;
