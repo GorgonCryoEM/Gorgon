@@ -22,15 +22,13 @@ namespace Visualization {
 
             bool calculateDisplay();
 
-            void draw(int subSceneIndex, bool selectEnabled);
-
             void setDisplayRadius(const int radius);
             void setDisplayRadiusOrigin(float radiusOriginX,
                                         float radiusOriginY,
                                         float radiusOriginZ);
             void useDisplayRadius(bool useRadius);
 
-        private:
+        protected:
             int displayRadius;
             Vec3F radiusOrigin;
             bool _useDisplayRadius;

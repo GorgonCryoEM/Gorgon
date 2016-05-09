@@ -67,11 +67,6 @@ namespace Visualization {
 
     }
 
-    void IsoSurface::draw(int subSceneIndex, bool selectEnabled) {
-        if(subSceneIndex == 0)
-            surfaceMesh.draw(true, selectEnabled, _useDisplayRadius, displayRadius, radiusOrigin);
-    }
-
     void IsoSurface::setDisplayRadius(const int radius) {
         displayRadius = radius;
     }
