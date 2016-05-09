@@ -17,7 +17,7 @@ namespace Visualization {
             Display();
 
         private:
-            vector<DisplayBase *> displays;
+            vector<DisplayType *> displays;
     };
 }
 

@@ -1,16 +1,17 @@
 /*
- * DisplayBase.cpp
+ * DisplayType.cpp
  *
  * Author: shadow_walker <shadowwalkersb@gmail.com>
  *
  */
 
-#include "DisplayBase.h"
+#include "DisplayType.h"
+
 #include "Foundation/StringUtils.h"
 
 namespace Visualization {
 
-    DisplayBase::DisplayBase()
+    DisplayType::DisplayType()
     {
         textureLoaded = false;
         viewingType = VIEWING_TYPE_ISO_SURFACE;
@@ -18,40 +19,40 @@ namespace Visualization {
         sampleInterval = 1;
     }
 
-    DisplayBase::~DisplayBase() {
+    DisplayType::~DisplayType() {
         if(textureLoaded) {
             glDeleteTextures(1, &textureName);
             textureLoaded = false;
         }
     }
 
-    float DisplayBase::getSurfaceValue() const {
+    float DisplayType::getSurfaceValue() const {
         return surfaceValue;
     }
 
-    int DisplayBase::getSampleInterval() const  {
+    int DisplayType::getSampleInterval() const  {
         return sampleInterval;
     }
 
-    void DisplayBase::setViewingType(const int type) {
+    void DisplayType::setViewingType(const int type) {
         viewingType = type;
 
         load3DTexture();
         calculateDisplay();
     }
 
-    void DisplayBase::draw(int subSceneIndex, bool selectEnabled) {
+    void DisplayType::draw(int subSceneIndex, bool selectEnabled) {
     }
 
-    bool DisplayBase::calculateDisplay() {
+    bool DisplayType::calculateDisplay() {
         return false;
     }
 
-    float DisplayBase::getMinPos(int i) const {
+    float DisplayType::getMinPos(int i) const {
         return 0.0;
     }
 
-    float DisplayBase::getMaxPos(int i) const {
+    float DisplayType::getMaxPos(int i) const {
         float result;
         switch(i) {
             case 0:
@@ -68,10 +69,10 @@ namespace Visualization {
         return result;
     }
 
-    void DisplayBase::load3DTexture() {
+    void DisplayType::load3DTexture() {
     }
 
-    void DisplayBase::load(string fileName) {
+    void DisplayType::load(string fileName) {
 //        #ifdef GORGON_DEBUG
               cout<<"\033[32mDEBUG: File:   DisplayBase.cpp"<<endl;
               cout<<"DEBUG: Method: DisplayBase::load(string)\033[0m"<<endl;
@@ -92,7 +93,7 @@ namespace Visualization {
 
     }
 
-    void DisplayBase::save(string fileName) {
+    void DisplayType::save(string fileName) {
         int pos = fileName.rfind(".") + 1;
         string extension = fileName.substr(pos, fileName.length()-pos);
 
@@ -105,26 +106,26 @@ namespace Visualization {
         }
     }
 
-    void DisplayBase::setSampleInterval(const int size) {
+    void DisplayType::setSampleInterval(const int size) {
         sampleInterval = size;
 
         calculateDisplay();
     }
 
-    void DisplayBase::setSurfaceValue(const float value) {
+    void DisplayType::setSurfaceValue(const float value) {
         surfaceValue = value;
 
         calculateDisplay();
         load3DTexture();
     }
 
-    void DisplayBase::setMaxSurfaceValue(const float value) {
+    void DisplayType::setMaxSurfaceValue(const float value) {
         maxSurfaceValue = value;
 
         load3DTexture();
     }
 
-    void DisplayBase::unload() {
+    void DisplayType::unload() {
         if(textureLoaded) {
             glDeleteTextures(1, &textureName);
             textureLoaded = false;

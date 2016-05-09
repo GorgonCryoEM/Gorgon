@@ -1,5 +1,5 @@
 /*
- * DisplayBase.h
+ * DisplayType.h
  *
  * Author: shadow_walker <shadowwalkersb@gmail.com>
  *
@@ -56,10 +56,10 @@ namespace Visualization {
         typedef int PFNGLTEXIMAGE3DPROC;
     #endif
 
-    class DisplayBase : public Volume {
+    class DisplayType : public Volume {
         public:
-            DisplayBase();
-            virtual ~DisplayBase();
+            DisplayType();
+            virtual ~DisplayType();
 
             float getSurfaceValue() const;
             int getSampleInterval() const;
@@ -97,4 +97,4 @@ namespace Visualization {
 
 } /* namespace Visualization */
 
-#endif /* SRC_TOOLKIT_DISPLAYBASE_H_ */
+#endif /* SRC_TOOLKIT_DISPLAYTYPE_H_ */
