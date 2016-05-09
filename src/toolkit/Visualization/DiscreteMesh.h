@@ -24,10 +24,6 @@ using namespace Core;
 
 namespace GraySkeletonCPP {
 
-    /*
-     *
-     */
-
     const unsigned char CURVE_TYPE_XPOS = 1;
     const unsigned char CURVE_TYPE_YPOS = 2;
     const unsigned char CURVE_TYPE_ZPOS = 4;
