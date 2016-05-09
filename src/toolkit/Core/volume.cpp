@@ -44,37 +44,10 @@ int Volume::id3=0;
     void Volume::setVolume(Volume *vol) {
         *this = *vol;
     }
-    //-----------------------------------
-
-    Volume::Volume(const Volume& obj)
-    : VolumeData(static_cast<VolumeData>(obj)), histogram(obj.histogram), volData(
-            dynamic_cast<VolumeData *>(this))
-    {
-#ifdef GORGON_DEBUG
-        cout<<"\033[32mDEBUG: File:   volume.cpp"<<endl;
-        cout<<"DEBUG: Method: Volume::Volume(const Volume&)\033[0m"<<endl;
-        cout<<"Id1: "<<id1<<endl;
-        id1++;
-
-        cout<<"\033[35mobj.size: "<<obj.getSize()<<endl;
-        cout<<"this->size: "<<this->getSize()<<"\033[0m"<<endl;
-#endif
-
-    }
-
-    Volume::Volume()
-    : VolumeData(), volData(getVolumeData())
-    {
-#ifdef GORGON_DEBUG
-        cout<<"\033[32mDEBUG: File:   volume.h"<<endl;
-        cout<<"DEBUG: Method: Volume::Volume()\033[0m"<<endl;
-        cout<<"Id0: "<<id0<<endl;
-        id0++;
-#endif
-    }
+    Volume::Volume() {}
 
     Volume::Volume(int x, int y, int z, float val)
-    : VolumeData(x, y, z, val), volData(getVolumeData())
+    : VolumeData(x, y, z, val)
     {
 #ifdef GORGON_DEBUG
         cout<<"\033[32mDEBUG: File:   volume.cpp"<<endl;
@@ -86,10 +59,6 @@ int Volume::id3=0;
     }
 
     Volume::~Volume() {
-    }
-
-    VolumeData * Volume::getVolumeData() {
-        return dynamic_cast<VolumeData *>(this);
     }
 
     float Volume::getOffset(float fValue1, float fValue2, float fValueDesired) const {
@@ -2662,7 +2631,7 @@ void Volume::normalize(double min, double max) {
     double irange = imax - imin;
     double range = max - min;
 
-    int size = volData->getMaxIndex();
+    int size = getMaxIndex();
     for(int i = 0; i < size; i++) {
         (*this)(i) = ( ((*this)(i) - (float)imin) / (float)irange) * (float)range + (float)min;
     }
@@ -2717,7 +2686,7 @@ void Volume::toMRCFile(string fname) {
 
     double dmin = 100000, dmax = -100000;
     int i;
-    int size = volData->getMaxIndex();
+    int size = getMaxIndex();
     for(i = 0; i < size; i++) {
         float val = (float)(*this)(i);
         if(val < dmin) {
@@ -2759,7 +2728,7 @@ void Volume::toMRCFile(string fname) {
 
 // Returns the mean value of all the voxels
 float Volume::getMean() {
-    int N = volData->getMaxIndex();
+    int N = getMaxIndex();
     double mass = 0;
     for(int i = 0; i < N; i++)
         mass += (*this)(i);
@@ -2769,7 +2738,7 @@ float Volume::getMean() {
 
 // Returns the population standard deviation of the values at all the voxels
 float Volume::getStdDev() {
-    int N = volData->getMaxIndex();
+    int N = getMaxIndex();
 
     //Calculate the standard deviation of all the voxels in the image
     double voxel_sum = 0;
@@ -2820,7 +2789,7 @@ void Volume::downsample() {
 
 void Volume::load(string inputFile) {
 
-    *volData = *MRCReaderPicker::pick(inputFile.c_str())->getVolume();
+    *this = *MRCReaderPicker::pick(inputFile.c_str())->getVolume();
 
 #ifdef GORGON_DEBUG
     cout<<"\033[35mDEBUG: File:   VolumeFormatConverter.h"<<endl;

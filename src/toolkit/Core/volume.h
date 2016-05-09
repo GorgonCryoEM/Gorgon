@@ -71,7 +71,6 @@ namespace SkeletonMaker {
     public:
         Volume();
         Volume(int x, int y, int z, float val=0.0);
-        Volume(const Volume& obj);
         virtual ~Volume( );
 
         int getHashKey(int x, int y, int z, int edge, int iScale) const;
@@ -149,13 +148,8 @@ namespace SkeletonMaker {
 
 
     private:
-
-        VolumeData * getVolumeData();
         vector<int> histogram;
 
-    protected:
-        VolumeData * volData;
-//----------------------
     public:
         Volume * getVolume();
         void setVolume(Volume *vol);
