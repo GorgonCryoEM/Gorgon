@@ -10,6 +10,7 @@
 
 //#include "Core/GlobalDefinitions.h"
 #include <Core/volume.h>
+#include "Mesh.h"
 //#include <MathTools/DataStructures.h>
 #include <MathTools/Vector3.h>
 //#include <string>
@@ -44,7 +45,7 @@ namespace Core {
                                                     {0,0,0,SURFACE_TYPE_YZ},  {0,0,0,SURFACE_TYPE_XZ},  {0,-1,0,SURFACE_TYPE_YZ},  {-1,0,0,SURFACE_TYPE_XZ},
                                                     {0,0,-1,SURFACE_TYPE_YZ}, {0,0,-1,SURFACE_TYPE_XZ}, {0,-1,-1,SURFACE_TYPE_YZ}, {-1,0,-1,SURFACE_TYPE_XZ}};
 
-    class DiscreteMesh : public Volume {
+    class DiscreteMesh : public Volume, public Mesh {
         public:
             DiscreteMesh(int sX, int sY, int sZ);
             DiscreteMesh(const Volume & vol);
