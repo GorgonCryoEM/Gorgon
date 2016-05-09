@@ -25,7 +25,7 @@
 using namespace MathTools;
 using namespace Visualization;
 
-namespace SkeletonMaker {
+namespace Core {
 
     const int neighbor6[6][3]={{0,0,1},{0,0,-1},{0,1,0},{0,-1,0},{1,0,0},{-1,0,0}} ;
     const vector<Vec3I> vneighbor6(neighbor6, neighbor6+6);

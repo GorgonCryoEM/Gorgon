@@ -14,7 +14,7 @@
 
 //using namespace std;
 //using namespace GraphMatch;
-using namespace SkeletonMaker;
+using namespace Core;
 
 namespace GraySkeletonCPP {
 

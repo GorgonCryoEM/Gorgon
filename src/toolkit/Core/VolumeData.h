@@ -7,7 +7,8 @@
 using namespace std;
 using namespace Toolkit;
 
-namespace SkeletonMaker {
+namespace Core {
+
     class VolumeData {
     public:
         VolumeData();

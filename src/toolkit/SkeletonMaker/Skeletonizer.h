@@ -30,7 +30,7 @@ using namespace std;
 
 using namespace MathTools;
 //using namespace Foundation;
-using namespace SkeletonMaker;
+using namespace Core;
 
 namespace GraySkeletonCPP {
 

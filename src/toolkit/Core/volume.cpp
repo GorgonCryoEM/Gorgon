@@ -7,11 +7,11 @@
 #include <fstream>
 #include <iomanip>
 
-//using namespace SkeletonMaker;
+using namespace SkeletonMaker;
 using namespace Foundation;
 using namespace GraySkeletonCPP;
 
-namespace SkeletonMaker {
+namespace Core {
 
 #ifdef GORGON_DEBUG
 int Volume::id0=0;

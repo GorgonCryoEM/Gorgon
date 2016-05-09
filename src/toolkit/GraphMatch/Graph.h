@@ -11,7 +11,7 @@
 //#include <MathTools/Vector3.h>
 //#include <Core/volume.h>
 //using namespace std;
-using namespace SkeletonMaker;
+using namespace Core;
 
 namespace GraphMatch {
 
