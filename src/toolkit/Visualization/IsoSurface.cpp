@@ -9,8 +9,8 @@
 
 namespace Visualization {
 
-    IsoSurface::IsoSurface()
-            : surfaceMesh(Mesh())
+    IsoSurface::IsoSurface(const Volume & vol)
+            : DisplayType(vol), surfaceMesh(Mesh())
     {
         displayRadius = 1;
         _useDisplayRadius = false;
@@ -29,13 +29,13 @@ namespace Visualization {
             redraw = false;
 
             redraw = true;
-            int maxX = getSizeX();
-            int maxY = getSizeY();
-            int maxZ = getSizeZ();
+            int maxX = vol.getSizeX();
+            int maxY = vol.getSizeY();
+            int maxZ = vol.getSizeZ();
             for(int i = 0; i < maxX; i+=sampleInterval) {
                 for(int j = 0; j < maxY; j+=sampleInterval) {
                     for(int k = 0; k < maxZ; k+=sampleInterval) {
-                        MarchingCube(*this, surfaceMesh, surfaceValue, i, j, k, sampleInterval);
+                        MarchingCube(vol, surfaceMesh, surfaceValue, i, j, k, sampleInterval);
                     }
                 }
             }
