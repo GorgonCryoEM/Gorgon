@@ -34,9 +34,6 @@ using namespace SkeletonMaker;
 
 namespace GraySkeletonCPP {
 
-    /*
-     *
-     */
     class Skeletonizer {
         public:
             Skeletonizer(int pointR, int curveR,

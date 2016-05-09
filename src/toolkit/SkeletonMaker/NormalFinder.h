@@ -18,9 +18,6 @@ using namespace SkeletonMaker;
 
 namespace GraySkeletonCPP {
 
-    /*
-     *
-     */
     const int nodeVectors[6][3] = {{-1,0,0}, {0,1,0}, {1,0,0}, {0,-1,0}, {0,0,-1}, {0,0,1}};
 
     class NormalFinder {
