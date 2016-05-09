@@ -8,7 +8,7 @@
 #ifndef SRC_TOOLKIT_VISUALIZATION_CALPHARENDERER_H_
 #define SRC_TOOLKIT_VISUALIZATION_CALPHARENDERER_H_
 
-#include "Display.h"
+#include "RendererBase.h"
 //#include <GorgonGL.h>
 //#include <cstdlib>
 //#include <cstdio>
@@ -47,7 +47,7 @@ namespace Visualization {
     const int CALPHA_DISPLAY_STYLE_RIBBON = 4;
     const int CALPHA_DISPLAY_STYLE_SIDE_CHAIN = 5;
 
-    class CAlphaRenderer : public Display {
+    class CAlphaRenderer : public RendererBase {
         public:
             struct Secel{
                 vector<unsigned long long> atomHashes;

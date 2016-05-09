@@ -273,7 +273,7 @@ namespace Visualization {
 
     void SSERenderer::LoadSheetFile(string fileName) {
         if(helices.size() == 0) {
-            Display::load(fileName);
+            RendererBase::load(fileName);
         }
         //vector<Shape *> sheets;
         sheets.clear();

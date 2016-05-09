@@ -15,7 +15,7 @@
 #include <Core/volume.h>
 #include <Readers/reader.h>
 #include <Visualization/NonManifoldMesh.h>
-#include "Display.h"
+#include "RendererBase.h"
 #include <Foundation/StringUtils.h>
 
 using namespace Core;
@@ -25,7 +25,7 @@ using namespace SkeletonMaker;
 
 namespace Visualization {
 
-    class MeshRenderer : public Display {
+    class MeshRenderer : public RendererBase {
         public:
             NonManifoldMesh getMesh();
             void load(string fileName);
