@@ -19,10 +19,8 @@
 
 using namespace std;
 using namespace MathTools;
-using namespace Core;
 
-
-namespace GraySkeletonCPP {
+namespace Core {
 
     const unsigned char CURVE_TYPE_XPOS = 1;
     const unsigned char CURVE_TYPE_YPOS = 2;
