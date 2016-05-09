@@ -19,6 +19,8 @@ namespace Visualization {
         public:
             RendererBase();
 
+            virtual void draw(int subSceneIndex, bool selectEnabled);
+
             virtual float getMinPos(int i) const;
             virtual float getMaxPos(int i) const;
     };

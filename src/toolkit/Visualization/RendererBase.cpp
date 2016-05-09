@@ -13,6 +13,9 @@ namespace Visualization {
             : IsoSurface((Volume)(*this))
     {}
 
+    void RendererBase::draw(int subSceneIndex, bool selectEnabled) {
+    }
+
     float RendererBase::getMinPos(int i) const {
         return 0.0;
     }

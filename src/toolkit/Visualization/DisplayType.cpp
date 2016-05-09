@@ -42,9 +42,6 @@ namespace Visualization {
         calculateDisplay();
     }
 
-    void DisplayType::draw(int subSceneIndex, bool selectEnabled) {
-    }
-
     bool DisplayType::calculateDisplay() {
         return false;
     }

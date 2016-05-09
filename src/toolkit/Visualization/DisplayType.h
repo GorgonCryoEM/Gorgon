@@ -63,7 +63,6 @@ namespace Visualization {
 
             float getSurfaceValue() const;
             int getSampleInterval() const;
-            virtual void draw(int subSceneIndex, bool selectEnabled);
             void setViewingType(const int type);
             void setSampleInterval(const int size);
             void setSurfaceValue(const float value);
