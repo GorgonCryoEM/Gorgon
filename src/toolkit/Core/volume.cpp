@@ -260,15 +260,12 @@ int Volume::id3=0;
         return 1;
     }
 
-    Volume * Volume::markCellFace() {
-        int i, j, k;
-        Volume* fvol = new Volume(getSizeX(), getSizeY(), getSizeZ());
+    Volume Volume::markCellFace() {
+        Volume fvol(getSizeX(), getSizeY(), getSizeZ());
 
-        //return fvol ;
-
-        for(i = 0; i < getSizeX(); i++)
-            for(j = 0; j < getSizeY(); j++)
-                for(k = 0; k < getSizeZ(); k++) {
+        for(int i = 0; i < getSizeX(); i++)
+            for(int j = 0; j < getSizeY(); j++)
+                for(int k = 0; k < getSizeZ(); k++) {
                     if((*this)(i, j, k) >= 0) {
                         if(hasCell(i, j, k)) {
                             for(int m = 0; m < 6; m++) {
@@ -276,7 +273,7 @@ int Volume::id3=0;
                                 int ny = j + neighbor6[m][1];
                                 int nz = k + neighbor6[m][2];
                                 if(!hasCell(nx, ny, nz)) {
-                                    (*fvol)(i, j, k) = (double) (1 << m);
+                                    fvol(i, j, k) = (double) (1 << m);
                                     break;
                                 }
                             }
@@ -1928,7 +1925,7 @@ int Volume::erodeSheet(int disthr) {
     threshold(0.1f, -1, 0);
 
     /* Debug: remove cells */
-    Volume* facevol = markCellFace();
+    Volume facevol = markCellFace();
     /* End debugging */
 
     // Next, initialize the linked queue
@@ -2146,7 +2143,6 @@ int Volume::erodeSheet(int disthr) {
 #endif
     threshold(0, 0, 1);
 
-    delete facevol;
     delete fvol;
     delete queue2;
     delete queue3;
