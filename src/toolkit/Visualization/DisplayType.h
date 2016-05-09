@@ -56,29 +56,26 @@ namespace Visualization {
         typedef int PFNGLTEXIMAGE3DPROC;
     #endif
 
-    class DisplayType : public Volume {
+    class DisplayType {
         public:
-            DisplayType();
+            DisplayType(const Volume & vol);
             virtual ~DisplayType();
 
             float getSurfaceValue() const;
             int getSampleInterval() const;
             virtual void draw(int subSceneIndex, bool selectEnabled);
-            void load(string fileName);
-            void save(string fileName);
             void setViewingType(const int type);
             void setSampleInterval(const int size);
             void setSurfaceValue(const float value);
             void setMaxSurfaceValue(const float value);
             void unload();
 
-            virtual float getMinPos(int i) const;
-            virtual float getMaxPos(int i) const;
-
             virtual bool calculateDisplay();
             virtual void load3DTexture();
 
     protected:
+        const Volume &vol;
+
         bool textureLoaded;
         Dim3D<int> textureSize;
         GLuint textureName;

@@ -11,7 +11,8 @@
 
 namespace Visualization {
 
-    DisplayType::DisplayType()
+    DisplayType::DisplayType(const Volume & v)
+            : vol(v)
     {
         textureLoaded = false;
         viewingType = VIEWING_TYPE_ISO_SURFACE;
@@ -48,62 +49,7 @@ namespace Visualization {
         return false;
     }
 
-    float DisplayType::getMinPos(int i) const {
-        return 0.0;
-    }
-
-    float DisplayType::getMaxPos(int i) const {
-        float result;
-        switch(i) {
-            case 0:
-                result = float(getSizeX()-1);
-                break;
-            case 1:
-                result = float(getSizeY()-1);
-                break;
-            case 2:
-                result = float(getSizeZ()-1);
-                break;
-        }
-
-        return result;
-    }
-
     void DisplayType::load3DTexture() {
-    }
-
-    void DisplayType::load(string fileName) {
-//        #ifdef GORGON_DEBUG
-              cout<<"\033[32mDEBUG: File:   DisplayBase.cpp"<<endl;
-              cout<<"DEBUG: Method: DisplayBase::load(string)\033[0m"<<endl;
-              cout<<(Volume)(*this)<<endl;
-//        #endif
-
-        Volume::load(fileName);
-
-//        #ifdef GORGON_DEBUG
-              cout<<"\033[32mDEBUG: File:   DisplayBase.cpp"<<endl;
-              cout<<"DEBUG: After load()\033[0m"<<endl;
-              cout<<(Volume)(*this)<<endl;
-//        #endif
-
-        #ifdef _WIN32
-            glTexImage3D = (PFNGLTEXIMAGE3DPROC) wglGetProcAddress("glTexImage3D");
-        #endif
-
-    }
-
-    void DisplayType::save(string fileName) {
-        int pos = fileName.rfind(".") + 1;
-        string extension = fileName.substr(pos, fileName.length()-pos);
-
-        extension = StringUtils::StringToUpper(extension);
-
-        if(strcmp(extension.c_str(), "MRC") == 0) {
-            toMRCFile((char *)fileName.c_str());
-        } else {
-            printf("Input format %s not supported!\n", extension.c_str());
-        }
     }
 
     void DisplayType::setSampleInterval(const int size) {
