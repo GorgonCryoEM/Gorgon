@@ -12,9 +12,6 @@
 
 namespace Visualization {
 
-    /*
-     *
-     */
     class IsoSurface : public DisplayType {
         public:
             IsoSurface(const Volume & vol);
