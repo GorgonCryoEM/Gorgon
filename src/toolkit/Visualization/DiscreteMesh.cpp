@@ -459,7 +459,7 @@ namespace Core {
             n6[n6Count][0] = x + VOLUME_NEIGHBORS_6[i][0];
             n6[n6Count][1] = y + VOLUME_NEIGHBORS_6[i][1];
             n6[n6Count][2] = z + VOLUME_NEIGHBORS_6[i][2];
-            if(src(n6[n6Count][0], n6[n6Count][1], n6[n6Count][2]) > 0) {
+            if(src(n6[n6Count]) > 0) {
                 n6Count++;
             }
         }
