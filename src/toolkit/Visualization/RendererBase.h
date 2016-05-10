@@ -20,9 +20,6 @@ namespace Visualization {
         public:
             RendererBase();
 
-            void load(string fileName);
-            void save(string fileName);
-
             virtual void draw(int subSceneIndex, bool selectEnabled);
 
             virtual float getMinPos(int i) const;

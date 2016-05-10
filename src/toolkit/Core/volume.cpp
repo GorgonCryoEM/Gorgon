@@ -2770,15 +2770,20 @@ void Volume::downsample() {
 }
 
 void Volume::load(string inputFile) {
+//    #ifdef GORGON_DEBUG
+          cout<<"\033[32mDEBUG: File:   volume.cpp"<<endl;
+          cout<<"DEBUG: Method: Volume::load(string)\033[0m"<<endl;
+          cout<<*this<<endl;
+//    #endif
 
     *this = *MRCReaderPicker::pick(inputFile.c_str())->getVolume();
 
-#ifdef GORGON_DEBUG
-    cout<<"\033[35mDEBUG: File:   VolumeFormatConverter.h"<<endl;
-    cout<<"DEBUG: Method: VolumeFormatConverter::LoadVolume\033[0m"<<endl;
-    cout<<"DEBUG: Args: string, int, int, int, int\033[0m"<<endl;
-    cout<<getSize()<<endl;
-#endif
+//    #ifdef GORGON_DEBUG
+          cout<<"\033[32mDEBUG: File:   volume.cpp"<<endl;
+          cout<<"DEBUG: Method: Volume::load(string)\033[0m"<<endl;
+          cout<<*this<<endl;
+//    #endif
+
 }
 
 void Volume::save(string fileName) {
