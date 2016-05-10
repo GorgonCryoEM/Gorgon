@@ -584,7 +584,7 @@ namespace Core {
         return mCount;
     }
 
-    int DiscreteMesh::getImmersionN6Count(Volume & skel, Vec3I point) {
+    int DiscreteMesh::getImmersionN6Count(const Volume & skel, Vec3I point) {
         Volume range = skel.getDataRange(point[0], point[1], point[2], 1);
         range.threshold(range(1,1,1), 0, 1, 0, false);
         int n6Count = getN6Count(range,1,1,1);
@@ -592,7 +592,7 @@ namespace Core {
         return n6Count;
     }
 
-    int DiscreteMesh::getImmersionSkeletalValue(Volume & skel, Vec3I point) {
+    int DiscreteMesh::getImmersionSkeletalValue(const Volume & skel, Vec3I point) {
         Volume range = skel.getDataRange(point[0], point[1], point[2], 2);
         Volume thresholdedRange(range);
         double value = 0;

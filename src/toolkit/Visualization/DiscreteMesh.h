@@ -73,9 +73,9 @@ namespace Core {
             static int getN26Count                   (const Volume & src, int x, int y, int z);
             static int getMCount                     (const Volume & src, int x1, int y1, int z1,
                                                                           int x2, int y2, int z2);
-            static int getImmersionN6Count       (Volume & skel, Vec3I point);
-            static int getImmersionSkeletalValue (Volume & skel, Vec3I point);
-            static bool isImmersionBoundary(const Volume & skel, Vec3I point);
+            static int getImmersionN6Count       (const Volume & skel, Vec3I point);
+            static int getImmersionSkeletalValue (const Volume & skel, Vec3I point);
+            static bool isImmersionBoundary      (const Volume & skel, Vec3I point);
             static bool isPoint                      (const Volume & src, int x, int y, int z);
             static bool isCurveEnd                   (const Volume & src, int x, int y, int z);
             static bool isCurveBody                  (const Volume & src, int x, int y, int z);

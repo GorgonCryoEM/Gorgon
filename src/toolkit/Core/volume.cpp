@@ -2621,7 +2621,7 @@ void Volume::normalize(double min, double max) {
 
 /* Set data at a pixel */
 
-Volume Volume::getDataRange(int x, int y, int z, int radius) {
+Volume Volume::getDataRange(int x, int y, int z, int radius) const {
     Volume range(radius * 2 + 1, radius * 2 + 1, radius * 2 + 1);
     for(int xx = x - radius; xx <= x + radius; xx++) {
         for(int yy = y - radius; yy <= y + radius; yy++) {
