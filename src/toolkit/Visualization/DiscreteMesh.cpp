@@ -466,6 +466,11 @@ namespace Core {
         return n6Count;
     }
 
+    int DiscreteMesh::getN6Count(const Volume & src, int x, int y, int z) {
+        vector<Vec3I> n6;
+        return getN6(n6, src, x, y, z);
+    }
+
     int DiscreteMesh::getN6_2Count(const Volume & src,
                               int x, int y, int z)
     {
@@ -530,19 +535,6 @@ namespace Core {
             }
         }
         return n26Count;
-    }
-
-    int DiscreteMesh::getN6Count(const Volume & src, int x, int y, int z) {
-        int n6Count = 0;
-        for(int i = 0; i < 6; i++) {
-            if(src(x + VOLUME_NEIGHBORS_6[i][0],
-                   y + VOLUME_NEIGHBORS_6[i][1],
-                   z + VOLUME_NEIGHBORS_6[i][2]) > 0)
-            {
-                n6Count++;
-            }
-        }
-        return n6Count;
     }
 
     int DiscreteMesh::getN18Count(const Volume & src, int x, int y, int z) {
