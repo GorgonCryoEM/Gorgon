@@ -272,9 +272,9 @@ namespace Visualization {
     }
 
     void SSERenderer::LoadSheetFile(string fileName) {
-        if(helices.size() == 0) {
-            RendererBase::load(fileName);
-        }
+//        if(helices.size() == 0) {
+//            RendererBase::load(fileName);
+//        }
         //vector<Shape *> sheets;
         sheets.clear();
         SkeletonReader::ReadSheetFile((char *)fileName.c_str(), sheets);
