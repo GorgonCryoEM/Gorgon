@@ -14,7 +14,7 @@
 //#include <string>
 #include <Core/volume.h>
 #include <Readers/reader.h>
-#include <Visualization/NonManifoldMesh.h>
+#include "SkeletonMesh.h"
 #include "RendererBase.h"
 #include <Foundation/StringUtils.h>
 
@@ -27,7 +27,7 @@ namespace Visualization {
 
     class SkeletonRenderer : public RendererBase {
         public:
-            NonManifoldMesh getMesh();
+            SkeletonMesh getMesh();
             void load(string fileName);
             void save(string fileName);
             int intersectMeshAndSphere(Vec3F center, float radius);
@@ -38,7 +38,7 @@ namespace Visualization {
 
             void loadVolume(Volume src);
         private:
-            NonManifoldMesh mesh;
+            SkeletonMesh mesh;
             vector<Vec3F> intersectionPoints;
             int lineThickness;
     };

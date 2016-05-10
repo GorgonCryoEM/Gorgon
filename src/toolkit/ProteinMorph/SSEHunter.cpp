@@ -94,7 +94,7 @@ namespace Protein_Morph {
         return patoms[i];
     }
 
-    void SSEHunter::SetSkeletonScores(const Volume & vol, const NonManifoldMesh & skeleton, float resolution) {
+    void SSEHunter::SetSkeletonScores(const Volume & vol, const SkeletonMesh & skeleton, float resolution) {
         cout << "SetSkeletonScores()\n";
 //          float maxDistance = 4*sqrt(skeleton->scale[0]+skeleton->scale[1]+skeleton->scale[2]);//resolution;  // TODO: In EMAN1 the maximum distance is sqrt(3*4*4) voxels, we're using Angstroms here
         const unsigned int SCORE_RANGE = 4;
@@ -109,7 +109,7 @@ namespace Protein_Morph {
 #ifdef GORGON_DEBUG
       cout<<"\033[32mDEBUG: File:   SSEHunter.h"<<endl;
       cout<<"DEBUG: Method: SSEHunter::SetSkeletonScores\033[0m"<<endl;
-      cout<<"DEBUG: Args: Volume*, NonManifoldMesh*, float\033[0m"<<endl;
+      cout<<"DEBUG: Args: Volume*, SkeletonMesh*, float\033[0m"<<endl;
       cout<<"Checkpoint 1"<<endl;
       cout<<skeleton<<endl;
       cout<<"patoms.size(): "<<patoms.size()<<endl;

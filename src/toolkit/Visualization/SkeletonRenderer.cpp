@@ -27,7 +27,7 @@ namespace Visualization {
         lineThickness = thickness;
     }
 
-    NonManifoldMesh SkeletonRenderer::getMesh() {
+    SkeletonMesh SkeletonRenderer::getMesh() {
         return mesh;
     }
 
@@ -49,7 +49,7 @@ namespace Visualization {
 #endif
 
         if(extension == "OFF") {
-            mesh = NonManifoldMesh::loadOffFile(fileName);
+            mesh = SkeletonMesh::loadOffFile(fileName);
         } else if(extension == "MRC" || extension == "ATOM") {
             Volume::load(fileName);
             #ifdef GORGON_DEBUG
@@ -58,7 +58,7 @@ namespace Visualization {
                   cout<<(Volume)(*this)<<"\033[0m"<<endl;
             #endif
 
-            mesh = NonManifoldMesh(*this);
+            mesh = SkeletonMesh(*this);
 
 #ifdef GORGON_DEBUG
       cout<<"\033[35m"<<mesh.getSize()<<"\033[0m"<<endl;
@@ -125,7 +125,7 @@ namespace Visualization {
     }
 
     void SkeletonRenderer::loadVolume(Volume src) {
-        mesh = NonManifoldMesh(src);
+        mesh = SkeletonMesh(src);
 //        #ifdef GORGON_DEBUG
               cout<<"\033[32mDEBUG: File:   SkeletonRenderer.cpp"<<endl;
               cout<<"DEBUG: Method: SkeletonRenderer::loadVolume(Volume)\033[0m"<<endl;

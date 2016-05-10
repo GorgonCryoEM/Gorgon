@@ -283,7 +283,7 @@ namespace Visualization {
     }
 
     void SSERenderer::SheetListToMesh(vector<Shape*> & sheets) {
-        sheetMesh = NonManifoldMesh();
+        sheetMesh = SkeletonMesh();
 
         Vec3D pt;
         vector<int> indices;

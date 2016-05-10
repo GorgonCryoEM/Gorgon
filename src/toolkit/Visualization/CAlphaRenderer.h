@@ -12,7 +12,7 @@
 //#include <GorgonGL.h>
 //#include <cstdlib>
 //#include <cstdio>
-//#include <ProteinMorph/NonManifoldMesh.h>
+//#include <ProteinMorph/SkeletonMesh.h>
 //#include <ProteinMorph/SSEHunter.h>
 //#include <SkeletonMaker/volume.h>
 #include <GraphMatch/PDBReader.h>
@@ -61,7 +61,7 @@ namespace Visualization {
             void loadFile(string fileName);
             void loadSSEHunterFile(string fileName);
             bool saveSSEHunterFile(string fileName);
-//          void GetSSEHunterAtoms(Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution, float threshold, float correlationCoeff, float skeletonCoeff, float geometryCoeff);
+//          void GetSSEHunterAtoms(Volume * vol, SkeletonMesh_Annotated * skeleton, float resolution, float threshold, float correlationCoeff, float skeletonCoeff, float geometryCoeff);
             void updateTotalScoreSSEHunterAtoms(float correlationCoeff, float skeletonCoeff, float geometryCoeff);
             void colorSSEHunterAtoms();
             int selectionObjectCount();

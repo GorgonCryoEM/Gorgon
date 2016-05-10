@@ -26,10 +26,10 @@ namespace Core {
     typedef map<TKey, Vertex > TV;
     typedef map<TKey, IdList >   TE;
 
-    class NonManifoldMesh : public Volume, public Mesh {
+    class SkeletonMesh : public Volume, public Mesh {
         public:
-            NonManifoldMesh();
-            NonManifoldMesh(const Volume & src);
+            SkeletonMesh();
+            SkeletonMesh(const Volume & src);
             void clear();
             void draw(bool drawSurfaceBorders, bool drawSurfaces,
                       bool drawLines, bool drawPoints, bool annotateSurfaces,
@@ -50,14 +50,14 @@ namespace Core {
             vector<Vec3F> sampleTriangle(int faceId, double discretizationStep);
 
             Volume toVolume();
-            static NonManifoldMesh loadOffFile(string fileName);
+            static SkeletonMesh loadOffFile(string fileName);
 
         public:
             TE curves;
 
             bool fromVolume;
 
-            friend ostream& operator<<(ostream& out, const NonManifoldMesh& obj);
+            friend ostream& operator<<(ostream& out, const SkeletonMesh& obj);
     };
 }
 

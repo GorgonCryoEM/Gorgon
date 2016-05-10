@@ -34,8 +34,8 @@ namespace Visualization {
         vector<SSEResult> correspondence;
 
         // Attributes for path calculation
-        NonManifoldMesh * pathMesh;
-        NonManifoldMesh * singlePathMesh;
+        SkeletonMesh * pathMesh;
+        SkeletonMesh * singlePathMesh;
         map<TKey, vector<TKey> > helixStartPoints;
         map<TKey, vector<TKey> > helixEndPoints;
         int pathCount;

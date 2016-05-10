@@ -17,7 +17,7 @@
 //#include <SkeletonMaker/VolumeSkeletonizer.h>
 //#include <GraySkeletonCPP/VolumeFormatConverter.h>
 //#include "MeshRenderer.h"
-//#include <ProteinMorph/NonManifoldMesh.h>
+//#include <ProteinMorph/SkeletonMesh.h>
 //#include <ProteinMorph/TriangleMesh.h>
 //#include <Foundation/Octree.h>
 

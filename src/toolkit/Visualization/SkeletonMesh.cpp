@@ -1,25 +1,25 @@
 /*
- * NonManifoldMesh.cpp
+ * SkeletonMesh.cpp
  *
  * Author: shadow_walker <shadowwalkersb@gmail.com>
  *
  */
 
-#include "NonManifoldMesh.h"
+#include "SkeletonMesh.h"
 
 namespace Core {
 
-    NonManifoldMesh::NonManifoldMesh()
+    SkeletonMesh::SkeletonMesh()
             : fromVolume(false)
     {
         setSpacing(1, 1, 1);
         setOrigin(0, 0, 0);
     }
 
-    NonManifoldMesh::NonManifoldMesh(const Volume & src) {
+    SkeletonMesh::SkeletonMesh(const Volume & src) {
 //#ifdef GORGON_DEBUG
-        cout<<"\033[33mDEBUG: File:   NonManifoldMesh.h"<<endl;
-        cout<<"DEBUG: Method: NonManifoldMesh::NonManifoldMesh\033[0m"<<endl;
+        cout<<"\033[33mDEBUG: File:   SkeletonMesh.h"<<endl;
+        cout<<"DEBUG: Method: SkeletonMesh::SkeletonMesh\033[0m"<<endl;
         cout<<"DEBUG: Args: Volume*\033[0m"<<endl;
         cout<<"src.getSize(): "<<src.getSize()<<endl;
 //#endif
@@ -105,23 +105,23 @@ namespace Core {
         cout<<"\033[33mDEBUG: END"<<endl;
         cout<<getSize()<<endl;
         cout<<*this<<endl;
-        cout<<"DEBUG: Method: NonManifoldMesh::NonManifoldMesh\n\033[0m"<<endl;
+        cout<<"DEBUG: Method: SkeletonMesh::SkeletonMesh\n\033[0m"<<endl;
 //#endif
 
     }
 
-    void NonManifoldMesh::clear() {
+    void SkeletonMesh::clear() {
         Mesh::clear();
         curves.clear();
     }
 
-    int NonManifoldMesh::addVertex(Vec3F vertex) {
+    int SkeletonMesh::addVertex(Vec3F vertex) {
         TKey id = vertices.size();
 
         return Mesh::addVertex(vertex, id);
     }
 
-    void NonManifoldMesh::draw(bool drawSurfaceBorders, bool drawSurfaces,
+    void SkeletonMesh::draw(bool drawSurfaceBorders, bool drawSurfaces,
                                bool drawLines, bool drawPoints,
                                bool annotateSurfaces, bool annotateLines, bool annotatePoints,
                                bool disableSurfaceLighting, bool disableCurveLighting, bool disablePointLighting,
@@ -186,7 +186,7 @@ namespace Core {
             }
 //            #ifdef GORGON_DEBUG
                   cout<<"\033[32m"<<endl;
-                  cout<<"DEBUG: Method: NonManifoldMesh::draw(bool, bool, bool, bool, bool, bool, bool, bool, bool, bool, int, bool)\033[0m"<<endl;
+                  cout<<"DEBUG: Method: SkeletonMesh::draw(bool, bool, bool, bool, bool, bool, bool, bool, bool, bool, int, bool)\033[0m"<<endl;
                   cout<<"faces.size(): "<<faces.size()<<endl;
                   cout<<"\033[0m";
 //            #endif
@@ -284,14 +284,14 @@ namespace Core {
         glFlush();
     }
 
-    int NonManifoldMesh::addEdge(IdList edge) {
+    int SkeletonMesh::addEdge(IdList edge) {
         TKey id = curves.size();
         curves[id] = edge;
 
         return id;
     }
 
-    IdList NonManifoldMesh::addEdge(int v1, int v2) {
+    IdList SkeletonMesh::addEdge(int v1, int v2) {
         IdList edge(v1, v2);
         int id = addEdge(edge);
         vertices[v1].addId(id);
@@ -300,12 +300,12 @@ namespace Core {
         return edge;
     }
 
-    void NonManifoldMesh::addQuad(int v1, int v2, int v3, int v4) {
+    void SkeletonMesh::addQuad(int v1, int v2, int v3, int v4) {
         addFace(Vec3U(v1, v2, v3));
         addFace(Vec3U(v1, v3, v4));
     }
 
-    vector<TKey> NonManifoldMesh::getPath(TKey id0, TKey id1) {
+    vector<TKey> SkeletonMesh::getPath(TKey id0, TKey id1) {
         vector<TKey> path;
         map<TKey, TKey> src;
 
@@ -344,7 +344,7 @@ namespace Core {
         return path;
     }
 
-    vector<Vec3F> NonManifoldMesh::sampleTriangle(int id, double step) {
+    vector<Vec3F> SkeletonMesh::sampleTriangle(int id, double step) {
         IdList face = faces[id];
 
         vector<Vec3F> points;
@@ -374,7 +374,7 @@ namespace Core {
         }
     }
 
-    int NonManifoldMesh::getClosestVertexIndex(Vec3F pos) {
+    int SkeletonMesh::getClosestVertexIndex(Vec3F pos) {
         if(vertices.size() == 0) {
             return -1;
         }
@@ -392,7 +392,7 @@ namespace Core {
         return id;
     }
 
-    bool NonManifoldMesh::isSurfaceVertex(int id) const {
+    bool SkeletonMesh::isSurfaceVertex(int id) const {
         Vertex vertex;
         TV::const_iterator it = vertices.find(id);
         if(it!=vertices.end())
@@ -401,7 +401,7 @@ namespace Core {
         return vertex.sizeIds() > 0;
     }
 
-    vector<TKey> NonManifoldMesh::getNeighboringVertexIndices(TKey id) {
+    vector<TKey> SkeletonMesh::getNeighboringVertexIndices(TKey id) {
         vector<TKey> neighbors;
         for(unsigned int i = 0; i < vertices[id].sizeIds(); i++) {
             if(curves[vertices[id].id(i)].id(0) == id) {
@@ -413,7 +413,7 @@ namespace Core {
         return neighbors;
     }
 
-    Volume NonManifoldMesh::toVolume() {
+    Volume SkeletonMesh::toVolume() {
         double minPos[3] = {MAX_DOUBLE, MAX_DOUBLE, MAX_DOUBLE};
         double maxPos[3] = {MIN_DOUBLE, MIN_DOUBLE, MIN_DOUBLE};
         if(fromVolume) {
@@ -456,7 +456,7 @@ namespace Core {
         return vol;
     }
 
-    NonManifoldMesh NonManifoldMesh::loadOffFile(string fileName) {
+    SkeletonMesh SkeletonMesh::loadOffFile(string fileName) {
         ifstream inFile(fileName.c_str());
         string strTemp;
         int nVertices, nEdges, nFaces;
@@ -466,7 +466,7 @@ namespace Core {
         inFile >> nVertices >> nFaces >> nEdges;
         //printf("[%d] [%d] [%d]\n", nVertices, nFaces, nEdges);
 
-        NonManifoldMesh mesh;
+        SkeletonMesh mesh;
         for(int i=0, lVertices=0; i < nVertices; i++, lVertices++) {
             float xPos, yPos, zPos;
             inFile >> xPos >> yPos >> zPos;
@@ -520,7 +520,7 @@ namespace Core {
         return mesh;
     }
 
-    ostream& operator<<(ostream& out, const NonManifoldMesh& obj) {
+    ostream& operator<<(ostream& out, const SkeletonMesh& obj) {
         return out //<<"\033[34m"
                << "vertices.size(): "
                << obj.vertices.size()

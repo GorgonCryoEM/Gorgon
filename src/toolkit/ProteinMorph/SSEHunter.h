@@ -9,7 +9,7 @@
 #define SRC_TOOLKIT_PROTEINMORPH_SSEHUNTER_H_
 
 //#include <Core/volume.h>
-#include "Visualization/NonManifoldMesh.h"
+#include "Visualization/SkeletonMesh.h"
 //#include <vector>
 //#include <algorithm>
 //#include <map>
@@ -53,7 +53,7 @@ namespace Protein_Morph {
 
             void SetCorrelationScores(const Volume & vol, RadialProfileType type,
                                       float resolution, float deltaAltRadians);
-            void SetSkeletonScores(const Volume & vol, const NonManifoldMesh & skeleton,
+            void SetSkeletonScores(const Volume & vol, const SkeletonMesh & skeleton,
                                    float resolution);
             vector<vector<float> > GetAtomDistances();
             vector<float> GetLocalDirectionalityScores(const Volume & vol);
