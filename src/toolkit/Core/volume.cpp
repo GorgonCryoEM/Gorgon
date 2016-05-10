@@ -2819,7 +2819,7 @@ void Volume::save(string fileName) {
     }
 }
 
-Volume Volume::PerformBinarySkeletonizationJu2007(double threshold,
+Volume Volume::binarySkeletonization(double threshold,
                                                     int minCurveSize,
                                                     int minSurfaceSize)
 {
@@ -2849,7 +2849,7 @@ Volume Volume::PerformBinarySkeletonizationJu2007(double threshold,
     return outputVol;
 }
 
-Volume Volume::PerformGrayscaleSkeletonizationAbeysinghe2008(
+Volume Volume::grayscaleSkeletonization(
         double startDensity, int stepCount, int minCurveSize,
         int minSurfaceSize, int curveRadius, int surfaceRadius,
         int skeletonRadius)
