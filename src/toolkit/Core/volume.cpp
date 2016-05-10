@@ -2799,8 +2799,8 @@ Volume Volume::PerformBinarySkeletonizationJu2007(double threshold,
                                                     int minCurveSize,
                                                     int minSurfaceSize)
 {
-    Skeletonizer skeletonizer(getOriginX(), getOriginY(), getOriginZ(),
-            DEFAULT_SKELETON_DIRECTION_RADIUS);
+    Skeletonizer skeletonizer(0, 0, 0,
+                              DEFAULT_SKELETON_DIRECTION_RADIUS);
 //#ifdef GORGON_DEBUG
     cout<<"DEBUG: File:   Volume.h"<<endl;
     cout<<"DEBUG: Method: Volume::PerformBinarySkeletonizationJu2007"<<endl;
