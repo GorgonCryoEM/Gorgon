@@ -2801,25 +2801,26 @@ Volume Volume::PerformBinarySkeletonizationJu2007(double threshold,
 {
     Skeletonizer skeletonizer(0, 0, 0,
                               DEFAULT_SKELETON_DIRECTION_RADIUS);
-//#ifdef GORGON_DEBUG
-    cout<<"DEBUG: File:   Volume.h"<<endl;
-    cout<<"DEBUG: Method: Volume::PerformBinarySkeletonizationJu2007"<<endl;
-    cout<<getSize()<<endl;
-//#endif
+//    #ifdef GORGON_DEBUG
+          cout<<"\033[32mDEBUG: File:   volume.cpp"<<endl;
+          cout<<"DEBUG: Method: Volume::PerformBinarySkeletonizationJu2007(double, int, int)\033[0m"<<endl;
+          cout<<*this<<endl;
+//    #endif
 
     Volume outputVol = *skeletonizer.PerformPureJuSkeletonization(*this, "",
             threshold, minCurveSize, minSurfaceSize);
 
-    cout<<"outputVol->getNonZeroVoxelCount(): "<<outputVol.getNonZeroVoxelCount()<<endl;
-    cout<<"\t"<<threshold
-            <<"\t"<<minCurveSize
-            <<"\t"<<minSurfaceSize
-            <<endl;
-//#ifdef GORGON_DEBUG
-    cout<<"DEBUG: File:   Volume.h"<<endl;
-    cout<<"DEBUG: Method: Volume::PerformBinarySkeletonizationJu2007"<<endl;
-    cout<<"outputVol->getSize(): "<<outputVol.getSize()<<endl;
-//#endif
+//    #ifdef GORGON_DEBUG
+          cout<<"\033[32mDEBUG: File:   volume.cpp"<<endl;
+          cout<<"DEBUG: Method: Volume::PerformBinarySkeletonizationJu2007(double, int, int)\033[0m"<<endl;
+          cout<<"outputVol->getSize(): "<<outputVol.getSize()<<endl;
+          cout<<"outputVol->getNonZeroVoxelCount(): "<<outputVol.getNonZeroVoxelCount()<<endl;
+          cout<<"\t"<<threshold
+              <<"\t"<<minCurveSize
+              <<"\t"<<minSurfaceSize
+              <<endl;
+          cout<<outputVol<<endl;
+//    #endif
 
     return outputVol;
 }
