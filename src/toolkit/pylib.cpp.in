@@ -136,6 +136,7 @@ BOOST_PYTHON_MODULE(@current_pylib@)
 //      .def("saveFile", &Volume::SaveFile)
       .def("loadFile", &Volume::load)
       .def("saveFile", &Volume::save)
+      .def("__str__", &Volume::str)
 
   ;
   

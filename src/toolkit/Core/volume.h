@@ -102,6 +102,7 @@ namespace Core {
 
         int getNonZeroVoxelCount();
         void print();
+        string str();
         void subtract(const Volume & vol);
         void applyMask(const Volume & mask, double maskValue, bool keepMaskValue);
         double getMin() const;

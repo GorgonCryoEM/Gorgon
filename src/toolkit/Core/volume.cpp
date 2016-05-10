@@ -98,6 +98,14 @@ int Volume::id3=0;
         }
         return count;
     }
+
+    string Volume::str() {
+        ostringstream out;
+        out<<*this;
+
+        return out.str();
+    }
+
     void Volume::print() {
         for(int x = 0; x < getSizeX(); x++) {
             printf("{ ");
