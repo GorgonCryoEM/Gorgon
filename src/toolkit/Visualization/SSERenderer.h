@@ -14,7 +14,7 @@
 #include "Core/Point.h"
 
 //#include "Renderer.h"
-//#include "MeshRenderer.h"
+//#include "SkeletonRenderer.h"
 //#include <ProteinMorph/SheetGenerator.h>
 //#include <GraphMatch/StandardGraph.h>
 #include "Readers/SkeletonReader.h"

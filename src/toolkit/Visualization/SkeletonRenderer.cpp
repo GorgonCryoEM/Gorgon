@@ -1,15 +1,15 @@
 /*
- * MeshRenderer.cpp
+ * SkeletonRenderer.cpp
  *
  *      Author: shadow_walker <shadowwalkersb@gmail.com>
  *
  */
 
-#include "MeshRenderer.h"
+#include "SkeletonRenderer.h"
 
 namespace Visualization {
 
-    void MeshRenderer::draw(int subSceneIndex, bool selectEnabled) {
+    void SkeletonRenderer::draw(int subSceneIndex, bool selectEnabled) {
         switch(subSceneIndex) {
             case 0:
                     mesh.draw(false, false, true, false, selectEnabled, selectEnabled, false, false, true, true, lineThickness, false);
@@ -23,27 +23,27 @@ namespace Visualization {
         }
     }
 
-    void MeshRenderer::setLineThickness(int thickness) {
+    void SkeletonRenderer::setLineThickness(int thickness) {
         lineThickness = thickness;
     }
 
-    NonManifoldMesh MeshRenderer::getMesh() {
+    NonManifoldMesh SkeletonRenderer::getMesh() {
         return mesh;
     }
 
-    Vec3F MeshRenderer::getIntersectionPoint(int ix) {
+    Vec3F SkeletonRenderer::getIntersectionPoint(int ix) {
         return intersectionPoints[ix];
     }
 
 
-    void MeshRenderer::load(string fileName) {
+    void SkeletonRenderer::load(string fileName) {
         int pos = fileName.rfind(".") + 1;
         string extension = fileName.substr(pos, fileName.length()-pos);
         extension = StringUtils::StringToUpper(extension);
 
 #ifdef GORGON_DEBUG
-      cout<<"\033[36mDEBUG: File:   MeshRenderer.h"<<endl;
-      cout<<"DEBUG: Method: MeshRenderer::loadFile\033[0m"<<endl;
+      cout<<"\033[36mDEBUG: File:   SkeletonRenderer.h"<<endl;
+      cout<<"DEBUG: Method: SkeletonRenderer::loadFile\033[0m"<<endl;
       cout<<"DEBUG: Args: string\033[0m"<<endl;
       cout<<"FileName: "<<fileName<<endl;
 #endif
@@ -68,7 +68,7 @@ namespace Visualization {
         }
     }
 
-    void MeshRenderer::save(string fileName) {
+    void SkeletonRenderer::save(string fileName) {
             int pos = fileName.rfind(".") + 1;
             string extension = fileName.substr(pos, fileName.length()-pos);
 
@@ -82,7 +82,7 @@ namespace Visualization {
             }
     }
 
-    int MeshRenderer::intersectMeshAndSphere(Vec3F center, float radius) {
+    int SkeletonRenderer::intersectMeshAndSphere(Vec3F center, float radius) {
         float x1, y1, z1, x2, y2, z2, x3, y3, z3, r, a, b, c, d, u;
         Vec3F p1, p2;
         x3 = center.X();
@@ -124,11 +124,11 @@ namespace Visualization {
         return intersectionPoints.size();
     }
 
-    void MeshRenderer::loadVolume(Volume src) {
+    void SkeletonRenderer::loadVolume(Volume src) {
         mesh = NonManifoldMesh(src);
 //        #ifdef GORGON_DEBUG
-              cout<<"\033[32mDEBUG: File:   MeshRenderer.cpp"<<endl;
-              cout<<"DEBUG: Method: MeshRenderer::loadVolume(Volume)\033[0m"<<endl;
+              cout<<"\033[32mDEBUG: File:   SkeletonRenderer.cpp"<<endl;
+              cout<<"DEBUG: Method: SkeletonRenderer::loadVolume(Volume)\033[0m"<<endl;
               cout<<"src.getSize(): "<<src.getSize()<<endl;
               cout<<"mesh.getSize(): "<<mesh.getSize()<<endl;
 //        #endif

@@ -1,12 +1,12 @@
 /*
- * MeshRenderer.h
+ * SkeletonRenderer.h
  *
  *      Author: shadow_walker <shadowwalkersb@gmail.com>
  *
  */
 
-#ifndef SRC_TOOLKIT_VISUALIZATION_MESHRENDERER_H_
-#define SRC_TOOLKIT_VISUALIZATION_MESHRENDERER_H_
+#ifndef SRC_TOOLKIT_VISUALIZATION_SKELETONRENDERER_H_
+#define SRC_TOOLKIT_VISUALIZATION_SKELETONRENDERER_H_
 
 //#include <cstdlib>
 //#include <cstdio>
@@ -25,7 +25,7 @@ using namespace SkeletonMaker;
 
 namespace Visualization {
 
-    class MeshRenderer : public RendererBase {
+    class SkeletonRenderer : public RendererBase {
         public:
             NonManifoldMesh getMesh();
             void load(string fileName);
@@ -45,4 +45,4 @@ namespace Visualization {
 
 } /* namespace Visualization */
 
-#endif /* SRC_TOOLKIT_VISUALIZATION_MESHRENDERER_H_ */
+#endif /* SRC_TOOLKIT_VISUALIZATION_SKELETONRENDERER_H_ */

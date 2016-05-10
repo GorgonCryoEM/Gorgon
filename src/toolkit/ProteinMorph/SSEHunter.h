@@ -18,7 +18,7 @@
 #include <MathTools/CrossCorrelation.h>
 #include <GraphMatch/PDBAtom.h>
 #include <SkeletonMaker/Skeletonizer.h>
-//#include <Gorgon/MeshRenderer.h>
+//#include <Gorgon/SkeletonRenderer.h>
 //#include <cmath>
 #include <iostream>
 #include <Core/GlobalDefinitions.h>

@@ -17,7 +17,7 @@
 ////#include <string>
 ////#include <GraphMatch/VectorMath.h>
 ////#include "GlobalConstants.h"
-////#include "MeshRenderer.h"
+////#include "SkeletonRenderer.h"
 #include <Core/volume.h>
 ////#include <GraySkeletonCPP/GlobalDefinitions.h>
 ////#include <GraySkeletonCPP/VolumeSkeletonizer.h>
