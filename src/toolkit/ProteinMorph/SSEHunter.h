@@ -38,10 +38,6 @@ using namespace Core;
 
 namespace Protein_Morph {
 
-    /*
-     *
-     */
-
     enum RadialProfileType {GAUSSIAN, GAUSSIAN_DIP, POLYNOMIAL};
 
     class SSEHunter {
