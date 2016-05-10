@@ -466,10 +466,9 @@ namespace Core {
         return n6Count;
     }
 
-    int DiscreteMesh::getN6_2(vector<Vec3I> & n6_2, const Volume & src,
+    int DiscreteMesh::getN6_2Count(const Volume & src,
                               int x, int y, int z)
     {
-        n6_2.resize(18);
         vector<Vec3I> n18;
         vector<Vec3I> n6X, n6Y;
         vector<Vec3I> n62List(36);
@@ -495,7 +494,6 @@ namespace Core {
                 found = found || ((n18[i][0] == n62List[j][0]) && (n18[i][1] == n62List[j][1]) && (n18[i][2] == n62List[j][2]));
             }
             if(found) {
-                n6_2[retVal] = n18[i];
                 retVal++;
             }
         }
@@ -545,13 +543,6 @@ namespace Core {
             }
         }
         return n6Count;
-    }
-
-    int DiscreteMesh::getN6_2Count(const Volume & src, int x, int y, int z) {
-        vector<Vec3I> n6_2;
-        int count = getN6_2(n6_2, src, x, y, z);
-
-        return count;
     }
 
     int DiscreteMesh::getN18Count(const Volume & src, int x, int y, int z) {
@@ -672,9 +663,9 @@ namespace Core {
     }
 
     bool DiscreteMesh::isSurfaceBorder(const Volume & src, int x, int y, int z) {
-        vector<Vec3I> n6_2, n6;
+        vector<Vec3I> n6;
         Vec3I currPoint = Vec3I(x, y, z);
-        int n6_2Count = getN6_2(n6_2, src, x, y, z);
+        int n6_2Count = getN6_2Count(src, x, y, z);
         int n6Count = getN6(n6, src, x, y, z);
         int mZigma = 0;
         for(int i = 0; i < n6Count; i++) {

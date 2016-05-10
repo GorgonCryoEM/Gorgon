@@ -65,7 +65,6 @@ namespace Core {
             static int getC6 (vector<Vec3I> &neighbors, int neighborCount, Vec3I currPoint);
             static int getC26(vector<Vec3I> &neighbors, int neighborCount, Vec3I currPoint);
             static int getN6   (vector<Vec3I> &   n6, const Volume & src, int x, int y, int z);
-            static int getN6_2 (vector<Vec3I> & n6_2, const Volume & src, int x, int y, int z);
             static int getN18  (vector<Vec3I> &  n18, const Volume & src, int x, int y, int z);
             static int getN26  (vector<Vec3I> &  n26, const Volume & src, int x, int y, int z);
             static int getN6Count                    (const Volume & src, int x, int y, int z);
