@@ -452,7 +452,7 @@ namespace Core {
     }
 
 
-    int DiscreteMesh::getN6(vector<Vec3I> & n6, const Volume & src, int x, int y, int z) {
+    int DiscreteMesh::getN6(vector<Vec3I> & n6, int x, int y, int z) {
         int n6Count = 0;
         n6.resize(6);
         for(int i = 0; i < 6; i++) {
@@ -466,7 +466,7 @@ namespace Core {
         return n6Count;
     }
 
-    int DiscreteMesh::getN6Count(const Volume & src, int x, int y, int z) {
+    int DiscreteMesh::getN6Count(int x, int y, int z) {
         vector<Vec3I> n6;
         return getN6(n6, src, x, y, z);
     }
@@ -537,7 +537,7 @@ namespace Core {
         return n26Count;
     }
 
-    int DiscreteMesh::getN18Count(const Volume & src, int x, int y, int z) {
+    int DiscreteMesh::getN18Count(int x, int y, int z) {
         int n18Count = 0;
         for(int i = 0; i < 18; i++) {
             if(src(x + VOLUME_NEIGHBORS_18[i][0],
@@ -550,7 +550,7 @@ namespace Core {
         return n18Count;
     }
 
-    int DiscreteMesh::getN26Count(const Volume & src, int x, int y, int z) {
+    int DiscreteMesh::getN26Count(int x, int y, int z) {
         int n26Count = 0;
         for(int i = 0; i < 26; i++) {
             if(src(x + VOLUME_NEIGHBORS_26[i][0],
@@ -626,15 +626,15 @@ namespace Core {
         return (int)round(value);
     }
 
-    bool DiscreteMesh::isPoint(const Volume & src, int x, int y, int z) {
+    bool DiscreteMesh::isPoint(int x, int y, int z) {
         return (getN6Count(src, x, y, z) == 0);
     }
 
-    bool DiscreteMesh::isCurveEnd(const Volume & src, int x, int y, int z) {
+    bool DiscreteMesh::isCurveEnd(int x, int y, int z) {
         return (getN6Count(src, x, y, z) == 1);
     }
 
-    bool DiscreteMesh::isCurveBody(const Volume & src, int x, int y, int z) {
+    bool DiscreteMesh::isCurveBody(int x, int y, int z) {
         bool foundFace = false;
         bool allPoints;
         for(int n = 0; n < 12; n++) {
@@ -654,7 +654,7 @@ namespace Core {
 
     }
 
-    bool DiscreteMesh::isSurfaceBorder(const Volume & src, int x, int y, int z) {
+    bool DiscreteMesh::isSurfaceBorder(int x, int y, int z) {
         vector<Vec3I> n6;
         Vec3I currPoint = Vec3I(x, y, z);
         int n6_2Count = getN6_2Count(src, x, y, z);
@@ -667,7 +667,7 @@ namespace Core {
         return (mZigma - n6_2Count - n6Count) == 0;
     }
 
-    bool DiscreteMesh::isSurfaceBody(const Volume & src, int x, int y, int z, bool doDependantChecks) {
+    bool DiscreteMesh::isSurfaceBody(int x, int y, int z, bool doDependantChecks) {
         if(src(x, y, z) <= 0)
             return false;
 
@@ -708,7 +708,7 @@ namespace Core {
         return surfaceFound && ((doDependantChecks && !isSurfaceBorder(src, x, y, z)) || (!doDependantChecks));
     }
 
-    bool DiscreteMesh::isVolumeBorder(const Volume & src, int x, int y, int z, bool doDependantChecks) {
+    bool DiscreteMesh::isVolumeBorder(int x, int y, int z, bool doDependantChecks) {
         if(doDependantChecks && isVolumeBody(src, x, y, z))
             return false;
 
@@ -729,11 +729,11 @@ namespace Core {
         return isBorder;
     }
 
-    bool DiscreteMesh::isVolumeBody(const Volume & src, int x, int y, int z) {
+    bool DiscreteMesh::isVolumeBody(int x, int y, int z) {
         return (getN26Count(src, x, y, z) == 26);
     }
 
-    bool DiscreteMesh::isValidSurface(const Volume & src, Vec3D p0, Vec3D p1, Vec3D p2, Vec3D p3) {
+    bool DiscreteMesh::isValidSurface(Vec3D p0, Vec3D p1, Vec3D p2, Vec3D p3) {
         Vec3D surface[4] = {p0, p1, p2, p3};
         Vec3D pDelta = p2 - p0;
         Vec3D upperVector, lowerVector;
