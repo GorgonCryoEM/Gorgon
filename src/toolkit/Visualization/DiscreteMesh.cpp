@@ -634,7 +634,7 @@ namespace Core {
                 thresholds.pop_front();
                 thresholdedRange = Volume(range);
                 thresholdedRange.threshold(value, -1, 1, -1, false);
-                if(!isSimple(thresholdedRange, 2, 2, 2)) {
+                if(!thresholdedRange.isSimple(2, 2, 2)) {
                     break;
                 }
             }
@@ -748,10 +748,6 @@ namespace Core {
 
     bool DiscreteMesh::isVolumeBody(const Volume & src, int x, int y, int z) {
         return (getN26Count(src, x, y, z) == 26);
-    }
-
-    bool DiscreteMesh::isSimple(Volume & src, int x, int y, int z) {
-        return src.isSimple(x, y, z) != 0;
     }
 
     bool DiscreteMesh::isValidSurface(const Volume & src, Vec3D p0, Vec3D p1, Vec3D p2, Vec3D p3) {

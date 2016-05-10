@@ -120,7 +120,7 @@ namespace Core {
         int isHelixEnd       (int ox, int oy, int oz);
         int isFeatureFace    (int ox, int oy, int oz);
         int isSheetEnd       (int ox, int oy, int oz);
-        int isSimple         (int ox, int oy, int oz);
+        bool isSimple         (int ox, int oy, int oz);
         int isPiercable      (int ox, int oy, int oz);
         int getNumPotComplex (int ox, int oy, int oz);
         int getNumPotComplex2(int ox, int oy, int oz);

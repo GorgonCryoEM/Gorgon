@@ -333,7 +333,7 @@ int Volume::id3=0;
         return ( (hasCompleteSheet(ox, oy, oz) == 0) && isFeatureFace(ox, oy, oz));
     }
 
-    int Volume::isSimple(int ox, int oy, int oz) {
+    bool Volume::isSimple(int ox, int oy, int oz) {
         /* Test if this is a simple voxel */
         // int flag = 0 ;
         double vox[3][3][3];
@@ -346,10 +346,10 @@ int Volume::id3=0;
                 }
 
         if(countInt(vox) == 1 && countNeg(vox) == 1) {
-            return 1;
+            return true;
         }
         else {
-            return 0;
+            return false;
         }
 }
 

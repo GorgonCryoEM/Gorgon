@@ -84,7 +84,6 @@ namespace Core {
             static bool isSurfaceBody                (const Volume & src, int x, int y, int z, bool doDependantChecks);
             static bool isVolumeBorder               (const Volume & src, int x, int y, int z, bool doDependantChecks);
             static bool isVolumeBody                 (const Volume & src, int x, int y, int z);
-            static bool isSimple                     (      Volume & src, int x, int y, int z);
             static bool isValidSurface               (const Volume & src,
                                                       Vec3D p0, Vec3D p1, Vec3D p2, Vec3D p3);
 
