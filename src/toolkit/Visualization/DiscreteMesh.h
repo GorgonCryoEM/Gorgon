@@ -64,26 +64,26 @@ namespace Core {
 
             static int getC6 (vector<Vec3I> &neighbors, int neighborCount, Vec3I currPoint);
             static int getC26(vector<Vec3I> &neighbors, int neighborCount, Vec3I currPoint);
-            static int getN6   (vector<Vec3I> &   n6, int x, int y, int z);
-            static int getN18  (vector<Vec3I> &  n18, int x, int y, int z);
-            static int getN26  (vector<Vec3I> &  n26, int x, int y, int z);
-            static int getN6Count                    (int x, int y, int z);
-            static int getN6_2Count                  (int x, int y, int z);
-            static int getN18Count                   (int x, int y, int z);
-            static int getN26Count                   (int x, int y, int z);
-            static int getMCount                     (int x1, int y1, int z1,
-                                                      int x2, int y2, int z2);
-            static int getImmersionN6Count           ( Vec3I point);
-            static int getImmersionSkeletalValue     ( Vec3I point);
-            static bool isImmersionBoundary          ( Vec3I point);
-            static bool isPoint                      (int x, int y, int z);
-            static bool isCurveEnd                   (int x, int y, int z);
-            static bool isCurveBody                  (int x, int y, int z);
-            static bool isSurfaceBorder              (int x, int y, int z);
-            static bool isSurfaceBody                (int x, int y, int z, bool doDependantChecks);
-            static bool isVolumeBorder               (int x, int y, int z, bool doDependantChecks);
-            static bool isVolumeBody                 (int x, int y, int z);
-            static bool isValidSurface               (
+            static int getN6   (vector<Vec3I> &   n6, const Volume & src, int x, int y, int z);
+            static int getN18  (vector<Vec3I> &  n18, const Volume & src, int x, int y, int z);
+            static int getN26  (vector<Vec3I> &  n26, const Volume & src, int x, int y, int z);
+            static int getN6Count                    (const Volume & src, int x, int y, int z);
+            static int getN6_2Count                  (const Volume & src, int x, int y, int z);
+            static int getN18Count                   (const Volume & src, int x, int y, int z);
+            static int getN26Count                   (const Volume & src, int x, int y, int z);
+            static int getMCount                     (const Volume & src, int x1, int y1, int z1,
+                                                                          int x2, int y2, int z2);
+            static int getImmersionN6Count       (const Volume & skel, Vec3I point);
+            static int getImmersionSkeletalValue (const Volume & skel, Vec3I point);
+            static bool isImmersionBoundary      (const Volume & skel, Vec3I point);
+            static bool isPoint                      (const Volume & src, int x, int y, int z);
+            static bool isCurveEnd                   (const Volume & src, int x, int y, int z);
+            static bool isCurveBody                  (const Volume & src, int x, int y, int z);
+            static bool isSurfaceBorder              (const Volume & src, int x, int y, int z);
+            static bool isSurfaceBody                (const Volume & src, int x, int y, int z, bool doDependantChecks);
+            static bool isVolumeBorder               (const Volume & src, int x, int y, int z, bool doDependantChecks);
+            static bool isVolumeBody                 (const Volume & src, int x, int y, int z);
+            static bool isValidSurface               (const Volume & src,
                                                       Vec3D p0, Vec3D p1, Vec3D p2, Vec3D p3);
 
             template <class T>
