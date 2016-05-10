@@ -111,14 +111,14 @@ namespace Core {
     }
 
     void SkeletonMesh::clear() {
-        Mesh::clear();
+        MeshBase::clear();
         curves.clear();
     }
 
     int SkeletonMesh::addVertex(Vec3F vertex) {
         TKey id = vertices.size();
 
-        return Mesh::addVertex(vertex, id);
+        return MeshBase::addVertex(vertex, id);
     }
 
     void SkeletonMesh::draw(bool drawSurfaceBorders, bool drawSurfaces,

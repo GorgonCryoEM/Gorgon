@@ -26,7 +26,7 @@ namespace Visualization {
             virtual float getMaxPos(int i) const;
 
         protected:
-            Mesh surfaceMesh;
+            MeshBase surfaceMesh;
     };
 }
 

@@ -12,7 +12,7 @@
 
 namespace Core {
 
-    class VolumeMesh : public Volume, public Mesh {
+    class VolumeMesh : public Volume, public MeshBase {
         public:
             VolumeMesh();
             virtual ~VolumeMesh();

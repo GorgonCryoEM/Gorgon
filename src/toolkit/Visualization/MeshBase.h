@@ -1,12 +1,12 @@
 /*
- * Mesh.h
+ * MeshBase.h
  *
  * Author: shadow_walker <shadowwalkersb@gmail.com>
  *
  */
 
-#ifndef SRC_TOOLKIT_VISUALIZATION_MESH_H_
-#define SRC_TOOLKIT_VISUALIZATION_MESH_H_
+#ifndef SRC_TOOLKIT_VISUALIZATION_MESHBASE_H_
+#define SRC_TOOLKIT_VISUALIZATION_MESHBASE_H_
 
 #include <map>
 #include <set>
@@ -27,10 +27,10 @@ namespace Core {
     typedef Vector3<TKey> Vec3U;
     typedef map<TKey, Vertex> MUV;
 
-    class Mesh {
+    class MeshBase {
         public:
-            Mesh();
-            virtual ~Mesh();
+            MeshBase();
+            virtual ~MeshBase();
 
             virtual int addVertex(Vec3F vertex, int id);
             int addFace(IdList face);
@@ -49,7 +49,7 @@ namespace Core {
             MUV vertices;
             TF faces;
 
-            friend ostream & operator<<(ostream & out, const Mesh & obj) {
+            friend ostream & operator<<(ostream & out, const MeshBase & obj) {
                 return out
                         <<"Mesh:\n"
                         <<"vertices.size(): "<<obj.vertices.size()<<endl
@@ -61,4 +61,4 @@ namespace Core {
 
 } /* namespace Core */
 
-#endif /* SRC_TOOLKIT_VISUALIZATION_MESH_H_ */
+#endif /* SRC_TOOLKIT_VISUALIZATION_MESHBASE_H_ */

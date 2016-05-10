@@ -44,7 +44,7 @@ using namespace Core;
 namespace Visualization {
 
     int smallest2ndPower(int value);
-    void MarchingCube(const Volume & vol, Mesh & mesh,
+    void MarchingCube(const Volume & vol, MeshBase & mesh,
                       const float iso_level, int iX, int iY, int iZ,
                       int iScale);
 

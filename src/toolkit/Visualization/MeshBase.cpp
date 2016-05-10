@@ -1,11 +1,11 @@
 /*
- * Mesh.cpp
+ * MeshBase.cpp
  *
  * Author: shadow_walker <shadowwalkersb@gmail.com>
  *
  */
 
-#include "Mesh.h"
+#include "MeshBase.h"
 #include "GorgonGL.h"
 
 //using namespace std;
@@ -15,25 +15,25 @@
 
 namespace Core {
 
-    Mesh::Mesh() {
+    MeshBase::MeshBase() {
     }
 
-    Mesh::~Mesh() {
+    MeshBase::~MeshBase() {
     }
 
-    int Mesh::addVertex(Vec3F vertex, int id) {
+    int MeshBase::addVertex(Vec3F vertex, int id) {
         vertices[id] = Vertex(vertex);
         return id;
     }
 
-    int Mesh::addFace(IdList face) {
+    int MeshBase::addFace(IdList face) {
         TKey id = faces.size();
         faces.push_back(face);
 
         return id;
     }
 
-    TKey Mesh::addFace(Vec3U vertex) {
+    TKey MeshBase::addFace(Vec3U vertex) {
         IdList face;
         for (int i = 0; i < 3; ++i) {
             face.addId(vertex[i]);
@@ -47,16 +47,16 @@ namespace Core {
         return id;
     }
 
-    MUV Mesh::getVertices() const {
+    MUV MeshBase::getVertices() const {
         return vertices;
     }
 
-    void Mesh::clear() {
+    void MeshBase::clear() {
         vertices.clear();
         faces.clear();
     }
 
-    Vec3F Mesh::getVertexNormal(TKey id) {
+    Vec3F MeshBase::getVertexNormal(TKey id) {
         Vertex vertex = vertices[id];
         CElem v = vertex.getIds();
 
@@ -68,7 +68,7 @@ namespace Core {
         return normal;
     }
 
-    Vec3F Mesh::getFaceNormal(TKey id) {
+    Vec3F MeshBase::getFaceNormal(TKey id) {
         IdList face = faces[id];
         CElem v = face.getIds();
 
@@ -79,7 +79,7 @@ namespace Core {
         return normal;
     }
 
-    void Mesh::draw(bool drawSurfaces,
+    void MeshBase::draw(bool drawSurfaces,
                     bool annotateSurfaces,
                     bool fadeExtreme, int radius,
                     Vec3F center)
@@ -121,7 +121,7 @@ namespace Core {
         glFlush();
     }
 
-    void Mesh::save(string fileName) {
+    void MeshBase::save(string fileName) {
         FILE * outFile = fopen(fileName.c_str(), "wt");
         fprintf(outFile, "OFF\n");
         fprintf(outFile, "%d %d %d\n", (int)vertices.size(), (int)faces.size(), 0);

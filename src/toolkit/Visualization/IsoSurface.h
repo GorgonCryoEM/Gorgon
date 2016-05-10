@@ -14,7 +14,7 @@ namespace Visualization {
 
     class IsoSurface : public DisplayType {
         public:
-            IsoSurface(const Volume & vol, Mesh & mesh);
+            IsoSurface(const Volume & vol, MeshBase & mesh);
             virtual ~IsoSurface();
 
             bool calculateDisplay();
@@ -30,7 +30,7 @@ namespace Visualization {
             Vec3F radiusOrigin;
             bool _useDisplayRadius;
 
-            Mesh & surfaceMesh;
+            MeshBase & surfaceMesh;
     };
 
 } /* namespace Visualization */
