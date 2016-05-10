@@ -47,7 +47,7 @@ namespace Visualization {
     const int CALPHA_DISPLAY_STYLE_RIBBON = 4;
     const int CALPHA_DISPLAY_STYLE_SIDE_CHAIN = 5;
 
-    class CAlphaRenderer {
+    class CAlphaRenderer : public RendererBase {
         public:
             struct Secel{
                 vector<unsigned long long> atomHashes;

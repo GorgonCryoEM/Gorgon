@@ -38,7 +38,7 @@ namespace Visualization {
 
     const float HELIX_LENGTH_TO_RESIDUE_RATIO = 1.54;
 
-    class SSERenderer {
+    class SSERenderer : public RendererBase {
         public:
             SSERenderer();
             virtual ~SSERenderer();
