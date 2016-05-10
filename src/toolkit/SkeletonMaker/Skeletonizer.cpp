@@ -140,7 +140,7 @@ namespace GraySkeletonCPP {
 
     Vec3F Skeletonizer::GetCurveDirection(const Volume & skel, int x, int y, int z, int R) {
         Vec3F direction = Vec3F(0,0,0);
-        if(DiscreteMesh::getN6Count(skel, x, y, z) > 2) {
+        if(skel.getN6Count(x, y, z) > 2) {
             direction = Vec3F(BAD_NORMAL, BAD_NORMAL, BAD_NORMAL);
         } else {
 
@@ -167,9 +167,9 @@ namespace GraySkeletonCPP {
                 pos = list[list.size()-1];
                 list.pop_back();
                 visited(pos.X(), pos.Y(), pos.Z()) = 1;
-                n6Count = DiscreteMesh::getN6(n6, block, pos.X(), pos.Y(), pos.Z());
+                n6Count = block.getN6(n6, pos.X(), pos.Y(), pos.Z());
 
-                if(DiscreteMesh::getN6Count(skel, x+pos.X()-marg-R, y+pos.Y()-marg-R, z+pos.Z()-marg-R) <= 2) {
+                if(skel.getN6Count(x+pos.X()-marg-R, y+pos.Y()-marg-R, z+pos.Z()-marg-R) <= 2) {
                     for(int i = 0; i < n6Count; i++) {
                         if(visited(n6[i].X(), n6[i].Y(), n6[i].Z()) < 1) {
                             list.push_back(n6[i]);

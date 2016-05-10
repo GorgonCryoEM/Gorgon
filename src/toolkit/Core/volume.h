@@ -112,6 +112,10 @@ namespace Core {
         float getStdDev(); // Returns the population standard deviation of the values at all the voxels
 
         Volume markCellFace();
+
+        int getN6     (vector<Vec3I> &   n6, int x, int y, int z) const;
+        int getN6Count(int x, int y, int z) const;
+
         int getNumNeighbor6  (int ox, int oy, int oz);
         int isInternal2      (int ox, int oy, int oz);
         int hasCell          (int ox, int oy, int oz);

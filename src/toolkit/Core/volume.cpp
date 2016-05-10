@@ -235,6 +235,25 @@ int Volume::id3=0;
         return fvol;
     }
 
+    int Volume::getN6(vector<Vec3I> & n6, int x, int y, int z) const {
+        int n6Count = 0;
+        n6.resize(6);
+        for(int i = 0; i < 6; i++) {
+            n6[n6Count][0] = x + VOLUME_NEIGHBORS_6[i][0];
+            n6[n6Count][1] = y + VOLUME_NEIGHBORS_6[i][1];
+            n6[n6Count][2] = z + VOLUME_NEIGHBORS_6[i][2];
+            if((*this)(n6[n6Count]) > 0) {
+                n6Count++;
+            }
+        }
+        return n6Count;
+    }
+
+    int Volume::getN6Count(int x, int y, int z) const {
+        vector<Vec3I> n6;
+        return getN6(n6, x, y, z);
+    }
+
     int Volume::hasCompleteSheet(int ox, int oy, int oz) {
         // Returns 1 if it lies in the middle of a sheet
         int temp = countIntEuler(ox, oy, oz);
