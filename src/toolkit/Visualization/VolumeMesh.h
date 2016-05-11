@@ -8,7 +8,8 @@
 #ifndef SRC_TOOLKIT_VISUALIZATION_VOLUMEMESH_H_
 #define SRC_TOOLKIT_VISUALIZATION_VOLUMEMESH_H_
 
-#include "Mesh.h"
+#include "Core/Volume.h"
+#include "MeshBase.h"
 
 namespace Core {
 

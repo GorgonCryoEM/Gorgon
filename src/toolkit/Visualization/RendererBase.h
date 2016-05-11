@@ -10,7 +10,7 @@
 
 #include "IsoSurface.h"
 #include "Core/volume.h"
-#include "Visualization/Mesh.h"
+#include "Visualization/MeshBase.h"
 
 using namespace Core;
 

@@ -8,7 +8,7 @@
 #include <queue>
 #include <fstream>
 
-#include "Mesh.h"
+#include "MeshBase.h"
 
 #include "MathTools/BasicDefines.h"
 #include "Core/volume.h"
@@ -26,7 +26,7 @@ namespace Core {
     typedef map<TKey, Vertex > TV;
     typedef map<TKey, IdList >   TE;
 
-    class SkeletonMesh : public Volume, public Mesh {
+    class SkeletonMesh : public Volume, public MeshBase {
         public:
             SkeletonMesh();
             SkeletonMesh(const Volume & src);

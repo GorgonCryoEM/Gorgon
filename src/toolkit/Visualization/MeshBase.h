@@ -51,7 +51,7 @@ namespace Core {
 
             friend ostream & operator<<(ostream & out, const MeshBase & obj) {
                 return out
-                        <<"Mesh:\n"
+                        <<"MeshBase:\n"
                         <<"vertices.size(): "<<obj.vertices.size()<<endl
                         <<"faces.size(): "<<obj.faces.size()
                         <<endl;
