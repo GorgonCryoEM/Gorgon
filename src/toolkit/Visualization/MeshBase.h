@@ -29,9 +29,6 @@ namespace Core {
 
     class MeshBase {
         public:
-            MeshBase();
-            virtual ~MeshBase();
-
             virtual int addVertex(Vec3F vertex, int id);
             int addFace(IdList face);
             virtual TKey addFace(Vec3U face);
@@ -40,11 +37,6 @@ namespace Core {
             void clear();
             Vec3F getVertexNormal(TKey id);
             Vec3F getFaceNormal(TKey faceHash);
-            void draw(bool drawSurfaces, bool annotateSurfaces,
-                      bool fadeExtreme, int radius, Vec3F center);
-
-            void save(string fileName);
-
         protected:
             MUV vertices;
             TF faces;

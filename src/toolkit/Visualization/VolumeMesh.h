@@ -15,8 +15,10 @@ namespace Core {
 
     class VolumeMesh : public Volume, public MeshBase {
         public:
-            VolumeMesh();
-            virtual ~VolumeMesh();
+            void draw(bool drawSurfaces, bool annotateSurfaces,
+                      bool fadeExtreme, int radius, Vec3F center);
+
+            void save(string fileName);
     };
 
 } /* namespace Core */
