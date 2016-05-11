@@ -14,11 +14,6 @@ namespace Visualization {
             : IsoSurface((*this), surfaceMesh)
     {}
 
-    void RendererBase::draw(int subSceneIndex, bool selectEnabled) {
-        if(subSceneIndex == 0)
-            surfaceMesh.draw(true, selectEnabled, _useDisplayRadius, displayRadius, radiusOrigin);
-    }
-
     float RendererBase::getMinPos(int i) const {
         return 0.0;
     }

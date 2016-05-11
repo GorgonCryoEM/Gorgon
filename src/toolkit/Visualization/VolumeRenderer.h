@@ -17,6 +17,8 @@ namespace Visualization {
         public:
             VolumeRenderer();
             virtual ~VolumeRenderer();
+
+            void draw(int subSceneIndex, bool selectEnabled);
     };
 
 } /* namespace Visualization */

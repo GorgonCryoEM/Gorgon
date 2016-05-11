@@ -18,4 +18,9 @@ namespace Visualization {
         // TODO Auto-generated destructor stub
     }
 
+    void VolumeRenderer::draw(int subSceneIndex, bool selectEnabled) {
+        if(subSceneIndex == 0)
+            surfaceMesh.draw(true, selectEnabled, _useDisplayRadius, displayRadius, radiusOrigin);
+    }
+
 } /* namespace Visualization */
