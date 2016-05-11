@@ -28,7 +28,7 @@ class SkeletonViewer(BaseViewer):
 #         if(self.loaded):
 #             self.unloadData
         print "SkeletonViewer.loadVolume()"
-        print volume.getSize()
+        print volume
         
         self.renderer.loadVolume(volume)
         print self.renderer.getMesh().getSize()
