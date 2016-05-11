@@ -19,6 +19,9 @@ namespace Visualization {
             virtual ~VolumeRenderer();
 
             void draw(int subSceneIndex, bool selectEnabled);
+
+        private:
+            VolumeMesh surfaceMesh;
     };
 
 } /* namespace Visualization */
