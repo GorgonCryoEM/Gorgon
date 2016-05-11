@@ -196,6 +196,8 @@ BOOST_PYTHON_MODULE(@current_pylib@)
   
   class_< SkeletonRenderer, bases<RendererBase> >("SkeletonRenderer", init<>())
       .def("draw", &SkeletonRenderer::draw)
+      .def("getMinPos", &SkeletonRenderer::getMinPos)
+      .def("getMaxPos", &SkeletonRenderer::getMaxPos)
 //      .def("drawBoundingBox", &SkeletonRenderer::DrawBoundingBox)
       .def("loadFile", load)
       .def("loadVolume", &SkeletonRenderer::loadVolume)
