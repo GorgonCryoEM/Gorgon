@@ -154,6 +154,8 @@ BOOST_PYTHON_MODULE(@current_pylib@)
        .def("getOriginX",  &RendererBase::getOriginX)
        .def("getOriginY",  &RendererBase::getOriginY)
        .def("getOriginZ",  &RendererBase::getOriginZ)
+       .def("getMinPos", &RendererBase::getMinPos)
+       .def("getMaxPos", &RendererBase::getMaxPos)
   ;
   
   class_<VolumeRenderer, bases<Volume, RendererBase> >("VolumeRenderer", init<>())
