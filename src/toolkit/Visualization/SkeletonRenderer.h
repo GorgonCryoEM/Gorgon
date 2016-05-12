@@ -36,7 +36,7 @@ namespace Visualization {
             void setLineThickness(int thickness);
             void draw(int subSceneIndex, bool selectEnabled);
 
-            void loadVolume(Volume src);
+            void loadVolume(const Volume & src);
         private:
             SkeletonMesh mesh;
             vector<Vec3F> intersectionPoints;

@@ -124,7 +124,7 @@ namespace Visualization {
         return intersectionPoints.size();
     }
 
-    void SkeletonRenderer::loadVolume(Volume src) {
+    void SkeletonRenderer::loadVolume(const Volume & src) {
         mesh = SkeletonMesh(src);
 //        #ifdef GORGON_DEBUG
               cout<<"\033[32mDEBUG: File:   SkeletonRenderer.cpp"<<endl;
