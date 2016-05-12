@@ -11,7 +11,6 @@
 namespace Visualization {
 
     RendererBase::RendererBase()
-            : IsoSurface((*this), surfaceMesh)
     {}
 
     float RendererBase::getMinPos(int i) const {

@@ -10,10 +10,11 @@
 
 #include "RendererBase.h"
 #include "VolumeMesh.h"
+#include "IsoSurface.h"
 
 namespace Visualization {
 
-    class VolumeRenderer : public RendererBase {
+    class VolumeRenderer : public RendererBase, public IsoSurface {
         public:
             VolumeRenderer();
             virtual ~VolumeRenderer();
