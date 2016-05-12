@@ -99,11 +99,19 @@ class BaseViewer(BaseDockWidget):
 
     def paintGL(self):
         glPushMatrix()
-        loc = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]
-        glTranslated(loc[0], loc[1], loc[2])
+        try:
+            loc = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]
+        except:
+            pass
+        else:
+            glTranslated(loc[0], loc[1], loc[2])
         glMultMatrixf(self.rotation)
-        scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
-        glScaled(scale[0], scale[1], scale[2])
+        try:
+            scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
+        except:
+            pass
+        else:
+            glScaled(scale[0], scale[1], scale[2])
                 
         glPushAttrib(GL_DEPTH_BUFFER_BIT | GL_LIGHTING_BIT | GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT)
         glEnable(GL_DEPTH_TEST);
