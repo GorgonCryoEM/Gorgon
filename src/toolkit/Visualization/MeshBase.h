@@ -34,7 +34,7 @@ namespace Core {
             virtual TKey addFace(Vec3U face);
             MUV getVertices() const;
 
-            void clear();
+            virtual void clear();
             Vec3F getVertexNormal(TKey id);
             Vec3F getFaceNormal(TKey faceHash);
         protected:
