@@ -9,7 +9,9 @@
 
 namespace Visualization {
 
-    VolumeRenderer::VolumeRenderer() {
+    VolumeRenderer::VolumeRenderer()
+            : IsoSurface(*this, *this)
+    {
         // TODO Auto-generated constructor stub
 
     }
@@ -20,7 +22,7 @@ namespace Visualization {
 
     void VolumeRenderer::draw(int subSceneIndex, bool selectEnabled) {
         if(subSceneIndex == 0)
-            surfaceMesh.draw(true, selectEnabled, _useDisplayRadius, displayRadius, radiusOrigin);
+            VolumeMesh::draw(true, selectEnabled, _useDisplayRadius, displayRadius, radiusOrigin);
     }
 
 } /* namespace Visualization */

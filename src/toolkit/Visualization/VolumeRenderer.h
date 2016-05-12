@@ -14,15 +14,12 @@
 
 namespace Visualization {
 
-    class VolumeRenderer : public RendererBase, public IsoSurface {
+    class VolumeRenderer : public VolumeMesh, public RendererBase, public IsoSurface {
         public:
             VolumeRenderer();
             virtual ~VolumeRenderer();
 
             void draw(int subSceneIndex, bool selectEnabled);
-
-        private:
-            VolumeMesh surfaceMesh;
     };
 
 } /* namespace Visualization */
