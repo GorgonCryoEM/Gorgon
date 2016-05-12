@@ -33,4 +33,29 @@ namespace Visualization {
 
         return result;
     }
+
+    float RendererBase::getSpacingX() const {
+        return 1;
+    }
+
+    float RendererBase::getSpacingY() const {
+        return 1;
+    }
+
+    float RendererBase::getSpacingZ() const {
+        return 1;
+    }
+
+    float RendererBase::getOriginX() const {
+        return 40;
+    }
+
+    float RendererBase::getOriginY() const {
+        return 40;
+    }
+
+    float RendererBase::getOriginZ() const {
+        return 40;
+    }
+
 }

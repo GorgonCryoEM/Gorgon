@@ -148,9 +148,15 @@ BOOST_PYTHON_MODULE(@current_pylib@)
     def("drawLine",     drawLine);
   
   class_<RendererBase>("RendererBase", init<>())
+       .def("getSpacingX", &RendererBase::getSpacingX)
+       .def("getSpacingY", &RendererBase::getSpacingY)
+       .def("getSpacingZ", &RendererBase::getSpacingZ)
+       .def("getOriginX",  &RendererBase::getOriginX)
+       .def("getOriginY",  &RendererBase::getOriginY)
+       .def("getOriginZ",  &RendererBase::getOriginZ)
   ;
   
-  class_<VolumeRenderer, bases<Volume> >("VolumeRenderer", init<>())
+  class_<VolumeRenderer, bases<Volume, RendererBase> >("VolumeRenderer", init<>())
         .def("draw", &VolumeRenderer::draw)
 //        .def("drawBoundingBox", &VolumeRenderer::drawBoundingBox)
 //        .def("enableDraw", &VolumeRenderer::enableDraw)
