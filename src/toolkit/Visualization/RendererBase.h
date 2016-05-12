@@ -15,7 +15,7 @@ using namespace Core;
 
 namespace Visualization {
 
-    class RendererBase : public Volume {
+    class RendererBase {
         public:
             RendererBase();
 
