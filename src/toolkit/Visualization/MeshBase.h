@@ -30,13 +30,13 @@ namespace Core {
     class MeshBase {
         public:
             virtual int addVertex(Vec3F vertex, int id);
-            int addFace(IdList face);
+            virtual int addFace(IdList face);
             virtual TKey addFace(Vec3U face);
-            MUV getVertices() const;
+            virtual MUV getVertices() const;
 
             virtual void clear();
-            Vec3F getVertexNormal(TKey id);
-            Vec3F getFaceNormal(TKey faceHash);
+            virtual Vec3F getVertexNormal(TKey id);
+            virtual Vec3F getFaceNormal(TKey faceHash);
         protected:
             MUV vertices;
             TF faces;
