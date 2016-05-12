@@ -49,19 +49,19 @@ namespace Visualization {
 #endif
 
         if(extension == "OFF") {
-            mesh = SkeletonMesh::loadOffFile(fileName);
+            (SkeletonMesh&)(*this) = SkeletonMesh::loadOffFile(fileName);
         } else if(extension == "MRC" || extension == "ATOM") {
-            Volume::load(fileName);
+            SkeletonMesh::load(fileName);
             #ifdef GORGON_DEBUG
                   cout<<"\033[36mDEBUG: After VolumeFormatConverter::LoadVolume(fileName)"<<endl;
                   cout<<"FileName: "<<fileName<<endl;
                   cout<<(Volume)(*this)<<"\033[0m"<<endl;
             #endif
 
-            mesh = SkeletonMesh(*this);
+//            mesh = SkeletonMesh(*this);
 
 #ifdef GORGON_DEBUG
-      cout<<"\033[35m"<<mesh.getSize()<<"\033[0m"<<endl;
+      cout<<"\033[35m"<<getSize()<<"\033[0m"<<endl;
 #endif
         } else {
             cout<<"Input format "<<extension<<" not supported!"<<endl;
@@ -75,7 +75,7 @@ namespace Visualization {
             extension = StringUtils::StringToUpper(extension);
 
             if(extension == "MRC") {
-                Volume volume = mesh.toVolume();
+                Volume volume = toVolume();
                 volume.toMRCFile(fileName.c_str());
             } else {
               cout<<"Input format "<<extension<<" not supported!"<<endl;
@@ -91,10 +91,10 @@ namespace Visualization {
         r = radius;
         intersectionPoints.clear();
 
-        MUV vertices = mesh.getVertices();
-        for(unsigned int i = 0; i < mesh.curves.size(); i++) {
-            p1 = vertices[mesh.curves[i].id(0)];
-            p2 = vertices[mesh.curves[i].id(1)];
+        MUV vertices = getVertices();
+        for(unsigned int i = 0; i < curves.size(); i++) {
+            p1 = vertices[curves[i].id(0)];
+            p2 = vertices[curves[i].id(1)];
             x1 = p1.X();
             y1 = p1.Y();
             z1 = p1.Z();
@@ -125,12 +125,12 @@ namespace Visualization {
     }
 
     void SkeletonRenderer::loadVolume(const Volume & src) {
-        mesh = SkeletonMesh(src);
+        static_cast<SkeletonMesh&>(*this) = src;
 //        #ifdef GORGON_DEBUG
               cout<<"\033[32mDEBUG: File:   SkeletonRenderer.cpp"<<endl;
               cout<<"DEBUG: Method: SkeletonRenderer::loadVolume(Volume)\033[0m"<<endl;
               cout<<"src.getSize(): "<<src.getSize()<<endl;
-              cout<<"mesh.getSize(): "<<mesh.getSize()<<endl;
+              cout<<"*this:\n"<<*this<<endl;
 //        #endif
 
     }
