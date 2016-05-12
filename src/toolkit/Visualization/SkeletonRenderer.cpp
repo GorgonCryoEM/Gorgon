@@ -12,13 +12,13 @@ namespace Visualization {
     void SkeletonRenderer::draw(int subSceneIndex, bool selectEnabled) {
         switch(subSceneIndex) {
             case 0:
-                    mesh.draw(false, false, true, false, selectEnabled, selectEnabled, false, false, true, true, lineThickness, false);
+                    SkeletonMesh::draw(false, false, true, false, selectEnabled, selectEnabled, false, false, true, true, lineThickness, false);
                 break;
             case 1:
-                    mesh.draw(false, true, false, false, selectEnabled, selectEnabled, false, false, true, true, lineThickness, false);
+                    SkeletonMesh::draw(false, true, false, false, selectEnabled, selectEnabled, false, false, true, true, lineThickness, false);
                 break;
             case 2:
-                    mesh.draw(true, false, false, false, selectEnabled, selectEnabled, false, false, true, true, lineThickness, false);
+                    SkeletonMesh::draw(true, false, false, false, selectEnabled, selectEnabled, false, false, true, true, lineThickness, false);
                 break;
         }
     }
@@ -28,7 +28,7 @@ namespace Visualization {
     }
 
     SkeletonMesh SkeletonRenderer::getMesh() {
-        return mesh;
+        return *this;
     }
 
     Vec3F SkeletonRenderer::getIntersectionPoint(int ix) {

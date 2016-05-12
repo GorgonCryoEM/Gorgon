@@ -25,7 +25,7 @@ using namespace SkeletonMaker;
 
 namespace Visualization {
 
-    class SkeletonRenderer : public RendererBase {
+    class SkeletonRenderer : public SkeletonMesh, public RendererBase {
         public:
             SkeletonMesh getMesh();
             void load(string fileName);
@@ -38,7 +38,6 @@ namespace Visualization {
 
             void loadVolume(const Volume & src);
         private:
-            SkeletonMesh mesh;
             vector<Vec3F> intersectionPoints;
             int lineThickness;
     };
