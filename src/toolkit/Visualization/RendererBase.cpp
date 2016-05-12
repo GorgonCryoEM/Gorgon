@@ -21,13 +21,13 @@ namespace Visualization {
         float result;
         switch(i) {
             case 0:
-                result = float(getSizeX()-1);
+                result = 100.;
                 break;
             case 1:
-                result = float(getSizeY()-1);
+                result = 100.;
                 break;
             case 2:
-                result = float(getSizeZ()-1);
+                result = 100.;
                 break;
         }
 
