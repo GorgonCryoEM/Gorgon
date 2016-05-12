@@ -847,7 +847,7 @@ namespace Visualization {
     }
 
     void CAlphaRenderer::loadFile(string fileName) {
-        RendererBase::load(fileName);
+//        RendererBase::load(fileName);
         atoms.clear();
         bonds.clear();
         atoms = PDBReader::ReadAtomPositions(fileName);
