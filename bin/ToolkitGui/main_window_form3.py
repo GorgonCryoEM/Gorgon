@@ -21,9 +21,8 @@ class MainWindowForm3(QtGui.QMainWindow):
         self.volumeViewer = VolumeViewer(self)
         self.skeletonViewer = SkeletonViewer(self)
         self.calphaViewer = CAlphaViewer(self)
-        self.sseViewer    = SSEViewer(self)
         
-        self.scene = [self.volumeViewer, self.skeletonViewer, self.calphaViewer, self.sseViewer]
+        self.scene = [self.volumeViewer, self.skeletonViewer, self.calphaViewer]
         
         self.mainCamera = Camera(self.scene, self)
         self.setCentralWidget(self.mainCamera)
