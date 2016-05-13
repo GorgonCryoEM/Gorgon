@@ -52,6 +52,7 @@ namespace Visualization {
             (SkeletonMesh&)(*this) = SkeletonMesh::loadOffFile(fileName);
         } else if(extension == "MRC" || extension == "ATOM") {
             SkeletonMesh::load(fileName);
+            loadVolume((Volume&)(*this));
 //            #ifdef GORGON_DEBUG
                   cout<<"\033[36mDEBUG: After SkeletonMesh::load(fileName)"<<endl;
                   cout<<"FileName: "<<fileName<<endl;
