@@ -41,28 +41,28 @@ namespace Visualization {
         string extension = fileName.substr(pos, fileName.length()-pos);
         extension = StringUtils::StringToUpper(extension);
 
-#ifdef GORGON_DEBUG
+//#ifdef GORGON_DEBUG
       cout<<"\033[36mDEBUG: File:   SkeletonRenderer.h"<<endl;
       cout<<"DEBUG: Method: SkeletonRenderer::loadFile\033[0m"<<endl;
       cout<<"DEBUG: Args: string\033[0m"<<endl;
       cout<<"FileName: "<<fileName<<endl;
-#endif
+//#endif
 
         if(extension == "OFF") {
             (SkeletonMesh&)(*this) = SkeletonMesh::loadOffFile(fileName);
         } else if(extension == "MRC" || extension == "ATOM") {
             SkeletonMesh::load(fileName);
-            #ifdef GORGON_DEBUG
-                  cout<<"\033[36mDEBUG: After VolumeFormatConverter::LoadVolume(fileName)"<<endl;
+//            #ifdef GORGON_DEBUG
+                  cout<<"\033[36mDEBUG: After SkeletonMesh::load(fileName)"<<endl;
                   cout<<"FileName: "<<fileName<<endl;
                   cout<<(Volume)(*this)<<"\033[0m"<<endl;
-            #endif
+//            #endif
 
 //            mesh = SkeletonMesh(*this);
 
-#ifdef GORGON_DEBUG
-      cout<<"\033[35m"<<getSize()<<"\033[0m"<<endl;
-#endif
+//#ifdef GORGON_DEBUG
+      cout<<"\033[35m"<<*this<<"\033[0m"<<endl;
+//#endif
         } else {
             cout<<"Input format "<<extension<<" not supported!"<<endl;
         }
