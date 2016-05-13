@@ -26,9 +26,9 @@ def main():
     app = QtGui.QApplication(sys.argv)
 
     windows = []
-    windows.append(MainWindowForm('2.2.2', args))
-    windows.append(MainWindowForm2('2.2.3', args))
-    windows.append(MainWindowForm3('2.2.4', args))
+#     windows.append(MainWindowForm('2.2.2', args))
+#     windows.append(MainWindowForm2('2.2.3', args))
+#     windows.append(MainWindowForm3('2.2.4', args))
     windows.append(MainWindowForm4('2.2.5', args))
     
     for window in windows:
