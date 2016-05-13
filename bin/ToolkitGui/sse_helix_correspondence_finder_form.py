@@ -25,7 +25,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
         QtGui.QDialog.__init__(self, main)
         
         self.app = main
-#         self.viewer = self.app.sseViewer
+        self.viewer = parent
         dock = QtGui.QDockWidget("SSEHelixCorrespondenceFinder", self.app)
         dock.setWidget(self)
         dock.setAllowedAreas(QtCore.Qt.AllDockWidgetAreas)
