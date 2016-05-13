@@ -163,7 +163,13 @@ namespace Visualization {
     }
 
     inline void SSEEngine::draw(int sceneIndex) {
-        //std::cout << "SSECorrespondenceEngine::Draw called" << std::endl;
+        cout << "SSEEngine::draw called" << endl;
+//        #ifdef GORGON_DEBUG
+              cout<<"\033[32mDEBUG: File:   SSEEngine.h"<<endl;
+              cout<<"DEBUG: Method: SSEEngine::draw(int)\033[0m"<<endl;
+              cout<<correspondenceIndex<<endl;
+//        #endif
+
         int n1, n2, sse1, sse2;
         vector<Vec3I> path;
         if(correspondenceIndex >= 0) {
