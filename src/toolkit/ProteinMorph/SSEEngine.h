@@ -47,7 +47,7 @@ namespace Visualization {
     						: pathCount(0)
     {}
 
-    int SSEEngine::ExecuteQuery() {
+    inline int SSEEngine::ExecuteQuery() {
         if(skeleton != NULL && sequence != NULL) {
             int resultCount = matcher->match(sequence, skeleton);
             correspondence.clear();
@@ -60,11 +60,11 @@ namespace Visualization {
         }
     }
 
-    int SSEEngine::GetResultCount() {
+    inline int SSEEngine::GetResultCount() {
         return correspondence.size();
     }
 
-    int SSEEngine::load(string fileName) {
+    inline int SSEEngine::load(string fileName) {
 
         ifstream fin(fileName.c_str());
         if (!fin)
@@ -97,7 +97,7 @@ namespace Visualization {
         return correspondenceCount;
     }
 
-    SSEResult SSEEngine::GetResult(int rank) {
+    inline SSEResult SSEEngine::GetResult(int rank) {
         // TODO: Fix!
         //if(rank <= (int)correspondence.size() && (rank >= 1)) {
             return correspondence[rank-1];
@@ -106,7 +106,7 @@ namespace Visualization {
         //}
     }
 
-    void SSEEngine::save(string fileName) {
+    inline void SSEEngine::save(string fileName) {
         ofstream fout(fileName.c_str());
         if (!fout)
         {
@@ -126,7 +126,7 @@ namespace Visualization {
         fout.close();
     }
 
-    Shape * SSEEngine::GetSkeletonSSE(int sseId) {
+    inline Shape * SSEEngine::GetSkeletonSSE(int sseId) {
         if((skeleton != NULL) && (sseId < (int)skeleton->skeletonHelixes.size())) {
             return skeleton->skeletonHelixes[sseId];
         } else {
@@ -134,7 +134,7 @@ namespace Visualization {
         }
     }
 
-    SecStruct * SSEEngine::GetSequenceSSE(int sseId) {
+    inline SecStruct * SSEEngine::GetSequenceSSE(int sseId) {
         if((sequence != NULL) && (sseId < (int)sequence->pdbStructures.size())) {
             return sequence->pdbStructures[sseId];
         } else {
@@ -143,11 +143,11 @@ namespace Visualization {
     }
 
 
-    int SSEEngine::GetSkeletonSSECount() {
+    inline int SSEEngine::GetSkeletonSSECount() {
         return skeleton->skeletonHelixes.size();
     }
 
-    int SSEEngine::GetSequenceSSECount() {
+    inline int SSEEngine::GetSequenceSSECount() {
         return sequence->pdbStructures.size();
     }
 }
