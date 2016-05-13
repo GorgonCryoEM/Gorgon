@@ -932,31 +932,33 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
             self.ui.tableWidgetCorrespondenceList.setVerticalHeaderLabels(rowLabels)
             
             observedHelices = self.viewer.correspondenceLibrary.structureObservation.helixDict
-#             for i in range(len(observedHelices)):
-#                 if(not notMissing.has_key(i)):
-#                     self.viewer.renderer.setHelixColor(i, 0.5, 0.5, 0.5, 1.0)
-                
-#         self.viewer.correspondenceEngine.setVisibleCorrespondence(correspondenceIndex)
-#         self.viewer.correspondenceLibrary.setCurrentCorrespondenceIndex(correspondenceIndex)
+            for i in range(len(observedHelices)):
+                if(not notMissing.has_key(i)):
+                    self.viewer.renderer.setHelixColor(i, 0.5, 0.5, 0.5, 1.0)
+
+        self.viewer.correspondenceEngine.setVisibleCorrespondence(correspondenceIndex)
+        self.viewer.correspondenceLibrary.setCurrentCorrespondenceIndex(correspondenceIndex)
         self.viewer.modelChanged()
         self.loadingCorrespondance = False
         
     def drawOverlay(self):
-        if self.executed and self.corrAct.isChecked():
+        if True:
             glPushAttrib(GL_LIGHTING_BIT)
-            self.viewer.setMaterials(self.colors["CorrespondenceFinder:BackboneTrace"])
+#             self.viewer.setMaterials(self.colors["CorrespondenceFinder:BackboneTrace"])
+            self.viewer.setMaterials()
             # calls Draw method of c++ SSECorrespondenceEngine object
             self.viewer.correspondenceEngine.draw(0)
             glPopAttrib()
-        if self.corrAct.isChecked() and self.dataLoaded and (self.ui.checkBoxShowAllPaths.isChecked() or self.ui.checkBoxShowHelixCorners.isChecked() or self.ui.checkBoxShowSheetCorners.isChecked() or self.ui.checkBoxShowSheetColors.isChecked() ):
+        if True:
             # TODO: Move this color changing code somewhere else
             # set colors of all SSEs
             # Probably should use the setColor calls in previous sections.
             for i in range(self.viewer.correspondenceEngine.getSkeletonSSECount()):
                 color = self.getIndexedHelixColor(i, self.viewer.correspondenceEngine.getSkeletonSSECount())
             glPushAttrib(GL_LIGHTING_BIT)
-            self.viewer.setMaterials(self.colors["CorrespondenceFinder:BackboneTrace"])
-            self.viewer.correspondenceEngine.drawAllPaths(0,self.ui.checkBoxShowAllPaths.isChecked(),self.ui.checkBoxShowHelixCorners.isChecked(),self.ui.checkBoxShowSheetCorners.isChecked(),False)
+#             self.viewer.setMaterials(self.colors["CorrespondenceFinder:BackboneTrace"])
+            self.viewer.setMaterials()
+            self.viewer.correspondenceEngine.drawAllPaths(0,True,True,True,True)
             glPopAttrib()
             
     def rebuildGraph(self):
