@@ -20,6 +20,8 @@ def main():
     
     parser.add_argument('volume', action="store")
     parser.add_argument('skeleton', action="store")
+    parser.add_argument('sequence', action="store")
+    parser.add_argument('helix', action="store")
     parser.add_argument('output', action="store")
     args = parser.parse_args()
 
