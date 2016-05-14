@@ -21,9 +21,6 @@ using namespace std;
 
 namespace GraphMatch {
 
-    /*
-     *
-     */
     static const int ATOM_ROLE_COUNT = 44;
     static const string ATOM_ROLE_NAMES[ATOM_ROLE_COUNT] = {
         "C",    "CA",   "CB",   "CD",   "CD1",  "CD2",  "CE",   "CE1",  "CE2",  "CE3",

@@ -5,7 +5,6 @@
  *
  */
 
-
 #ifndef SRC_TOOLKIT_CORE_OUTPUT_H_
 #define SRC_TOOLKIT_CORE_OUTPUT_H_
 
