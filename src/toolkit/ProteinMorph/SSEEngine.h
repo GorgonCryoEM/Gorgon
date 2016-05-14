@@ -8,9 +8,10 @@
 #include <map>
 #include <set>
 #include <iomanip>
-//#include <GorgonGL.h>
+#include <GorgonGL.h>
 //#include <Foundation/StringUtils.h>
 #include "Visualization/Shapes.h"
+#include "Visualization/SkeletonMesh.h"
 
 //using namespace GraphMatch;
 //using namespace Foundation;
