@@ -83,15 +83,15 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog, SSEHelixCorrespondence):
         self.ui.lineEditHelixLengthFile.setVisible(False)
         self.ui.pushButtonGetHelixLengthFile.setVisible(False)
           
-    # populate parameter boxes with default values for correspondence search
-    def loadDefaults(self):
-        self.ui.lineEditHelixLengthFile.setText("")
-        self.ui.lineEditHelixLocationFile.setText(self.viewer.helixFileName)
-        self.ui.lineEditSheetLocationFile.setText(self.viewer.sheetFileName)
-        self.ui.lineEditSkeletonFile.setText(self.app.skeletonViewer.fileName)
-        self.ui.lineEditSequenceFile.setText(self.app.calphaViewer.fileName)
-        self.ui.lineEditSettingsFile.setText("")
-        self.loadDefaultParams()
+#     # populate parameter boxes with default values for correspondence search
+#     def loadDefaults(self):
+#         self.ui.lineEditHelixLengthFile.setText("")
+#         self.ui.lineEditHelixLocationFile.setText(self.viewer.helixFileName)
+#         self.ui.lineEditSheetLocationFile.setText(self.viewer.sheetFileName)
+#         self.ui.lineEditSkeletonFile.setText(self.app.skeletonViewer.fileName)
+#         self.ui.lineEditSequenceFile.setText(self.app.calphaViewer.fileName)
+#         self.ui.lineEditSettingsFile.setText("")
+#         self.loadDefaultParams()
 
     def loadDefaultParams(self):
         self.ui.pushButtonExportToRosetta.setVisible(False)
