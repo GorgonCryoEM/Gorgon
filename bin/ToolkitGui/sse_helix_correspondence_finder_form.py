@@ -12,6 +12,8 @@ from Toolkit.sse.seq_model.Helix import Helix
 from Explorer import Vec3
 import xml.dom.minidom
 
+from Toolkit.sse.sse_helix_correspondence import SSEHelixCorrespondence
+
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
@@ -19,22 +21,28 @@ from OpenGL.GLUT import *
 import math
 
 
-class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
+class SSEHelixCorrespondenceFinderForm(QtGui.QDialog, SSEHelixCorrespondence):
 
     def __init__(self, main, parent=None):
-        QtGui.QDialog.__init__(self, main)
-        
         self.app = main
         self.viewer = parent
+        
+        QtGui.QDialog.__init__(self, main)
+                
+        args = self.app.args
+        SSEHelixCorrespondence.__init__(self, args.skeleton, args.sequence, args.helix, args.output, False)
+        
         dock = QtGui.QDockWidget("SSEHelixCorrespondenceFinder", self.app)
         dock.setWidget(self)
         dock.setAllowedAreas(QtCore.Qt.AllDockWidgetAreas)
         self.app.addDockWidget(QtCore.Qt.LeftDockWidgetArea, dock)
         
+        self.createUI()
+        self.ui.correspondences = self.ui.comboBoxCorrespondences
+        
         self.executed = False
         self.colors = {}
         self.colors["CorrespondenceFinder:BackboneTrace"] = QtGui.QColor(255, 255, 255, 255)
-        self.createUI()
         self.loadingCorrespondance = False
         self.userConstraints = {}
         self.constraintActions = {}
