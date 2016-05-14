@@ -626,87 +626,87 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog, SSEHelixCorrespondence):
             corr = library.correspondenceList[i]
             self.ui.comboBoxCorrespondences.addItem("Correspondence " + str(i+1) + " - [Cost: " + str(corr.score) + "]")
                    
-    def createBasicCorrespondence(self):
-        """Writes search parameters to correspondence object, loads predicted structure and observed structure, and creates correspondence library"""
-        print "creating basic correspondence"
-        oldCursor = self.cursor()
-        self.setCursor(QtCore.Qt.BusyCursor)
-
-        # put user-entered match parameters from UI into the correspondence object
-        print "setting constants"
-        self.setConstants()
-        
-        #Loading Predicted SSEs
-        print "loading predicted SSEs"
-        self.viewer.correspondenceEngine.loadSequenceGraph()
-        
-        print "before calling StructurePrediction.load"
-        print "sequenceFileName is " + str(self.sequenceFileName)
-        print "app is " + str(self.app)
-        includeStrands = self.viewer.correspondenceEngine.getConstantInt("INCLUDE_STRANDS")
-        structPred = StructurePrediction.load(self.sequenceFileName, self.app, includeStrands)
-        print "after calling StructurePrediction.load"
-        cAlphaViewer = self.app.calphaViewer
-        sseViewer = self.app.sseViewer
-        skeletonViewer = self.app.skeletonViewer
-        cAlphaViewer.structPred = structPred
-
-        def vector3DFloatToTuple(v3df):
-            return (v3df.x(), v3df.y(), v3df.z())
-        
-        #Loading Observed SSEs
-        print "loading observed SSEs"
-        self.viewer.correspondenceEngine.loadSkeletonGraph()
-        observedHelices = {}
-        helixCount = 0
-        observedSheets = {}
-        sheetCount = 0
-        sseCount = self.viewer.correspondenceEngine.getSkeletonSSECount()
-
-        print "adding helices to list of observed helices"
-        for sseIx in range(sseCount):
-            # call to c++ method QueryEngine::getSkeletonSSE(), which returns a c++ GeometricShape object
-            cppSse = self.viewer.correspondenceEngine.getSkeletonSSE(sseIx)
-            
-            # create list of observed helices for this correspondence result
-            if cppSse.isHelix():
-                q1 = cAlphaViewer.worldToObjectCoordinates(sseViewer.objectToWorldCoordinates(vector3DFloatToTuple(cppSse.getCornerCell3(1))))
-                q2 = cAlphaViewer.worldToObjectCoordinates(sseViewer.objectToWorldCoordinates(vector3DFloatToTuple(cppSse.getCornerCell3(2))))
-            
-                pyHelix = ObservedHelix(sseIx, q1, q2)
-                observedHelices[helixCount] = pyHelix
-                helixCount = helixCount + 1
-
-            elif cppSse.isSheet():
-                cornerList = {}
-                cornerNum = 1
-                while True:
-                    corner = vector3DFloatToTuple(cppSse.getCornerCell2(cornerNum))
-                    lastSheet = ( corner == (0,0,0) )
-                    p1 = cAlphaViewer.worldToObjectCoordinates(skeletonViewer.objectToWorldCoordinates(corner))
-                    if lastSheet:
-                        break
-                    cornerList[corner] = p1
-                    print "adding sheet corner " + str(cornerNum) + " with coordinates (" + str(p1[0]) + "," + str(p1[1]) + "," + str(p1[2]) + ")"
-                    cornerNum = cornerNum + 1
-                print "done adding sheet corners."
-                pySheet = ObservedSheet(sseIx, cornerList)
-                # adding sheets to list of observedHelices
-                observedSheets[sheetCount] = pySheet
-                print "added a sheet to observedSheets. total number of sheets is now " + str(len(observedSheets))
-                sheetCount = sheetCount + 1
-        
-        #TODO: Mike this raises an error!;
-        print "found " + str(helixCount) + " helices and " + str(sheetCount) + " sheets"
-        structObserv = StructureObservation(helixDict = observedHelices, sheetDict = observedSheets)
-        print "writing to correspondenceLibrary"
-
-        # create a new python CorrespondenceLibrary object
-        self.viewer.correspondenceLibrary = CorrespondenceLibrary(sp = structPred, so = structObserv)
-               
-        self.setCursor(oldCursor)
-        
-        print "finished creating basic correspondences"
+#     def createBasicCorrespondence(self):
+#         """Writes search parameters to correspondence object, loads predicted structure and observed structure, and creates correspondence library"""
+#         print "creating basic correspondence"
+#         oldCursor = self.cursor()
+#         self.setCursor(QtCore.Qt.BusyCursor)
+#
+#         # put user-entered match parameters from UI into the correspondence object
+#         print "setting constants"
+#         self.setConstants()
+#
+#         #Loading Predicted SSEs
+#         print "loading predicted SSEs"
+#         self.viewer.correspondenceEngine.loadSequenceGraph()
+#
+#         print "before calling StructurePrediction.load"
+#         print "sequenceFileName is " + str(self.sequenceFileName)
+#         print "app is " + str(self.app)
+#         includeStrands = self.viewer.correspondenceEngine.getConstantInt("INCLUDE_STRANDS")
+#         structPred = StructurePrediction.load(self.sequenceFileName, self.app, includeStrands)
+#         print "after calling StructurePrediction.load"
+#         cAlphaViewer = self.app.calphaViewer
+#         sseViewer = self.app.sseViewer
+#         skeletonViewer = self.app.skeletonViewer
+#         cAlphaViewer.structPred = structPred
+#
+#         def vector3DFloatToTuple(v3df):
+#             return (v3df.x(), v3df.y(), v3df.z())
+#
+#         #Loading Observed SSEs
+#         print "loading observed SSEs"
+#         self.viewer.correspondenceEngine.loadSkeletonGraph()
+#         observedHelices = {}
+#         helixCount = 0
+#         observedSheets = {}
+#         sheetCount = 0
+#         sseCount = self.viewer.correspondenceEngine.getSkeletonSSECount()
+#
+#         print "adding helices to list of observed helices"
+#         for sseIx in range(sseCount):
+#             # call to c++ method QueryEngine::getSkeletonSSE(), which returns a c++ GeometricShape object
+#             cppSse = self.viewer.correspondenceEngine.getSkeletonSSE(sseIx)
+#
+#             # create list of observed helices for this correspondence result
+#             if cppSse.isHelix():
+#                 q1 = cAlphaViewer.worldToObjectCoordinates(sseViewer.objectToWorldCoordinates(vector3DFloatToTuple(cppSse.getCornerCell3(1))))
+#                 q2 = cAlphaViewer.worldToObjectCoordinates(sseViewer.objectToWorldCoordinates(vector3DFloatToTuple(cppSse.getCornerCell3(2))))
+#
+#                 pyHelix = ObservedHelix(sseIx, q1, q2)
+#                 observedHelices[helixCount] = pyHelix
+#                 helixCount = helixCount + 1
+#
+#             elif cppSse.isSheet():
+#                 cornerList = {}
+#                 cornerNum = 1
+#                 while True:
+#                     corner = vector3DFloatToTuple(cppSse.getCornerCell2(cornerNum))
+#                     lastSheet = ( corner == (0,0,0) )
+#                     p1 = cAlphaViewer.worldToObjectCoordinates(skeletonViewer.objectToWorldCoordinates(corner))
+#                     if lastSheet:
+#                         break
+#                     cornerList[corner] = p1
+#                     print "adding sheet corner " + str(cornerNum) + " with coordinates (" + str(p1[0]) + "," + str(p1[1]) + "," + str(p1[2]) + ")"
+#                     cornerNum = cornerNum + 1
+#                 print "done adding sheet corners."
+#                 pySheet = ObservedSheet(sseIx, cornerList)
+#                 # adding sheets to list of observedHelices
+#                 observedSheets[sheetCount] = pySheet
+#                 print "added a sheet to observedSheets. total number of sheets is now " + str(len(observedSheets))
+#                 sheetCount = sheetCount + 1
+#
+#         #TODO: Mike this raises an error!;
+#         print "found " + str(helixCount) + " helices and " + str(sheetCount) + " sheets"
+#         structObserv = StructureObservation(helixDict = observedHelices, sheetDict = observedSheets)
+#         print "writing to correspondenceLibrary"
+#
+#         # create a new python CorrespondenceLibrary object
+#         self.viewer.correspondenceLibrary = CorrespondenceLibrary(sp = structPred, so = structObserv)
+#
+#         self.setCursor(oldCursor)
+#
+#         print "finished creating basic correspondences"
         
     def accept(self):
         print "beginning search"
