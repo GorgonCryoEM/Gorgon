@@ -140,48 +140,48 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog, SSEHelixCorrespondence):
 
         self.checkOk()
         
-    def openFile(self, title, fileformats):
-        fileName = QtGui.QFileDialog.getOpenFileName(self, self.tr(title), "", self.tr(fileformats))
-        return fileName
-    
-    def getHelixLengthFile(self):
-        self.ui.lineEditHelixLengthFile.setText(self.openFile("Load Helix Length File", "SSE Hunter results (*.sse)"))
-        self.checkOk()
-#         self.bringToFront()
-
-    def getHelixLocationFile(self):
-        self.viewer.loadHelixData()
-        self.ui.lineEditHelixLocationFile.setText(self.viewer.helixFileName)
-        self.checkOk()
-#         self.bringToFront()
-
-    def getSheetLocationFile(self):
-        self.viewer.loadSheetData()
-        self.ui.lineEditSheetLocationFile.setText(self.viewer.sheetFileName)
-        self.checkOk()
-#         self.bringToFront()
-
-    def getSkeletonFile(self):
-        self.app.skeletonViewer.loadData()
-        self.ui.lineEditSkeletonFile.setText(self.app.skeletonViewer.fileName)
-        self.checkOk()
-#         self.bringToFront()
-        
-    def getSequenceFile(self):
-        """
-        This loads a SEQ file or, for testing purposes, a PDB file.
-        """
-        self.ui.lineEditSequenceFile.setText(self.openFile("Load Sequence File", "Sequence with SSE predictions (*.seq)\nPDB Helix Annotations (*.pdb)"))
-        self.checkOk()
-#         self.bringToFront()
-
-    def getSettingsFile(self):
-        """
-        This loads a settings file, which contains filenames and search parameters.
-        """
-        self.ui.lineEditSettingsFile.setText(self.openFile("Load Settings File", "Settings File (*.txt)"))
-        self.loadSettings()
-#         self.bringToFront()
+#     def openFile(self, title, fileformats):
+#         fileName = QtGui.QFileDialog.getOpenFileName(self, self.tr(title), "", self.tr(fileformats))
+#         return fileName
+#
+#     def getHelixLengthFile(self):
+#         self.ui.lineEditHelixLengthFile.setText(self.openFile("Load Helix Length File", "SSE Hunter results (*.sse)"))
+#         self.checkOk()
+# #         self.bringToFront()
+#
+#     def getHelixLocationFile(self):
+#         self.viewer.loadHelixData()
+#         self.ui.lineEditHelixLocationFile.setText(self.viewer.helixFileName)
+#         self.checkOk()
+# #         self.bringToFront()
+#
+#     def getSheetLocationFile(self):
+#         self.viewer.loadSheetData()
+#         self.ui.lineEditSheetLocationFile.setText(self.viewer.sheetFileName)
+#         self.checkOk()
+# #         self.bringToFront()
+#
+#     def getSkeletonFile(self):
+#         self.app.skeletonViewer.loadData()
+#         self.ui.lineEditSkeletonFile.setText(self.app.skeletonViewer.fileName)
+#         self.checkOk()
+# #         self.bringToFront()
+#
+#     def getSequenceFile(self):
+#         """
+#         This loads a SEQ file or, for testing purposes, a PDB file.
+#         """
+#         self.ui.lineEditSequenceFile.setText(self.openFile("Load Sequence File", "Sequence with SSE predictions (*.seq)\nPDB Helix Annotations (*.pdb)"))
+#         self.checkOk()
+# #         self.bringToFront()
+#
+#     def getSettingsFile(self):
+#         """
+#         This loads a settings file, which contains filenames and search parameters.
+#         """
+#         self.ui.lineEditSettingsFile.setText(self.openFile("Load Settings File", "Settings File (*.txt)"))
+#         self.loadSettings()
+# #         self.bringToFront()
         
     def checkOk(self):
         """
