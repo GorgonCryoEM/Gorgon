@@ -43,8 +43,8 @@ class MainWindowForm4(QtGui.QMainWindow):
         self.sseViewer.loadHelixDataFromFile(self.args.helix)
 
         self.form.ui.lineEditSkeletonFile.setText(self.args.skeleton)
-        self.form.ui.lineEditSequenceFile.setText('groel-segment.seq')
-        self.form.ui.lineEditHelixLocationFile.setText('helices-densityMap.wrl')
+        self.form.ui.lineEditSequenceFile.setText(self.args.sequence)
+        self.form.ui.lineEditHelixLocationFile.setText(self.args.helix)
 #         self.form.loadDefaults()
 #         self.form.setConstants()
 # #         self.form.lineEditSheetLocationFile.setText()
