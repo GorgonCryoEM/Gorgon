@@ -23,6 +23,10 @@ class MainWindowForm4(QtGui.QMainWindow):
         self.calphaViewer = CAlphaViewer(self)
         self.sseViewer    = SSEViewer(self)
         
+        self.viewers = {}
+        self.viewers['volume'] = self.volumeViewer
+        self.viewers['skeleton'] = self.skeletonViewer
+        
         self.scene = [self.volumeViewer, self.skeletonViewer, self.calphaViewer, self.sseViewer]
         
         self.mainCamera = Camera(self.scene, self)
