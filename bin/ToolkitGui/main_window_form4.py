@@ -40,14 +40,8 @@ class MainWindowForm4(QtGui.QMainWindow):
         self.volumeViewer.load(self.args.volume)
         self.skeletonViewer.load(self.args.skeleton)
         self.calphaViewer.loadSeq(self.args.sequence)
-#         self.sseViewer.loadHelixDataFromFile('groel-segment.seq')
-#         self.sseViewer.loadHelixData()
-#         self.sseViewer.helixCorrespondanceFinder.viewer = self.sseViewer
-        self.form.sequenceFileName = QtCore.QString('groel-segment.seq')
-        self.form.helixFileName    = QtCore.QString('helices-densityMap.wrl')
-#
         self.sseViewer.loadHelixDataFromFile(self.args.helix)
-#         self.sseViewer.loadHelixData('helices-densityMap.wrl')
+
         self.form.ui.lineEditSkeletonFile.setText(self.args.skeleton)
         self.form.ui.lineEditSequenceFile.setText('groel-segment.seq')
         self.form.ui.lineEditHelixLocationFile.setText('helices-densityMap.wrl')
