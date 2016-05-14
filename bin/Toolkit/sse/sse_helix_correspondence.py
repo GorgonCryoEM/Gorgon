@@ -15,7 +15,7 @@ import math
 
 class SSEHelixCorrespondence(object):
 
-    def __init__(self, skeleton, sequence, helix, output):
+    def __init__(self, skeleton, sequence, helix, output, auto=True):
         self.ui = SSEDefaults()
         self.skeleton = skeleton
         self.sequence = sequence
@@ -35,9 +35,9 @@ class SSEHelixCorrespondence(object):
         self.correspondenceEngine = SSEEngine()
         self.correspondenceLibrary = CorrespondenceLibrary()
         
-        self.run()
-        
-        self.correspondenceEngine.saveCorrespondenceToFile(self.output)
+        if auto:
+            self.run()
+            self.correspondenceEngine.saveCorrespondenceToFile(self.output)
         
     def run(self):
         self.checkOk()
