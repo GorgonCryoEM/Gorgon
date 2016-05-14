@@ -1,15 +1,15 @@
 from PyQt4 import QtCore, QtGui
 from ui_dialog_sse_helix_correspondence_finder import Ui_DialogSSEHelixCorrespondenceFinder
-from libpytoolkit import SSEEngine, SSEResult, Vec3F
-from Toolkit.sse.correspondence.CorrespondenceLibrary import CorrespondenceLibrary
-from Toolkit.sse.correspondence.Correspondence import Correspondence
-from Toolkit.sse.correspondence.Match import Match
-from Toolkit.sse.correspondence.ObservedHelix import ObservedHelix
-from Toolkit.sse.correspondence.ObservedSheet import ObservedSheet
-from Toolkit.sse.correspondence.StructureObservation import StructureObservation
-from Toolkit.sse.correspondence.StructurePrediction import StructurePrediction
-from Toolkit.sse.seq_model.Helix import Helix
-from Explorer import Vec3
+# from libpytoolkit import SSEEngine, SSEResult, Vec3F
+# from Toolkit.sse.correspondence.CorrespondenceLibrary import CorrespondenceLibrary
+# from Toolkit.sse.correspondence.Correspondence import Correspondence
+# from Toolkit.sse.correspondence.Match import Match
+# from Toolkit.sse.correspondence.ObservedHelix import ObservedHelix
+# from Toolkit.sse.correspondence.ObservedSheet import ObservedSheet
+# from Toolkit.sse.correspondence.StructureObservation import StructureObservation
+# from Toolkit.sse.correspondence.StructurePrediction import StructurePrediction
+# from Toolkit.sse.seq_model.Helix import Helix
+# from Explorer import Vec3
 import xml.dom.minidom
 
 from Toolkit.sse.sse_helix_correspondence import SSEHelixCorrespondence
@@ -18,7 +18,7 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
-import math
+# import math
 
 
 class SSEHelixCorrespondenceFinderForm(QtGui.QDialog, SSEHelixCorrespondence):
