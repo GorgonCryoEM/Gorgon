@@ -834,121 +834,121 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog, SSEHelixCorrespondence):
                     
         return QtGui.QColor.fromRgba(QtGui.qRgba(r*255, g*255, b*255, a*255))
         
-    def selectCorrespondence(self, correspondenceIndex):
-        self.loadingCorrespondance = True
-        self.ui.tableWidgetCorrespondenceList.clearContents()
-        if(correspondenceIndex >= 0):
-            corr = self.viewer.correspondenceLibrary.correspondenceList[correspondenceIndex]
-            self.ui.tableWidgetCorrespondenceList.setRowCount(2*len(corr.matchList)-1)
-            notMissing = {}
-            
-            # count number of helices and sheets in this correspondence
-            helixCount = 0
-            sheetCount = 0
-            for i in range(len(corr.matchList)):
-                match = corr.matchList[i]
-                #print "object has type " + str(type(match.predicted))
-                if match.predicted is not None:
-                    if match.predicted.type == 'strand':
-                        # TODO: only count strands that are different. every sheet must be the same color!
-                        #print "found strand"
-                        sheetCount += 1
-                    elif match.predicted.type == 'helix':
-                        #print "found helix"
-                        helixCount += 1
-
-            helixIndex = 0
-            sheetIndex = 0
-
-            for i in range(len(corr.matchList)):
-                sseRow = 2*i
-                loopRow = 2*i+1
-                match = corr.matchList[i]
-                #color = self.getIndexedColor(i, len(corr.matchList))
-                if match.predicted is not None:
-                    if match.predicted.type == 'strand':
-                        if(match.observed):
-                            color = self.getIndexedSheetColor(match.observed.label - sheetCount, sheetCount)
-                        else:
-                            color = self.getIndexedColor(0,100)
-                        sheetIndex += 1
-                    elif match.predicted.type == 'helix':
-                        color = self.getIndexedHelixColor(helixIndex, helixCount)
-                        helixIndex += 1
-                    match.predicted.setColor(color)
-                if(match.predicted):
-                    cellItemPredicted =  QtGui.QTableWidgetItem(match.predicted.type + " " + str(match.predicted.serialNo) + " : " + str(match.predicted.label) +
-                                                                "\n  "  + str(round(match.predicted.getLengthInAngstroms(),2)) + "A length" +
-                                                                "\n  "  + str(match.predicted.getResidueCount()) + " residues")
-                                                                 
-                    cellItemPredicted.setBackgroundColor(color)
-                    self.ui.tableWidgetCorrespondenceList.setItem(sseRow, 0, cellItemPredicted)
-                if(match.observed):
-                    # compute the percentage of results that have the same match
-                    matchPercentage = 0.0
-                    for corresp in self.viewer.correspondenceLibrary.correspondenceList:
-                        if corresp.matchList[i].observed == match.observed:
-                            matchPercentage += 1
-                    matchPercentage /= len(self.viewer.correspondenceLibrary.correspondenceList)
-                    matchPercentage *= 100.0
-                    
-                    if match.observed.sseType == 'helix':
-                        cellItemObserved =  QtGui.QTableWidgetItem("helix " + str(match.observed.label+1) +
-                                                                   "\n  " + str(round(match.observed.getLength(), 2)) + "A length" +
-                                                                   "\n   (" + str(int(matchPercentage)) + "%) " + str(match.direction) )
-                    if match.observed.sseType == 'sheet':
-                        cellItemObserved =  QtGui.QTableWidgetItem("sheet " + str(match.observed.label+1) +
-                                                                   #"\n  " + str(round(match.observed.getLength(), 2)) + "A length" +
-                                                                   "\n   (" + str(int(matchPercentage)) + "%)"  )
-                    cellItemObserved.setBackgroundColor(color)
-                    self.ui.tableWidgetCorrespondenceList.setItem(sseRow, 1, cellItemObserved)
-#                     if match.observed.sseType == 'helix':
-#                         # color is stored in two places: the renderer and the correspondence engine. update both.
-#                         self.viewer.renderer.setHelixColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
-#                         self.viewer.correspondenceEngine.setSSEColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
+#     def selectCorrespondence(self, correspondenceIndex):
+#         self.loadingCorrespondance = True
+#         self.ui.tableWidgetCorrespondenceList.clearContents()
+#         if(correspondenceIndex >= 0):
+#             corr = self.viewer.correspondenceLibrary.correspondenceList[correspondenceIndex]
+#             self.ui.tableWidgetCorrespondenceList.setRowCount(2*len(corr.matchList)-1)
+#             notMissing = {}
 #
+#             # count number of helices and sheets in this correspondence
+#             helixCount = 0
+#             sheetCount = 0
+#             for i in range(len(corr.matchList)):
+#                 match = corr.matchList[i]
+#                 #print "object has type " + str(type(match.predicted))
+#                 if match.predicted is not None:
+#                     if match.predicted.type == 'strand':
+#                         # TODO: only count strands that are different. every sheet must be the same color!
+#                         #print "found strand"
+#                         sheetCount += 1
+#                     elif match.predicted.type == 'helix':
+#                         #print "found helix"
+#                         helixCount += 1
+#
+#             helixIndex = 0
+#             sheetIndex = 0
+#
+#             for i in range(len(corr.matchList)):
+#                 sseRow = 2*i
+#                 loopRow = 2*i+1
+#                 match = corr.matchList[i]
+#                 #color = self.getIndexedColor(i, len(corr.matchList))
+#                 if match.predicted is not None:
+#                     if match.predicted.type == 'strand':
+#                         if(match.observed):
+#                             color = self.getIndexedSheetColor(match.observed.label - sheetCount, sheetCount)
+#                         else:
+#                             color = self.getIndexedColor(0,100)
+#                         sheetIndex += 1
+#                     elif match.predicted.type == 'helix':
+#                         color = self.getIndexedHelixColor(helixIndex, helixCount)
+#                         helixIndex += 1
+#                     match.predicted.setColor(color)
+#                 if(match.predicted):
+#                     cellItemPredicted =  QtGui.QTableWidgetItem(match.predicted.type + " " + str(match.predicted.serialNo) + " : " + str(match.predicted.label) +
+#                                                                 "\n  "  + str(round(match.predicted.getLengthInAngstroms(),2)) + "A length" +
+#                                                                 "\n  "  + str(match.predicted.getResidueCount()) + " residues")
+#
+#                     cellItemPredicted.setBackgroundColor(color)
+#                     self.ui.tableWidgetCorrespondenceList.setItem(sseRow, 0, cellItemPredicted)
+#                 if(match.observed):
+#                     # compute the percentage of results that have the same match
+#                     matchPercentage = 0.0
+#                     for corresp in self.viewer.correspondenceLibrary.correspondenceList:
+#                         if corresp.matchList[i].observed == match.observed:
+#                             matchPercentage += 1
+#                     matchPercentage /= len(self.viewer.correspondenceLibrary.correspondenceList)
+#                     matchPercentage *= 100.0
+#
+#                     if match.observed.sseType == 'helix':
+#                         cellItemObserved =  QtGui.QTableWidgetItem("helix " + str(match.observed.label+1) +
+#                                                                    "\n  " + str(round(match.observed.getLength(), 2)) + "A length" +
+#                                                                    "\n   (" + str(int(matchPercentage)) + "%) " + str(match.direction) )
 #                     if match.observed.sseType == 'sheet':
-#                         self.viewer.renderer.setSSEColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
-#                         self.viewer.correspondenceEngine.setSSEColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
-
-                    notMissing[match.observed.label] = True
-            
-                checkBox = QtGui.QCheckBox()
-                self.ui.tableWidgetCorrespondenceList.setCellWidget(sseRow, 2, checkBox)
-                self.connect(checkBox, QtCore.SIGNAL("stateChanged (int)"), self.constraintAdded)
-                if(match.constrained):
-                    self.ui.tableWidgetCorrespondenceList.cellWidget(sseRow, 2).setCheckState(QtCore.Qt.Checked)
-                else:
-                    #print "i=" + str(i)
-                    self.ui.tableWidgetCorrespondenceList.cellWidget(sseRow, 2).setCheckState(QtCore.Qt.Unchecked)
-                    
-                self.ui.tableWidgetCorrespondenceList.resizeRowToContents(sseRow)
-
-                # add row with loop info
-                if (i < len(corr.matchList)-1 ):
-                    resCount = corr.matchList[i+1].predicted.startIndex - corr.matchList[i].predicted.stopIndex
-                    cellItemLoop =  QtGui.QTableWidgetItem("loop: " + str(resCount) + " residues")
-                    self.ui.tableWidgetCorrespondenceList.setItem(loopRow, 0, cellItemLoop)
-                    self.ui.tableWidgetCorrespondenceList.resizeRowToContents(loopRow)
-     
-            # relabel rows of table
-            rowLabels = []
-            for i in range(len(corr.matchList)):
-                rowLabels.append(str(i+1))
-                if i < len(corr.matchList)-1:
-                    rowLabels.append(" ")
-            #print "rowLabels string has " + str(len(rowLabels)) + " elements."
-            self.ui.tableWidgetCorrespondenceList.setVerticalHeaderLabels(rowLabels)
-            
-            observedHelices = self.viewer.correspondenceLibrary.structureObservation.helixDict
-            for i in range(len(observedHelices)):
-                if(not notMissing.has_key(i)):
-                    self.viewer.renderer.setHelixColor(i, 0.5, 0.5, 0.5, 1.0)
-
-        self.viewer.correspondenceEngine.setVisibleCorrespondence(correspondenceIndex)
-        self.viewer.correspondenceLibrary.setCurrentCorrespondenceIndex(correspondenceIndex)
-        self.viewer.modelChanged()
-        self.loadingCorrespondance = False
+#                         cellItemObserved =  QtGui.QTableWidgetItem("sheet " + str(match.observed.label+1) +
+#                                                                    #"\n  " + str(round(match.observed.getLength(), 2)) + "A length" +
+#                                                                    "\n   (" + str(int(matchPercentage)) + "%)"  )
+#                     cellItemObserved.setBackgroundColor(color)
+#                     self.ui.tableWidgetCorrespondenceList.setItem(sseRow, 1, cellItemObserved)
+# #                     if match.observed.sseType == 'helix':
+# #                         # color is stored in two places: the renderer and the correspondence engine. update both.
+# #                         self.viewer.renderer.setHelixColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
+# #                         self.viewer.correspondenceEngine.setSSEColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
+# #
+# #                     if match.observed.sseType == 'sheet':
+# #                         self.viewer.renderer.setSSEColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
+# #                         self.viewer.correspondenceEngine.setSSEColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
+#
+#                     notMissing[match.observed.label] = True
+#
+#                 checkBox = QtGui.QCheckBox()
+#                 self.ui.tableWidgetCorrespondenceList.setCellWidget(sseRow, 2, checkBox)
+#                 self.connect(checkBox, QtCore.SIGNAL("stateChanged (int)"), self.constraintAdded)
+#                 if(match.constrained):
+#                     self.ui.tableWidgetCorrespondenceList.cellWidget(sseRow, 2).setCheckState(QtCore.Qt.Checked)
+#                 else:
+#                     #print "i=" + str(i)
+#                     self.ui.tableWidgetCorrespondenceList.cellWidget(sseRow, 2).setCheckState(QtCore.Qt.Unchecked)
+#
+#                 self.ui.tableWidgetCorrespondenceList.resizeRowToContents(sseRow)
+#
+#                 # add row with loop info
+#                 if (i < len(corr.matchList)-1 ):
+#                     resCount = corr.matchList[i+1].predicted.startIndex - corr.matchList[i].predicted.stopIndex
+#                     cellItemLoop =  QtGui.QTableWidgetItem("loop: " + str(resCount) + " residues")
+#                     self.ui.tableWidgetCorrespondenceList.setItem(loopRow, 0, cellItemLoop)
+#                     self.ui.tableWidgetCorrespondenceList.resizeRowToContents(loopRow)
+#
+#             # relabel rows of table
+#             rowLabels = []
+#             for i in range(len(corr.matchList)):
+#                 rowLabels.append(str(i+1))
+#                 if i < len(corr.matchList)-1:
+#                     rowLabels.append(" ")
+#             #print "rowLabels string has " + str(len(rowLabels)) + " elements."
+#             self.ui.tableWidgetCorrespondenceList.setVerticalHeaderLabels(rowLabels)
+#
+#             observedHelices = self.viewer.correspondenceLibrary.structureObservation.helixDict
+#             for i in range(len(observedHelices)):
+#                 if(not notMissing.has_key(i)):
+#                     self.viewer.renderer.setHelixColor(i, 0.5, 0.5, 0.5, 1.0)
+#
+#         self.viewer.correspondenceEngine.setVisibleCorrespondence(correspondenceIndex)
+#         self.viewer.correspondenceLibrary.setCurrentCorrespondenceIndex(correspondenceIndex)
+#         self.viewer.modelChanged()
+#         self.loadingCorrespondance = False
         
     def drawOverlay(self):
         if True:
