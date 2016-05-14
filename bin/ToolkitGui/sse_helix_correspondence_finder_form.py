@@ -218,91 +218,91 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog, SSEHelixCorrespondence):
         print "correspondence index at end is " + str(self.ui.comboBoxCorrespondences.currentIndex())
         print "end checkOk"
     
-    def loadSettings(self):
-        
-        if (not(self.ui.lineEditSettingsFile.text().isEmpty())):
-
-            print "loading default parameters"
-            self.loadDefaultParams()
-        
-            print "loading settings file"
-            oldCursor = self.cursor()
-            self.setCursor(QtCore.Qt.BusyCursor)
-                   
-            print "calling setConstantsFromFile"
-            self.setConstants()
-            self.viewer.correspondenceEngine.setConstantsFromFile(str(self.ui.lineEditSettingsFile.text()))
-    
-            print "copying constants from file to GUI"
-            self.getConstants()
-    
-            print "getting settings filename"
-            settingsFilename = str(self.ui.lineEditSettingsFile.text())
-            
-            #self.viewer.correspondenceEngine.printConstants
-            print "reading other filenames for parsing"
-            helixFilename = self.viewer.correspondenceEngine.getConstantString("VRML_HELIX_FILE_NAME")
-            print "helix filename is " + helixFilename
-            sheetFilename = self.viewer.correspondenceEngine.getConstantString("VRML_SHEET_FILE_NAME")
-            print "sheet filename is " + sheetFilename
-            sequenceFilename = self.viewer.correspondenceEngine.getConstantString("SEQUENCE_FILE_NAME")
-            print "sequence filename is " + sequenceFilename
-            skeletonFilename = self.viewer.correspondenceEngine.getConstantString("MRC_FILE_NAME")
-            print "skeleton filename is " + skeletonFilename
-            sseFilename = self.viewer.correspondenceEngine.getConstantString("SSE_FILE_NAME")
-            print "sse filename is " + sseFilename
-            
-            import os
-            path,settingsFile = os.path.split(settingsFilename)
-            ssePath,sseFile = os.path.split(sseFilename)
-            helixPath,helixFile = os.path.split(helixFilename)
-            sheetPath,sheetFile = os.path.split(sheetFilename)
-            skeletonPath,skeletonFile = os.path.split(skeletonFilename)
-            seqPath,seqFile = os.path.split(sequenceFilename)
-    
-            print "The path (raw) is " + path
-            path = path.replace('/', os.sep)  # replace forward slash with separator for this OS
-            path = path.replace('\\', os.sep) # replace backslash with separator for this OS
-            print "The path (fixed) is " + path
-    
-            settingsFilePath = path + os.sep + settingsFile
-            sseFilePath = path + os.sep + sseFile
-            helixFilePath = path + os.sep + helixFile
-            sheetFilePath = path + os.sep + sheetFile
-            skeletonFilePath = path + os.sep + skeletonFile
-            seqFilePath = path + os.sep + seqFile
-    
-            print "The settings file is " + settingsFilePath
-            print "The sse file is " + sseFilePath
-            print "The helix file is " + helixFilePath
-            print "The sheet file is " + sheetFilePath
-            print "The skeleton file is " + skeletonFilePath
-            print "The seq file is " + seqFilePath
-            
-            # store sequence filename
-            self.ui.lineEditSequenceFile.setText(seqFilePath)
-            
-            # load helix file and store the filename
-            self.viewer.loadHelixDataFromFile(helixFilePath)
-            self.ui.lineEditHelixLocationFile.setText(helixFilePath)
-    
-            # load sheet file and store the filename
-            self.viewer.loadSheetDataFromFile(sheetFilePath)
-            self.ui.lineEditSheetLocationFile.setText(sheetFilePath)
-    
-            # load skeleton file and store the filename
-            self.app.skeletonViewer.loadDataFromFile(skeletonFilePath)
-            self.ui.lineEditSkeletonFile.setText(skeletonFilePath)
-    
-            # store helix length filename
-            self.ui.lineEditHelixLengthFile.setText(sseFilePath)
-    
-            self.setCursor(oldCursor)
-            
-            self.checkOk()
-    
-            self.getConstraints()
-            print "done loading settings file"
+#     def loadSettings(self):
+#
+#         if (not(self.ui.lineEditSettingsFile.text().isEmpty())):
+#
+#             print "loading default parameters"
+#             self.loadDefaultParams()
+#
+#             print "loading settings file"
+#             oldCursor = self.cursor()
+#             self.setCursor(QtCore.Qt.BusyCursor)
+#
+#             print "calling setConstantsFromFile"
+#             self.setConstants()
+#             self.viewer.correspondenceEngine.setConstantsFromFile(str(self.ui.lineEditSettingsFile.text()))
+#
+#             print "copying constants from file to GUI"
+#             self.getConstants()
+#
+#             print "getting settings filename"
+#             settingsFilename = str(self.ui.lineEditSettingsFile.text())
+#
+#             #self.viewer.correspondenceEngine.printConstants
+#             print "reading other filenames for parsing"
+#             helixFilename = self.viewer.correspondenceEngine.getConstantString("VRML_HELIX_FILE_NAME")
+#             print "helix filename is " + helixFilename
+#             sheetFilename = self.viewer.correspondenceEngine.getConstantString("VRML_SHEET_FILE_NAME")
+#             print "sheet filename is " + sheetFilename
+#             sequenceFilename = self.viewer.correspondenceEngine.getConstantString("SEQUENCE_FILE_NAME")
+#             print "sequence filename is " + sequenceFilename
+#             skeletonFilename = self.viewer.correspondenceEngine.getConstantString("MRC_FILE_NAME")
+#             print "skeleton filename is " + skeletonFilename
+#             sseFilename = self.viewer.correspondenceEngine.getConstantString("SSE_FILE_NAME")
+#             print "sse filename is " + sseFilename
+#
+#             import os
+#             path,settingsFile = os.path.split(settingsFilename)
+#             ssePath,sseFile = os.path.split(sseFilename)
+#             helixPath,helixFile = os.path.split(helixFilename)
+#             sheetPath,sheetFile = os.path.split(sheetFilename)
+#             skeletonPath,skeletonFile = os.path.split(skeletonFilename)
+#             seqPath,seqFile = os.path.split(sequenceFilename)
+#
+#             print "The path (raw) is " + path
+#             path = path.replace('/', os.sep)  # replace forward slash with separator for this OS
+#             path = path.replace('\\', os.sep) # replace backslash with separator for this OS
+#             print "The path (fixed) is " + path
+#
+#             settingsFilePath = path + os.sep + settingsFile
+#             sseFilePath = path + os.sep + sseFile
+#             helixFilePath = path + os.sep + helixFile
+#             sheetFilePath = path + os.sep + sheetFile
+#             skeletonFilePath = path + os.sep + skeletonFile
+#             seqFilePath = path + os.sep + seqFile
+#
+#             print "The settings file is " + settingsFilePath
+#             print "The sse file is " + sseFilePath
+#             print "The helix file is " + helixFilePath
+#             print "The sheet file is " + sheetFilePath
+#             print "The skeleton file is " + skeletonFilePath
+#             print "The seq file is " + seqFilePath
+#
+#             # store sequence filename
+#             self.ui.lineEditSequenceFile.setText(seqFilePath)
+#
+#             # load helix file and store the filename
+#             self.viewer.loadHelixDataFromFile(helixFilePath)
+#             self.ui.lineEditHelixLocationFile.setText(helixFilePath)
+#
+#             # load sheet file and store the filename
+#             self.viewer.loadSheetDataFromFile(sheetFilePath)
+#             self.ui.lineEditSheetLocationFile.setText(sheetFilePath)
+#
+#             # load skeleton file and store the filename
+#             self.app.skeletonViewer.loadDataFromFile(skeletonFilePath)
+#             self.ui.lineEditSkeletonFile.setText(skeletonFilePath)
+#
+#             # store helix length filename
+#             self.ui.lineEditHelixLengthFile.setText(sseFilePath)
+#
+#             self.setCursor(oldCursor)
+#
+#             self.checkOk()
+#
+#             self.getConstraints()
+#             print "done loading settings file"
         
     def setConstants(self):
         #Data Sources tab
