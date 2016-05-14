@@ -1,3 +1,4 @@
+from PyQt4 import QtCore, QtGui
 from libpytoolkit import SSEEngine, SSEResult, Vec3F
 from sse_defaults import SSEDefaults
 from .correspondence.CorrespondenceLibrary import CorrespondenceLibrary
@@ -624,7 +625,7 @@ class SSEHelixCorrespondence(object):
                 
         self.correspondenceEngine.setVisibleCorrespondence(correspondenceIndex)
         self.correspondenceLibrary.setCurrentCorrespondenceIndex(correspondenceIndex)
-        self.viewer.emitModelChanged()
+        self.viewer.modelChanged()
         self.loadingCorrespondance = False
         
     def rebuildGraph(self):
