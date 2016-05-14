@@ -47,7 +47,8 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog, SSEHelixCorrespondence):
         self.userConstraints = {}
         self.constraintActions = {}
         self.selectedRow = 0
-        self.dataLoaded = False
+        self.dataLoaded = True
+        self.allLoaded  = True
 
     def createUI(self):
         self.ui = Ui_DialogSSEHelixCorrespondenceFinder()
