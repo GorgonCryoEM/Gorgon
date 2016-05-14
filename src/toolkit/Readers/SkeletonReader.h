@@ -47,7 +47,7 @@ namespace GraphMatch {
     };
 
     // returns the graph node index for corner cornerNum of helix/sheet helixNum
-    int SkeletonReader::GetGraphIndex(vector<Shape*> & helixes, int helixNum, int cornerNum) {
+    inline int SkeletonReader::GetGraphIndex(vector<Shape*> & helixes, int helixNum, int cornerNum) {
         int numH = 0;
         for (unsigned int i = 0; i < (int)helixes.size(); i++) {
             if(helixes[i]->shapeType == GRAPHEDGE_HELIX) {
@@ -64,7 +64,7 @@ namespace GraphMatch {
     }
 
     // returns the graph node index for the corner of helix/sheet helixNum nearest to point point.
-    int SkeletonReader::GetGraphIndex(vector<Shape*> & helixes, int helixNum, Point3Pair * point) {
+    inline int SkeletonReader::GetGraphIndex(vector<Shape*> & helixes, int helixNum, Point3Pair * point) {
         int node = 1;
         double minDistance = MAXINT;
         double dist;
@@ -97,7 +97,7 @@ namespace GraphMatch {
         }
     }
 
-    Graph * SkeletonReader::ReadFile(string volumeFile, string helixFile, string sseFile, string sheetFile) {
+    inline Graph * SkeletonReader::ReadFile(string volumeFile, string helixFile, string sseFile, string sheetFile) {
 
         // Read the volume file and load volume data structure
         Volume * vol = (MRCReaderPicker::pick(volumeFile.c_str()))->getVolume();
@@ -444,7 +444,7 @@ namespace GraphMatch {
 
     // Returns a collection of individual sheets with minimum size minSize, created from input volume vol
     // This is a copy of getSheets from volume.h, with the final thresholding step removed.
-    Volume* SkeletonReader::getSheetsNoThreshold( Volume * vol, int minSize ) {
+    inline Volume* SkeletonReader::getSheetsNoThreshold( Volume * vol, int minSize ) {
         //Initialize volume
 #ifdef VERBOSE
         printf("\033[34mInitialize volume at %d %d %d\n\033[0m",  vol->getSizeX(), vol->getSizeY(), vol->getSizeZ() ) ;
@@ -550,7 +550,7 @@ namespace GraphMatch {
 
     // Returns a collection of individual sheets with minimum size minSize, created from input volume vol
     // This is a copy of isSheet from volume.h, with the minimum number of corner nodes changed from 3 to 1.
-    int SkeletonReader::isSkeletonSheet(const Volume &vol, int ox, int oy, int oz )
+    inline int SkeletonReader::isSkeletonSheet(const Volume &vol, int ox, int oy, int oz )
     {
         int cn = 12 ;
         int nx, ny, nz ;
@@ -576,7 +576,7 @@ namespace GraphMatch {
 
     // finds all the corner cells in a sheet
     // corner cells are cells that are inside the sheet but have more than one neighbor on the skeleton that lies outside the sheet
-    void SkeletonReader::FindCornerCellsInSheet(Volume * vol, Volume * paintedVol, vector<Shape*> & helixes, int sheetId) {
+    inline void SkeletonReader::FindCornerCellsInSheet(Volume * vol, Volume * paintedVol, vector<Shape*> & helixes, int sheetId) {
 
         // helper function for iterating over 6 neighbor voxels
         int d[6][3];
@@ -633,7 +633,7 @@ namespace GraphMatch {
     // Parses sheetFile, a .wrl file containing a list of polygons that form a sheet.
     // Creates a Shape object consisting of a collection of polygons (triangles) for each sheet.
     // Adds these sheet objects to helixes.
-    void SkeletonReader::ReadSheetFile(string sheetFile, vector<Shape*> & helixes){
+    inline void SkeletonReader::ReadSheetFile(string sheetFile, vector<Shape*> & helixes){
         ifstream fin(sheetFile.c_str());
         if (!fin) {
             cout<<"Error reading sheet input file "<<sheetFile<<".  Skipping sheets.\n" ;
@@ -683,7 +683,7 @@ namespace GraphMatch {
         }
     }
 
-    void SkeletonReader::ReadHelixFile(string helixFile, string sseFile, vector<Shape*> & helixes){
+    inline void SkeletonReader::ReadHelixFile(string helixFile, string sseFile, vector<Shape*> & helixes){
 //        #ifdef GORGON_DEBUG
               cout<<"\033[32mDEBUG: File:   SkeletonReader.h"<<endl;
               cout<<"DEBUG: Method: SkeletonReader::ReadHelixFile(string, string, vector<Shape*>&)\033[0m"<<endl;
@@ -757,7 +757,7 @@ namespace GraphMatch {
     // finds the loops from the helix/sheet corner given by helixList[startHelix]->cornerCells[startCell] to
     // all other helices/sheets by flooding outward along the skeleton volume
     // stores the resulting loops in the graph object using graph->SetCost and graph->SetType
-    void SkeletonReader::FindSizes(int startHelix, int startCell, vector<Shape*> & helixList, Volume * vol, Volume * coloredVol, Graph * graph) {
+    inline void SkeletonReader::FindSizes(int startHelix, int startCell, vector<Shape*> & helixList, Volume * vol, Volume * coloredVol, Graph * graph) {
         vector<Point3Pair *> oldStack;
         vector<Point3Pair *> newStack;
         int currentHelix;
@@ -941,7 +941,7 @@ namespace GraphMatch {
 
 
     // Find all paths in a graph
-    void SkeletonReader::FindPaths(Graph * graph) {
+    inline void SkeletonReader::FindPaths(Graph * graph) {
         vector<Vec3I> endPoints;
         vector< vector<Vec3I> > nodes;
         Point3Pair pt = Point3Pair(0,0,0,0);
@@ -1015,7 +1015,7 @@ namespace GraphMatch {
     // The path grows outward from start point to end point along voxels in the maskVol with values > 0.5.
     // The path is stored in graph->paths[startIx][endIx] and also painted in maskVol.
     // If eraseMask is set, maskVol voxels inside the startIx and endIx helices are not painted.
-    void SkeletonReader::FindPath(int startIx, int endIx, vector<vector<Vec3I> > nodes, Volume * maskVol, Graph * graph, bool eraseMask) {
+    inline void SkeletonReader::FindPath(int startIx, int endIx, vector<vector<Vec3I> > nodes, Volume * maskVol, Graph * graph, bool eraseMask) {
         // erase any old path
         graph->paths[startIx][endIx] = vector<Vec3I>();
 

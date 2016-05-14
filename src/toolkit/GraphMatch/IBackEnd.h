@@ -44,11 +44,11 @@ namespace GraphMatch {
         Graph * sequence;
     };
 
-    IBackEnd::IBackEnd(): skeleton(NULL), sequence(NULL) {
+    inline IBackEnd::IBackEnd(): skeleton(NULL), sequence(NULL) {
         matcher = new Matcher();
     }
 
-    IBackEnd::~IBackEnd() {
+    inline IBackEnd::~IBackEnd() {
         delete matcher;
         if(skeleton != NULL) {
             delete skeleton;
@@ -58,27 +58,27 @@ namespace GraphMatch {
         }
     }
 
-    void IBackEnd::load(string fileName) {
+    inline void IBackEnd::load(string fileName) {
         LoadConstantsFromFile(fileName);
     }
 
-    bool IBackEnd::SetConstant(string token, string value) {
+    inline bool IBackEnd::SetConstant(string token, string value) {
         return setConstantFree(token, value);
     }
 
-    bool IBackEnd::SetConstant(string token, double value) {
+    inline bool IBackEnd::SetConstant(string token, double value) {
         return setConstantFree(token, value);
     }
 
-    bool IBackEnd::SetConstant(string token, int value) {
+    inline bool IBackEnd::SetConstant(string token, int value) {
         return setConstantFree(token, value);
     }
 
-    bool IBackEnd::SetConstant(string token, bool value) {
+    inline bool IBackEnd::SetConstant(string token, bool value) {
         return setConstantFree(token, value);
     }
 
-    string IBackEnd::GetConstantString(string token) {
+    inline string IBackEnd::GetConstantString(string token) {
         string  sVal;
         int iVal;
         double dVal;
@@ -87,7 +87,7 @@ namespace GraphMatch {
         return sVal;
     }
 
-    double IBackEnd::GetConstantDouble(string token) {
+    inline double IBackEnd::GetConstantDouble(string token) {
         int iVal;
         double dVal;
         bool bVal;
@@ -95,7 +95,7 @@ namespace GraphMatch {
         return dVal;
     }
 
-    int IBackEnd::GetConstantInt(string token) {
+    inline int IBackEnd::GetConstantInt(string token) {
         int iVal;
         double dVal;
         bool bVal;
@@ -103,7 +103,7 @@ namespace GraphMatch {
         return iVal;
     }
 
-    bool IBackEnd::GetConstantBool(string token) {
+    inline bool IBackEnd::GetConstantBool(string token) {
         int iVal;
         double dVal;
         bool bVal;
@@ -111,12 +111,12 @@ namespace GraphMatch {
         return bVal;
     }
 
-    void IBackEnd::ClearAllConstraints() {
+    inline void IBackEnd::ClearAllConstraints() {
         ClearAllowedConstraints();
         ClearNotAllowedConstraints();
     }
 
-    void IBackEnd::loadSequence() {
+    inline void IBackEnd::loadSequence() {
         #ifdef GORGON_DEBUG
         cout << "In BackEndInterface::LoadSequenceGraph" << endl;
         #endif
@@ -127,7 +127,7 @@ namespace GraphMatch {
         //sequence->print();
     }
 
-    void IBackEnd::loadSkeleton() {
+    inline void IBackEnd::loadSkeleton() {
         if(skeleton != NULL) {
             delete skeleton;
         }
@@ -141,18 +141,18 @@ namespace GraphMatch {
 
     }
 
-    int IBackEnd::ExecuteQuery() {
+    inline int IBackEnd::ExecuteQuery() {
         if(skeleton != NULL && sequence != NULL)
             return matcher->match(sequence, skeleton);
         else
             return 0;
     }
 
-    SSEResult IBackEnd::GetResult(int rank) {
+    inline SSEResult IBackEnd::GetResult(int rank) {
         return matcher->GetSolution(rank);
     }
 
-    void IBackEnd::CleanupMemory() {
+    inline void IBackEnd::CleanupMemory() {
         matcher->destruct();
     }
 }
