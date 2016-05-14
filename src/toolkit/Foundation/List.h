@@ -1,5 +1,12 @@
-#ifndef TOOLKIT_SKELETON_MAKER_GRID_QUEUE2_H
-#define TOOLKIT_SKELETON_MAKER_GRID_QUEUE2_H
+/*
+ * List.h
+ *
+ * Author: shadow_walker <shadowwalkersb@gmail.com>
+ *
+ */
+
+#ifndef SRC_TOOLKIT_FOUNDATION_LIST_H_
+#define SRC_TOOLKIT_FOUNDATION_LIST_H_
 
 #include <list>
 
@@ -74,6 +81,7 @@ namespace SkeletonMaker {
         else
             return NULL;
     }
-}
 
-#endif
+} /* namespace SkeletonMaker */
+
+#endif /* SRC_TOOLKIT_FOUNDATION_LIST_H_ */

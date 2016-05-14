@@ -18,6 +18,8 @@
 #include <iostream>
 #include <fstream>
 
+using namespace std;
+
 namespace GraphMatch {
 
     const int NOPATHPENALTY = 1;

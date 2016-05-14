@@ -1,10 +1,17 @@
-#ifndef TOOLKIT_FOUNDATION_GORGONPRIORITYQUEUE_H
-#define TOOLKIT_FOUNDATION_GORGONPRIORITYQUEUE_H
+/*
+ * Pair.h
+ *
+ * Author: shadow_walker <shadowwalkersb@gmail.com>
+ *
+ */
 
+#ifndef SRC_TOOLKIT_FOUNDATION_PAIR_H_
+#define SRC_TOOLKIT_FOUNDATION_PAIR_H_
 
 #include <queue>
 
 namespace Foundation {
+
     template <class T, class U>
     class Pair {
     public:
@@ -23,6 +30,7 @@ namespace Foundation {
     inline bool operator<(const Pair<T,U>& lhs, const Pair<T, U> &rhs) {
         return (lhs.first < rhs.first);
     }
-}
 
-#endif
+} /* namespace Foundation */
+
+#endif /* SRC_TOOLKIT_FOUNDATION_PAIR_H_ */

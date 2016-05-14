@@ -1,14 +1,21 @@
-#ifndef TOOLKIT_SSE_CORRESPONDENCE_ENGINE_H
-#define TOOLKIT_SSE_CORRESPONDENCE_ENGINE_H
+/*
+ * SSEEngine.h
+ *
+ * Author: shadow_walker <shadowwalkersb@gmail.com>
+ *
+ */
+
+#ifndef SRC_TOOLKIT_PROTEINMORPH_SSEENGINE_H_
+#define SRC_TOOLKIT_PROTEINMORPH_SSEENGINE_H_
 
 //#include <GraphMatch/SSEResult.h>
-#include <GraphMatch/IBackEnd.h>
+#include "GraphMatch/IBackEnd.h"
 //#include <GraphMatch/Shape.h>
 #include <vector>
 #include <map>
 #include <set>
 #include <iomanip>
-#include <GorgonGL.h>
+#include "GorgonGL.h"
 //#include <Foundation/StringUtils.h>
 #include "Visualization/Shapes.h"
 #include "Visualization/SkeletonMesh.h"
@@ -47,7 +54,6 @@ namespace Visualization {
         int pathCount;
 
     };
-
 
     inline SSEEngine::SSEEngine()
     						: pathCount(0)
@@ -518,6 +524,6 @@ namespace Visualization {
             glPopAttrib();
         }
     }
-}
+} /* namespace Visualization */
 
-#endif
+#endif /* SRC_TOOLKIT_PROTEINMORPH_SSEENGINE_H_ */
