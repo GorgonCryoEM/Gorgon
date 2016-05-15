@@ -54,19 +54,19 @@ namespace GraphMatch {
             PathGenerator * pathGenerator;
 
         private:
-            void Init(Graph * patternGraph, Graph * baseGraph);
-            double GetC(int p, int qp);
-            double GetC(int j, int p, int qj, int qp);
-            double GetCost(int d, int m, int qj, int qp, bool debugMsg);
-            double GetPenaltyCost(int d, int m, bool debugMsg);
-            double GetCPrime(int a, int b, int c, int d);
-            double GetK(int p, int qp);
-            double GetKPrime(int i, int q);
-            double GetF();
-            void PopBestNode(); // Gets the best (first) node from the active nodes list.
-            bool ExpandNode(LinkedNodeStub * currentStub); // Expands all the children of the current node.
-            void NormalizeGraphs();
-            void NormalizeSheets();
+            void init(Graph * patternGraph, Graph * baseGraph);
+            double getC(int p, int qp);
+            double getC(int j, int p, int qj, int qp);
+            double getCost(int d, int m, int qj, int qp, bool debugMsg);
+            double getPenaltyCost(int d, int m, bool debugMsg);
+            double getCPrime(int a, int b, int c, int d);
+            double getK(int p, int qp);
+            double getKPrime(int i, int q);
+            double getF();
+            void popBestNode(); // Gets the best (first) node from the active nodes list.
+            bool expandNode(LinkedNodeStub * currentStub); // Expands all the children of the current node.
+            void normalizeGraphs();
+            void normalizeSheets();
             int bestMatches[RESULT_COUNT][MAX_NODES];
 
     };
@@ -74,14 +74,14 @@ namespace GraphMatch {
     WongMatch::WongMatch(Graph * patternGraph,
                          Graph * baseGraph)
     {
-        Init(patternGraph, baseGraph);
+        init(patternGraph, baseGraph);
     }
 
     WongMatch::WongMatch(Graph * patternGraph,
                          Graph * baseGraph, int missingHelixCount,
                          int missingSheetCount)
     {
-        Init(patternGraph, baseGraph);
+        init(patternGraph, baseGraph);
         this->nMissHelix = missingHelixCount;
         this->nMissSheet = missingSheetCount;
     }
@@ -103,7 +103,7 @@ namespace GraphMatch {
         delete pathGenerator;
     }
 
-    inline void WongMatch::Init(Graph * patternGraph,
+    inline void WongMatch::init(Graph * patternGraph,
                          Graph * baseGraph)
     {
 #ifdef VERBOSE
@@ -195,8 +195,8 @@ namespace GraphMatch {
 #endif
 
         if(!PERFORMANCE_COMPARISON_MODE) {
-            NormalizeGraphs();
-            NormalizeSheets();
+            normalizeGraphs();
+            normalizeSheets();
         }
         foundCount = 0;
         longestMatch = 0;
@@ -228,7 +228,7 @@ namespace GraphMatch {
         clock_t finishTime;
         // repeat the following loop until all results are found
         while(continueLoop) {
-            PopBestNode();
+            popBestNode();
             if(currentNode == NULL) {
                 break;
             }
@@ -259,7 +259,7 @@ namespace GraphMatch {
             }
             else {
                 LinkedNodeStub * currentStub = new LinkedNodeStub(*currentNode);
-                if(ExpandNode(currentStub)) {
+                if(expandNode(currentStub)) {
                     usedNodes.push_back(currentStub);
                 }
                 else {
@@ -310,8 +310,8 @@ namespace GraphMatch {
 
     // returns the cost of matching node p in the pattern graph to node qp in the base graph
     // this method does not include any cost for matching strands to sheets.
-    inline double WongMatch::GetC(int p, int qp) {
-        double cost = GetC(p, p, qp, qp);
+    inline double WongMatch::getC(int p, int qp) {
+        double cost = getC(p, p, qp, qp);
 
         // if sheet-to-strand match, compute the cost of the match based on the unused sheet capacity and the strand length
         if(   (int) (patternGraph->adjacencyMatrix[ p-1][ p-1][0] + 0.01) == GRAPHNODE_SHEET
@@ -329,7 +329,7 @@ namespace GraphMatch {
     //   j != p and qj == qp -- edge match cost, special case where same sheet revisited by two consecutive nodes
     //   j != p and qj != qp -- edge match cost
     // note: only the first case is ever used, as all calls to this method have j=p and qj=qp.
-    inline double WongMatch::GetC(int j, int p, int qj, int qp) {
+    inline double WongMatch::getC(int j, int p, int qj, int qp) {
 
         double jpCost;
         double qjqpCost;
@@ -369,7 +369,7 @@ namespace GraphMatch {
     // m is the number of missing helices or sheets in the pattern graph
     // qj is the start node in the base graph
     // qp is the end node in the base graph
-    inline double WongMatch::GetCost(int d, int m, int qj, int qp, bool debugMsg) {
+    inline double WongMatch::getCost(int d, int m, int qj, int qp, bool debugMsg) {
         // TODO: Fix patthernLength and baseLength for sheet-to-sheet case.
         double patternLength = 0;
         double baseLength;
@@ -559,11 +559,11 @@ namespace GraphMatch {
         return 0;
     }
 
-    inline double WongMatch::GetF() {
+    inline double WongMatch::getF() {
         return currentNode->costGStar;
     }
 
-    inline void WongMatch::PopBestNode() {
+    inline void WongMatch::popBestNode() {
 #ifdef VERBOSE
         clock_t start = clock();
 #endif
@@ -578,7 +578,7 @@ namespace GraphMatch {
 
     // add in penalties for skipped helices and sheets
     // m is the number of nodes involved in the match. m=1 is no skipped helices or sheets.
-    inline double WongMatch::GetPenaltyCost(int d, int m, bool debugMsg) {
+    inline double WongMatch::getPenaltyCost(int d, int m, bool debugMsg) {
         double cost = 0.0;
         int lastPatternNode = patternGraph->getNodeCount() - 1;
         bool startAtBeginning = (d == 0);
@@ -653,7 +653,7 @@ namespace GraphMatch {
     // if an edge is found, match the pattern graph to that edge and add the match to the queue.
     // also match edges that include skip edges in the pattern graph
     // costs of matches are determined by the GetC method
-    inline bool WongMatch::ExpandNode(LinkedNodeStub * currentStub) {
+    inline bool WongMatch::expandNode(LinkedNodeStub * currentStub) {
         bool expanded = false;
         nExpand++;
 
@@ -753,19 +753,19 @@ namespace GraphMatch {
                         if(temp->depth == 0)
                             edgeCost = 0;
                         else
-                            edgeCost = GetCost(temp->n1Node, j+1, temp->n2Node, currentNode->n2Node, false);
+                            edgeCost = getCost(temp->n1Node, j+1, temp->n2Node, currentNode->n2Node, false);
 
                         // if this is an allowed match:
                         if(edgeCost >= 0) {
                             //worked! currentNode->costGStar += temp->costGStar + edgeCost + GetC(currentNode->n1Node, currentNode->n2Node, currentNode);
                             currentNode->costGStar +=  temp->costGStar
                                                      + edgeCost
-                                                     + GetC(currentNode->n1Node, currentNode->n2Node);
+                                                     + getC(currentNode->n1Node, currentNode->n2Node);
 
                             // add costs for skipped helices and sheets
-                            currentNode->costGStar += GetPenaltyCost(temp->n1Node, j+1, false);
+                            currentNode->costGStar += getPenaltyCost(temp->n1Node, j+1, false);
 
-                            currentNode->cost = GetF();
+                            currentNode->cost = getF();
                             queue->push(Elem(currentNode->cost, currentNode));
                             expanded = true;
                         }
@@ -825,7 +825,7 @@ namespace GraphMatch {
                 currentNode = new LinkedNode(*temp);
                 currentNode->depth = (char)patternGraph->nodeCount;
                 currentNode->costGStar  = temp->costGStar;
-                currentNode->costGStar += GetPenaltyCost(temp->n1Node, remainingHelixNodes + remainingSheetNodes, false);
+                currentNode->costGStar += getPenaltyCost(temp->n1Node, remainingHelixNodes + remainingSheetNodes, false);
                 currentNode->cost = currentNode->costGStar;
                 queue->push(Elem(currentNode->cost, currentNode));
                 currentNode = temp;
@@ -834,7 +834,7 @@ namespace GraphMatch {
         return expanded;
     }
 
-    inline void WongMatch::NormalizeGraphs() {
+    inline void WongMatch::normalizeGraphs() {
 #ifdef VERBOSE
         printf("Normalizing Graphs\n");
         printf("\tNormalizing the base graph from Angstroms to amino acids\nNormalized Graph:\n");
@@ -864,7 +864,7 @@ namespace GraphMatch {
 #endif
     }
 
-    inline void WongMatch::NormalizeSheets() {
+    inline void WongMatch::normalizeSheets() {
 #ifdef VERBOSE
         printf("\tNormalizing the sheet nodes in the base graph based on sheet ratio\nNormalized Graph:\n");
 #endif
