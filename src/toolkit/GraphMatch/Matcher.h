@@ -90,14 +90,14 @@ using namespace std;
 				matcher = new WongMatch(sequenceGraph, skeletonGraph, MISSING_HELIX_COUNT, MISSING_SHEET_COUNT);
 			}
 			start = clock();
-			int matchCount = matcher->RunMatching(start);
-			matcher->SaveResults();
+			int matchCount = matcher->runMatching(start);
+			matcher->saveResults();
 
 			return matchCount;
 		}
 
 		inline SSEResult Matcher::getSolution(int rank) {
-			return matcher->GetResult(rank);
+			return matcher->getResult(rank);
 		}
 
 		inline void Matcher::destruct() {

@@ -29,9 +29,9 @@ namespace GraphMatch {
                       int missingHelixCount, int missingSheetCount
                       );
             ~WongMatch();
-            int RunMatching(clock_t startTime);
-            SSEResult GetResult(int rank);
-            void SaveResults();
+            int runMatching(clock_t startTime);
+            SSEResult getResult(int rank);
+            void saveResults();
 
         private:
 #ifdef VERBOSE
@@ -219,7 +219,7 @@ namespace GraphMatch {
     }
 
     // searches for correspondences between the pattern graph and base graph.
-    inline int WongMatch::RunMatching(clock_t startTime) {
+    inline int WongMatch::runMatching(clock_t startTime) {
 #ifdef VERBOSE
         cout << "Starting to search for correspondences." << endl;
         DisplayConstants();
@@ -294,12 +294,12 @@ namespace GraphMatch {
     }
 
     // returns one of the results of a correspondence search
-    inline SSEResult WongMatch::GetResult(int rank) {
+    inline SSEResult WongMatch::getResult(int rank) {
         return solutions[rank - 1];
     }
 
     // prints correspondence search results
-    inline void WongMatch::SaveResults() {
+    inline void WongMatch::saveResults() {
 #ifdef VERBOSE
         printf("Time taken in GetA %f\n", timeInGetA / (double)CLOCKS_PER_SEC);
         printf("Time taken in GetB %f\n", timeInGetB / (double)CLOCKS_PER_SEC);
