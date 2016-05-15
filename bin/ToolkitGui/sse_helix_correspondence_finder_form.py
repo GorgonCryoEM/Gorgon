@@ -231,7 +231,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog, SSEHelixCorrespondence):
 #
 #             print "calling setConstantsFromFile"
 #             self.setConstants()
-#             self.viewer.correspondenceEngine.setConstantsFromFile(str(self.ui.lineEditSettingsFile.text()))
+#             self.correspondenceEngine.setConstantsFromFile(str(self.ui.lineEditSettingsFile.text()))
 #
 #             print "copying constants from file to GUI"
 #             self.getConstants()
@@ -239,17 +239,17 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog, SSEHelixCorrespondence):
 #             print "getting settings filename"
 #             settingsFilename = str(self.ui.lineEditSettingsFile.text())
 #
-#             #self.viewer.correspondenceEngine.printConstants
+#             #self.correspondenceEngine.printConstants
 #             print "reading other filenames for parsing"
-#             helixFilename = self.viewer.correspondenceEngine.getConstantString("VRML_HELIX_FILE_NAME")
+#             helixFilename = self.correspondenceEngine.getConstantString("VRML_HELIX_FILE_NAME")
 #             print "helix filename is " + helixFilename
-#             sheetFilename = self.viewer.correspondenceEngine.getConstantString("VRML_SHEET_FILE_NAME")
+#             sheetFilename = self.correspondenceEngine.getConstantString("VRML_SHEET_FILE_NAME")
 #             print "sheet filename is " + sheetFilename
-#             sequenceFilename = self.viewer.correspondenceEngine.getConstantString("SEQUENCE_FILE_NAME")
+#             sequenceFilename = self.correspondenceEngine.getConstantString("SEQUENCE_FILE_NAME")
 #             print "sequence filename is " + sequenceFilename
-#             skeletonFilename = self.viewer.correspondenceEngine.getConstantString("MRC_FILE_NAME")
+#             skeletonFilename = self.correspondenceEngine.getConstantString("MRC_FILE_NAME")
 #             print "skeleton filename is " + skeletonFilename
-#             sseFilename = self.viewer.correspondenceEngine.getConstantString("SSE_FILE_NAME")
+#             sseFilename = self.correspondenceEngine.getConstantString("SSE_FILE_NAME")
 #             print "sse filename is " + sseFilename
 #
 #             import os
@@ -306,64 +306,64 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog, SSEHelixCorrespondence):
         
     def setConstants(self):
         #Data Sources tab
-        #self.viewer.correspondenceEngine.setConstant("SSE_FILE_NAME", str(self.ui.lineEditHelixLengthFile.text()))
-        self.viewer.correspondenceEngine.setConstant("VRML_HELIX_FILE_NAME", str(self.ui.lineEditHelixLocationFile.text()))
-        self.viewer.correspondenceEngine.setConstant("VRML_SHEET_FILE_NAME", str(self.ui.lineEditSheetLocationFile.text()))
-        self.viewer.correspondenceEngine.setConstant("MRC_FILE_NAME", str(self.ui.lineEditSkeletonFile.text()))
+        #self.correspondenceEngine.setConstant("SSE_FILE_NAME", str(self.ui.lineEditHelixLengthFile.text()))
+        self.correspondenceEngine.setConstant("VRML_HELIX_FILE_NAME", str(self.ui.lineEditHelixLocationFile.text()))
+        self.correspondenceEngine.setConstant("VRML_SHEET_FILE_NAME", str(self.ui.lineEditSheetLocationFile.text()))
+        self.correspondenceEngine.setConstant("MRC_FILE_NAME", str(self.ui.lineEditSkeletonFile.text()))
         self.sequenceFileName = str(self.ui.lineEditSequenceFile.text())
-        self.viewer.correspondenceEngine.setConstant("SEQUENCE_FILE_NAME", self.sequenceFileName)
+        self.correspondenceEngine.setConstant("SEQUENCE_FILE_NAME", self.sequenceFileName)
         if self.sequenceFileName.split('.')[-1].lower() == 'pdb':
-            self.viewer.correspondenceEngine.setConstant("SEQUENCE_FILE_TYPE", "PDB")
+            self.correspondenceEngine.setConstant("SEQUENCE_FILE_TYPE", "PDB")
         elif self.sequenceFileName.split('.')[-1].lower() == 'seq':
-            self.viewer.correspondenceEngine.setConstant("SEQUENCE_FILE_TYPE", "SEQ")
+            self.correspondenceEngine.setConstant("SEQUENCE_FILE_TYPE", "SEQ")
         
         #Graph Settings tab
-        self.viewer.correspondenceEngine.setConstantInt("BORDER_MARGIN_THRESHOLD", self.ui.spinBoxBorderMarginThreshold.value())
-        self.viewer.correspondenceEngine.setConstant("EUCLIDEAN_DISTANCE_THRESHOLD", self.ui.doubleSpinBoxEuclideanDistance.value())
-        self.viewer.correspondenceEngine.setConstant("MAXIMUM_DISTANCE_SHEET_SKELETON", self.ui.doubleSpinBoxMaxSheetDistance.value())
-        self.viewer.correspondenceEngine.setConstantInt("MINIMUM_SHEET_SIZE", self.ui.spinBoxMinSheetSize.value())
-        self.viewer.correspondenceEngine.setConstant("SHEET_SELF_LOOP_LENGTH", self.ui.doubleSpinBoxSheetSelfLoopLength.value())
-        self.viewer.correspondenceEngine.setConstant("SHEET_MERGE_THRESHOLD", self.ui.doubleSpinBoxSheetMergeThreshold.value())
+        self.correspondenceEngine.setConstantInt("BORDER_MARGIN_THRESHOLD", self.ui.spinBoxBorderMarginThreshold.value())
+        self.correspondenceEngine.setConstant("EUCLIDEAN_DISTANCE_THRESHOLD", self.ui.doubleSpinBoxEuclideanDistance.value())
+        self.correspondenceEngine.setConstant("MAXIMUM_DISTANCE_SHEET_SKELETON", self.ui.doubleSpinBoxMaxSheetDistance.value())
+        self.correspondenceEngine.setConstantInt("MINIMUM_SHEET_SIZE", self.ui.spinBoxMinSheetSize.value())
+        self.correspondenceEngine.setConstant("SHEET_SELF_LOOP_LENGTH", self.ui.doubleSpinBoxSheetSelfLoopLength.value())
+        self.correspondenceEngine.setConstant("SHEET_MERGE_THRESHOLD", self.ui.doubleSpinBoxSheetMergeThreshold.value())
         if (self.ui.checkBoxIncludeStrands.isChecked()):
-            self.viewer.correspondenceEngine.setConstantInt("INCLUDE_STRANDS", 1)
+            self.correspondenceEngine.setConstantInt("INCLUDE_STRANDS", 1)
         else:
-            self.viewer.correspondenceEngine.setConstantInt("INCLUDE_STRANDS", 0)
+            self.correspondenceEngine.setConstantInt("INCLUDE_STRANDS", 0)
 
         #Matching Settings tab
-        self.viewer.correspondenceEngine.setConstant("EUCLIDEAN_VOXEL_TO_PDB_RATIO", self.ui.doubleSpinBoxEuclideanToPDBRatio.value())
+        self.correspondenceEngine.setConstant("EUCLIDEAN_VOXEL_TO_PDB_RATIO", self.ui.doubleSpinBoxEuclideanToPDBRatio.value())
         if(self.ui.radioButtonAbsoluteDifference.isChecked()):
-            self.viewer.correspondenceEngine.setConstantInt("COST_FUNCTION", 1)
+            self.correspondenceEngine.setConstantInt("COST_FUNCTION", 1)
         elif (self.ui.radioButtonNormalizedDifference.isChecked()):
-            self.viewer.correspondenceEngine.setConstantInt("COST_FUNCTION", 2)
+            self.correspondenceEngine.setConstantInt("COST_FUNCTION", 2)
         else:
-            self.viewer.correspondenceEngine.setConstantInt("COST_FUNCTION", 3)
+            self.correspondenceEngine.setConstantInt("COST_FUNCTION", 3)
 
-        self.viewer.correspondenceEngine.setConstant("LOOP_WEIGHT_COEFFICIENT", self.ui.doubleSpinBoxLoopImportance.value())
-        self.viewer.correspondenceEngine.setConstant("EUCLIDEAN_LOOP_PENALTY", self.ui.doubleSpinBoxEuclideanLoopUsedPenalty.value())
+        self.correspondenceEngine.setConstant("LOOP_WEIGHT_COEFFICIENT", self.ui.doubleSpinBoxLoopImportance.value())
+        self.correspondenceEngine.setConstant("EUCLIDEAN_LOOP_PENALTY", self.ui.doubleSpinBoxEuclideanLoopUsedPenalty.value())
 
-        self.viewer.correspondenceEngine.setConstant("HELIX_WEIGHT_COEFFICIENT", self.ui.doubleSpinBoxHelixImportance.value())
+        self.correspondenceEngine.setConstant("HELIX_WEIGHT_COEFFICIENT", self.ui.doubleSpinBoxHelixImportance.value())
         if(self.ui.checkBoxMissingHelices.isChecked()):
-            self.viewer.correspondenceEngine.setConstantInt("MISSING_HELIX_COUNT", self.ui.spinBoxMissingHelixCount.value())
+            self.correspondenceEngine.setConstantInt("MISSING_HELIX_COUNT", self.ui.spinBoxMissingHelixCount.value())
         else:
-            self.viewer.correspondenceEngine.setConstantInt("MISSING_HELIX_COUNT", -1)
-        self.viewer.correspondenceEngine.setConstant("MISSING_HELIX_PENALTY", self.ui.doubleSpinBoxHelixMissingPenalty.value())
-        self.viewer.correspondenceEngine.setConstant("MISSING_HELIX_PENALTY_SCALED", self.ui.doubleSpinBoxHelixMissingPenaltyScaled.value())
-        self.viewer.correspondenceEngine.setConstant("START_END_MISSING_HELIX_PENALTY", self.ui.doubleSpinBoxEndHelixMissingPenalty.value())
+            self.correspondenceEngine.setConstantInt("MISSING_HELIX_COUNT", -1)
+        self.correspondenceEngine.setConstant("MISSING_HELIX_PENALTY", self.ui.doubleSpinBoxHelixMissingPenalty.value())
+        self.correspondenceEngine.setConstant("MISSING_HELIX_PENALTY_SCALED", self.ui.doubleSpinBoxHelixMissingPenaltyScaled.value())
+        self.correspondenceEngine.setConstant("START_END_MISSING_HELIX_PENALTY", self.ui.doubleSpinBoxEndHelixMissingPenalty.value())
         
-        self.viewer.correspondenceEngine.setConstant("SHEET_WEIGHT_COEFFICIENT", self.ui.doubleSpinBoxSheetImportance.value())
+        self.correspondenceEngine.setConstant("SHEET_WEIGHT_COEFFICIENT", self.ui.doubleSpinBoxSheetImportance.value())
         if(self.ui.checkBoxMissingSheets.isChecked()):
-            self.viewer.correspondenceEngine.setConstantInt("MISSING_SHEET_COUNT", self.ui.spinBoxMissingSheetCount.value())
+            self.correspondenceEngine.setConstantInt("MISSING_SHEET_COUNT", self.ui.spinBoxMissingSheetCount.value())
         else:
-            self.viewer.correspondenceEngine.setConstantInt("MISSING_SHEET_COUNT", -1)
-        self.viewer.correspondenceEngine.setConstant("MISSING_SHEET_PENALTY", self.ui.doubleSpinBoxSheetMissingPenalty.value())
-        self.viewer.correspondenceEngine.setConstant("MISSING_SHEET_PENALTY_SCALED", self.ui.doubleSpinBoxSheetMissingPenaltyScaled.value())
+            self.correspondenceEngine.setConstantInt("MISSING_SHEET_COUNT", -1)
+        self.correspondenceEngine.setConstant("MISSING_SHEET_PENALTY", self.ui.doubleSpinBoxSheetMissingPenalty.value())
+        self.correspondenceEngine.setConstant("MISSING_SHEET_PENALTY_SCALED", self.ui.doubleSpinBoxSheetMissingPenaltyScaled.value())
         
         # no longer needed?
-        self.viewer.correspondenceEngine.setConstantBool("NORMALIZE_GRAPHS", True)
+        self.correspondenceEngine.setConstantBool("NORMALIZE_GRAPHS", True)
 
         #Tab 4 User Constraints
         # comment out the constraint clearing so that constraints can be loaded from settings files
-        #self.viewer.correspondenceEngine.clearAllConstraints()
+        #self.correspondenceEngine.clearAllConstraints()
         correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
         if(correspondenceIndex >= 0):
             corr = self.viewer.correspondenceLibrary.correspondenceList[correspondenceIndex]
@@ -375,19 +375,19 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog, SSEHelixCorrespondence):
                 if match.predicted.type == 'helix':
                     if match.constrained:
                         if(match.observed):
-                            self.viewer.correspondenceEngine.setHelixConstraint(predictedGraphNode, 2*match.observed.label + 1)
+                            self.correspondenceEngine.setHelixConstraint(predictedGraphNode, 2*match.observed.label + 1)
                         else:
-                            self.viewer.correspondenceEngine.setHelixConstraint(predictedGraphNode, -1)
+                            self.correspondenceEngine.setHelixConstraint(predictedGraphNode, -1)
                 if match.predicted.type == 'strand':
                     if(not self.ui.checkBoxIncludeSheets.isChecked()):
                         self.userConstraints[i]=False # clear all strand constraints
                         match.constrained = False     # clear all strand constraints
-                        self.viewer.correspondenceEngine.setNodeConstraint(predictedGraphNode, -1)
+                        self.correspondenceEngine.setNodeConstraint(predictedGraphNode, -1)
                     elif(match.constrained):
                         if(match.observed):
-                            self.viewer.correspondenceEngine.setNodeConstraint(predictedGraphNode, match.observed.label + nObservedHelices + 1)
+                            self.correspondenceEngine.setNodeConstraint(predictedGraphNode, match.observed.label + nObservedHelices + 1)
                         else:
-                            self.viewer.correspondenceEngine.setNodeConstraint(predictedGraphNode, -1)
+                            self.correspondenceEngine.setNodeConstraint(predictedGraphNode, -1)
                 if (match.predicted.type) == 'strand':
                     predictedGraphNode += 1
                 if (match.predicted.type) == 'helix':
@@ -396,58 +396,58 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog, SSEHelixCorrespondence):
     def getConstants(self):
         
         #Graph Settings tab
-        self.ui.spinBoxBorderMarginThreshold.setValue(self.viewer.correspondenceEngine.getConstantInt("BORDER_MARGIN_THRESHOLD"))
-        self.ui.doubleSpinBoxEuclideanDistance.setValue(self.viewer.correspondenceEngine.getConstantDouble("EUCLIDEAN_DISTANCE_THRESHOLD"))
-        self.ui.spinBoxMinSheetSize.setValue(self.viewer.correspondenceEngine.getConstantInt("MINIMUM_SHEET_SIZE"))
-        self.ui.doubleSpinBoxMaxSheetDistance.setValue(self.viewer.correspondenceEngine.getConstantDouble("MAXIMUM_DISTANCE_SHEET_SKELETON"))
-        self.ui.doubleSpinBoxSheetSelfLoopLength.setValue(self.viewer.correspondenceEngine.getConstantDouble("SHEET_SELF_LOOP_LENGTH"))
-        self.ui.doubleSpinBoxSheetMergeThreshold.setValue(self.viewer.correspondenceEngine.getConstantDouble("SHEET_MERGE_THRESHOLD"))
-        if(self.viewer.correspondenceEngine.getConstantInt("INCLUDE_STRANDS") == 1):
+        self.ui.spinBoxBorderMarginThreshold.setValue(self.correspondenceEngine.getConstantInt("BORDER_MARGIN_THRESHOLD"))
+        self.ui.doubleSpinBoxEuclideanDistance.setValue(self.correspondenceEngine.getConstantDouble("EUCLIDEAN_DISTANCE_THRESHOLD"))
+        self.ui.spinBoxMinSheetSize.setValue(self.correspondenceEngine.getConstantInt("MINIMUM_SHEET_SIZE"))
+        self.ui.doubleSpinBoxMaxSheetDistance.setValue(self.correspondenceEngine.getConstantDouble("MAXIMUM_DISTANCE_SHEET_SKELETON"))
+        self.ui.doubleSpinBoxSheetSelfLoopLength.setValue(self.correspondenceEngine.getConstantDouble("SHEET_SELF_LOOP_LENGTH"))
+        self.ui.doubleSpinBoxSheetMergeThreshold.setValue(self.correspondenceEngine.getConstantDouble("SHEET_MERGE_THRESHOLD"))
+        if(self.correspondenceEngine.getConstantInt("INCLUDE_STRANDS") == 1):
             self.ui.checkBoxIncludeStrands.setChecked(True)
         else:
             self.ui.checkBoxIncludeStrands.setChecked(False)
 
         #Matching settings tab
-        self.ui.doubleSpinBoxEuclideanToPDBRatio.setValue(self.viewer.correspondenceEngine.getConstantDouble("EUCLIDEAN_VOXEL_TO_PDB_RATIO"))
-        if(self.viewer.correspondenceEngine.getConstantInt("COST_FUNCTION") == 1):
+        self.ui.doubleSpinBoxEuclideanToPDBRatio.setValue(self.correspondenceEngine.getConstantDouble("EUCLIDEAN_VOXEL_TO_PDB_RATIO"))
+        if(self.correspondenceEngine.getConstantInt("COST_FUNCTION") == 1):
             self.ui.radioButtonAbsoluteDifference.setChecked(True)
             self.ui.radioButtonNormalizedDifference.setChecked(False)
             self.ui.radioButtonQuadraticError.setChecked(False)
-        elif (self.viewer.correspondenceEngine.getConstantInt("COST_FUNCTION") == 2):
+        elif (self.correspondenceEngine.getConstantInt("COST_FUNCTION") == 2):
             self.ui.radioButtonAbsoluteDifference.setChecked(False)
             self.ui.radioButtonNormalizedDifference.setChecked(True)
             self.ui.radioButtonQuadraticError.setChecked(False)
-        elif (self.viewer.correspondenceEngine.getConstantInt("COST_FUNCTION") == 3):
+        elif (self.correspondenceEngine.getConstantInt("COST_FUNCTION") == 3):
             self.ui.radioButtonAbsoluteDifference.setChecked(False)
             self.ui.radioButtonNormalizedDifference.setChecked(False)
             self.ui.radioButtonQuadraticError.setChecked(True)
 
-        self.ui.doubleSpinBoxLoopImportance.setValue(self.viewer.correspondenceEngine.getConstantDouble("LOOP_WEIGHT_COEFFICIENT"))
-        self.ui.doubleSpinBoxEuclideanLoopUsedPenalty.setValue(self.viewer.correspondenceEngine.getConstantDouble("EUCLIDEAN_LOOP_PENALTY"))
+        self.ui.doubleSpinBoxLoopImportance.setValue(self.correspondenceEngine.getConstantDouble("LOOP_WEIGHT_COEFFICIENT"))
+        self.ui.doubleSpinBoxEuclideanLoopUsedPenalty.setValue(self.correspondenceEngine.getConstantDouble("EUCLIDEAN_LOOP_PENALTY"))
 
-        self.ui.doubleSpinBoxHelixImportance.setValue(self.viewer.correspondenceEngine.getConstantDouble("HELIX_WEIGHT_COEFFICIENT"))
-        if (self.viewer.correspondenceEngine.getConstantInt("MISSING_HELIX_COUNT") == -1):
+        self.ui.doubleSpinBoxHelixImportance.setValue(self.correspondenceEngine.getConstantDouble("HELIX_WEIGHT_COEFFICIENT"))
+        if (self.correspondenceEngine.getConstantInt("MISSING_HELIX_COUNT") == -1):
             self.ui.checkBoxMissingHelices.setChecked(False)
         else:
             self.ui.checkBoxMissingHelices.setChecked(True)
-            self.ui.spinBoxMissingHelixCount.setValue(self.viewer.correspondenceEngine.getConstantInt("MISSING_HELIX_COUNT"))
-        self.ui.doubleSpinBoxHelixMissingPenalty.setValue(self.viewer.correspondenceEngine.getConstantDouble("MISSING_HELIX_PENALTY"))
-        self.ui.doubleSpinBoxHelixMissingPenaltyScaled.setValue(self.viewer.correspondenceEngine.getConstantDouble("MISSING_HELIX_PENALTY_SCALED"))
-        self.ui.doubleSpinBoxEndHelixMissingPenalty.setValue(self.viewer.correspondenceEngine.getConstantDouble("START_END_MISSING_HELIX_PENALTY"))
+            self.ui.spinBoxMissingHelixCount.setValue(self.correspondenceEngine.getConstantInt("MISSING_HELIX_COUNT"))
+        self.ui.doubleSpinBoxHelixMissingPenalty.setValue(self.correspondenceEngine.getConstantDouble("MISSING_HELIX_PENALTY"))
+        self.ui.doubleSpinBoxHelixMissingPenaltyScaled.setValue(self.correspondenceEngine.getConstantDouble("MISSING_HELIX_PENALTY_SCALED"))
+        self.ui.doubleSpinBoxEndHelixMissingPenalty.setValue(self.correspondenceEngine.getConstantDouble("START_END_MISSING_HELIX_PENALTY"))
         
         self.ui.checkBoxIncludeSheets.setChecked(True)
         self.ui.doubleSpinBoxSheetImportance.setEnabled(True)
-        self.ui.doubleSpinBoxSheetImportance.setValue(self.viewer.correspondenceEngine.getConstantDouble("SHEET_WEIGHT_COEFFICIENT"))
+        self.ui.doubleSpinBoxSheetImportance.setValue(self.correspondenceEngine.getConstantDouble("SHEET_WEIGHT_COEFFICIENT"))
         self.ui.checkBoxMissingSheets.setEnabled(True)
-        if (self.viewer.correspondenceEngine.getConstantInt("MISSING_SHEET_COUNT") == -1):
+        if (self.correspondenceEngine.getConstantInt("MISSING_SHEET_COUNT") == -1):
             self.ui.checkBoxMissingSheets.setChecked(False)
         else:
             self.ui.checkBoxMissingSheets.setChecked(True)
-            self.ui.spinBoxMissingSheetCount.setValue(self.viewer.correspondenceEngine.getConstantInt("MISSING_SHEET_COUNT"))
+            self.ui.spinBoxMissingSheetCount.setValue(self.correspondenceEngine.getConstantInt("MISSING_SHEET_COUNT"))
         self.ui.doubleSpinBoxSheetMissingPenalty.setEnabled(True)
-        self.ui.doubleSpinBoxSheetMissingPenalty.setValue(self.viewer.correspondenceEngine.getConstantDouble("MISSING_SHEET_PENALTY"))
+        self.ui.doubleSpinBoxSheetMissingPenalty.setValue(self.correspondenceEngine.getConstantDouble("MISSING_SHEET_PENALTY"))
         self.ui.doubleSpinBoxSheetMissingPenaltyScaled.setEnabled(True)
-        self.ui.doubleSpinBoxSheetMissingPenaltyScaled.setValue(self.viewer.correspondenceEngine.getConstantDouble("MISSING_SHEET_PENALTY_SCALED"))
+        self.ui.doubleSpinBoxSheetMissingPenaltyScaled.setValue(self.correspondenceEngine.getConstantDouble("MISSING_SHEET_PENALTY_SCALED"))
 
     def getConstraints(self):
         print "Reading constraints from c++ layer to python layer"
@@ -465,7 +465,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog, SSEHelixCorrespondence):
             if match.predicted is not None:
                 if match.predicted.type == 'strand':
                     #print "reading constraints for strand " + str(sIx) + " (graph node " + str(graphIx) + ")"
-                    obsSheet = self.viewer.correspondenceEngine.getStrandConstraint(graphIx,0)
+                    obsSheet = self.correspondenceEngine.getStrandConstraint(graphIx,0)
                     constrained = (obsSheet != 0)
                     if (obsSheet == -1):
                         sheetNum = -1
@@ -478,9 +478,9 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog, SSEHelixCorrespondence):
                     graphIx += 1
                 elif match.predicted.type == 'helix':
                     #print "reading constraints for helix " + str(hIx) + " (graph node " + str(graphIx) + ")"
-                    obsHelixFwd = self.viewer.correspondenceEngine.getHelixConstraintFwd(graphIx)
-                    obsHelixRev = self.viewer.correspondenceEngine.getHelixConstraintRev(graphIx)
-                    obsHelixUnk = self.viewer.correspondenceEngine.getHelixConstraintUnk(graphIx)
+                    obsHelixFwd = self.correspondenceEngine.getHelixConstraintFwd(graphIx)
+                    obsHelixRev = self.correspondenceEngine.getHelixConstraintRev(graphIx)
+                    obsHelixUnk = self.correspondenceEngine.getHelixConstraintUnk(graphIx)
                     #print "  fwd constraint = " + str(obsHelixFwd)
                     #print "  rev constraint = " + str(obsHelixRev)
                     #print "  unk constraint = " + str(obsHelixUnk)
@@ -508,7 +508,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog, SSEHelixCorrespondence):
                     hIx += 1
                     graphIx += 2
         # now that constraints are stored, clear from c++ class
-        self.viewer.correspondenceEngine.clearAllConstraints()
+        self.correspondenceEngine.clearAllConstraints()
 
 #     def populateEmptyResults(self, library):
 #         """ add empty result before correspondence search is started """
@@ -543,7 +543,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog, SSEHelixCorrespondence):
         for i in range(self.resultCount):
             # create a Correspondence object and add it to the list
             # start from correspondenceEngine result
-            result = self.viewer.correspondenceEngine.getResult(i+1)
+            result = self.correspondenceEngine.getResult(i+1)
             matchList = [] # matchList holds the matches
             
             # iterate over all nodes in the matching from correspondenceEngine
@@ -638,12 +638,12 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog, SSEHelixCorrespondence):
 #
 #         #Loading Predicted SSEs
 #         print "loading predicted SSEs"
-#         self.viewer.correspondenceEngine.loadSequenceGraph()
+#         self.correspondenceEngine.loadSequenceGraph()
 #
 #         print "before calling StructurePrediction.load"
 #         print "sequenceFileName is " + str(self.sequenceFileName)
 #         print "app is " + str(self.app)
-#         includeStrands = self.viewer.correspondenceEngine.getConstantInt("INCLUDE_STRANDS")
+#         includeStrands = self.correspondenceEngine.getConstantInt("INCLUDE_STRANDS")
 #         structPred = StructurePrediction.load(self.sequenceFileName, self.app, includeStrands)
 #         print "after calling StructurePrediction.load"
 #         cAlphaViewer = self.app.calphaViewer
@@ -656,17 +656,17 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog, SSEHelixCorrespondence):
 #
 #         #Loading Observed SSEs
 #         print "loading observed SSEs"
-#         self.viewer.correspondenceEngine.loadSkeletonGraph()
+#         self.correspondenceEngine.loadSkeletonGraph()
 #         observedHelices = {}
 #         helixCount = 0
 #         observedSheets = {}
 #         sheetCount = 0
-#         sseCount = self.viewer.correspondenceEngine.getSkeletonSSECount()
+#         sseCount = self.correspondenceEngine.getSkeletonSSECount()
 #
 #         print "adding helices to list of observed helices"
 #         for sseIx in range(sseCount):
 #             # call to c++ method QueryEngine::getSkeletonSSE(), which returns a c++ GeometricShape object
-#             cppSse = self.viewer.correspondenceEngine.getSkeletonSSE(sseIx)
+#             cppSse = self.correspondenceEngine.getSkeletonSSE(sseIx)
 #
 #             # create list of observed helices for this correspondence result
 #             if cppSse.isHelix():
@@ -724,13 +724,13 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog, SSEHelixCorrespondence):
         # execute correspondence query and do cleanup
         memErr = False
         try:
-            self.resultCount = self.viewer.correspondenceEngine.executeQuery()
+            self.resultCount = self.correspondenceEngine.executeQuery()
         except MemoryError:
             print "memory error"
             self.resultCount=0
             memErr = True
-        self.viewer.correspondenceEngine.cleanupMemory()
-        self.viewer.correspondenceEngine.clearAllConstraints()
+        self.correspondenceEngine.cleanupMemory()
+        self.correspondenceEngine.clearAllConstraints()
 
         print "found " + str(self.resultCount) + " results. cleaning up memory."
         self.setCursor(oldCursor)
@@ -905,11 +905,11 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog, SSEHelixCorrespondence):
 # #                     if match.observed.sseType == 'helix':
 # #                         # color is stored in two places: the renderer and the correspondence engine. update both.
 # #                         self.viewer.renderer.setHelixColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
-# #                         self.viewer.correspondenceEngine.setSSEColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
+# #                         self.correspondenceEngine.setSSEColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
 # #
 # #                     if match.observed.sseType == 'sheet':
 # #                         self.viewer.renderer.setSSEColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
-# #                         self.viewer.correspondenceEngine.setSSEColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
+# #                         self.correspondenceEngine.setSSEColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
 #
 #                     notMissing[match.observed.label] = True
 #
@@ -945,7 +945,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog, SSEHelixCorrespondence):
 #                 if(not notMissing.has_key(i)):
 #                     self.viewer.renderer.setHelixColor(i, 0.5, 0.5, 0.5, 1.0)
 #
-#         self.viewer.correspondenceEngine.setVisibleCorrespondence(correspondenceIndex)
+#         self.correspondenceEngine.setVisibleCorrespondence(correspondenceIndex)
 #         self.viewer.correspondenceLibrary.setCurrentCorrespondenceIndex(correspondenceIndex)
 #         self.viewer.modelChanged()
 #         self.loadingCorrespondance = False
@@ -956,18 +956,18 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog, SSEHelixCorrespondence):
 #             self.viewer.setMaterials(self.colors["CorrespondenceFinder:BackboneTrace"])
             self.viewer.setMaterials()
             # calls Draw method of c++ SSECorrespondenceEngine object
-            self.viewer.correspondenceEngine.draw(0)
+            self.correspondenceEngine.draw(0)
             glPopAttrib()
         if True:
             # TODO: Move this color changing code somewhere else
             # set colors of all SSEs
             # Probably should use the setColor calls in previous sections.
-            for i in range(self.viewer.correspondenceEngine.getSkeletonSSECount()):
-                color = self.getIndexedHelixColor(i, self.viewer.correspondenceEngine.getSkeletonSSECount())
+            for i in range(self.correspondenceEngine.getSkeletonSSECount()):
+                color = self.getIndexedHelixColor(i, self.correspondenceEngine.getSkeletonSSECount())
             glPushAttrib(GL_LIGHTING_BIT)
 #             self.viewer.setMaterials(self.colors["CorrespondenceFinder:BackboneTrace"])
             self.viewer.setMaterials()
-            self.viewer.correspondenceEngine.drawAllPaths(0,True,True,True,True)
+            self.correspondenceEngine.drawAllPaths(0,True,True,True,True)
             glPopAttrib()
             
     def rebuildGraph(self):
