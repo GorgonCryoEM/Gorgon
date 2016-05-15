@@ -216,7 +216,7 @@ namespace GraphMatch {
             LinkedNode::AddNodeToBitmap(currentNode->m2Bitmap, j);
         }
         queue->push(Elem(currentNode->cost, currentNode));
-        pathGenerator = new PathGenerator(baseGraph);
+        pathGenerator = new PathGenerator(&baseGraph);
     }
 
     // searches for correspondences between the pattern graph and base graph.
