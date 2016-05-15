@@ -48,11 +48,8 @@ class SSEHelixCorrespondence(object):
 
         self.correspondenceEngine.setConstant("LOOP_WEIGHT_COEFFICIENT", self.ui.LoopImportance)
 
-    def createBasicCorrespondence(self):
+    def accept(self):
         self.setConstants()
         self.correspondenceEngine.loadSequenceGraph()
         self.correspondenceEngine.loadSkeletonGraph()
-
-    def accept(self):
-        self.createBasicCorrespondence()
         self.correspondenceEngine.executeQuery()
