@@ -40,42 +40,40 @@ using namespace std;
 
 		inline void Matcher::loadSequence() {
 			#ifdef GORGON_DEBUG
-				cout << "In QueryEngine::LoadSequenceGraph" << endl;
+				cout << "In QueryEngine::LoadSequencesequence" << endl;
 			#endif
 			clock_t start, finish;
-			Graph * graph;
+
 			string type = SEQUENCE_FILE_TYPE; //easier than doing comparison with a char array
 			#ifdef VERBOSE
-				printf("Pattern Graph \n");
+				printf("Pattern sequence \n");
 			#endif
 			start = clock();
 			if (type == "PDB")
-				graph = PDBReader::ReadFile(SEQUENCE_FILE_NAME.c_str());
+				sequence = PDBReader::ReadFile(SEQUENCE_FILE_NAME.c_str());
 			else if (type == "SEQ")
-				graph = SEQReader::ReadFile(SEQUENCE_FILE_NAME.c_str());
+				sequence = SEQReader::ReadFile(SEQUENCE_FILE_NAME.c_str());
 
 			finish = clock();
 			#ifdef VERBOSE
 				printf("\tReading Pattern file Took %f seconds.\n", (double) (finish - start) / (double) CLOCKS_PER_SEC ) ;
-				graph->print();
+				sequence->print();
 			#endif
-			sequence = graph;
 		}
 
 		inline void Matcher::loadSkeleton() {
 			clock_t start, finish;
-			Graph * graph;
+
 			#ifdef VERBOSE
 				printf("Base Graph \n");
 			#endif
 			start = clock();
-			graph = SkeletonReader::ReadFile(MRC_FILE_NAME, VRML_HELIX_FILE_NAME, SSE_FILE_NAME, VRML_SHEET_FILE_NAME);
+			skeleton = SkeletonReader::ReadFile(MRC_FILE_NAME, VRML_HELIX_FILE_NAME, SSE_FILE_NAME, VRML_SHEET_FILE_NAME);
 			finish = clock();
 			#ifdef VERBOSE
 				printf("\033[32m\tReading Base file Took %f seconds.\n\033[0m", (double) (finish - start) / (double) CLOCKS_PER_SEC ) ;
-				graph->print();
+				skeleton->print();
 			#endif
-			skeleton = graph;
 		}
 
 
