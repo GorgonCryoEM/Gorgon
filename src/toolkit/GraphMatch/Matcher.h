@@ -26,15 +26,15 @@ using namespace std;
 
 		class Matcher {
 		public:
-			int match(Graph * sequenceGraph, Graph * skeletonGraph);
+			int match(Graph & sequenceGraph, Graph & skeletonGraph);
 			SSEResult getSolution(int rank);
 			void destruct();
 			virtual void loadSequence();
 			virtual void loadSkeleton();
 		protected:
 			WongMatch * matcher;
-	        Graph * skeleton;
-	        Graph * sequence;
+	        Graph & skeleton;
+	        Graph & sequence;
 		};
 
 
@@ -77,7 +77,7 @@ using namespace std;
 		}
 
 
-		inline int Matcher::match(Graph * sequenceGraph, Graph * skeletonGraph) {
+		inline int Matcher::match(Graph & sequenceGraph, Graph & skeletonGraph) {
 			clock_t start;
 
 			PERFORMANCE_COMPARISON_MODE = false;
