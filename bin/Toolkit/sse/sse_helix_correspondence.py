@@ -10,14 +10,7 @@ class SSEHelixCorrespondence(object):
         self.sequence = sequence
         self.helix    = helix
         self.output   = output
-        
-        self.executed = False
-        self.loadingCorrespondance = False
-        self.userConstraints = {}
-        self.constraintActions = {}
-        self.selectedRow = 0
-        self.dataLoaded = False
-        
+                
         '''
         SSEViewer
         '''
