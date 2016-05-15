@@ -1,14 +1,5 @@
-from PyQt4 import QtCore, QtGui
-from libpytoolkit import SSEEngine, SSEResult, Vec3F
+from libpytoolkit import SSEEngine
 from sse_defaults import SSEDefaults
-from .correspondence.CorrespondenceLibrary import CorrespondenceLibrary
-from .correspondence.Correspondence import Correspondence
-from .correspondence.Match import Match
-from .correspondence.ObservedHelix import ObservedHelix
-from .correspondence.StructureObservation import StructureObservation
-from .correspondence.StructurePrediction import StructurePrediction
-
-import math
 
 
 class SSEHelixCorrespondence(object):
