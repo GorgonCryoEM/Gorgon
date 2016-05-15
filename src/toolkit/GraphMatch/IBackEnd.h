@@ -15,8 +15,6 @@ namespace GraphMatch {
 
     class IBackEnd : public Matcher {
     public:
-        IBackEnd();
-        virtual ~IBackEnd();
         // Initialization Methods
         void load(string fileName);
         bool setConstant(string token, string value);
@@ -37,18 +35,6 @@ namespace GraphMatch {
         void cleanupMemory();
     protected:
     };
-
-    inline IBackEnd::IBackEnd() {}
-
-    inline IBackEnd::~IBackEnd() {
-        delete matcher;
-        if(skeleton != NULL) {
-            delete skeleton;
-        }
-        if(sequence != NULL) {
-            delete sequence;
-        }
-    }
 
     inline void IBackEnd::load(string fileName) {
         LoadConstantsFromFile(fileName);
