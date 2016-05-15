@@ -63,8 +63,9 @@ class SSEHelixCorrespondence(object):
             print "correspondenceList has length " + str(len(self.correspondenceLibrary.correspondenceList))
             self.populateComboBox(self.correspondenceLibrary)
             self.viewer.makeSheetSurfaces(self.app.viewers['skeleton'].renderer.getOriginX(), self.app.viewers['skeleton'].renderer.getOriginY(), self.app.viewers['skeleton'].renderer.getOriginZ(), self.app.viewers['skeleton'].renderer.getSpacingX(), self.app.viewers['skeleton'].renderer.getSpacingY(), self.app.viewers['skeleton'].renderer.getSpacingZ())
-            if(allLoaded):
+            if(self.allLoaded):
                 self.ui.tabWidget.setCurrentIndex(1)
+                self.ui.pushButtonOk.setEnabled(True)
         else:
             print "data not loaded"
         print "correspondence index at end is " + str(self.ui.correspondences.currentIndex())
