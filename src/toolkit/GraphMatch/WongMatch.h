@@ -21,11 +21,11 @@ namespace GraphMatch {
 
     class WongMatch {
         public:
-            Graph * patternGraph;
-            Graph * baseGraph;
+            Graph & patternGraph;
+            Graph & baseGraph;
         public:
-            WongMatch(Graph * patternGraph, Graph * baseGraph);
-            WongMatch(Graph * patternGraph, Graph * baseGraph,
+            WongMatch(Graph & pGraph, Graph & bGraph);
+            WongMatch(Graph & pGraph, Graph & bGraph,
                       int missingHelixCount, int missingSheetCount
                       );
             ~WongMatch();
@@ -54,7 +54,7 @@ namespace GraphMatch {
             PathGenerator * pathGenerator;
 
         private:
-            void init(Graph * patternGraph, Graph * baseGraph);
+            void init(Graph & pGraph, Graph & bGraph);
             double getC(int p, int qp);
             double getC(int j, int p, int qj, int qp);
             double getCost(int d, int m, int qj, int qp, bool debugMsg);
@@ -71,14 +71,14 @@ namespace GraphMatch {
 
     };
 
-    WongMatch::WongMatch(Graph * patternGraph,
-                         Graph * baseGraph)
+    WongMatch::WongMatch(Graph & pGraph,
+                         Graph & bGraph)
     {
         init(patternGraph, baseGraph);
     }
 
-    WongMatch::WongMatch(Graph * patternGraph,
-                         Graph * baseGraph, int missingHelixCount,
+    WongMatch::WongMatch(Graph & pGraph, Graph & bGraph,
+                         int missingHelixCount,
                          int missingSheetCount)
     {
         init(patternGraph, baseGraph);
@@ -103,8 +103,7 @@ namespace GraphMatch {
         delete pathGenerator;
     }
 
-    inline void WongMatch::init(Graph * patternGraph,
-                         Graph * baseGraph)
+    inline void WongMatch::init(Graph & pGraph, Graph & bGraph)
     {
 #ifdef VERBOSE
         cout << "Initializing search" << endl;
