@@ -121,11 +121,11 @@ namespace Visualization {
 
         fout<<correspondence.size()<<endl;
         for(unsigned int i = 0; i < correspondence.size(); i++) {
-            fout<<correspondence[i].GetNodeCount()<<" ";
-            for(int j = 0; j < correspondence[i].GetNodeCount(); j++) {
-                fout<<correspondence[i].GetSkeletonNode(j)<<" ";
+            fout<<correspondence[i].getNodeCount()<<" ";
+            for(int j = 0; j < correspondence[i].getNodeCount(); j++) {
+                fout<<correspondence[i].getSkeletonNode(j)<<" ";
             }
-            fout<<fixed<<setprecision(6)<<correspondence[i].GetCost()<<endl;
+            fout<<fixed<<setprecision(6)<<correspondence[i].getCost()<<endl;
         }
 
         fout.close();
@@ -197,13 +197,13 @@ namespace Visualization {
 
             // the following code iterates over the correspondence, finding a valid edge at each iteration.
             // start at node 0 of this result, continue until i is at last node
-            int numNodes = result.GetNodeCount();
-            for(int i = 0; i < result.GetNodeCount()-1; ) {
+            int numNodes = result.getNodeCount();
+            for(int i = 0; i < result.getNodeCount()-1; ) {
 
                 // set n1 to be the ith result. if the result is -1, increment i and repeat.
                 for(n1 = -1; n1 < 0; ) {
-                    n1 = result.GetSkeletonNode(i);
-                    sse1 = result.NodeToHelix(n1);
+                    n1 = result.getSkeletonNode(i);
+                    sse1 = result.nodeToHelix(n1);
                     i++;
                     // update the seqIndex
                     if (sequence->adjacencyMatrix[i][i][0] == GRAPHNODE_SHEET) {
@@ -213,14 +213,14 @@ namespace Visualization {
                 // set n2 to be the ith result. if the result is -1, increment i and repeat
                 //for(n2 = -1; n2 < 0l; ) {
                 for(n2 = -1; n2 < 0; ) {
-                    n2 = result.GetSkeletonNode(i);
-                    sse2 = result.NodeToHelix(n2);
+                    n2 = result.getSkeletonNode(i);
+                    sse2 = result.nodeToHelix(n2);
                     i++;
                     // update the seqIndex
                     if (sequence->adjacencyMatrix[i][i][0] == GRAPHNODE_SHEET) {
                         strandsPassed ++;
                     }
-                    if (i >= result.GetNodeCount()) {
+                    if (i >= result.getNodeCount()) {
                         //cout << "found skip edge at end of correspondence. breaking out of loop." << endl;
                         break;
                     }

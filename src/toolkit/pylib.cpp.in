@@ -496,12 +496,12 @@ BOOST_PYTHON_MODULE(@current_pylib@)
   
   class_<SSEResult>("SSEResult", init<>())
 //        .def("getNodeString", &SSEResult::GetNodeString)
-        .def("getCost", &SSEResult::GetCost)
-        .def("getNodeCount", &SSEResult::GetNodeCount)
-        .def("getHelixCount", &SSEResult::GetHelixCount)
+        .def("getCost", &SSEResult::getCost)
+        .def("getNodeCount", &SSEResult::getNodeCount)
+        .def("getHelixCount", &SSEResult::getHelixCount)
 //        .def("getSheetCount", &SSEResult::GetSheetCount)
-        .def("getSkeletonNode", &SSEResult::GetSkeletonNode)
-        .def("nodeToHelix", &SSEResult::NodeToHelix)      
+        .def("getSkeletonNode", &SSEResult::getSkeletonNode)
+        .def("nodeToHelix", &SSEResult::nodeToHelix)      
     ;
 
     class_<SecStruct>("SecStruct", init<>())

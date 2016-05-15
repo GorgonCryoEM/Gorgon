@@ -15,11 +15,11 @@ namespace GraphMatch {
         SSEResult(LinkedNode * node, int helixCount);
         SSEResult(vector<int> correspondence, double cost, int helixCount);
 
-        double GetCost();
-        int GetNodeCount();
-        int GetHelixCount();
-        int GetSkeletonNode(int sequenceNode);
-        int NodeToHelix(int nodeId);
+        double getCost();
+        int getNodeCount();
+        int getHelixCount();
+        int getSkeletonNode(int sequenceNode);
+        int nodeToHelix(int nodeId);
     private:
         vector<int> correspondence;
         double cost;
@@ -42,23 +42,23 @@ namespace GraphMatch {
 						  helixCount(nHelix)
     {}
 
-    double SSEResult::GetCost() {
+    double SSEResult::getCost() {
         return cost;
     }
 
-    int SSEResult::GetNodeCount() {
+    int SSEResult::getNodeCount() {
         return correspondence.size();
     }
 
-    int SSEResult::GetHelixCount() {
+    int SSEResult::getHelixCount() {
         return helixCount;
     }
 
-    int SSEResult::GetSkeletonNode(int sequenceNode) {
+    int SSEResult::getSkeletonNode(int sequenceNode) {
         return correspondence[sequenceNode];
     }
 
-    int SSEResult::NodeToHelix(int nodeId) {
+    int SSEResult::nodeToHelix(int nodeId) {
         if(nodeId >= 0) {
             if (nodeId < 2 * helixCount) {
                 return (int)(nodeId / 2);
