@@ -73,6 +73,7 @@ namespace GraphMatch {
 
     WongMatch::WongMatch(Graph & pGraph,
                          Graph & bGraph)
+                : patternGraph(pGraph), baseGraph(bGraph)
     {
         init(patternGraph, baseGraph);
     }
@@ -80,6 +81,7 @@ namespace GraphMatch {
     WongMatch::WongMatch(Graph & pGraph, Graph & bGraph,
                          int missingHelixCount,
                          int missingSheetCount)
+                : patternGraph(pGraph), baseGraph(bGraph)
     {
         init(patternGraph, baseGraph);
         this->nMissHelix = missingHelixCount;
