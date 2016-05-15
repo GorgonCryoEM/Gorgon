@@ -37,40 +37,9 @@ class SSEHelixCorrespondence(object):
         self.correspondenceLibrary = CorrespondenceLibrary()
         
         if auto:
-            self.run()
+            self.accept()
             self.correspondenceEngine.saveCorrespondenceToFile(self.output)
         
-    def run(self):
-        self.checkOk()
-        self.accept()
-        
-    def checkOk(self):
-        """
-        This checks if all files necessary for the correspondence search have been loaded. If so, the
-        correspondence search parameter tabs are enabled and a basic correspondence is created.   
-        """
-        print "begin checkOk"
-        print "correspondence index at beginning is "
-        print self.ui.correspondences.currentIndex()
-        
-        if(self.dataLoaded):
-            self.executed = False
-            self.createBasicCorrespondence()
-            print "after creating basic correspondence (1), secelDict has length " + str(len(self.correspondenceLibrary.structurePrediction.secelDict))
-            #self.createBasicCorrespondence()
-            print "after creating basic correspondence (2), secelDict has length " + str(len(self.correspondenceLibrary.structurePrediction.secelDict))
-            self.correspondenceLibrary.correspondenceList = self.populateEmptyResults(self.correspondenceLibrary)
-            print "correspondenceList has length " + str(len(self.correspondenceLibrary.correspondenceList))
-            self.populateComboBox(self.correspondenceLibrary)
-            self.viewer.makeSheetSurfaces(self.app.viewers['skeleton'].renderer.getOriginX(), self.app.viewers['skeleton'].renderer.getOriginY(), self.app.viewers['skeleton'].renderer.getOriginZ(), self.app.viewers['skeleton'].renderer.getSpacingX(), self.app.viewers['skeleton'].renderer.getSpacingY(), self.app.viewers['skeleton'].renderer.getSpacingZ())
-            if(self.allLoaded):
-                self.ui.tabWidget.setCurrentIndex(1)
-                self.ui.pushButtonOk.setEnabled(True)
-        else:
-            print "data not loaded"
-        print "correspondence index at end is " + str(self.ui.correspondences.currentIndex())
-        print "end checkOk"
-    
     def setConstants(self):
         #Data Sources tab
         #self.correspondenceEngine.setConstant("SSE_FILE_NAME", str(self.ui.lineEditHelixLengthFile.text()))
