@@ -158,6 +158,7 @@ namespace Visualization {
 
 
     inline int SSEEngine::GetSkeletonSSECount() {
+        cout<<"skeleton: "<<skeleton<<endl;
         return skeleton->skeletonHelixes.size();
     }
 
