@@ -29,8 +29,8 @@ using namespace std;
 			int match(Graph * sequenceGraph, Graph * skeletonGraph);
 			SSEResult getSolution(int rank);
 			void destruct();
-			Graph * loadSequence();
-			Graph * loadSkeleton();
+			virtual void loadSequence();
+			virtual void loadSkeleton();
 		protected:
 			WongMatch * matcher;
 	        Graph * skeleton;
@@ -38,7 +38,7 @@ using namespace std;
 		};
 
 
-		inline Graph * Matcher::loadSequence() {
+		inline void Matcher::loadSequence() {
 			#ifdef GORGON_DEBUG
 				cout << "In QueryEngine::LoadSequenceGraph" << endl;
 			#endif
@@ -53,17 +53,16 @@ using namespace std;
 				graph = PDBReader::ReadFile(SEQUENCE_FILE_NAME.c_str());
 			else if (type == "SEQ")
 				graph = SEQReader::ReadFile(SEQUENCE_FILE_NAME.c_str());
-			else
-				return NULL;
+
 			finish = clock();
 			#ifdef VERBOSE
 				printf("\tReading Pattern file Took %f seconds.\n", (double) (finish - start) / (double) CLOCKS_PER_SEC ) ;
 				graph->print();
 			#endif
-			return graph;
+			sequence = graph;
 		}
 
-		inline Graph * Matcher::loadSkeleton() {
+		inline void Matcher::loadSkeleton() {
 			clock_t start, finish;
 			Graph * graph;
 			#ifdef VERBOSE
@@ -76,7 +75,7 @@ using namespace std;
 				printf("\033[32m\tReading Base file Took %f seconds.\n\033[0m", (double) (finish - start) / (double) CLOCKS_PER_SEC ) ;
 				graph->print();
 			#endif
-			return graph;
+			skeleton = graph;
 		}
 
 

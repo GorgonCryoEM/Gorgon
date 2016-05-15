@@ -29,9 +29,6 @@ namespace GraphMatch {
         bool getConstantBool(string token);
         void clearAllConstraints();
 
-        // Graph Loading
-        void loadSequence();
-        void loadSkeleton();
         // Process Execution
         virtual int executeQuery();
         // Result Retrieval
@@ -109,31 +106,6 @@ namespace GraphMatch {
     inline void IBackEnd::clearAllConstraints() {
         ClearAllowedConstraints();
         ClearNotAllowedConstraints();
-    }
-
-    inline void IBackEnd::loadSequence() {
-        #ifdef GORGON_DEBUG
-        cout << "In BackEndInterface::LoadSequenceGraph" << endl;
-        #endif
-        if(sequence != NULL) {
-            delete sequence;
-        }
-        sequence = Matcher::loadSequence();
-        //sequence->print();
-    }
-
-    inline void IBackEnd::loadSkeleton() {
-        if(skeleton != NULL) {
-            delete skeleton;
-        }
-        skeleton = Matcher::loadSkeleton();
-        #ifdef GORGON_DEBUG
-              cout<<"\033[32mDEBUG: File:   BackEndInterface.h"<<endl;
-              cout<<"DEBUG: Method: BackEndInterface::LoadSkeletonGraph()\033[0m"<<endl;
-              skeleton->print();
-              cout<<"\033[32mDEBUG: END: File:   BackEndInterface.h\033[0m"<<endl;
-        #endif
-
     }
 
     inline int IBackEnd::executeQuery() {
