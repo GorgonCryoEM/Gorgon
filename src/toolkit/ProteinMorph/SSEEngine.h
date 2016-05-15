@@ -45,18 +45,9 @@ namespace Visualization {
     private:
         vector<SSEResult> correspondence;
         int correspondenceIndex;
-
-        // Attributes for path calculation
-        SkeletonMesh * pathMesh;
-        SkeletonMesh * singlePathMesh;
-        map<TKey, vector<TKey> > helixStartPoints;
-        map<TKey, vector<TKey> > helixEndPoints;
-        int pathCount;
-
     };
 
     inline SSEEngine::SSEEngine()
-    						: pathCount(0)
     {
         correspondenceIndex = -1;
     }
