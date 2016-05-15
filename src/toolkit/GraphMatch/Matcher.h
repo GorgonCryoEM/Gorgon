@@ -27,12 +27,14 @@ using namespace std;
 		class Matcher {
 		public:
 			int match(Graph * sequenceGraph, Graph * skeletonGraph);
-			SSEResult GetSolution(int rank);
+			SSEResult getSolution(int rank);
 			void destruct();
 			Graph * loadSequence();
 			Graph * loadSkeleton();
-		private:
+		protected:
 			WongMatch * matcher;
+	        Graph * skeleton;
+	        Graph * sequence;
 		};
 
 
@@ -97,7 +99,7 @@ using namespace std;
 			return matchCount;
 		}
 
-		inline SSEResult Matcher::GetSolution(int rank) {
+		inline SSEResult Matcher::getSolution(int rank) {
 			return matcher->GetResult(rank);
 		}
 

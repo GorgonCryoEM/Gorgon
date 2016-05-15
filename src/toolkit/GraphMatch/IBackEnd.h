@@ -13,7 +13,7 @@ using namespace std;
 
 namespace GraphMatch {
 
-    class IBackEnd {
+    class IBackEnd : public Matcher {
     public:
         IBackEnd();
         virtual ~IBackEnd();
@@ -39,14 +39,9 @@ namespace GraphMatch {
         // Cleanup
         void cleanupMemory();
     protected:
-        Matcher * matcher;
-        Graph * skeleton;
-        Graph * sequence;
     };
 
-    inline IBackEnd::IBackEnd(): skeleton(NULL), sequence(NULL) {
-        matcher = new Matcher();
-    }
+    inline IBackEnd::IBackEnd() {}
 
     inline IBackEnd::~IBackEnd() {
         delete matcher;
@@ -123,7 +118,7 @@ namespace GraphMatch {
         if(sequence != NULL) {
             delete sequence;
         }
-        sequence = matcher->loadSequence();
+        sequence = Matcher::loadSequence();
         //sequence->print();
     }
 
@@ -131,7 +126,7 @@ namespace GraphMatch {
         if(skeleton != NULL) {
             delete skeleton;
         }
-        skeleton = matcher->loadSkeleton();
+        skeleton = Matcher::loadSkeleton();
         #ifdef GORGON_DEBUG
               cout<<"\033[32mDEBUG: File:   BackEndInterface.h"<<endl;
               cout<<"DEBUG: Method: BackEndInterface::LoadSkeletonGraph()\033[0m"<<endl;
@@ -143,17 +138,17 @@ namespace GraphMatch {
 
     inline int IBackEnd::executeQuery() {
         if(skeleton != NULL && sequence != NULL)
-            return matcher->match(sequence, skeleton);
+            return match(sequence, skeleton);
         else
             return 0;
     }
 
     inline SSEResult IBackEnd::getResult(int rank) {
-        return matcher->GetSolution(rank);
+        return getSolution(rank);
     }
 
     inline void IBackEnd::cleanupMemory() {
-        matcher->destruct();
+        destruct();
     }
 }
 
