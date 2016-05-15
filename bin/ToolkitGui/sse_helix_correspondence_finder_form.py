@@ -512,25 +512,25 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog, SSEHelixCorrespondence):
         # now that constraints are stored, clear from c++ class
         self.correspondenceEngine.clearAllConstraints()
 
-#     def populateEmptyResults(self, library):
-#         """ add empty result before correspondence search is started """
-#
-#         # create one empty result
-#         corrList = []
-#         matchList = []
-#
-#         # build an empty correspondence result by creating an empty match for each secondary structure element.
-#         for i in range(len(library.structurePrediction.secelDict)):
-#             observed = None
-#             predicted = library.structurePrediction.secelDict[i]
-#             currentMatch = Match(observed, predicted, Match.FORWARD)
-#             currentMatch.constrained = False
-#             matchList.append(currentMatch)
-#         corr = Correspondence(library=library, matchList=matchList, score=0)
-#         self.lastCorrespondence = corr # used in accept() method
-#         # add the empty correspondence to the list
-#         corrList.append(corr)
-#         return corrList
+    def populateEmptyResults(self, library):
+        """ add empty result before correspondence search is started """
+
+        # create one empty result
+        corrList = []
+        matchList = []
+
+        # build an empty correspondence result by creating an empty match for each secondary structure element.
+        for i in range(len(library.structurePrediction.secelDict)):
+            observed = None
+            predicted = library.structurePrediction.secelDict[i]
+            currentMatch = Match(observed, predicted, Match.FORWARD)
+            currentMatch.constrained = False
+            matchList.append(currentMatch)
+        corr = Correspondence(library=library, matchList=matchList, score=0)
+        self.lastCorrespondence = corr # used in accept() method
+        # add the empty correspondence to the list
+        corrList.append(corr)
+        return corrList
             
     def populateResults(self, library):
 
