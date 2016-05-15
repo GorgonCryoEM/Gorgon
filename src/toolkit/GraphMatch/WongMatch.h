@@ -4,7 +4,7 @@
 #define TOOLKIT_GRAPHMATCH_WONGMATCH_H
 
 //#include "Graph.h"
-#include "Foundation/LinkedNode.h"
+#include "Foundation/Node.h"
 //#include "NodeList.h"
 //#include "Core/GlobalConstants.h"
 #include "PathGenerator.h"

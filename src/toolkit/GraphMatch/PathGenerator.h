@@ -1,9 +1,9 @@
 #ifndef TOOLKIT_GRAPHMATCH_PATHGENERATOR_H
 #define TOOLKIT_GRAPHMATCH_PATHGENERATOR_H
 
-//#include "Graph.h"
-//#include "LinkedNode.h"
-//#include "LinkedNodeStub.h"
+#include "Graph.h"
+//#include "Node.h"
+//#include "NodeStub.h"
 //#include <Core/volume.h>
 //#include "VectorMath.h"
 #include <vector>

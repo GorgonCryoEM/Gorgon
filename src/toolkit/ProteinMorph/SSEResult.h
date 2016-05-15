@@ -1,7 +1,7 @@
 #ifndef TOOLKIT_GRAPHMATCH_SSE_CORRESPONDENCE_RESULT_H
 #define TOOLKIT_GRAPHMATCH_SSE_CORRESPONDENCE_RESULT_H
 
-#include "Foundation/LinkedNode.h"
+#include "Foundation/Node.h"
 //#include <vector>
 //#include <cstdio>
 
