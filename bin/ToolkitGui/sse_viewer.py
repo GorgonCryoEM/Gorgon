@@ -32,7 +32,7 @@ class SSEViewer(BaseViewer):
         self.helixLoaded = False
         self.sheetLoaded = False
         self.renderer = SSERenderer()
-        self.correspondenceEngine = SSEEngine()
+#         self.correspondenceEngine = SSEEngine()
         self.createUI()
         self.selectEnabled = True
         self.model2Visible = True
