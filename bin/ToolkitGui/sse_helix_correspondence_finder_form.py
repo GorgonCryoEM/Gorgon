@@ -185,40 +185,40 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog, SSEHelixCorrespondence):
 #         self.loadSettings()
 # #         self.bringToFront()
         
-#     def checkOk(self):
-#         """
-#         This checks if all files necessary for the correspondence search have been loaded. If so, the
-#         correspondence search parameter tabs are enabled and a basic correspondence is created.
-#         """
-#         print "begin checkOk"
-#         print "correspondence index at beginning is "
-#         print self.ui.comboBoxCorrespondences.currentIndex()
-#
-#         allLoaded = True
-#
-#         self.dataLoaded = True
-#         self.ui.pushButtonOk.setEnabled(self.dataLoaded)
-#
-#         self.ui.tabWidget.setTabEnabled(1, self.dataLoaded)
-#         self.ui.tabWidget.setTabEnabled(2, self.dataLoaded)
-#         self.ui.tabWidget.setTabEnabled(3, self.dataLoaded)
-#         self.ui.tabWidget.setTabEnabled(4, self.dataLoaded)
-#         if(True):
-#             self.executed = False
-#             self.createBasicCorrespondence()
-#             print "after creating basic correspondence (1), secelDict has length " + str(len(self.viewer.correspondenceLibrary.structurePrediction.secelDict))
-#             #self.createBasicCorrespondence()
-#             print "after creating basic correspondence (2), secelDict has length " + str(len(self.viewer.correspondenceLibrary.structurePrediction.secelDict))
-#             self.viewer.correspondenceLibrary.correspondenceList = self.populateEmptyResults(self.viewer.correspondenceLibrary)
-#             print "correspondenceList has length " + str(len(self.viewer.correspondenceLibrary.correspondenceList))
-#             self.populateComboBox(self.viewer.correspondenceLibrary)
-#             self.viewer.makeSheetSurfaces(self.app.skeletonViewer.renderer.getOriginX(), self.app.skeletonViewer.renderer.getOriginY(), self.app.skeletonViewer.renderer.getOriginZ(), self.app.skeletonViewer.renderer.getSpacingX(), self.app.skeletonViewer.renderer.getSpacingY(), self.app.skeletonViewer.renderer.getSpacingZ())
-#             if(allLoaded):
-#                 self.ui.tabWidget.setCurrentIndex(1)
-#         else:
-#             print "data not loaded"
-#         print "correspondence index at end is " + str(self.ui.comboBoxCorrespondences.currentIndex())
-#         print "end checkOk"
+    def checkOk(self):
+        """
+        This checks if all files necessary for the correspondence search have been loaded. If so, the
+        correspondence search parameter tabs are enabled and a basic correspondence is created.
+        """
+        print "begin checkOk"
+        print "correspondence index at beginning is "
+        print self.ui.comboBoxCorrespondences.currentIndex()
+
+        allLoaded = True
+
+        self.dataLoaded = True
+        self.ui.pushButtonOk.setEnabled(self.dataLoaded)
+
+        self.ui.tabWidget.setTabEnabled(1, self.dataLoaded)
+        self.ui.tabWidget.setTabEnabled(2, self.dataLoaded)
+        self.ui.tabWidget.setTabEnabled(3, self.dataLoaded)
+        self.ui.tabWidget.setTabEnabled(4, self.dataLoaded)
+        if(True):
+            self.executed = False
+            self.createBasicCorrespondence()
+            print "after creating basic correspondence (1), secelDict has length " + str(len(self.viewer.correspondenceLibrary.structurePrediction.secelDict))
+            #self.createBasicCorrespondence()
+            print "after creating basic correspondence (2), secelDict has length " + str(len(self.viewer.correspondenceLibrary.structurePrediction.secelDict))
+            self.viewer.correspondenceLibrary.correspondenceList = self.populateEmptyResults(self.viewer.correspondenceLibrary)
+            print "correspondenceList has length " + str(len(self.viewer.correspondenceLibrary.correspondenceList))
+            self.populateComboBox(self.viewer.correspondenceLibrary)
+            self.viewer.makeSheetSurfaces(self.app.skeletonViewer.renderer.getOriginX(), self.app.skeletonViewer.renderer.getOriginY(), self.app.skeletonViewer.renderer.getOriginZ(), self.app.skeletonViewer.renderer.getSpacingX(), self.app.skeletonViewer.renderer.getSpacingY(), self.app.skeletonViewer.renderer.getSpacingZ())
+            if(allLoaded):
+                self.ui.tabWidget.setCurrentIndex(1)
+        else:
+            print "data not loaded"
+        print "correspondence index at end is " + str(self.ui.comboBoxCorrespondences.currentIndex())
+        print "end checkOk"
     
 #     def loadSettings(self):
 #
