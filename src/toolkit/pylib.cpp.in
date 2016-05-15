@@ -520,21 +520,21 @@ BOOST_PYTHON_MODULE(@current_pylib@)
         .def("getCornerCell3", &Shape::GetCornerCell3)
     ;
 
-    bool (SSEEngine::*SetConstant1)(string, string)   = &SSEEngine::SetConstant;
-    bool (SSEEngine::*SetConstant2)(string, double)   = &SSEEngine::SetConstant;
-    bool (SSEEngine::*SetConstant3)(string, int)      = &SSEEngine::SetConstant;
-    bool (SSEEngine::*SetConstant4)(string, bool)     = &SSEEngine::SetConstant;
+    bool (SSEEngine::*setConstant1)(string, string)   = &SSEEngine::setConstant;
+    bool (SSEEngine::*setConstant2)(string, double)   = &SSEEngine::setConstant;
+    bool (SSEEngine::*setConstant3)(string, int)      = &SSEEngine::setConstant;
+    bool (SSEEngine::*setConstant4)(string, bool)     = &SSEEngine::setConstant;
 
     class_<SSEEngine>("SSEEngine", init<>())
-        .def("setConstant", SetConstant1)
-        .def("setConstant", SetConstant2)
-        .def("setConstantInt", SetConstant3)
-        .def("setConstantBool", SetConstant4)
-        .def("getConstantString", &SSEEngine::GetConstantString)
-        .def("getConstantDouble", &SSEEngine::GetConstantDouble)
-        .def("getConstantInt", &SSEEngine::GetConstantInt)
-        .def("getConstantBool", &SSEEngine::GetConstantBool)
-        .def("clearAllConstraints", &SSEEngine::ClearAllConstraints)          
+        .def("setConstant", setConstant1)
+        .def("setConstant", setConstant2)
+        .def("setConstantInt", setConstant3)
+        .def("setConstantBool", setConstant4)
+        .def("getConstantString", &SSEEngine::getConstantString)
+        .def("getConstantDouble", &SSEEngine::getConstantDouble)
+        .def("getConstantInt", &SSEEngine::getConstantInt)
+        .def("getConstantBool", &SSEEngine::getConstantBool)
+        .def("clearAllConstraints", &SSEEngine::clearAllConstraints)          
 //        .def("setHelixConstraint", &SSEEngine::SetHelixConstraint)            
 //        .def("getHelixConstraintFwd", &SSEEngine::GetHelixConstraintFwd)          
 //        .def("getHelixConstraintRev", &SSEEngine::GetHelixConstraintRev)          
@@ -547,17 +547,17 @@ BOOST_PYTHON_MODULE(@current_pylib@)
         .def("loadSkeletonGraph", &SSEEngine::loadSkeleton)
         .def("loadSequenceGraph", &SSEEngine::loadSequence)
 //        .def("loadCorrespondenceFromFile", &SSEEngine::load)
-        .def("executeQuery", &SSEEngine::ExecuteQuery)
-        .def("cleanupMemory", &SSEEngine::CleanupMemory)
-        .def("getResult", &SSEEngine::GetResult)
+        .def("executeQuery", &SSEEngine::executeQuery)
+        .def("cleanupMemory", &SSEEngine::cleanupMemory)
+        .def("getResult", &SSEEngine::getResult)
 //        .def("getResultCount", &SSEEngine::GetResultCount)
 //        .def("getSupportedLoadFileFormats", &SSEEngine::getSupportedLoadFileFormats)
 //        .def("getSupportedSaveFileFormats", &SSEEngine::getSupportedSaveFileFormats)
-        .def("getSkeletonSSE", &SSEEngine::GetSkeletonSSE, return_value_policy<reference_existing_object>())
+        .def("getSkeletonSSE", &SSEEngine::getSkeletonSSE, return_value_policy<reference_existing_object>())
 //        .def("getSequenceSSE", &SSEEngine::GetSequenceSSE, return_value_policy<reference_existing_object>())
-        .def("getSkeletonSSECount", &SSEEngine::GetSkeletonSSECount)
+        .def("getSkeletonSSECount", &SSEEngine::getSkeletonSSECount)
 //        .def("getSequenceSSECount", &SSEEngine::GetSequenceSSECount)
-        .def("setVisibleCorrespondence", &SSEEngine::SetVisibleCorrespondence)
+        .def("setVisibleCorrespondence", &SSEEngine::setVisibleCorrespondence)
         .def("draw", &SSEEngine::draw)
         .def("drawAllPaths", &SSEEngine::drawAllPaths)
 //        .def("initializePathFinder", &SSEEngine::InitializePathFinder)

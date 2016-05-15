@@ -29,16 +29,16 @@ namespace Visualization {
     public:
         SSEEngine();
 
-        int ExecuteQuery();
-        int GetResultCount();
+        int executeQuery();
+        int getResultCount();
         int load(string fileName);
-        SSEResult GetResult(int rank);
+        SSEResult getResult(int rank);
         void save(string fileName);
-        Shape * GetSkeletonSSE(int sseId);
-        SecStruct * GetSequenceSSE(int sseId);
-        int GetSkeletonSSECount();
-        int GetSequenceSSECount();
-        void SetVisibleCorrespondence(int correspondenceIndex);
+        Shape * getSkeletonSSE(int sseId);
+        SecStruct * getSequenceSSE(int sseId);
+        int getSkeletonSSECount();
+        int getSequenceSSECount();
+        void setVisibleCorrespondence(int correspondenceIndex);
         void draw(int sceneIndex);
         void drawAllPaths(int sceneIndex, bool showPaths, bool showHelixCorners, bool showSheetCorners, bool showSheetColors);
 
@@ -52,7 +52,7 @@ namespace Visualization {
         correspondenceIndex = -1;
     }
 
-    inline int SSEEngine::ExecuteQuery() {
+    inline int SSEEngine::executeQuery() {
         if(skeleton != NULL && sequence != NULL) {
             int resultCount = matcher->match(sequence, skeleton);
             correspondence.clear();
@@ -65,7 +65,7 @@ namespace Visualization {
         }
     }
 
-    inline int SSEEngine::GetResultCount() {
+    inline int SSEEngine::getResultCount() {
         return correspondence.size();
     }
 
@@ -102,7 +102,7 @@ namespace Visualization {
         return correspondenceCount;
     }
 
-    inline SSEResult SSEEngine::GetResult(int rank) {
+    inline SSEResult SSEEngine::getResult(int rank) {
         // TODO: Fix!
         //if(rank <= (int)correspondence.size() && (rank >= 1)) {
             return correspondence[rank-1];
@@ -131,7 +131,7 @@ namespace Visualization {
         fout.close();
     }
 
-    inline Shape * SSEEngine::GetSkeletonSSE(int sseId) {
+    inline Shape * SSEEngine::getSkeletonSSE(int sseId) {
         if((skeleton != NULL) && (sseId < (int)skeleton->skeletonHelixes.size())) {
             return skeleton->skeletonHelixes[sseId];
         } else {
@@ -139,7 +139,7 @@ namespace Visualization {
         }
     }
 
-    inline SecStruct * SSEEngine::GetSequenceSSE(int sseId) {
+    inline SecStruct * SSEEngine::getSequenceSSE(int sseId) {
         if((sequence != NULL) && (sseId < (int)sequence->pdbStructures.size())) {
             return sequence->pdbStructures[sseId];
         } else {
@@ -148,16 +148,16 @@ namespace Visualization {
     }
 
 
-    inline int SSEEngine::GetSkeletonSSECount() {
+    inline int SSEEngine::getSkeletonSSECount() {
         cout<<"skeleton: "<<skeleton<<endl;
         return skeleton->skeletonHelixes.size();
     }
 
-    inline int SSEEngine::GetSequenceSSECount() {
+    inline int SSEEngine::getSequenceSSECount() {
         return sequence->pdbStructures.size();
     }
 
-    inline void SSEEngine::SetVisibleCorrespondence(int correspondenceIndex) {
+    inline void SSEEngine::setVisibleCorrespondence(int correspondenceIndex) {
         this->correspondenceIndex = correspondenceIndex;
     }
 
@@ -172,7 +172,7 @@ namespace Visualization {
         int n1, n2, sse1, sse2;
         vector<Vec3I> path;
         if(correspondenceIndex >= 0) {
-            SSEResult result = GetResult(correspondenceIndex + 1);
+            SSEResult result = getResult(correspondenceIndex + 1);
 
             glPushAttrib(GL_LIGHTING_BIT | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT);
             glDisable(GL_LIGHTING);

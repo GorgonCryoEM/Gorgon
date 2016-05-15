@@ -19,25 +19,25 @@ namespace GraphMatch {
         virtual ~IBackEnd();
         // Initialization Methods
         void load(string fileName);
-        bool SetConstant(string token, string value);
-        bool SetConstant(string token, double value);
-        bool SetConstant(string token, int value);
-        bool SetConstant(string token, bool value);
-        string GetConstantString(string token);
-        double GetConstantDouble(string token);
-        int GetConstantInt(string token);
-        bool GetConstantBool(string token);
-        void ClearAllConstraints();
+        bool setConstant(string token, string value);
+        bool setConstant(string token, double value);
+        bool setConstant(string token, int value);
+        bool setConstant(string token, bool value);
+        string getConstantString(string token);
+        double getConstantDouble(string token);
+        int getConstantInt(string token);
+        bool getConstantBool(string token);
+        void clearAllConstraints();
 
         // Graph Loading
         void loadSequence();
         void loadSkeleton();
         // Process Execution
-        virtual int ExecuteQuery();
+        virtual int executeQuery();
         // Result Retrieval
-        virtual SSEResult GetResult(int rank);
+        virtual SSEResult getResult(int rank);
         // Cleanup
-        void CleanupMemory();
+        void cleanupMemory();
     protected:
         Matcher * matcher;
         Graph * skeleton;
@@ -62,23 +62,23 @@ namespace GraphMatch {
         LoadConstantsFromFile(fileName);
     }
 
-    inline bool IBackEnd::SetConstant(string token, string value) {
+    inline bool IBackEnd::setConstant(string token, string value) {
         return setConstantFree(token, value);
     }
 
-    inline bool IBackEnd::SetConstant(string token, double value) {
+    inline bool IBackEnd::setConstant(string token, double value) {
         return setConstantFree(token, value);
     }
 
-    inline bool IBackEnd::SetConstant(string token, int value) {
+    inline bool IBackEnd::setConstant(string token, int value) {
         return setConstantFree(token, value);
     }
 
-    inline bool IBackEnd::SetConstant(string token, bool value) {
+    inline bool IBackEnd::setConstant(string token, bool value) {
         return setConstantFree(token, value);
     }
 
-    inline string IBackEnd::GetConstantString(string token) {
+    inline string IBackEnd::getConstantString(string token) {
         string  sVal;
         int iVal;
         double dVal;
@@ -87,7 +87,7 @@ namespace GraphMatch {
         return sVal;
     }
 
-    inline double IBackEnd::GetConstantDouble(string token) {
+    inline double IBackEnd::getConstantDouble(string token) {
         int iVal;
         double dVal;
         bool bVal;
@@ -95,7 +95,7 @@ namespace GraphMatch {
         return dVal;
     }
 
-    inline int IBackEnd::GetConstantInt(string token) {
+    inline int IBackEnd::getConstantInt(string token) {
         int iVal;
         double dVal;
         bool bVal;
@@ -103,7 +103,7 @@ namespace GraphMatch {
         return iVal;
     }
 
-    inline bool IBackEnd::GetConstantBool(string token) {
+    inline bool IBackEnd::getConstantBool(string token) {
         int iVal;
         double dVal;
         bool bVal;
@@ -111,7 +111,7 @@ namespace GraphMatch {
         return bVal;
     }
 
-    inline void IBackEnd::ClearAllConstraints() {
+    inline void IBackEnd::clearAllConstraints() {
         ClearAllowedConstraints();
         ClearNotAllowedConstraints();
     }
@@ -141,18 +141,18 @@ namespace GraphMatch {
 
     }
 
-    inline int IBackEnd::ExecuteQuery() {
+    inline int IBackEnd::executeQuery() {
         if(skeleton != NULL && sequence != NULL)
             return matcher->match(sequence, skeleton);
         else
             return 0;
     }
 
-    inline SSEResult IBackEnd::GetResult(int rank) {
+    inline SSEResult IBackEnd::getResult(int rank) {
         return matcher->GetSolution(rank);
     }
 
-    inline void IBackEnd::CleanupMemory() {
+    inline void IBackEnd::cleanupMemory() {
         matcher->destruct();
     }
 }
