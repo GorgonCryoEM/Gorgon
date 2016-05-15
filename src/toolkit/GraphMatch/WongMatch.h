@@ -41,12 +41,12 @@ namespace GraphMatch {
             clock_t timeInGetB;
             clock_t timeInQueue;
 #endif
-            LinkedNode * currentNode;
+            Node * currentNode;
 
-            typedef Pair<double, LinkedNode *> Elem;
+            typedef Pair<double, Node *> Elem;
             priority_queue<Elem> q;
 
-            vector<LinkedNodeStub*> usedNodes;
+            vector<NodeStub*> usedNodes;
             int nMissHelix;
             int nMissSheet;
             int nExpand;
@@ -65,7 +65,7 @@ namespace GraphMatch {
             double getKPrime(int i, int q);
             double getF();
             void popBestNode(); // Gets the best (first) node from the active nodes list.
-            bool expandNode(LinkedNodeStub * currentStub); // Expands all the children of the current node.
+            bool expandNode(NodeStub * currentStub); // Expands all the children of the current node.
             void normalizeGraphs();
             void normalizeSheets();
             int bestMatches[RESULT_COUNT][MAX_NODES];
@@ -87,7 +87,7 @@ namespace GraphMatch {
             delete usedNodes[i];
         }
 
-        LinkedNode * tempNode;
+        Node * tempNode;
         while(!q.empty()) {
             Elem res = q.top();
             tempNode = res.second;
@@ -201,12 +201,12 @@ namespace GraphMatch {
 #endif
 
         // create and set up a new node to start the search
-        currentNode = new LinkedNode();
+        currentNode = new Node();
         for(int j = 1; j <= patternGraph.nodeCount; j++) {
-            LinkedNode::AddNodeToBitmap(currentNode->m1Bitmap, j);
+            Node::AddNodeToBitmap(currentNode->m1Bitmap, j);
         }
         for(int j = 1; j <= baseGraph.nodeCount; j++) {
-            LinkedNode::AddNodeToBitmap(currentNode->m2Bitmap, j);
+            Node::AddNodeToBitmap(currentNode->m2Bitmap, j);
         }
         q.push(Elem(currentNode->cost, currentNode));
         pathGenerator = new PathGenerator(&baseGraph);
@@ -252,7 +252,7 @@ namespace GraphMatch {
                 // otherwise, expand currentNode and adds its children to usedNodes
             }
             else {
-                LinkedNodeStub * currentStub = new LinkedNodeStub(*currentNode);
+                NodeStub * currentStub = new NodeStub(*currentNode);
                 if(expandNode(currentStub)) {
                     usedNodes.push_back(currentStub);
                 }
@@ -271,7 +271,7 @@ namespace GraphMatch {
         }
         usedNodes.clear();
 
-        LinkedNode * tempNode;
+        Node * tempNode;
         while(!q.empty()) {
             Elem res = q.top();
             tempNode = res.second;
@@ -647,11 +647,11 @@ namespace GraphMatch {
     // if an edge is found, match the pattern graph to that edge and add the match to the queue.
     // also match edges that include skip edges in the pattern graph
     // costs of matches are determined by the GetC method
-    inline bool WongMatch::expandNode(LinkedNodeStub * currentStub) {
+    inline bool WongMatch::expandNode(NodeStub * currentStub) {
         bool expanded = false;
         nExpand++;
 
-        LinkedNode * temp;
+        Node * temp;
         double edgeCost;
 #ifdef VERBOSE
         if(longestMatch < currentNode->depth) {
@@ -671,7 +671,7 @@ namespace GraphMatch {
             //   or
             //   i is in the currentNode bitmap, and there is an edge in baseGraph between currentNode and node i
             if(    (currentNode->depth == 0)
-                || (LinkedNode::IsNodeInBitmap(currentNode->m2Bitmap, i)
+                || (Node::IsNodeInBitmap(currentNode->m2Bitmap, i)
                      && baseGraph.edgeExists(currentNode->n2Node - 1, i - 1)
                    )
                 ) {
@@ -725,7 +725,7 @@ namespace GraphMatch {
 
                         // generate a current node, marking it as revisitable or not depending on result from test
                         // the constructor marches forward along the sequence, skipping j nodes
-                        currentNode = new LinkedNode(currentNode, currentStub,
+                        currentNode = new Node(currentNode, currentStub,
                                                 i, skippedHelixNodes,
                                                 skippedSheetNodes, revisitable);
 
@@ -816,7 +816,7 @@ namespace GraphMatch {
 
             if(notConstrained) {
                 temp = currentNode;
-                currentNode = new LinkedNode(*temp);
+                currentNode = new Node(*temp);
                 currentNode->depth = (char)patternGraph.nodeCount;
                 currentNode->costGStar  = temp->costGStar;
                 currentNode->costGStar += getPenaltyCost(temp->n1Node, remainingHelixNodes + remainingSheetNodes, false);

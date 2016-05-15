@@ -1,40 +1,17 @@
-#ifndef SRC_TOOLKIT_FOUNDATION_LINKEDNODE_H
-#define SRC_TOOLKIT_FOUNDATION_LINKEDNODE_H
+/*
+ * Node.cpp
+ *
+ * Author: shadow_walker <shadowwalkersb@gmail.com>
+ *
+ */
 
-//#include <vector>
-//#include "Core/GlobalConstants.h"
-#include "LinkedNodeStub.h"
-//#include <string>
-//#include <cassert>
+#include "Node.h"
+
 #include "GraphMatch/Graph.h"
 
-using namespace std;
-
 namespace GraphMatch {
-    class LinkedNode : public LinkedNodeStub {
-    public:
-        unsigned long long m1Bitmap;
-        unsigned long long m2Bitmap;
-        char missingNodesUsed;
-        char missingHelixNodesUsed;
-        char missingSheetNodesUsed;
-        char depth;
-        double cost;
-        double costGStar;
-    public:
-        LinkedNode();
-        LinkedNode(LinkedNode * olderNode, LinkedNodeStub * olderStub,
-                   int n2Node, int dummyHelixCount, int dummySheetCount,
-                   bool allowRevisit);
 
-        vector<int> GetNodeCorrespondence();
-        double GetCost();
-        static void AddNodeToBitmap(unsigned long long & bitmap, int node);
-        static void RemoveNodeFromBitmap(unsigned long long & bitmap, int node);
-        static bool IsNodeInBitmap(unsigned long long bitmap, int node);
-    };
-
-    LinkedNode::LinkedNode() {
+    Node::Node() {
         cost = 0;
         n1Node = 0;
         n2Node = 0;
@@ -48,7 +25,7 @@ namespace GraphMatch {
         depth = 0;
     }
 
-    LinkedNode::LinkedNode(LinkedNode * olderNode, LinkedNodeStub * olderStub,
+    Node::Node(Node * olderNode, NodeStub * olderStub,
                            int n2Node, int dummyHelixCount, int dummySheetCount,
                            bool allowRevisit)
     {
@@ -60,11 +37,11 @@ namespace GraphMatch {
         this->m2Bitmap   = olderNode->m2Bitmap;
         // remove all recently matched sequence graph nodes from bitmap
         for(int i = olderNode->n1Node + 1; i <= this->n1Node; i++) {
-            LinkedNode::RemoveNodeFromBitmap(this->m1Bitmap, i);
+            Node::RemoveNodeFromBitmap(this->m1Bitmap, i);
         }
         if (!allowRevisit) {
             // remove the recently matched pattern graph node from bitmap
-            LinkedNode::RemoveNodeFromBitmap(this->m2Bitmap, this->n2Node);
+            Node::RemoveNodeFromBitmap(this->m2Bitmap, this->n2Node);
         }
         this->missingNodesUsed      = olderNode->missingNodesUsed      + (char)dummyHelixCount + (char)dummySheetCount;
         this->missingHelixNodesUsed = olderNode->missingHelixNodesUsed + (char)dummyHelixCount;
@@ -74,12 +51,12 @@ namespace GraphMatch {
 
 
 
-    inline vector<int> LinkedNode::GetNodeCorrespondence() {
+    vector<int> Node::GetNodeCorrespondence() {
         vector<bool> used(MAX_NODES, false);
         vector<int>    n1(MAX_NODES);
         vector<int>    n2(MAX_NODES);
 
-        LinkedNodeStub * currentNode = this;
+        NodeStub * currentNode = this;
         int top = 0;
 
         for(;
@@ -122,22 +99,21 @@ namespace GraphMatch {
         return correspondance;
     }
 
-    inline double LinkedNode::GetCost() {
+    double Node::GetCost() {
         return cost;
     }
 
-    inline void LinkedNode::AddNodeToBitmap(unsigned long long & bitmap, int node) {
+    void Node::AddNodeToBitmap(unsigned long long & bitmap, int node) {
         bitmap = bitmap | ((unsigned long long)1 << node);
     }
 
-    inline void LinkedNode::RemoveNodeFromBitmap(unsigned long long & bitmap, int node) {
+    void Node::RemoveNodeFromBitmap(unsigned long long & bitmap, int node) {
         bitmap = bitmap - ((unsigned long long)1 << node);
     }
 
-    inline bool LinkedNode::IsNodeInBitmap(unsigned long long bitmap, int node) {
+    bool Node::IsNodeInBitmap(unsigned long long bitmap, int node) {
         unsigned long long bitvalue = ((unsigned long long)1 << node);
         return ((bitmap & bitvalue) == bitvalue);
     }
 
-}
-#endif
+} /* namespace GraphMatch */

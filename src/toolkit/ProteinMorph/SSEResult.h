@@ -12,7 +12,7 @@ namespace GraphMatch {
     class SSEResult {
     public:
         SSEResult();
-        SSEResult(LinkedNode * node, int helixCount);
+        SSEResult(Node * node, int helixCount);
         SSEResult(vector<int> correspondence, double cost, int helixCount);
 
         double getCost();
@@ -30,7 +30,7 @@ namespace GraphMatch {
     					: cost(0), helixCount(0)
     {}
 
-    SSEResult::SSEResult(LinkedNode * node, int nHelix)
+    SSEResult::SSEResult(Node * node, int nHelix)
     					: correspondence(node->GetNodeCorrespondence()),
 						  cost(node->GetCost()),
 						  helixCount(nHelix)
