@@ -5,7 +5,7 @@ from sse_defaults import SSEDefaults
 class SSEHelixCorrespondence(object):
 
     def __init__(self, skeleton, sequence, helix, output, auto=True):
-        self.ui = SSEDefaults()
+        self.defaults = SSEDefaults()
         self.skeleton = skeleton
         self.sequence = sequence
         self.helix    = helix
@@ -34,19 +34,19 @@ class SSEHelixCorrespondence(object):
             self.correspondenceEngine.setConstant("SEQUENCE_FILE_TYPE", "SEQ")
         
         #Graph Settings tab
-        self.correspondenceEngine.setConstantInt("BORDER_MARGIN_THRESHOLD", self.ui.BorderMarginThreshold)
-        self.correspondenceEngine.setConstant("EUCLIDEAN_DISTANCE_THRESHOLD", self.ui.EuclideanDistance)
+        self.correspondenceEngine.setConstantInt("BORDER_MARGIN_THRESHOLD", self.defaults.BorderMarginThreshold)
+        self.correspondenceEngine.setConstant("EUCLIDEAN_DISTANCE_THRESHOLD", self.defaults.EuclideanDistance)
 
         #Matching Settings tab
-        self.correspondenceEngine.setConstant("EUCLIDEAN_VOXEL_TO_PDB_RATIO", self.ui.EuclideanToPDBRatio)
-        if(self.ui.AbsoluteDifference):
+        self.correspondenceEngine.setConstant("EUCLIDEAN_VOXEL_TO_PDB_RATIO", self.defaults.EuclideanToPDBRatio)
+        if(self.defaults.AbsoluteDifference):
             self.correspondenceEngine.setConstantInt("COST_FUNCTION", 1)
-        elif (self.ui.NormalizedDifference.isChecked()):
+        elif (self.defaults.NormalizedDifference.isChecked()):
             self.correspondenceEngine.setConstantInt("COST_FUNCTION", 2)
         else:
             self.correspondenceEngine.setConstantInt("COST_FUNCTION", 3)
 
-        self.correspondenceEngine.setConstant("LOOP_WEIGHT_COEFFICIENT", self.ui.LoopImportance)
+        self.correspondenceEngine.setConstant("LOOP_WEIGHT_COEFFICIENT", self.defaults.LoopImportance)
 
     def accept(self):
         self.setConstants()
