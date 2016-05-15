@@ -208,23 +208,23 @@ namespace GraphMatch {
 #ifdef VERBOSE
                 cout << "adding helix " << i << endl;
 #endif // VERBOSE
-                graph->SetCost(node+1, node+1, 0); // First helix node.
-                graph->SetType(node+1, node+1, GRAPHNODE_HELIX);
-                graph->SetCost(node+2, node+2, 0); // Second helix node.
-                graph->SetType(node+2, node+2, GRAPHNODE_HELIX);
+                graph->setCost(node+1, node+1, 0); // First helix node.
+                graph->setType(node+1, node+1, GRAPHNODE_HELIX);
+                graph->setCost(node+2, node+2, 0); // Second helix node.
+                graph->setType(node+2, node+2, GRAPHNODE_HELIX);
 
                 // An edge for the helix
-                graph->SetCost(node+1, node+2, structures[i]->GetLengthResidues());
-                graph->SetType(node+1, node+2, structures[i]->sseType);
-                graph->SetCost(node+2, node+1, structures[i]->GetLengthResidues());
-                graph->SetType(node+2, node+1, structures[i]->sseType);
+                graph->setCost(node+1, node+2, structures[i]->GetLengthResidues());
+                graph->setType(node+1, node+2, structures[i]->sseType);
+                graph->setCost(node+2, node+1, structures[i]->GetLengthResidues());
+                graph->setType(node+2, node+1, structures[i]->sseType);
 
                 if(i != 0) {
                     // An edge for the loop before the helix
-                    graph->SetCost(node, node+1, max(0.5, (double)(structures[i]->startPosition - structures[i-1]->endPosition)));
-                    graph->SetType(node, node+1, GRAPHEDGE_LOOP);
-                    graph->SetCost(node+1, node, max(0.5, (double)(structures[i]->startPosition - structures[i-1]->endPosition)));
-                    graph->SetType(node+1, node, GRAPHEDGE_LOOP);
+                    graph->setCost(node, node+1, max(0.5, (double)(structures[i]->startPosition - structures[i-1]->endPosition)));
+                    graph->setType(node, node+1, GRAPHEDGE_LOOP);
+                    graph->setCost(node+1, node, max(0.5, (double)(structures[i]->startPosition - structures[i-1]->endPosition)));
+                    graph->setType(node+1, node, GRAPHEDGE_LOOP);
                 }
                 node += 2;
             }
@@ -233,19 +233,19 @@ namespace GraphMatch {
 #ifdef VERBOSE
                 cout << "adding strand " << i << " with ID " << structures[i]->ID << endl;
 #endif // VERBOSE
-                graph->SetCost(node+1, (structures[i]->endPosition - structures[i]->startPosition) );
+                graph->setCost(node+1, (structures[i]->endPosition - structures[i]->startPosition) );
 #ifdef VERBOSE
                 cout << "adding strand " << i << " at node " << node << " with length " << (structures[i]->endPosition - structures[i]->startPosition) * LOOP_C_ALPHA_TO_ANGSTROMS << endl;
 #endif // VERBOSE
-                graph->SetCost(node+1, node+1, 0); // Strand node.
-                graph->SetType(node+1, node+1, GRAPHNODE_SHEET);
+                graph->setCost(node+1, node+1, 0); // Strand node.
+                graph->setType(node+1, node+1, GRAPHNODE_SHEET);
 
                 if(i != 0) {
                     // An edge for the loop before the strand
-                    graph->SetCost(node, node+1, max(0.5, (double)structures[i]->startPosition - structures[i-1]->endPosition) );
-                    graph->SetType(node, node+1, GRAPHEDGE_LOOP);
-                    graph->SetCost(node+1, node, max(0.5, (double)structures[i]->startPosition - structures[i-1]->endPosition) );
-                    graph->SetType(node+1, node, GRAPHEDGE_LOOP);
+                    graph->setCost(node, node+1, max(0.5, (double)structures[i]->startPosition - structures[i-1]->endPosition) );
+                    graph->setType(node, node+1, GRAPHEDGE_LOOP);
+                    graph->setCost(node+1, node, max(0.5, (double)structures[i]->startPosition - structures[i-1]->endPosition) );
+                    graph->setType(node+1, node, GRAPHEDGE_LOOP);
                 }
                 node += 1;
             }

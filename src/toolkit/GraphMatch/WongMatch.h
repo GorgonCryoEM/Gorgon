@@ -108,11 +108,11 @@ namespace GraphMatch {
     {
 #ifdef VERBOSE
         cout << "Initializing search" << endl;
-        cout << "Base graph has " << baseGraph->GetHelixCount()
-             << " helices and " << baseGraph->GetSheetCount() << " sheets."
+        cout << "Base graph has " << baseGraph->getHelixCount()
+             << " helices and " << baseGraph->getSheetCount() << " sheets."
              << endl;
-        cout << "Pattern graph has " << patternGraph->GetHelixCount()
-             << " helices and " << patternGraph->GetSheetCount() << " sheets."
+        cout << "Pattern graph has " << patternGraph->getHelixCount()
+             << " helices and " << patternGraph->getSheetCount() << " sheets."
              << endl;
 #endif
         usedNodes.clear();
@@ -133,7 +133,7 @@ namespace GraphMatch {
 #ifdef VERBOSE
         cout << "Finding the number of missing helices and sheets" << endl;
 #endif
-        nMissHelix = (patternGraph->GetNodeCount() - baseGraph->GetNodeCount()) / 2;
+        nMissHelix = (patternGraph->getNodeCount() - baseGraph->getNodeCount()) / 2;
         if(nMissHelix < 0) {
             nMissHelix = 0;
         }
@@ -148,7 +148,7 @@ namespace GraphMatch {
         int patternHelixNodes = 0;
         int patternSheetNodes = 0;
 
-        for(int i = 0; i < baseGraph->GetNodeCount(); i++) {
+        for(int i = 0; i < baseGraph->getNodeCount(); i++) {
             switch((int) (baseGraph->adjacencyMatrix[i][i][0] + 0.01)) {
                 case (GRAPHNODE_HELIX):
                     baseHelixNodes++;
@@ -165,7 +165,7 @@ namespace GraphMatch {
              << baseSheetNodes << " sheet nodes." << endl;
 #endif
 
-        for(int i = 0; i < patternGraph->GetNodeCount(); i++) {
+        for(int i = 0; i < patternGraph->getNodeCount(); i++) {
             switch((int) (patternGraph->adjacencyMatrix[i][i][0] + 0.01)) {
                 case (GRAPHNODE_HELIX):
                     patternHelixNodes++;
@@ -244,7 +244,7 @@ namespace GraphMatch {
 #ifdef _WIN32
                 flushall();
 #endif
-                int numHelices = baseGraph->GetHelixCount();
+                int numHelices = baseGraph->getHelixCount();
                 solutions.push_back(SSEResult(currentNode,
                                                             numHelices
                                                             )
@@ -430,7 +430,7 @@ namespace GraphMatch {
             }
         }
         else {
-            assert(baseGraph->EdgeExists(qj - 1, qp - 1));
+            assert(baseGraph->edgeExists(qj - 1, qp - 1));
             baseLength = baseGraph->adjacencyMatrix[qj - 1][qp - 1][1];
             euclideanEstimate = ((int) (baseGraph->adjacencyMatrix[qj-1][qp-1][0] + 0.01) == GRAPHEDGE_LOOP_EUCLIDEAN);
             switch((int) (baseGraph->adjacencyMatrix[qj-1][qp-1][0] + 0.01)) {
@@ -580,7 +580,7 @@ namespace GraphMatch {
     // m is the number of nodes involved in the match. m=1 is no skipped helices or sheets.
     inline double WongMatch::GetPenaltyCost(int d, int m, bool debugMsg) {
         double cost = 0.0;
-        int lastPatternNode = patternGraph->GetNodeCount() - 1;
+        int lastPatternNode = patternGraph->getNodeCount() - 1;
         bool startAtBeginning = (d == 0);
         bool finishAtEnd = (d + m - 1 == lastPatternNode);
         bool pastFirst = true;
@@ -678,7 +678,7 @@ namespace GraphMatch {
             //   i is in the currentNode bitmap, and there is an edge in baseGraph between currentNode and node i
             if(    (currentNode->depth == 0)
                 || (LinkedNode::IsNodeInBitmap(currentNode->m2Bitmap, i)
-                     && baseGraph->EdgeExists(currentNode->n2Node - 1, i - 1)
+                     && baseGraph->edgeExists(currentNode->n2Node - 1, i - 1)
                    )
                 ) {
                     int skippedHelixNodes = 0;
@@ -846,10 +846,10 @@ namespace GraphMatch {
                    && baseGraph->adjacencyMatrix[i][j][0] == GRAPHEDGE_HELIX
                   )
                 {
-                    baseGraph->SetCost(i+1, j+1, baseGraph->adjacencyMatrix[i][j][1] / HELIX_C_ALPHA_TO_ANGSTROMS);
+                    baseGraph->setCost(i+1, j+1, baseGraph->adjacencyMatrix[i][j][1] / HELIX_C_ALPHA_TO_ANGSTROMS);
                 }
                 else if(baseGraph->adjacencyMatrix[i][j][1] != MAXINT)
-                    baseGraph->SetCost(i + 1, j + 1, baseGraph->adjacencyMatrix[i][j][1] / LOOP_C_ALPHA_TO_ANGSTROMS);
+                    baseGraph->setCost(i + 1, j + 1, baseGraph->adjacencyMatrix[i][j][1] / LOOP_C_ALPHA_TO_ANGSTROMS);
 
                 // euclidean distance matrix
                 if(baseGraph->adjacencyMatrix[i][j][0] == GRAPHEDGE_HELIX)
@@ -902,9 +902,9 @@ namespace GraphMatch {
         for(int i = 0; i < baseGraph->nodeCount; i++) {
             if(baseGraph->adjacencyMatrix[i][i][1] != MAXINT && baseGraph->adjacencyMatrix[i][i][0] == GRAPHNODE_SHEET) {
                 // scale the sheet weight to the # of amino acids
-                baseGraph->SetCost(i + 1, baseGraph->nodeWeights[i] * ratio);
+                baseGraph->setCost(i + 1, baseGraph->nodeWeights[i] * ratio);
                 // take sqrt for matching algorithm
-                baseGraph->SetCost(i + 1, sqrt(baseGraph->nodeWeights[i]));
+                baseGraph->setCost(i + 1, sqrt(baseGraph->nodeWeights[i]));
             }
         }
 

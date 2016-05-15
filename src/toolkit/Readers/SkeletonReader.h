@@ -334,17 +334,17 @@ namespace GraphMatch {
 
                 // populate adjacency matrix
                 // no cost to go from a helix end back to itself
-                graph->SetCost(node1, node1, 0);
-                graph->SetType(node1, node1, GRAPHNODE_HELIX);
-                graph->SetCost(node2, node2, 0);
-                graph->SetType(node2, node2, GRAPHNODE_HELIX);
+                graph->setCost(node1, node1, 0);
+                graph->setType(node1, node1, GRAPHNODE_HELIX);
+                graph->setCost(node2, node2, 0);
+                graph->setType(node2, node2, GRAPHNODE_HELIX);
                 // cost of traversing a helix is the helix length
-                graph->SetCost(node1, node2, length);
+                graph->setCost(node1, node2, length);
                 // mark this edge type as helix or sheet, determined by helixes graph
-                graph->SetType(node1, node2, helixes[i]->shapeType);
+                graph->setType(node1, node2, helixes[i]->shapeType);
                 // same for reverse direction
-                graph->SetCost(node2, node1, length);
-                graph->SetType(node2, node1, helixes[i]->shapeType);
+                graph->setCost(node2, node1, length);
+                graph->setType(node2, node1, helixes[i]->shapeType);
             } else if (helixes[i]->shapeType == GRAPHEDGE_SHEET) {
                 // assign node number this sheet
                 int sheetNode = numH + i + 1; // each helix takes two nodes
@@ -353,8 +353,8 @@ namespace GraphMatch {
                 FindCornerCellsInSheet(vol, &paintedVol, helixes, i);
 
                 // cost is length of self-loops
-                graph->SetCost(sheetNode, sheetNode, SHEET_SELF_LOOP_LENGTH); // nonzero so it shows up as edge in StandardGraph::EdgeExists
-                graph->SetType(sheetNode, sheetNode, GRAPHNODE_SHEET);
+                graph->setCost(sheetNode, sheetNode, SHEET_SELF_LOOP_LENGTH); // nonzero so it shows up as edge in StandardGraph::EdgeExists
+                graph->setType(sheetNode, sheetNode, GRAPHNODE_SHEET);
             }
 
         }
@@ -366,12 +366,12 @@ namespace GraphMatch {
                 int sheetSize = skeletonSheets[s]->getNonZeroVoxelCount();
                 int sheetNode = numH + sseSheetNum + 1; // each helix takes two nodes
                 // TODO: Scale the sheet size by the geometric scale factor to make units match
-                graph->SetCost(sheetNode, sheetSize); // nonzero so it shows up as edge in StandardGraph::EdgeExists
+                graph->setCost(sheetNode, sheetSize); // nonzero so it shows up as edge in StandardGraph::EdgeExists
                 //cout << "adding sheet " << sseSheetNum << "(s=" << s << ") with size " << sheetSize << " as node " << sheetNode << endl;
             }
         }
 #ifdef VERBOSE
-        for (int i = 0; i < graph->GetNodeCount(); i++) {
+        for (int i = 0; i < graph->getNodeCount(); i++) {
             cout << "cost of node " << i << " is " << graph->nodeWeights[i] << endl;
         }
 #endif // VERBOSE
@@ -422,7 +422,7 @@ namespace GraphMatch {
 
         // measure Euclidian distance between all pairs of nodes and add edges between those nodes that are
         // closer than EUCLIDIAN_DISTANCE_THRESHOLD
-        graph->GenerateEuclidianMatrix(vol);
+        graph->generateEuclidianMatrix(vol);
 
 #ifdef VERBOSE
         printf("\033[34mEuclidian matrix generated.\n\033[0m");
@@ -432,7 +432,7 @@ namespace GraphMatch {
         printf("\033[34mMerging pairs of sheets that are close to each other.\n\033[0m");
 #endif // VERBOSE
 
-        graph->MergeSheets(SHEET_MERGE_THRESHOLD);
+        graph->mergeSheets(SHEET_MERGE_THRESHOLD);
 
 #ifdef VERBOSE
         printf("\033[34mDone merging pairs of sheets.\n\033[0m");
@@ -817,7 +817,7 @@ namespace GraphMatch {
         // mark all voxels as unvisited
         Volume * visited = new Volume(vol->getSizeX(), vol->getSizeY(), vol->getSizeZ());
 
-        int helixCount = graph->GetHelixCount();
+        int helixCount = graph->getHelixCount();
 
         bool expand;
 
@@ -848,14 +848,14 @@ namespace GraphMatch {
                     n1 = GetGraphIndex(helixList, startHelix, startCell);
                     n2 = GetGraphIndex(helixList, currentHelix, currentPoint);
                     bool found = false;
-                    if( (n1 >= 0) && (n2 >= 0) && (currentPoint->distance < graph->GetCost(n1, n2)) ) { // includes check for previously found shorter path
+                    if( (n1 >= 0) && (n2 >= 0) && (currentPoint->distance < graph->getCost(n1, n2)) ) { // includes check for previously found shorter path
                         // store the distance to the currentPoint as the cost of going from the start helix/sheet to the currentPoint helix/sheet
-                        graph->SetCost(n1, n2, currentPoint->distance);
+                        graph->setCost(n1, n2, currentPoint->distance);
                         // this is a loop type
-                        graph->SetType(n1, n2, GRAPHEDGE_LOOP);
+                        graph->setType(n1, n2, GRAPHEDGE_LOOP);
                         // save the same info for the reverse direction
-                        graph->SetCost(n2, n1, currentPoint->distance);
-                        graph->SetType(n2, n1, GRAPHEDGE_LOOP);
+                        graph->setCost(n2, n1, currentPoint->distance);
+                        graph->setType(n2, n1, GRAPHEDGE_LOOP);
                         found = true;
                     }
 

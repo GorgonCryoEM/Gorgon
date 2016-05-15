@@ -243,7 +243,7 @@ namespace Visualization {
                 // color code
 
                 // get colors of beginning and ending SSEs
-                int numHelices = skeleton->GetHelixCount();
+                int numHelices = skeleton->getHelixCount();
 
                 // start SSE color
                 int startSSENumber;
@@ -376,7 +376,7 @@ namespace Visualization {
             glEnable(GL_LINE_SMOOTH);
             glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 
-            int nodeCount = skeleton->GetNodeCount();
+            int nodeCount = skeleton->getNodeCount();
             for(int i = 0; i < nodeCount; i++) {
                 for(int j = i+1; j < nodeCount; j++) {
                     //cout << "adding path from " << i << " to " << j << endl;
@@ -393,7 +393,7 @@ namespace Visualization {
                         //cout << "adding path from " << n1 << " to " << n2 << ", which has length " << path.size() << endl;
 
                         // get colors of beginning and ending SSEs
-                        int numHelices = skeleton->GetHelixCount();
+                        int numHelices = skeleton->getHelixCount();
 
                         // start SSE color
                         int startSSENumber;
