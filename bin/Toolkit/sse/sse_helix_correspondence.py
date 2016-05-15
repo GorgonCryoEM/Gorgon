@@ -5,11 +5,8 @@ from .correspondence.CorrespondenceLibrary import CorrespondenceLibrary
 from .correspondence.Correspondence import Correspondence
 from .correspondence.Match import Match
 from .correspondence.ObservedHelix import ObservedHelix
-# from .correspondence.ObservedSheet import ObservedSheet
 from .correspondence.StructureObservation import StructureObservation
 from .correspondence.StructurePrediction import StructurePrediction
-# from .seq_model.Helix import Helix
-# from vector_lib import *
 
 import math
 
@@ -55,10 +52,6 @@ class SSEHelixCorrespondence(object):
         #Graph Settings tab
         self.correspondenceEngine.setConstantInt("BORDER_MARGIN_THRESHOLD", self.ui.BorderMarginThreshold)
         self.correspondenceEngine.setConstant("EUCLIDEAN_DISTANCE_THRESHOLD", self.ui.EuclideanDistance)
-        self.correspondenceEngine.setConstant("MAXIMUM_DISTANCE_SHEET_SKELETON", self.ui.MaxSheetDistance)
-        self.correspondenceEngine.setConstantInt("MINIMUM_SHEET_SIZE", self.ui.MinSheetSize)
-        self.correspondenceEngine.setConstant("SHEET_SELF_LOOP_LENGTH", self.ui.SheetSelfLoopLength)
-        self.correspondenceEngine.setConstant("SHEET_MERGE_THRESHOLD", self.ui.SheetMergeThreshold)
 
         #Matching Settings tab
         self.correspondenceEngine.setConstant("EUCLIDEAN_VOXEL_TO_PDB_RATIO", self.ui.EuclideanToPDBRatio)
