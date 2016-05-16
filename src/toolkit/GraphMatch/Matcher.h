@@ -33,8 +33,8 @@ using namespace std;
 			virtual void loadSkeleton();
 		protected:
 			WongMatch * matcher;
-	        Graph & skeleton;
-	        Graph & sequence;
+	        Graph * skeleton;
+	        Graph * sequence;
 		};
 
 
