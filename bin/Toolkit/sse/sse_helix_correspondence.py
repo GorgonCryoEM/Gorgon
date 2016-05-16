@@ -1,4 +1,4 @@
-from libpytoolkit import SSEEngine
+from libpytoolkit import SSEEngine, IBackEnd
 from sse_defaults import SSEDefaults
 
 
@@ -15,6 +15,7 @@ class SSEHelixCorrespondence(object):
         SSEViewer
         '''
         self.correspondenceEngine = SSEEngine()
+        self.constants = IBackEnd()
         
         if auto:
             self.accept()
@@ -22,31 +23,31 @@ class SSEHelixCorrespondence(object):
         
     def setConstants(self):
         #Data Sources tab
-        #self.correspondenceEngine.setConstant("SSE_FILE_NAME", str(self.ui.lineEditHelixLengthFile.text()))
-        self.correspondenceEngine.setConstant("VRML_HELIX_FILE_NAME", self.helix)
-#         self.correspondenceEngine.setConstant("VRML_SHEET_FILE_NAME", str(self.ui.lineEditSheetLocationFile.text()))
-        self.correspondenceEngine.setConstant("MRC_FILE_NAME", self.skeleton)
+        #self.constants.setConstant("SSE_FILE_NAME", str(self.ui.lineEditHelixLengthFile.text()))
+        self.constants.setConstant("VRML_HELIX_FILE_NAME", self.helix)
+#         self.constants.setConstant("VRML_SHEET_FILE_NAME", str(self.ui.lineEditSheetLocationFile.text()))
+        self.constants.setConstant("MRC_FILE_NAME", self.skeleton)
         self.sequenceFileName = self.sequence
-        self.correspondenceEngine.setConstant("SEQUENCE_FILE_NAME", self.sequenceFileName)
+        self.constants.setConstant("SEQUENCE_FILE_NAME", self.sequenceFileName)
         if self.sequenceFileName.split('.')[-1].lower() == 'pdb':
-            self.correspondenceEngine.setConstant("SEQUENCE_FILE_TYPE", "PDB")
+            self.constants.setConstant("SEQUENCE_FILE_TYPE", "PDB")
         elif self.sequenceFileName.split('.')[-1].lower() == 'seq':
-            self.correspondenceEngine.setConstant("SEQUENCE_FILE_TYPE", "SEQ")
+            self.constants.setConstant("SEQUENCE_FILE_TYPE", "SEQ")
         
         #Graph Settings tab
-        self.correspondenceEngine.setConstant("BORDER_MARGIN_THRESHOLD", self.defaults.BorderMarginThreshold)
-        self.correspondenceEngine.setConstant("EUCLIDEAN_DISTANCE_THRESHOLD", self.defaults.EuclideanDistance)
+        self.constants.setConstant("BORDER_MARGIN_THRESHOLD", self.defaults.BorderMarginThreshold)
+        self.constants.setConstant("EUCLIDEAN_DISTANCE_THRESHOLD", self.defaults.EuclideanDistance)
 
         #Matching Settings tab
-        self.correspondenceEngine.setConstant("EUCLIDEAN_VOXEL_TO_PDB_RATIO", self.defaults.EuclideanToPDBRatio)
+        self.constants.setConstant("EUCLIDEAN_VOXEL_TO_PDB_RATIO", self.defaults.EuclideanToPDBRatio)
         if(self.defaults.AbsoluteDifference):
-            self.correspondenceEngine.setConstant("COST_FUNCTION", 1)
+            self.constants.setConstant("COST_FUNCTION", 1)
         elif (self.defaults.NormalizedDifference.isChecked()):
-            self.correspondenceEngine.setConstant("COST_FUNCTION", 2)
+            self.constants.setConstant("COST_FUNCTION", 2)
         else:
-            self.correspondenceEngine.setConstant("COST_FUNCTION", 3)
+            self.constants.setConstant("COST_FUNCTION", 3)
 
-        self.correspondenceEngine.setConstant("LOOP_WEIGHT_COEFFICIENT", self.defaults.LoopImportance)
+        self.constants.setConstant("LOOP_WEIGHT_COEFFICIENT", self.defaults.LoopImportance)
 
     def accept(self):
         self.setConstants()
