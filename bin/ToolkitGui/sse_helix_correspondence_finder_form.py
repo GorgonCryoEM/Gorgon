@@ -731,7 +731,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog, SSEHelixCorrespondence):
             print "memory error"
             self.resultCount=0
             memErr = True
-        self.correspondenceEngine.cleanupMemory()
+#         self.correspondenceEngine.cleanupMemory()
         self.constants.clearAllConstraints()
 
         print "found " + str(self.resultCount) + " results. cleaning up memory."
