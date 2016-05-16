@@ -41,12 +41,12 @@ namespace Visualization {
         void drawAllPaths(int sceneIndex, bool showPaths, bool showHelixCorners, bool showSheetCorners, bool showSheetColors);
 
     private:
-        int correspondenceIndex;
+        int curInd;
     };
 
     inline SSEEngine::SSEEngine()
     {
-        correspondenceIndex = -1;
+        curInd = -1;
     }
 
     inline int SSEEngine::getResultCount() {
@@ -133,7 +133,7 @@ namespace Visualization {
     }
 
     inline void SSEEngine::setVisibleCorrespondence(int correspondenceIndex) {
-        this->correspondenceIndex = correspondenceIndex;
+        this->curInd = correspondenceIndex;
     }
 
     inline void SSEEngine::draw(int sceneIndex) {
@@ -141,13 +141,13 @@ namespace Visualization {
 //        #ifdef GORGON_DEBUG
               cout<<"\033[32mDEBUG: File:   SSEEngine.h"<<endl;
               cout<<"DEBUG: Method: SSEEngine::draw(int)\033[0m"<<endl;
-              cout<<correspondenceIndex<<endl;
+              cout<<curInd<<endl;
 //        #endif
 
         int n1, n2, sse1, sse2;
         vector<Vec3I> path;
-        if(correspondenceIndex >= 0) {
-            SSEResult result = getResult(correspondenceIndex + 1);
+        if(curInd >= 0) {
+            SSEResult result = getResult(curInd + 1);
 
             glPushAttrib(GL_LIGHTING_BIT | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT);
             glDisable(GL_LIGHTING);
