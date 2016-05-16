@@ -88,7 +88,7 @@ namespace GraphMatch {
                          int missingSheetCount)
                 : patternGraph(pGraph), baseGraph(bGraph)
     {
-        init(patternGraph, baseGraph);
+//        init(patternGraph, baseGraph);
         this->nMissHelix = missingHelixCount;
         this->nMissSheet = missingSheetCount;
     }
