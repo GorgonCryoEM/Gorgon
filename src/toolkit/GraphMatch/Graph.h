@@ -21,7 +21,7 @@ namespace GraphMatch {
 
     public:
         // Constructors
-        Graph(int nodeCount);
+        Graph(int nodeCount=0);
         Graph(char* fname);
         ~Graph();
 
