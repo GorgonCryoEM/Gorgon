@@ -76,7 +76,7 @@ namespace Visualization {
         finish = clock();
         #ifdef VERBOSE
             printf("\tReading Pattern file Took %f seconds.\n", (double) (finish - start) / (double) CLOCKS_PER_SEC ) ;
-            sequence.print();
+//            sequence.print();
         #endif
     }
 
@@ -204,13 +204,27 @@ namespace Visualization {
 //        #ifdef GORGON_DEBUG
               cout<<"\033[32mDEBUG: File:   SSEEngine.h"<<endl;
               cout<<"DEBUG: Method: SSEEngine::draw(int)\033[0m"<<endl;
-              cout<<curInd<<endl;
+              cout<<"curInd: "<<curInd<<endl;
 //        #endif
+
+        float p1 = -49.0;
+        float p2 = -49.0;
+        float p3 = -49.0;
+        float R = 20.0;
+        glColor3f(.2,.2,.8);
+        drawSphere(Vec3F(p1, p2, p3), R);
 
         int n1, n2, sse1, sse2;
         vector<Vec3I> path;
         if(curInd >= 0) {
             SSEResult result = getResult(curInd + 1);
+
+//            #ifdef GORGON_DEBUG
+                  cout<<"\033[32mDEBUG: File:   SSEEngine.h"<<endl;
+                  cout<<"DEBUG: Method: SSEEngine::draw(int)\033[0m"<<endl;
+                  cout<<result<<endl;
+//            #endif
+
 
             glPushAttrib(GL_LIGHTING_BIT | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT);
             glDisable(GL_LIGHTING);
@@ -270,7 +284,12 @@ namespace Visualization {
                 seqIndex = (i + strandsPassed + 1)/2 + 1;
 
                 path = skeleton.paths[n1][n2];
-                //cout << "path sizes. fwd:" << skeleton.paths[n1][n2].size() << ", rev:" << skeleton.paths[n2][n1].size() << endl;
+//                #ifdef GORGON_DEBUG
+                      cout<<"\033[32mDEBUG: File:   SSEEngine.h"<<endl;
+                      cout<<"DEBUG: Method: SSEEngine::draw(int)\033[0m"<<endl;
+                      cout << "path sizes. fwd:" << skeleton.paths[n1][n2].size() << ", rev:" << skeleton.paths[n2][n1].size() << endl;
+//                #endif
+
                 if(path.size() == 0) {
                     path = skeleton.paths[n2][n1];
                     int n1old = n1;
@@ -282,6 +301,12 @@ namespace Visualization {
 
                 // get colors of beginning and ending SSEs
                 int numHelices = skeleton.getHelixCount();
+//                #ifdef GORGON_DEBUG
+                      cout<<"\033[32mDEBUG: File:   SSEEngine.h"<<endl;
+                      cout<<"DEBUG: Method: SSEEngine::draw(int)\033[0m"<<endl;
+                      cout<<numHelices<<endl;
+//                #endif
+
 
                 // start SSE color
                 int startSSENumber;
@@ -315,8 +340,15 @@ namespace Visualization {
                     // draw labeled sphere at beginning of path
                     //GLfloat col = 1.0;
                     glColor3f(startColorR, startColorG, startColorB);
-                    double sphereRadius = 0.5;
-                    drawSphere(Vec3F(path[0].X(), path[0].Y(), path[0].Z()), sphereRadius);
+                    double sphereRadius = 50;
+//                    #ifdef GORGON_DEBUG
+                          cout<<"\033[32mDEBUG: File:   SSEEngine.h"<<endl;
+                          cout<<"DEBUG: Method: SSEEngine::draw(int)\033[0m"<<endl;
+                          cout<<".....Before drawSphere"<<endl;
+                          cout<<path[0]<<endl;
+//                    #endif
+
+                    drawSphere(path[0], sphereRadius);
                     /*
                     // Label the points with their graph node numbers
                     glColor3f(1.0, 1.0, 1.0);
@@ -354,7 +386,15 @@ namespace Visualization {
                     pathx=path[j].X()+offset;
                     pathy=path[j].Y()+offset;
                     pathz=path[j].Z()+offset;
-                    glVertex3d(pathx, pathy, pathz);
+//                    #ifdef GORGON_DEBUG
+                          cout<<"\033[32mDEBUG: File:   SSEEngine.h"<<endl;
+                          cout<<"DEBUG: Method: SSEEngine::draw(int)\033[0m"<<endl;
+                          cout<<"....Before glVertex"<<endl;
+                          cout<<path[j]<<endl;
+//                    #endif
+
+                    glColor3f(.7,.7,.7);
+                    glVertex3f(pathx, pathy, pathz);
                     //glVertex3d(path[j].X()+offset, path[j].Y()+offset, path[j].Z()+offset);
                 }
 
