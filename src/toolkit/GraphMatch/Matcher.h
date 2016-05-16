@@ -26,15 +26,20 @@ using namespace std;
 
 		class Matcher {
 		public:
+			Matcher(Graph & sequenceGraph, Graph & skeletonGraph);
 			int run(Graph & sequenceGraph, Graph & skeletonGraph);
 			SSEResult getResult(int rank);
 			void destruct();
 
 		protected:
 			WongMatch * matcher;
-	        Graph * skeleton;
-	        Graph * sequence;
+	        Graph & skeleton;
+	        Graph & sequence;
 		};
+
+		inline Matcher::Matcher(Graph & sequenceGraph, Graph & skeletonGraph)
+		            : sequence(sequenceGraph), skeleton(skeletonGraph)
+		{}
 
 		inline int Matcher::run(Graph & sequenceGraph, Graph & skeletonGraph) {
 			clock_t start;
