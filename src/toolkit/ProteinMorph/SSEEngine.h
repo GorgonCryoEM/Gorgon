@@ -43,13 +43,14 @@ namespace Visualization {
         virtual void loadSkeleton();
 
     private:
-        Graph * skeleton;
-        Graph * sequence;
+        Graph skeleton;
+        Graph sequence;
 
         int curInd;
     };
 
     inline SSEEngine::SSEEngine()
+                : IBackEnd(sequence, skeleton)
     {
         curInd = -1;
     }
