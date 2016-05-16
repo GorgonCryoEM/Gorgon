@@ -15,6 +15,7 @@ namespace GraphMatch {
 
     class IBackEnd : public Matcher {
     public:
+        IBackEnd(Graph & sequenceGraph, Graph & skeletonGraph);
         // Initialization Methods
         void loadConstantsFromFile(string fileName);
         bool setConstant(string token, string value);
@@ -33,6 +34,10 @@ namespace GraphMatch {
         void cleanupMemory();
     protected:
     };
+
+    inline IBackEnd::IBackEnd(Graph & sequenceGraph, Graph & skeletonGraph)
+                    : Matcher(sequenceGraph, skeletonGraph)
+    {}
 
     inline void IBackEnd::loadConstantsFromFile(string fileName) {
         LoadConstantsFromFile(fileName);
