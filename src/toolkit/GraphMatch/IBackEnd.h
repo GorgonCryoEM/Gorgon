@@ -25,10 +25,6 @@ namespace GraphMatch {
         int getConstantInt(string token);
         bool getConstantBool(string token);
         void clearAllConstraints();
-
-        // Cleanup
-        void cleanupMemory();
-    protected:
     };
 
     inline IBackEnd::IBackEnd(Graph & sequenceGraph, Graph & skeletonGraph)
@@ -80,10 +76,6 @@ namespace GraphMatch {
     inline void IBackEnd::clearAllConstraints() {
         ClearAllowedConstraints();
         ClearNotAllowedConstraints();
-    }
-
-    inline void IBackEnd::cleanupMemory() {
-        destruct();
     }
 }
 

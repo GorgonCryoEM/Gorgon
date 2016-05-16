@@ -28,7 +28,6 @@ using namespace std;
 		public:
 			Matcher(Graph & sequenceGraph, Graph & skeletonGraph);
 			int run();
-			void destruct();
 
 		protected:
 	        Graph & skeleton;
@@ -60,10 +59,6 @@ using namespace std;
 			saveResults();
 
 			return matchCount;
-		}
-
-		inline void Matcher::destruct() {
-			delete matcher;
 		}
 	}
 #endif
