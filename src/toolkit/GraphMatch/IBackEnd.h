@@ -16,7 +16,7 @@ namespace GraphMatch {
     class IBackEnd : public Matcher {
     public:
         // Initialization Methods
-        void load(string fileName);
+        void loadConstantsFromFile(string fileName);
         bool setConstant(string token, string value);
         bool setConstant(string token, double value);
         bool setConstant(string token, int value);
@@ -34,7 +34,7 @@ namespace GraphMatch {
     protected:
     };
 
-    inline void IBackEnd::load(string fileName) {
+    inline void IBackEnd::loadConstantsFromFile(string fileName) {
         LoadConstantsFromFile(fileName);
     }
 
