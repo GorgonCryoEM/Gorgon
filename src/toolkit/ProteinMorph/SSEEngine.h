@@ -42,6 +42,8 @@ namespace Visualization {
         virtual void loadSequence();
         virtual void loadSkeleton();
 
+        int run();
+
     private:
         Graph skeleton;
         Graph sequence;
@@ -88,6 +90,28 @@ namespace Visualization {
             printf("\033[32m\tReading Base file Took %f seconds.\n\033[0m", (double) (finish - start) / (double) CLOCKS_PER_SEC ) ;
             skeleton.print();
         #endif
+    }
+
+    inline int SSEEngine::run() {
+        clock_t start;
+
+        PERFORMANCE_COMPARISON_MODE = false;
+
+        // Match Graphs
+        // Constrained no future
+        if(MISSING_HELIX_COUNT == -1) {
+            set_MISSING_HELIX_COUNT(0);
+            set_MISSING_SHEET_COUNT(0);
+        } else {
+            set_MISSING_HELIX_COUNT(MISSING_HELIX_COUNT);
+            set_MISSING_SHEET_COUNT(MISSING_SHEET_COUNT);
+        }
+        init(sequence, skeleton);
+        start = clock();
+        int matchCount = WongMatch::run(start);
+        saveResults();
+
+        return matchCount;
     }
 
     inline int SSEEngine::load(string fileName) {
