@@ -143,7 +143,9 @@ BOOST_PYTHON_MODULE(@current_pylib@)
   ;
   
 //  BOOST_PYTHON_FUNCTION_OVERLOADS(cylinder_overloads, drawCylinder, 3, 5)
-    def("drawSphere",   drawSphere);
+    def("drawSphere",   drawSphere<Vec3F>);
+    def("drawSphere",   drawSphere<Vec3D>);
+    def("drawSphere",   drawSphere<Vec3I>);
     def("drawCylinder", drawCylinder);
 //    def("drawCylinder", drawCylinder, cylinder_overloads());
     def("drawLine",     drawLine);
