@@ -98,10 +98,7 @@ namespace GraphMatch {
     }
 
     inline int IBackEnd::run() {
-        if(skeleton != NULL && sequence != NULL)
-            return Matcher::run(*sequence, *skeleton);
-        else
-            return 0;
+        return Matcher::run(sequence, skeleton);
     }
 
     inline void IBackEnd::cleanupMemory() {
