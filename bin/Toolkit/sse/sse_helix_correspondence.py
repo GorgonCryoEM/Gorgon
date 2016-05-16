@@ -34,17 +34,17 @@ class SSEHelixCorrespondence(object):
             self.correspondenceEngine.setConstant("SEQUENCE_FILE_TYPE", "SEQ")
         
         #Graph Settings tab
-        self.correspondenceEngine.setConstantInt("BORDER_MARGIN_THRESHOLD", self.defaults.BorderMarginThreshold)
+        self.correspondenceEngine.setConstant("BORDER_MARGIN_THRESHOLD", self.defaults.BorderMarginThreshold)
         self.correspondenceEngine.setConstant("EUCLIDEAN_DISTANCE_THRESHOLD", self.defaults.EuclideanDistance)
 
         #Matching Settings tab
         self.correspondenceEngine.setConstant("EUCLIDEAN_VOXEL_TO_PDB_RATIO", self.defaults.EuclideanToPDBRatio)
         if(self.defaults.AbsoluteDifference):
-            self.correspondenceEngine.setConstantInt("COST_FUNCTION", 1)
+            self.correspondenceEngine.setConstant("COST_FUNCTION", 1)
         elif (self.defaults.NormalizedDifference.isChecked()):
-            self.correspondenceEngine.setConstantInt("COST_FUNCTION", 2)
+            self.correspondenceEngine.setConstant("COST_FUNCTION", 2)
         else:
-            self.correspondenceEngine.setConstantInt("COST_FUNCTION", 3)
+            self.correspondenceEngine.setConstant("COST_FUNCTION", 3)
 
         self.correspondenceEngine.setConstant("LOOP_WEIGHT_COEFFICIENT", self.defaults.LoopImportance)
 

@@ -320,48 +320,48 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog, SSEHelixCorrespondence):
             self.correspondenceEngine.setConstant("SEQUENCE_FILE_TYPE", "SEQ")
         
         #Graph Settings tab
-        self.correspondenceEngine.setConstantInt("BORDER_MARGIN_THRESHOLD", self.ui.spinBoxBorderMarginThreshold.value())
+        self.correspondenceEngine.setConstant("BORDER_MARGIN_THRESHOLD", self.ui.spinBoxBorderMarginThreshold.value())
         self.correspondenceEngine.setConstant("EUCLIDEAN_DISTANCE_THRESHOLD", self.ui.doubleSpinBoxEuclideanDistance.value())
         self.correspondenceEngine.setConstant("MAXIMUM_DISTANCE_SHEET_SKELETON", self.ui.doubleSpinBoxMaxSheetDistance.value())
-        self.correspondenceEngine.setConstantInt("MINIMUM_SHEET_SIZE", self.ui.spinBoxMinSheetSize.value())
+        self.correspondenceEngine.setConstant("MINIMUM_SHEET_SIZE", self.ui.spinBoxMinSheetSize.value())
         self.correspondenceEngine.setConstant("SHEET_SELF_LOOP_LENGTH", self.ui.doubleSpinBoxSheetSelfLoopLength.value())
         self.correspondenceEngine.setConstant("SHEET_MERGE_THRESHOLD", self.ui.doubleSpinBoxSheetMergeThreshold.value())
         if (self.ui.checkBoxIncludeStrands.isChecked()):
-            self.correspondenceEngine.setConstantInt("INCLUDE_STRANDS", 1)
+            self.correspondenceEngine.setConstant("INCLUDE_STRANDS", 1)
         else:
-            self.correspondenceEngine.setConstantInt("INCLUDE_STRANDS", 0)
+            self.correspondenceEngine.setConstant("INCLUDE_STRANDS", 0)
 
         #Matching Settings tab
         self.correspondenceEngine.setConstant("EUCLIDEAN_VOXEL_TO_PDB_RATIO", self.ui.doubleSpinBoxEuclideanToPDBRatio.value())
         if(self.ui.radioButtonAbsoluteDifference.isChecked()):
-            self.correspondenceEngine.setConstantInt("COST_FUNCTION", 1)
+            self.correspondenceEngine.setConstant("COST_FUNCTION", 1)
         elif (self.ui.radioButtonNormalizedDifference.isChecked()):
-            self.correspondenceEngine.setConstantInt("COST_FUNCTION", 2)
+            self.correspondenceEngine.setConstant("COST_FUNCTION", 2)
         else:
-            self.correspondenceEngine.setConstantInt("COST_FUNCTION", 3)
+            self.correspondenceEngine.setConstant("COST_FUNCTION", 3)
 
         self.correspondenceEngine.setConstant("LOOP_WEIGHT_COEFFICIENT", self.ui.doubleSpinBoxLoopImportance.value())
         self.correspondenceEngine.setConstant("EUCLIDEAN_LOOP_PENALTY", self.ui.doubleSpinBoxEuclideanLoopUsedPenalty.value())
 
         self.correspondenceEngine.setConstant("HELIX_WEIGHT_COEFFICIENT", self.ui.doubleSpinBoxHelixImportance.value())
         if(self.ui.checkBoxMissingHelices.isChecked()):
-            self.correspondenceEngine.setConstantInt("MISSING_HELIX_COUNT", self.ui.spinBoxMissingHelixCount.value())
+            self.correspondenceEngine.setConstant("MISSING_HELIX_COUNT", self.ui.spinBoxMissingHelixCount.value())
         else:
-            self.correspondenceEngine.setConstantInt("MISSING_HELIX_COUNT", -1)
+            self.correspondenceEngine.setConstant("MISSING_HELIX_COUNT", -1)
         self.correspondenceEngine.setConstant("MISSING_HELIX_PENALTY", self.ui.doubleSpinBoxHelixMissingPenalty.value())
         self.correspondenceEngine.setConstant("MISSING_HELIX_PENALTY_SCALED", self.ui.doubleSpinBoxHelixMissingPenaltyScaled.value())
         self.correspondenceEngine.setConstant("START_END_MISSING_HELIX_PENALTY", self.ui.doubleSpinBoxEndHelixMissingPenalty.value())
         
         self.correspondenceEngine.setConstant("SHEET_WEIGHT_COEFFICIENT", self.ui.doubleSpinBoxSheetImportance.value())
         if(self.ui.checkBoxMissingSheets.isChecked()):
-            self.correspondenceEngine.setConstantInt("MISSING_SHEET_COUNT", self.ui.spinBoxMissingSheetCount.value())
+            self.correspondenceEngine.setConstant("MISSING_SHEET_COUNT", self.ui.spinBoxMissingSheetCount.value())
         else:
-            self.correspondenceEngine.setConstantInt("MISSING_SHEET_COUNT", -1)
+            self.correspondenceEngine.setConstant("MISSING_SHEET_COUNT", -1)
         self.correspondenceEngine.setConstant("MISSING_SHEET_PENALTY", self.ui.doubleSpinBoxSheetMissingPenalty.value())
         self.correspondenceEngine.setConstant("MISSING_SHEET_PENALTY_SCALED", self.ui.doubleSpinBoxSheetMissingPenaltyScaled.value())
         
         # no longer needed?
-        self.correspondenceEngine.setConstantBool("NORMALIZE_GRAPHS", True)
+        self.correspondenceEngine.setConstant("NORMALIZE_GRAPHS", True)
 
         #Tab 4 User Constraints
         # comment out the constraint clearing so that constraints can be loaded from settings files
