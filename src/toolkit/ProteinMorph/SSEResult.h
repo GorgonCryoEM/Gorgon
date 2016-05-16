@@ -4,10 +4,24 @@
 #include "Foundation/Node.h"
 //#include <vector>
 //#include <cstdio>
+//#include "Core/Output.h"
 
 using namespace std;
+//using namespace Core;
 
 namespace GraphMatch {
+
+    template <class T>
+    ostream & operator<<(ostream & out, const vector<T> & obj) {
+            for(typename vector<T>::const_iterator it=obj.begin();
+                    it!=obj.end();
+                    ++it)
+
+                out<<"\t\t\t"<<*it
+                <<endl;
+
+            return out;
+    }
 
     class SSEResult {
     public:
@@ -24,6 +38,15 @@ namespace GraphMatch {
         vector<int> correspondence;
         double cost;
         int helixCount;
+
+        friend ostream & operator<<(ostream & out, const SSEResult & obj) {
+            return out
+                    <<"corespondences: "<<obj.correspondence
+                    <<endl
+                    <<"  cost: "<<obj.cost
+                    <<"  helixCount: "<<obj.helixCount
+                    <<endl;
+        }
     };
 
     SSEResult::SSEResult()
