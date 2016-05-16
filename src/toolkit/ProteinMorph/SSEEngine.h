@@ -25,7 +25,7 @@
 //using namespace std;
 
 namespace Visualization {
-    class SSEEngine : public IBackEnd {
+    class SSEEngine : public IBackEnd, public Matcher {
     public:
         SSEEngine();
 
@@ -50,7 +50,7 @@ namespace Visualization {
     };
 
     inline SSEEngine::SSEEngine()
-                : IBackEnd(sequence, skeleton)
+                : Matcher(sequence, skeleton)
     {
         curInd = -1;
     }

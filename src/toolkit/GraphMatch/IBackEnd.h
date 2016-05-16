@@ -2,7 +2,6 @@
 #define TOOLKIT_GRAPHMATCH_BACK_END_INTERFACE_H
 
 //#include "Core/GlobalConstants.h"
-#include "Matcher.h"
 //#include "Node.h"
 
 #ifdef DEBUG
@@ -13,9 +12,8 @@ using namespace std;
 
 namespace GraphMatch {
 
-    class IBackEnd : public Matcher {
+    class IBackEnd {
     public:
-        IBackEnd(Graph & sequenceGraph, Graph & skeletonGraph);
         // Initialization Methods
         void loadConstantsFromFile(string fileName);
         template <class T>
@@ -26,10 +24,6 @@ namespace GraphMatch {
         bool getConstantBool(string token);
         void clearAllConstraints();
     };
-
-    inline IBackEnd::IBackEnd(Graph & sequenceGraph, Graph & skeletonGraph)
-                    : Matcher(sequenceGraph, skeletonGraph)
-    {}
 
     inline void IBackEnd::loadConstantsFromFile(string fileName) {
         LoadConstantsFromFile(fileName);
