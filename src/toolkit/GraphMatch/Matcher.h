@@ -28,7 +28,6 @@ using namespace std;
 		public:
 			Matcher(Graph & sequenceGraph, Graph & skeletonGraph);
 			int run();
-			SSEResult getResult(int rank);
 			void destruct();
 
 		protected:
@@ -61,10 +60,6 @@ using namespace std;
 			saveResults();
 
 			return matchCount;
-		}
-
-		inline SSEResult Matcher::getResult(int rank) {
-			return matcher->getResult(rank);
 		}
 
 		inline void Matcher::destruct() {
