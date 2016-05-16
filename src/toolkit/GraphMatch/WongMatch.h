@@ -24,9 +24,8 @@ namespace GraphMatch {
             Graph & patternGraph;
             Graph & baseGraph;
         public:
-            WongMatch(Graph & pGraph, Graph & bGraph);
             WongMatch(Graph & pGraph, Graph & bGraph,
-                      int missingHelixCount, int missingSheetCount
+                      int missingHelixCount =0, int missingSheetCount =0
                       );
             ~WongMatch();
             int run(clock_t startTime);
@@ -72,13 +71,6 @@ namespace GraphMatch {
             int bestMatches[RESULT_COUNT][MAX_NODES];
 
     };
-
-    WongMatch::WongMatch(Graph & pGraph,
-                         Graph & bGraph)
-                : patternGraph(pGraph), baseGraph(bGraph)
-    {
-        init(patternGraph, baseGraph);
-    }
 
     WongMatch::WongMatch(Graph & pGraph, Graph & bGraph,
                          int missingHelixCount,
