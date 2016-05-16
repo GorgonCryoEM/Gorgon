@@ -28,7 +28,7 @@ namespace GraphMatch {
         void clearAllConstraints();
 
         // Process Execution
-        virtual int executeQuery();
+        virtual int run();
         // Result Retrieval
         virtual SSEResult getResult(int rank);
         // Cleanup
@@ -94,9 +94,9 @@ namespace GraphMatch {
         ClearNotAllowedConstraints();
     }
 
-    inline int IBackEnd::executeQuery() {
+    inline int IBackEnd::run() {
         if(skeleton != NULL && sequence != NULL)
-            return match(*sequence, *skeleton);
+            return Matcher::run(*sequence, *skeleton);
         else
             return 0;
     }

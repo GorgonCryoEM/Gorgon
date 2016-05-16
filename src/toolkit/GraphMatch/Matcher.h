@@ -26,7 +26,7 @@ using namespace std;
 
 		class Matcher {
 		public:
-			int match(Graph & sequenceGraph, Graph & skeletonGraph);
+			int run(Graph & sequenceGraph, Graph & skeletonGraph);
 			SSEResult getSolution(int rank);
 			void destruct();
 			virtual void loadSequence();
@@ -77,7 +77,7 @@ using namespace std;
 		}
 
 
-		inline int Matcher::match(Graph & sequenceGraph, Graph & skeletonGraph) {
+		inline int Matcher::run(Graph & sequenceGraph, Graph & skeletonGraph) {
 			clock_t start;
 
 			PERFORMANCE_COMPARISON_MODE = false;
@@ -90,7 +90,7 @@ using namespace std;
 				matcher = new WongMatch(sequenceGraph, skeletonGraph, MISSING_HELIX_COUNT, MISSING_SHEET_COUNT);
 			}
 			start = clock();
-			int matchCount = matcher->runMatching(start);
+			int matchCount = matcher->run(start);
 			matcher->saveResults();
 
 			return matchCount;

@@ -29,7 +29,7 @@ namespace GraphMatch {
                       int missingHelixCount, int missingSheetCount
                       );
             ~WongMatch();
-            int runMatching(clock_t startTime);
+            int run(clock_t startTime);
             SSEResult getResult(int rank);
             void saveResults();
 
@@ -220,7 +220,7 @@ namespace GraphMatch {
     }
 
     // searches for correspondences between the pattern graph and base graph.
-    inline int WongMatch::runMatching(clock_t startTime) {
+    inline int WongMatch::run(clock_t startTime) {
 #ifdef VERBOSE
         cout << "Starting to search for correspondences." << endl;
         DisplayConstants();

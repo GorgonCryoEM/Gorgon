@@ -29,7 +29,7 @@ namespace Visualization {
     public:
         SSEEngine();
 
-        int executeQuery();
+        int run();
         int getResultCount();
         int load(string fileName);
         SSEResult getResult(int rank);
@@ -52,9 +52,9 @@ namespace Visualization {
         correspondenceIndex = -1;
     }
 
-    inline int SSEEngine::executeQuery() {
+    inline int SSEEngine::run() {
         if(skeleton != NULL && sequence != NULL) {
-            int resultCount = match(*sequence, *skeleton);
+            int resultCount = Matcher::run(*sequence, *skeleton);
             correspondence.clear();
             for(int i = 0; i < resultCount; i++) {
                 correspondence.push_back(getSolution(i+1));
