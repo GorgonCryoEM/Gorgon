@@ -56,8 +56,8 @@ namespace Visualization {
         if(skeleton != NULL && sequence != NULL) {
             int resultCount = match(sequence, skeleton);
             correspondence.clear();
-            for(int i = 1; i <= resultCount; i++) {
-                correspondence.push_back(getSolution(i));
+            for(int i = 0; i < resultCount; i++) {
+                correspondence.push_back(getSolution(i+1));
             }
             return resultCount;
         } else {
