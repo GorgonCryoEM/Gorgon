@@ -538,7 +538,7 @@ BOOST_PYTHON_MODULE(@current_pylib@)
         .def("clearAllConstraints", &IBackEnd::clearAllConstraints)          
     ;
     
-    class_<SSEEngine, bases<IBackEnd> >("SSEEngine", init<>())
+    class_<SSEEngine>("SSEEngine", init<>())
 //        .def("setHelixConstraint", &SSEEngine::SetHelixConstraint)            
 //        .def("getHelixConstraintFwd", &SSEEngine::GetHelixConstraintFwd)          
 //        .def("getHelixConstraintRev", &SSEEngine::GetHelixConstraintRev)          

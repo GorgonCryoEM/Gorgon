@@ -9,7 +9,6 @@
 #define SRC_TOOLKIT_PROTEINMORPH_SSEENGINE_H_
 
 //#include <GraphMatch/SSEResult.h>
-#include "GraphMatch/IBackEnd.h"
 #include "GraphMatch/WongMatch.h"
 #include "GraphMatch/PDBReader.h"
 #include "Readers/SEQReader.h"
@@ -29,7 +28,7 @@
 //using namespace std;
 
 namespace Visualization {
-    class SSEEngine : public IBackEnd, public WongMatch {
+    class SSEEngine : public WongMatch {
     public:
         SSEEngine();
 
