@@ -32,13 +32,14 @@ using namespace std;
 			void destruct();
 
 		protected:
-			WongMatch * matcher;
 	        Graph & skeleton;
 	        Graph & sequence;
+			WongMatch * matcher;
 		};
 
 		inline Matcher::Matcher(Graph & sequenceGraph, Graph & skeletonGraph)
-		            : sequence(sequenceGraph), skeleton(skeletonGraph)
+		            : sequence(sequenceGraph), skeleton(skeletonGraph),
+		              matcher(new WongMatch(sequence, skeleton))
 		{}
 
 		inline int Matcher::run() {
@@ -49,10 +50,13 @@ using namespace std;
 			// Match Graphs
 			// Constrained no future
 			if(MISSING_HELIX_COUNT == -1) {
-				matcher = new WongMatch(sequence, skeleton);
+			    matcher->set_MISSING_HELIX_COUNT(0);
+			    matcher->set_MISSING_SHEET_COUNT(0);
 			} else {
-				matcher = new WongMatch(sequence, skeleton, MISSING_HELIX_COUNT, MISSING_SHEET_COUNT);
+                matcher->set_MISSING_HELIX_COUNT(MISSING_HELIX_COUNT);
+                matcher->set_MISSING_SHEET_COUNT(MISSING_SHEET_COUNT);
 			}
+			matcher->init(sequence, skeleton);
 			start = clock();
 			int matchCount = matcher->run(start);
 			matcher->saveResults();

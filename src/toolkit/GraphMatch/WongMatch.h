@@ -32,6 +32,9 @@ namespace GraphMatch {
             SSEResult getResult(int rank);
             void saveResults();
 
+            void set_MISSING_HELIX_COUNT(int n);
+            void set_MISSING_SHEET_COUNT(int n);
+
         public:
             vector<SSEResult> solutions;
 
@@ -54,8 +57,9 @@ namespace GraphMatch {
             int longestMatch;
             PathGenerator * pathGenerator;
 
-        private:
+        public:
             void init(Graph & pGraph, Graph & bGraph);
+        private:
             double getC(int p, int qp);
             double getC(int j, int p, int qj, int qp);
             double getCost(int d, int m, int qj, int qp, bool debugMsg);
@@ -71,6 +75,13 @@ namespace GraphMatch {
             int bestMatches[RESULT_COUNT][MAX_NODES];
 
     };
+
+    void WongMatch::set_MISSING_HELIX_COUNT(int n) {
+        nMissHelix = n;
+    }
+    void WongMatch::set_MISSING_SHEET_COUNT(int n) {
+        nMissSheet = n;
+    }
 
     WongMatch::WongMatch(Graph & pGraph, Graph & bGraph,
                          int missingHelixCount,
