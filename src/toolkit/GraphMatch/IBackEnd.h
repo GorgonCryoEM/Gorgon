@@ -28,8 +28,6 @@ namespace GraphMatch {
         bool getConstantBool(string token);
         void clearAllConstraints();
 
-        // Process Execution
-        virtual int run();
         // Cleanup
         void cleanupMemory();
     protected:
@@ -95,10 +93,6 @@ namespace GraphMatch {
     inline void IBackEnd::clearAllConstraints() {
         ClearAllowedConstraints();
         ClearNotAllowedConstraints();
-    }
-
-    inline int IBackEnd::run() {
-        return Matcher::run(sequence, skeleton);
     }
 
     inline void IBackEnd::cleanupMemory() {
