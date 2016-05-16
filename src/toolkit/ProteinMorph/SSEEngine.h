@@ -71,7 +71,7 @@ namespace Visualization {
         finish = clock();
         #ifdef VERBOSE
             printf("\tReading Pattern file Took %f seconds.\n", (double) (finish - start) / (double) CLOCKS_PER_SEC ) ;
-            sequence->print();
+            sequence.print();
         #endif
     }
 
@@ -86,7 +86,7 @@ namespace Visualization {
         finish = clock();
         #ifdef VERBOSE
             printf("\033[32m\tReading Base file Took %f seconds.\n\033[0m", (double) (finish - start) / (double) CLOCKS_PER_SEC ) ;
-            skeleton->print();
+            skeleton.print();
         #endif
     }
 
@@ -144,16 +144,16 @@ namespace Visualization {
     }
 
     inline Shape * SSEEngine::getSkeletonSSE(int sseId) {
-        if((skeleton != NULL) && (sseId < (int)skeleton->skeletonHelixes.size())) {
-            return skeleton->skeletonHelixes[sseId];
+        if((skeleton != NULL) && (sseId < (int)skeleton.skeletonHelixes.size())) {
+            return skeleton.skeletonHelixes[sseId];
         } else {
             return NULL;
         }
     }
 
     inline SecStruct * SSEEngine::getSequenceSSE(int sseId) {
-        if((sequence != NULL) && (sseId < (int)sequence->pdbStructures.size())) {
-            return sequence->pdbStructures[sseId];
+        if((sequence != NULL) && (sseId < (int)sequence.pdbStructures.size())) {
+            return sequence.pdbStructures[sseId];
         } else {
             return NULL;
         }
@@ -162,11 +162,11 @@ namespace Visualization {
 
     inline int SSEEngine::getSkeletonSSECount() {
         cout<<"skeleton: "<<skeleton<<endl;
-        return skeleton->skeletonHelixes.size();
+        return skeleton.skeletonHelixes.size();
     }
 
     inline int SSEEngine::getSequenceSSECount() {
-        return sequence->pdbStructures.size();
+        return sequence.pdbStructures.size();
     }
 
     inline void SSEEngine::setVisibleCorrespondence(int correspondenceIndex) {
@@ -218,7 +218,7 @@ namespace Visualization {
                     sse1 = result.nodeToHelix(n1);
                     i++;
                     // update the seqIndex
-                    if (sequence->adjacencyMatrix[i][i][0] == GRAPHNODE_SHEET) {
+                    if (sequence.adjacencyMatrix[i][i][0] == GRAPHNODE_SHEET) {
                         strandsPassed ++;
                     }
                 }
@@ -229,7 +229,7 @@ namespace Visualization {
                     sse2 = result.nodeToHelix(n2);
                     i++;
                     // update the seqIndex
-                    if (sequence->adjacencyMatrix[i][i][0] == GRAPHNODE_SHEET) {
+                    if (sequence.adjacencyMatrix[i][i][0] == GRAPHNODE_SHEET) {
                         strandsPassed ++;
                     }
                     if (i >= result.getNodeCount()) {
@@ -237,16 +237,16 @@ namespace Visualization {
                         break;
                     }
                 }
-                if (sequence->adjacencyMatrix[i][i][0] == GRAPHNODE_SHEET) {
+                if (sequence.adjacencyMatrix[i][i][0] == GRAPHNODE_SHEET) {
                     strandsPassed --;
                 }
                 i--;
                 seqIndex = (i + strandsPassed + 1)/2 + 1;
 
-                path = skeleton->paths[n1][n2];
-                //cout << "path sizes. fwd:" << skeleton->paths[n1][n2].size() << ", rev:" << skeleton->paths[n2][n1].size() << endl;
+                path = skeleton.paths[n1][n2];
+                //cout << "path sizes. fwd:" << skeleton.paths[n1][n2].size() << ", rev:" << skeleton.paths[n2][n1].size() << endl;
                 if(path.size() == 0) {
-                    path = skeleton->paths[n2][n1];
+                    path = skeleton.paths[n2][n1];
                     int n1old = n1;
                     n1 = n2;
                     n2 = n1old;
@@ -255,27 +255,27 @@ namespace Visualization {
                 // color code
 
                 // get colors of beginning and ending SSEs
-                int numHelices = skeleton->getHelixCount();
+                int numHelices = skeleton.getHelixCount();
 
                 // start SSE color
                 int startSSENumber;
                 float startColorR, startColorG, startColorB, startColorA;
-                if(skeleton->adjacencyMatrix[n1][n1][0] == GRAPHNODE_SHEET){
+                if(skeleton.adjacencyMatrix[n1][n1][0] == GRAPHNODE_SHEET){
                     startSSENumber = n1 - numHelices;
                 } else {
                     startSSENumber = n1/2;
                 }
-                skeleton->skeletonHelixes[startSSENumber]->GetColor(startColorR, startColorG, startColorB, startColorA);
+                skeleton.skeletonHelixes[startSSENumber]->GetColor(startColorR, startColorG, startColorB, startColorA);
 
                 // end SSE color
                 int endSSENumber;
                 float endColorR, endColorG, endColorB, endColorA;
-                if(skeleton->adjacencyMatrix[n2][n2][0] == GRAPHNODE_SHEET){
+                if(skeleton.adjacencyMatrix[n2][n2][0] == GRAPHNODE_SHEET){
                     endSSENumber = n2 - numHelices;
                 } else {
                     endSSENumber = n2/2;
                 }
-                skeleton->skeletonHelixes[endSSENumber]->GetColor(endColorR, endColorG, endColorB, endColorA);
+                skeleton.skeletonHelixes[endSSENumber]->GetColor(endColorR, endColorG, endColorB, endColorA);
 
                 if(startSSENumber == endSSENumber && startSSENumber < numHelices){
                     seqNumber += 0; // internal helix loop
@@ -388,16 +388,16 @@ namespace Visualization {
             glEnable(GL_LINE_SMOOTH);
             glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 
-            int nodeCount = skeleton->getNodeCount();
+            int nodeCount = skeleton.getNodeCount();
             for(int i = 0; i < nodeCount; i++) {
                 for(int j = i+1; j < nodeCount; j++) {
                     //cout << "adding path from " << i << " to " << j << endl;
                     n1 = i;
                     n2 = j;
                     if((n1 >= 0)  && (n2 >= 0)) {
-                        path = skeleton->paths[n1][n2];
+                        path = skeleton.paths[n1][n2];
                         if(path.size() == 0) {
-                            path = skeleton->paths[n2][n1];
+                            path = skeleton.paths[n2][n1];
                             int n1old = n1;
                             n1 = n2;
                             n2 = n1old;
@@ -405,27 +405,27 @@ namespace Visualization {
                         //cout << "adding path from " << n1 << " to " << n2 << ", which has length " << path.size() << endl;
 
                         // get colors of beginning and ending SSEs
-                        int numHelices = skeleton->getHelixCount();
+                        int numHelices = skeleton.getHelixCount();
 
                         // start SSE color
                         int startSSENumber;
                         float startColorR, startColorG, startColorB, startColorA;
-                        if(skeleton->adjacencyMatrix[n2][n2][0] == GRAPHNODE_SHEET){
+                        if(skeleton.adjacencyMatrix[n2][n2][0] == GRAPHNODE_SHEET){
                             startSSENumber = n2 - numHelices;
                         } else {
                             startSSENumber = n2/2;
                         }
-                        skeleton->skeletonHelixes[startSSENumber]->GetColor(startColorR, startColorG, startColorB, startColorA);
+                        skeleton.skeletonHelixes[startSSENumber]->GetColor(startColorR, startColorG, startColorB, startColorA);
 
                         // end SSE color
                         int endSSENumber;
                         float endColorR, endColorG, endColorB, endColorA;
-                        if(skeleton->adjacencyMatrix[n1][n1][0] == GRAPHNODE_SHEET){
+                        if(skeleton.adjacencyMatrix[n1][n1][0] == GRAPHNODE_SHEET){
                             endSSENumber = n1 - numHelices;
                         } else {
                             endSSENumber = n1/2;
                         }
-                        skeleton->skeletonHelixes[endSSENumber]->GetColor(endColorR, endColorG, endColorB, endColorA);
+                        skeleton.skeletonHelixes[endSSENumber]->GetColor(endColorR, endColorG, endColorB, endColorA);
 
                         glBegin(GL_LINE_STRIP);
                         int pathSize = path.size(); // for color
@@ -446,12 +446,12 @@ namespace Visualization {
 
         // draw start and end of paths (subset of corner nodes)
         /*
-        for(int i = 0; i < skeleton->GetNodeCount(); i++) {
-            for(int j = i; j < skeleton->GetNodeCount(); j++) {
+        for(int i = 0; i < skeleton.GetNodeCount(); i++) {
+            for(int j = i; j < skeleton.GetNodeCount(); j++) {
                 n1 = i;
                 n2 = j;
                 if((n1 >= 0)  && (n2 >= 0)) {
-                    path = skeleton->paths[n1][n2];
+                    path = skeleton.paths[n1][n2];
                     if(path.size() > 0) {
                         Renderer::DrawSphere(Vector3DFloat(path[0].X(), path[0].Y(), path[0].Z()), 1.0);
                         Renderer::DrawSphere(Vector3DFloat(path[path.size()-1].X(), path[path.size()-1].Y(), path[path.size()-1].Z()), 1.0);
@@ -464,21 +464,21 @@ namespace Visualization {
         // draw corner nodes (helices)
         if (showHelixCorners) {
             glPushAttrib(GL_LIGHTING_BIT | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT);
-            for(int i = 0; i < (int)skeleton->skeletonHelixes.size(); i++) {
-                if (skeleton->skeletonHelixes[i]->shapeType == GRAPHEDGE_HELIX) {
-                    for(int j = 0; j < (int)skeleton->skeletonHelixes[i]->cornerCells.size(); j++) {
+            for(int i = 0; i < (int)skeleton.skeletonHelixes.size(); i++) {
+                if (skeleton.skeletonHelixes[i]->shapeType == GRAPHEDGE_HELIX) {
+                    for(int j = 0; j < (int)skeleton.skeletonHelixes[i]->cornerCells.size(); j++) {
                         // Color first helix corner white, second corner gray
-                        GLfloat col = 1.0 - 0.6 * (skeleton->skeletonHelixes[i]->cornerCells[j].node - 1);
+                        GLfloat col = 1.0 - 0.6 * (skeleton.skeletonHelixes[i]->cornerCells[j].node - 1);
                         glColor3f(col, col, col);
                         double sphereRadius = 0.25;
-                        drawSphere(Vec3F(skeleton->skeletonHelixes[i]->cornerCells[j].x, skeleton->skeletonHelixes[i]->cornerCells[j].y, skeleton->skeletonHelixes[i]->cornerCells[j].z), sphereRadius);
+                        drawSphere(Vec3F(skeleton.skeletonHelixes[i]->cornerCells[j].x, skeleton.skeletonHelixes[i]->cornerCells[j].y, skeleton.skeletonHelixes[i]->cornerCells[j].z), sphereRadius);
 
 
                         // Label the points with their graph node numbers
                         glColor3f(1.0, 1.0, 1.0);
 
-                        glRasterPos3d(skeleton->skeletonHelixes[i]->cornerCells[j].x, skeleton->skeletonHelixes[i]->cornerCells[j].y, skeleton->skeletonHelixes[i]->cornerCells[j].z);
-                        int cornerNum = skeleton->skeletonHelixes[i]->cornerCells[j].node; // 0 or 1
+                        glRasterPos3d(skeleton.skeletonHelixes[i]->cornerCells[j].x, skeleton.skeletonHelixes[i]->cornerCells[j].y, skeleton.skeletonHelixes[i]->cornerCells[j].z);
+                        int cornerNum = skeleton.skeletonHelixes[i]->cornerCells[j].node; // 0 or 1
                         int labelInt = 2 * i + cornerNum;
                         std::ostringstream tmpStream;
                         tmpStream << labelInt;
@@ -499,17 +499,17 @@ namespace Visualization {
         if (showSheetCorners) {
             glPushAttrib(GL_LIGHTING_BIT | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT);
             int lastHelix = 0;
-            for(int i = 0; i < (int)skeleton->skeletonHelixes.size(); i++) {
-                if (skeleton->skeletonHelixes[i]->shapeType == GRAPHEDGE_HELIX) {
+            for(int i = 0; i < (int)skeleton.skeletonHelixes.size(); i++) {
+                if (skeleton.skeletonHelixes[i]->shapeType == GRAPHEDGE_HELIX) {
                     lastHelix=i;
                 }
-                if (skeleton->skeletonHelixes[i]->shapeType == GRAPHEDGE_SHEET) {
-                    for(int j = 0; j < (int)skeleton->skeletonHelixes[i]->cornerCells.size(); j++) {
+                if (skeleton.skeletonHelixes[i]->shapeType == GRAPHEDGE_SHEET) {
+                    for(int j = 0; j < (int)skeleton.skeletonHelixes[i]->cornerCells.size(); j++) {
                         glColor3f(1.0, 1.0, 1.0);
-                        drawSphere(Vec3F(skeleton->skeletonHelixes[i]->cornerCells[j].x, skeleton->skeletonHelixes[i]->cornerCells[j].y, skeleton->skeletonHelixes[i]->cornerCells[j].z), 0.25);
+                        drawSphere(Vec3F(skeleton.skeletonHelixes[i]->cornerCells[j].x, skeleton.skeletonHelixes[i]->cornerCells[j].y, skeleton.skeletonHelixes[i]->cornerCells[j].z), 0.25);
 
                         // Label the points with their graph node numbers
-                        glRasterPos3d(skeleton->skeletonHelixes[i]->cornerCells[j].x, skeleton->skeletonHelixes[i]->cornerCells[j].y, skeleton->skeletonHelixes[i]->cornerCells[j].z);
+                        glRasterPos3d(skeleton.skeletonHelixes[i]->cornerCells[j].x, skeleton.skeletonHelixes[i]->cornerCells[j].y, skeleton.skeletonHelixes[i]->cornerCells[j].z);
                         int labelInt = i + lastHelix + 2;
                         std::ostringstream tmpStream;
                         tmpStream << labelInt;
