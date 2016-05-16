@@ -21,7 +21,7 @@ from OpenGL.GLUT import *
 # import math
 
 
-class SSEHelixCorrespondenceFinderForm(QtGui.QDialog, SSEHelixCorrespondence):
+class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
 
     def __init__(self, main, parent=None):
         self.app = main
@@ -30,7 +30,6 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog, SSEHelixCorrespondence):
         QtGui.QDialog.__init__(self, main)
                 
         args = self.app.args
-        SSEHelixCorrespondence.__init__(self, args.skeleton, args.sequence, args.helix, args.output, False)
         self.viewer.correspondenceEngine = self.correspondenceEngine
         self.viewer.correspondenceLibrary = CorrespondenceLibrary()
 #         exit()
