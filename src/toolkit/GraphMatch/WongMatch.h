@@ -35,7 +35,7 @@ namespace GraphMatch {
             void set_MISSING_HELIX_COUNT(int n);
             void set_MISSING_SHEET_COUNT(int n);
 
-        public:
+        protected:
             vector<SSEResult> solutions;
 
         private:
@@ -57,7 +57,7 @@ namespace GraphMatch {
             int longestMatch;
             PathGenerator * pathGenerator;
 
-        public:
+        protected:
             void init(Graph & pGraph, Graph & bGraph);
         private:
             double getC(int p, int qp);

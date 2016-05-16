@@ -99,7 +99,7 @@ namespace Visualization {
             exit(0) ;
         }
 
-        matcher->solutions.clear();
+        solutions.clear();
 
         int correspondenceCount = 0, nodeCount, skeletonNode;
         vector<int> nodes;
@@ -115,7 +115,7 @@ namespace Visualization {
             }
             fin>>cost;
             // TODO: Fix! 0 not acceptable!
-            matcher->solutions.push_back(SSEResult(nodes, cost, 0));
+            solutions.push_back(SSEResult(nodes, cost, 0));
         }
 
         fin.close();
@@ -131,13 +131,13 @@ namespace Visualization {
             exit(0) ;
         }
 
-        fout<<matcher->solutions.size()<<endl;
-        for(unsigned int i = 0; i < matcher->solutions.size(); i++) {
-            fout<<matcher->solutions[i].getNodeCount()<<" ";
-            for(int j = 0; j < matcher->solutions[i].getNodeCount(); j++) {
-                fout<<matcher->solutions[i].getSkeletonNode(j)<<" ";
+        fout<<solutions.size()<<endl;
+        for(unsigned int i = 0; i < solutions.size(); i++) {
+            fout<<solutions[i].getNodeCount()<<" ";
+            for(int j = 0; j < solutions[i].getNodeCount(); j++) {
+                fout<<solutions[i].getSkeletonNode(j)<<" ";
             }
-            fout<<fixed<<setprecision(6)<<matcher->solutions[i].getCost()<<endl;
+            fout<<fixed<<setprecision(6)<<solutions[i].getCost()<<endl;
         }
 
         fout.close();
