@@ -29,7 +29,6 @@ namespace Visualization {
     public:
         SSEEngine();
 
-        int getResultCount();
         int load(string fileName);
         void save(string fileName);
         Shape * getSkeletonSSE(int sseId);
@@ -47,10 +46,6 @@ namespace Visualization {
     inline SSEEngine::SSEEngine()
     {
         curInd = -1;
-    }
-
-    inline int SSEEngine::getResultCount() {
-        return matcher->solutions.size();
     }
 
     inline int SSEEngine::load(string fileName) {
