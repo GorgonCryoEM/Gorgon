@@ -27,7 +27,7 @@ using namespace std;
 		class Matcher {
 		public:
 			int run(Graph & sequenceGraph, Graph & skeletonGraph);
-			SSEResult getSolution(int rank);
+			SSEResult getResult(int rank);
 			void destruct();
 			virtual void loadSequence();
 			virtual void loadSkeleton();
@@ -96,7 +96,7 @@ using namespace std;
 			return matchCount;
 		}
 
-		inline SSEResult Matcher::getSolution(int rank) {
+		inline SSEResult Matcher::getResult(int rank) {
 			return matcher->getResult(rank);
 		}
 

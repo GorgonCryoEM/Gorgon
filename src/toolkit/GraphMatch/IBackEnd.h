@@ -29,8 +29,6 @@ namespace GraphMatch {
 
         // Process Execution
         virtual int run();
-        // Result Retrieval
-        virtual SSEResult getResult(int rank);
         // Cleanup
         void cleanupMemory();
     protected:
@@ -99,10 +97,6 @@ namespace GraphMatch {
             return Matcher::run(*sequence, *skeleton);
         else
             return 0;
-    }
-
-    inline SSEResult IBackEnd::getResult(int rank) {
-        return getSolution(rank);
     }
 
     inline void IBackEnd::cleanupMemory() {
