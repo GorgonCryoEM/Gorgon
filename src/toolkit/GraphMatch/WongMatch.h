@@ -44,7 +44,7 @@ namespace GraphMatch {
             LinkedNode * currentNode;
 
             typedef Pair<double, LinkedNode *> Elem;
-            priority_queue<Elem> * q;
+            priority_queue<Elem> q;
 
             vector<LinkedNodeStub*> usedNodes;
             int nMissHelix;
@@ -88,14 +88,13 @@ namespace GraphMatch {
         }
 
         LinkedNode * tempNode;
-        while(!q->empty()) {
-            Elem res = q->top();
+        while(!q.empty()) {
+            Elem res = q.top();
             tempNode = res.second;
             delete tempNode;
-            q->pop();
+            q.pop();
         }
 
-        delete q;
         delete pathGenerator;
     }
 
@@ -114,7 +113,7 @@ namespace GraphMatch {
 #ifdef VERBOSE
         cout << "Creating priority queue" << endl;
 #endif
-        q = new priority_queue<Elem>();
+        q = priority_queue<Elem>();
 #ifdef VERBOSE
         cout << "Loading pattern graph" << endl;
 #endif
@@ -209,7 +208,7 @@ namespace GraphMatch {
         for(int j = 1; j <= baseGraph.nodeCount; j++) {
             LinkedNode::AddNodeToBitmap(currentNode->m2Bitmap, j);
         }
-        q->push(Elem(currentNode->cost, currentNode));
+        q.push(Elem(currentNode->cost, currentNode));
         pathGenerator = new PathGenerator(&baseGraph);
     }
 
@@ -263,7 +262,7 @@ namespace GraphMatch {
                 delete currentNode;
             }
             // continue until desired number of results are found
-            continueLoop = (foundCount < RESULT_COUNT) && (!q->empty());
+            continueLoop = (foundCount < RESULT_COUNT) && (!q.empty());
         }
 
         //Cleaning up memory
@@ -273,11 +272,11 @@ namespace GraphMatch {
         usedNodes.clear();
 
         LinkedNode * tempNode;
-        while(!q->empty()) {
-            Elem res = q->top();
+        while(!q.empty()) {
+            Elem res = q.top();
             tempNode = res.second;
             delete tempNode;
-            q->pop();
+            q.pop();
         }
 
 #ifdef VERBOSE
@@ -563,9 +562,9 @@ namespace GraphMatch {
         clock_t start = clock();
 #endif
         double cost;
-        Elem res = q->top();
+        Elem res = q.top();
         currentNode = res.second;
-        q->pop();
+        q.pop();
 #ifdef VERBOSE
         timeInQueue += clock() - start;
 #endif
@@ -761,7 +760,7 @@ namespace GraphMatch {
                             currentNode->costGStar += getPenaltyCost(temp->n1Node, j+1, false);
 
                             currentNode->cost = getF();
-                            q->push(Elem(currentNode->cost, currentNode));
+                            q.push(Elem(currentNode->cost, currentNode));
                             expanded = true;
                         }
                         else { // not an allowed match
@@ -822,7 +821,7 @@ namespace GraphMatch {
                 currentNode->costGStar  = temp->costGStar;
                 currentNode->costGStar += getPenaltyCost(temp->n1Node, remainingHelixNodes + remainingSheetNodes, false);
                 currentNode->cost = currentNode->costGStar;
-                q->push(Elem(currentNode->cost, currentNode));
+                q.push(Elem(currentNode->cost, currentNode));
                 currentNode = temp;
             }
         }
