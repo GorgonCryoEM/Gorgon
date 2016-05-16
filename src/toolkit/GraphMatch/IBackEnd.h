@@ -1,12 +1,7 @@
 #ifndef TOOLKIT_GRAPHMATCH_BACK_END_INTERFACE_H
 #define TOOLKIT_GRAPHMATCH_BACK_END_INTERFACE_H
 
-//#include "Core/GlobalConstants.h"
-//#include "Node.h"
-
-#ifdef DEBUG
-	#include <iostream>
-#endif
+#include "Constants.h"
 
 using namespace std;
 

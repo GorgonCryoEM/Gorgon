@@ -10,6 +10,10 @@
 
 //#include <GraphMatch/SSEResult.h>
 #include "GraphMatch/IBackEnd.h"
+#include "GraphMatch/WongMatch.h"
+#include "GraphMatch/PDBReader.h"
+#include "Readers/SEQReader.h"
+#include "Readers/SkeletonReader.h"
 //#include <GraphMatch/Shape.h>
 #include <vector>
 #include <map>
@@ -25,7 +29,7 @@
 //using namespace std;
 
 namespace Visualization {
-    class SSEEngine : public IBackEnd, public Matcher {
+    class SSEEngine : public IBackEnd, public WongMatch {
     public:
         SSEEngine();
 
@@ -52,7 +56,7 @@ namespace Visualization {
     };
 
     inline SSEEngine::SSEEngine()
-                : Matcher(sequence, skeleton)
+                : WongMatch(sequence, skeleton)
     {
         curInd = -1;
     }
