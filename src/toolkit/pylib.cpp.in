@@ -7,6 +7,7 @@
 #include "ProteinMorph/CAlpha.h"
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include "ProteinMorph/SSEEngine.h"
+#include "GraphMatch/IBackEnd.h"
 #include "GraphMatch/PDBBond.h"
 #include "Readers/SEQReader.h"
 #include "Visualization/RendererBase.h"
@@ -520,21 +521,24 @@ BOOST_PYTHON_MODULE(@current_pylib@)
         .def("getCornerCell3", &Shape::GetCornerCell3)
     ;
 
-    bool (SSEEngine::*setConstant1)(string, string)   = &SSEEngine::setConstant;
-    bool (SSEEngine::*setConstant2)(string, double)   = &SSEEngine::setConstant;
-    bool (SSEEngine::*setConstant3)(string, int)      = &SSEEngine::setConstant;
-    bool (SSEEngine::*setConstant4)(string, bool)     = &SSEEngine::setConstant;
+    bool (IBackEnd::*setConstant1)(string, string)   = &IBackEnd::setConstant;
+    bool (IBackEnd::*setConstant2)(string, double)   = &IBackEnd::setConstant;
+    bool (IBackEnd::*setConstant3)(string, int)      = &IBackEnd::setConstant;
+    bool (IBackEnd::*setConstant4)(string, bool)     = &IBackEnd::setConstant;
 
-    class_<SSEEngine>("SSEEngine", init<>())
+    class_<IBackEnd>("IBackEnd", init<>())
         .def("setConstant", setConstant1)
         .def("setConstant", setConstant2)
         .def("setConstant", setConstant3)
         .def("setConstant", setConstant4)
-        .def("getConstantString", &SSEEngine::getConstantString)
-        .def("getConstantDouble", &SSEEngine::getConstantDouble)
-        .def("getConstantInt", &SSEEngine::getConstantInt)
-        .def("getConstantBool", &SSEEngine::getConstantBool)
-        .def("clearAllConstraints", &SSEEngine::clearAllConstraints)          
+        .def("getConstantString",   &IBackEnd::getConstantString)
+        .def("getConstantDouble",   &IBackEnd::getConstantDouble)
+        .def("getConstantInt",      &IBackEnd::getConstantInt)
+        .def("getConstantBool",     &IBackEnd::getConstantBool)
+        .def("clearAllConstraints", &IBackEnd::clearAllConstraints)          
+    ;
+    
+    class_<SSEEngine, bases<IBackEnd> >("SSEEngine", init<>())
 //        .def("setHelixConstraint", &SSEEngine::SetHelixConstraint)            
 //        .def("getHelixConstraintFwd", &SSEEngine::GetHelixConstraintFwd)          
 //        .def("getHelixConstraintRev", &SSEEngine::GetHelixConstraintRev)          
