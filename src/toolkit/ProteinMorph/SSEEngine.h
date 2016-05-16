@@ -54,7 +54,7 @@ namespace Visualization {
 
     inline int SSEEngine::executeQuery() {
         if(skeleton != NULL && sequence != NULL) {
-            int resultCount = match(sequence, skeleton);
+            int resultCount = match(*sequence, *skeleton);
             correspondence.clear();
             for(int i = 0; i < resultCount; i++) {
                 correspondence.push_back(getSolution(i+1));

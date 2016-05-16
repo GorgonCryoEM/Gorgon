@@ -96,7 +96,7 @@ namespace GraphMatch {
 
     inline int IBackEnd::executeQuery() {
         if(skeleton != NULL && sequence != NULL)
-            return match(sequence, skeleton);
+            return match(*sequence, *skeleton);
         else
             return 0;
     }
