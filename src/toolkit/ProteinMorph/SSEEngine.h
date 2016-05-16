@@ -29,10 +29,8 @@ namespace Visualization {
     public:
         SSEEngine();
 
-        int run();
         int getResultCount();
         int load(string fileName);
-        SSEResult getResult(int rank);
         void save(string fileName);
         Shape * getSkeletonSSE(int sseId);
         SecStruct * getSequenceSSE(int sseId);
@@ -43,7 +41,6 @@ namespace Visualization {
         void drawAllPaths(int sceneIndex, bool showPaths, bool showHelixCorners, bool showSheetCorners, bool showSheetColors);
 
     private:
-        vector<SSEResult> correspondence;
         int correspondenceIndex;
     };
 
@@ -52,21 +49,8 @@ namespace Visualization {
         correspondenceIndex = -1;
     }
 
-    inline int SSEEngine::run() {
-        if(skeleton != NULL && sequence != NULL) {
-            int resultCount = Matcher::run(*sequence, *skeleton);
-            correspondence.clear();
-            for(int i = 0; i < resultCount; i++) {
-                correspondence.push_back(getSolution(i+1));
-            }
-            return resultCount;
-        } else {
-            return 0;
-        }
-    }
-
     inline int SSEEngine::getResultCount() {
-        return correspondence.size();
+        return matcher->solutions.size();
     }
 
     inline int SSEEngine::load(string fileName) {
@@ -78,7 +62,7 @@ namespace Visualization {
             exit(0) ;
         }
 
-        correspondence.clear();
+        matcher->solutions.clear();
 
         int correspondenceCount = 0, nodeCount, skeletonNode;
         vector<int> nodes;
@@ -94,21 +78,12 @@ namespace Visualization {
             }
             fin>>cost;
             // TODO: Fix! 0 not acceptable!
-            correspondence.push_back(SSEResult(nodes, cost, 0));
+            matcher->solutions.push_back(SSEResult(nodes, cost, 0));
         }
 
         fin.close();
 
         return correspondenceCount;
-    }
-
-    inline SSEResult SSEEngine::getResult(int rank) {
-        // TODO: Fix!
-        //if(rank <= (int)correspondence.size() && (rank >= 1)) {
-            return correspondence[rank-1];
-        //} else {
-        //	return NULL;
-        //}
     }
 
     inline void SSEEngine::save(string fileName) {
@@ -119,13 +94,13 @@ namespace Visualization {
             exit(0) ;
         }
 
-        fout<<correspondence.size()<<endl;
-        for(unsigned int i = 0; i < correspondence.size(); i++) {
-            fout<<correspondence[i].getNodeCount()<<" ";
-            for(int j = 0; j < correspondence[i].getNodeCount(); j++) {
-                fout<<correspondence[i].getSkeletonNode(j)<<" ";
+        fout<<matcher->solutions.size()<<endl;
+        for(unsigned int i = 0; i < matcher->solutions.size(); i++) {
+            fout<<matcher->solutions[i].getNodeCount()<<" ";
+            for(int j = 0; j < matcher->solutions[i].getNodeCount(); j++) {
+                fout<<matcher->solutions[i].getSkeletonNode(j)<<" ";
             }
-            fout<<fixed<<setprecision(6)<<correspondence[i].getCost()<<endl;
+            fout<<fixed<<setprecision(6)<<matcher->solutions[i].getCost()<<endl;
         }
 
         fout.close();
@@ -195,7 +170,7 @@ namespace Visualization {
             double prevx, prevy, prevz;
             bool pastFirstStructure = false;
 
-            // the following code iterates over the correspondence, finding a valid edge at each iteration.
+            // the following code iterates over the matcher->solutions, finding a valid edge at each iteration.
             // start at node 0 of this result, continue until i is at last node
             int numNodes = result.getNodeCount();
             for(int i = 0; i < result.getNodeCount()-1; ) {
@@ -221,7 +196,7 @@ namespace Visualization {
                         strandsPassed ++;
                     }
                     if (i >= result.getNodeCount()) {
-                        //cout << "found skip edge at end of correspondence. breaking out of loop." << endl;
+                        //cout << "found skip edge at end of matcher->solutions. breaking out of loop." << endl;
                         break;
                     }
                 }

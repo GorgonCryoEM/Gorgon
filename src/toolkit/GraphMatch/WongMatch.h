@@ -33,6 +33,9 @@ namespace GraphMatch {
             SSEResult getResult(int rank);
             void saveResults();
 
+        public:
+            vector<SSEResult> solutions;
+
         private:
 #ifdef VERBOSE
             clock_t timeInGetA;
@@ -45,7 +48,6 @@ namespace GraphMatch {
             priority_queue<Elem> * queue;
 
             vector<LinkedNodeStub*> usedNodes;
-            vector<SSEResult> solutions;
             int nMissHelix;
             int nMissSheet;
             int nExpand;
