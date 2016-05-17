@@ -1,5 +1,6 @@
 from PyQt4 import QtCore, QtGui
 from ui_dialog_sse_helix_correspondence_finder import Ui_DialogSSEHelixCorrespondenceFinder
+from libpytoolkit import SSEEngine, SSEResult, IBackEnd#, Vec3F
 # from libpytoolkit import SSEEngine, SSEResult, Vec3F
 from Toolkit.sse.correspondence.CorrespondenceLibrary import CorrespondenceLibrary
 from Toolkit.sse.correspondence.Correspondence import Correspondence
@@ -30,9 +31,11 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
         QtGui.QDialog.__init__(self, main)
                 
         args = self.app.args
-        self.viewer.correspondenceEngine = self.correspondenceEngine
+        self.viewer.correspondenceEngine = SSEEngine()
+        self.correspondenceEngine = self.viewer.correspondenceEngine
         self.viewer.correspondenceLibrary = CorrespondenceLibrary()
 #         exit()
+        self.constants = IBackEnd()
         
         dock = QtGui.QDockWidget("SSEHelixCorrespondenceFinder", self.app)
         dock.setWidget(self)
@@ -640,7 +643,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
 
         #Loading Predicted SSEs
         print "loading predicted SSEs"
-        self.correspondenceEngine.loadSequenceGraph()
+        self.viewer.correspondenceEngine.loadSequenceGraph()
 
         print "before calling StructurePrediction.load"
         print "sequenceFileName is " + str(self.sequenceFileName)
