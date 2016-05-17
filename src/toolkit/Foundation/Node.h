@@ -39,7 +39,7 @@ namespace GraphMatch {
             static bool IsNodeInBitmap(unsigned long long bitmap, int node);
     };
 
-    bool operator<(const Node & l, const Node & r) {
+    inline bool operator<(const Node & l, const Node & r) {
         return l.cost < r.cost;
     }
 
