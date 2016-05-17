@@ -12,7 +12,7 @@ using namespace std;
 namespace GraphMatch {
 
     template <class T>
-    ostream & operator<<(ostream & out, const vector<T> & obj) {
+    inline ostream & operator<<(ostream & out, const vector<T> & obj) {
             for(typename vector<T>::const_iterator it=obj.begin();
                     it!=obj.end();
                     ++it)

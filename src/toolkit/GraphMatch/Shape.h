@@ -1,5 +1,5 @@
-#ifndef TOOLKIT_GRAPHMATCH_GEOMETRICSHAPE_H
-#define TOOLKIT_GRAPHMATCH_GEOMETRICSHAPE_H
+#ifndef TOOLKIT_GRAPHMATCH_SHAPE_H
+#define TOOLKIT_GRAPHMATCH_SHAPE_H
 
 #include "MathTools/VectorMath.h"
 //#include <vector>

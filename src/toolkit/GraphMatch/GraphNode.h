@@ -1,5 +1,5 @@
-#ifndef TOOLKIT_GRAPHMATCH_STANDARDNODE_H
-#define TOOLKIT_GRAPHMATCH_STANDARDNODE_H
+#ifndef TOOLKIT_GRAPHMATCH_NODE_H
+#define TOOLKIT_GRAPHMATCH_NODE_H
 
 #include <vector>
 //#include "Core/GlobalConstants.h"
@@ -35,10 +35,10 @@ namespace GraphMatch {
         static int RemoveSmallestNode(unsigned long long & bitmap);
     };
 
-    GraphNode::~GraphNode() {
+    inline GraphNode::~GraphNode() {
     }
 
-    GraphNode::GraphNode()
+    inline GraphNode::GraphNode()
         : n1(MAX_NODES),
           n2(MAX_NODES)
     {
@@ -51,7 +51,7 @@ namespace GraphMatch {
         m2Bitmap = 0;
     }
 
-    GraphNode::GraphNode(GraphNode * olderNode)
+    inline GraphNode::GraphNode(GraphNode * olderNode)
         : n1(MAX_NODES),
           n2(MAX_NODES)
     {
@@ -68,7 +68,7 @@ namespace GraphMatch {
         missingNodesUsed = olderNode->missingNodesUsed;
     }
 
-    GraphNode::GraphNode(GraphNode * olderNode, int insertingNode, int dummyHelixCount)
+    inline GraphNode::GraphNode(GraphNode * olderNode, int insertingNode, int dummyHelixCount)
         : n1(MAX_NODES),
           n2(MAX_NODES)
     {
@@ -112,7 +112,7 @@ namespace GraphMatch {
         missingNodesUsed = olderNode->missingNodesUsed + dummyHelixCount;
     }
 
-    void GraphNode::print() {
+    inline void GraphNode::print() {
         printf("\t");
         for(int i = 0; i < n1Top; i++) {
             printf("(%d, %d) ", n1[i]+1, n2[i]+1);
@@ -120,7 +120,7 @@ namespace GraphMatch {
         printf(" - %f\n", cost);
     }
 
-    void GraphNode::PrintNodeConcise() {
+    inline void GraphNode::PrintNodeConcise() {
         printf("\t");
         for(int i = 0; i < n1Top; i++) {
             printf("%d ", n2[i]+1);
@@ -128,7 +128,7 @@ namespace GraphMatch {
         printf(" - %f\n", cost);
     }
 
-    void GraphNode::PrintNodeConcise(int rank) {
+    inline void GraphNode::PrintNodeConcise(int rank) {
         printf(" %d)\t", rank);
         for(int i = 0; i < n1Top; i++) {
             printf("%d ", n2[i]+1);
@@ -136,30 +136,30 @@ namespace GraphMatch {
         printf(" - %f\n", cost);
     }
 
-    void GraphNode::SortOnPattern() {
+    inline void GraphNode::SortOnPattern() {
         sort(n1.begin(), n1.end());
         sort(n2.begin(), n2.end());
     }
 
-    bool GraphNode::operator==(GraphNode &other) {
+    inline bool GraphNode::operator==(GraphNode &other) {
         return (n1Top == other.n1Top) && (n1 == other.n1) && (n2 == other.n2);
     }
 
-    void GraphNode::AddNodeToBitmap(unsigned long long & bitmap, int node) {
+    inline void GraphNode::AddNodeToBitmap(unsigned long long & bitmap, int node) {
         bitmap = bitmap | ((unsigned long long)1 << node);
     }
 
-    void GraphNode::RemoveNodeFromBitmap(unsigned long long & bitmap, int node) {
+    inline void GraphNode::RemoveNodeFromBitmap(unsigned long long & bitmap, int node) {
         bitmap = bitmap - ((unsigned long long)1 << node);
     }
 
-    bool GraphNode::IsNodeInBitmap(unsigned long long bitmap, int node) {
+    inline bool GraphNode::IsNodeInBitmap(unsigned long long bitmap, int node) {
         unsigned long long bitvalue = ((unsigned long long)1 << node);
         return ((bitmap & bitvalue) == bitvalue);
     }
 
 
-    int GraphNode::RemoveSmallestNode(unsigned long long & bitmap) {
+    inline int GraphNode::RemoveSmallestNode(unsigned long long & bitmap) {
         for(int i = 1; i <= MAX_NODES; i++) {
             if (IsNodeInBitmap(bitmap, i)) {
                 RemoveNodeFromBitmap(bitmap, i);
