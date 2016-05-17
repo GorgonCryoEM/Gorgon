@@ -32,7 +32,6 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
                 
         args = self.app.args
         self.viewer.correspondenceEngine = SSEEngine()
-        self.correspondenceEngine = self.viewer.correspondenceEngine
         self.viewer.correspondenceLibrary = CorrespondenceLibrary()
 #         exit()
         self.constants = IBackEnd()
@@ -661,17 +660,17 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
 
         #Loading Observed SSEs
         print "loading observed SSEs"
-        self.correspondenceEngine.loadSkeletonGraph()
+        self.viewer.correspondenceEngine.loadSkeletonGraph()
         observedHelices = {}
         helixCount = 0
         observedSheets = {}
         sheetCount = 0
-        sseCount = self.correspondenceEngine.getSkeletonSSECount()
+        sseCount = self.viewer.correspondenceEngine.getSkeletonSSECount()
 
         print "adding helices to list of observed helices"
         for sseIx in range(sseCount):
             # call to c++ method QueryEngine::getSkeletonSSE(), which returns a c++ GeometricShape object
-            cppSse = self.correspondenceEngine.getSkeletonSSE(sseIx)
+            cppSse = self.viewer.correspondenceEngine.getSkeletonSSE(sseIx)
 
             # create list of observed helices for this correspondence result
             if cppSse.isHelix():
