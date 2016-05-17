@@ -729,10 +729,10 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
         includeStrands = self.viewer.correspondenceEngine.getConstantInt("INCLUDE_STRANDS")
         structPred = StructurePrediction.load(self.sequenceFileName, self.app, includeStrands)
         print "after calling StructurePrediction.load"
-        cAlphaViewer = self.app.viewers['calpha']
+#         cAlphaViewer = self.app.viewers['calpha']
         sseViewer = self.app.viewers['sse']
         skeletonViewer = self.app.viewers['skeleton']
-        cAlphaViewer.structPred = structPred
+#         cAlphaViewer.structPred = structPred
 
         def vector3DFloatToTuple(v3df):
             return (v3df.x(), v3df.y(), v3df.z())
@@ -753,8 +753,8 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
             
             # create list of observed helices for this correspondence result
             if cppSse.isHelix():
-                q1 = cAlphaViewer.worldToObjectCoordinates(sseViewer.objectToWorldCoordinates(vector3DFloatToTuple(cppSse.getCornerCell3(1))))
-                q2 = cAlphaViewer.worldToObjectCoordinates(sseViewer.objectToWorldCoordinates(vector3DFloatToTuple(cppSse.getCornerCell3(2))))
+                q1 = vector3DFloatToTuple(cppSse.getCornerCell3(1))
+                q2 = vector3DFloatToTuple(cppSse.getCornerCell3(2))
             
                 pyHelix = ObservedHelix(sseIx, q1, q2)
                 observedHelices[helixCount] = pyHelix
