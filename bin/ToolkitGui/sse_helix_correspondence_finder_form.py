@@ -672,8 +672,8 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
 
             # create list of observed helices for this correspondence result
             if cppSse.isHelix():
-                q1 = cAlphaViewer.worldToObjectCoordinates(sseViewer.objectToWorldCoordinates(vector3DFloatToTuple(cppSse.getCornerCell3(1))))
-                q2 = cAlphaViewer.worldToObjectCoordinates(sseViewer.objectToWorldCoordinates(vector3DFloatToTuple(cppSse.getCornerCell3(2))))
+                q1 = cppSse.getCornerCell3(1)
+                q2 = cppSse.getCornerCell3(2)
 
                 pyHelix = ObservedHelix(sseIx, q1, q2)
                 observedHelices[helixCount] = pyHelix
