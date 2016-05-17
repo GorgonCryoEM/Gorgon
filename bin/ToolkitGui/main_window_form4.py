@@ -59,6 +59,8 @@ class MainWindowForm4(QtGui.QMainWindow):
 # #         self.form.lineEditSheetLocationFile.setText()
 #         self.form.drawOverlay()
         self.form.checkOk()
+        self.form.ui.pushButtonOk.setEnabled(True)
+        self.form.ui.tabWidget.setCurrentIndex(4)
 #         self.form.accept()
 
 #         self.form.viewer.sheetFileName    = QtCore.QString('groel-segment.seq')
