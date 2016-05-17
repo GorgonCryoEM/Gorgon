@@ -74,6 +74,7 @@ class SSEViewer(BaseViewer):
 #         self.sseBuilder = VolumeSSEBuilderForm(self.app, self, self)
 #         self.sequencePredictor = SSESequencePredictorForm(self.app, self, self)
         self.helixCorrespondanceFinder = SSEHelixCorrespondenceFinderForm(self.app, self)
+#         exit()
         
     def loadHelixDataFromFile(self, fileName):
         self.setCursor(QtCore.Qt.WaitCursor)
@@ -174,10 +175,10 @@ class SSEViewer(BaseViewer):
                     break
 
     def fitSelectedSSEs(self):
-        self.app.mainCamera.setCursor(QtCore.Qt.BusyCursor)
+#         self.app.mainCamera.setCursor(QtCore.Qt.BusyCursor)
         self.renderer.fitSelectedSSEs(self.app.volumeViewer.renderer.getVolume())
         self.modelChanged()
-        self.app.mainCamera.setCursor(QtCore.Qt.ArrowCursor)
+#         self.app.mainCamera.setCursor(QtCore.Qt.ArrowCursor)
         
     def updateCorrespondences(self, corrs):
         self.correspondences  = corrs

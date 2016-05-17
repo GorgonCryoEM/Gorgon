@@ -634,8 +634,6 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog, SSEHelixCorrespondence):
     def createBasicCorrespondence(self):
         """Writes search parameters to correspondence object, loads predicted structure and observed structure, and creates correspondence library"""
         print "creating basic correspondence"
-        oldCursor = self.cursor()
-        self.setCursor(QtCore.Qt.BusyCursor)
 
         # put user-entered match parameters from UI into the correspondence object
         print "setting constants"
@@ -709,14 +707,10 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog, SSEHelixCorrespondence):
         # create a new python CorrespondenceLibrary object
         self.viewer.correspondenceLibrary = CorrespondenceLibrary(sp = structPred, so = structObserv)
 
-        self.setCursor(oldCursor)
-
         print "finished creating basic correspondences"
         
     def accept(self):
         print "beginning search"
-        oldCursor = self.cursor()
-        self.setCursor(QtCore.Qt.BusyCursor)
 
         # save the settings used to generate the last result, in case this search fails
         if self.executed:
@@ -738,7 +732,6 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog, SSEHelixCorrespondence):
         self.constants.clearAllConstraints()
 
         print "found " + str(self.resultCount) + " results. cleaning up memory."
-        self.setCursor(oldCursor)
 
         if self.resultCount > 0:
             self.executed = True
