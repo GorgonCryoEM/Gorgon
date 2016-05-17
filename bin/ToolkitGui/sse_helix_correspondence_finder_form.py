@@ -722,13 +722,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
         self.createBasicCorrespondence()
                 
         # execute correspondence query and do cleanup
-        memErr = False
-        try:
-            self.resultCount = self.viewer.correspondenceEngine.executeQuery()
-        except MemoryError:
-            print "memory error"
-            self.resultCount=0
-            memErr = True
+        self.resultCount = self.viewer.correspondenceEngine.executeQuery()
 #         self.correspondenceEngine.cleanupMemory()
         self.constants.clearAllConstraints()
 
@@ -742,10 +736,6 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
 
         else:
             self.executed = False
-            if memErr:
-                QtGui.QMessageBox.warning(self.app, "Insufficient Memory", "Insufficient memory to complete the search. Try adding or removing constraints.")
-            else:
-                QtGui.QMessageBox.warning(self.app, "No results found", "The correspondence search returned no results. Try removing constraints.")
             print "no results found. loading the most recent successful correspondence"
 
             self.viewer.correspondenceLibrary.correspondenceList = []
