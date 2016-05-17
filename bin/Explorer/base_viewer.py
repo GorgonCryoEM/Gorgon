@@ -147,9 +147,9 @@ class BaseViewer(BaseDockWidget):
                 self.renderer.draw(s, False)
                 glDepthFunc(GL_LEQUAL)
                 glColorMask(True, True, True, True)
-                self.renderer.draw(s, self.selectEnabled or self.mouseMoveEnabled)
+                self.renderer.draw(s, True)
             else:
-                self.renderer.draw(s, self.selectEnabled or self.mouseMoveEnabled)
+                self.renderer.draw(s, True)
 
     def setMaterials(self):
         color = self.color
