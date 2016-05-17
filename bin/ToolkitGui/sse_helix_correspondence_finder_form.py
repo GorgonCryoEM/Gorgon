@@ -667,9 +667,10 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
         for sseIx in range(sseCount):
             # call to c++ method QueryEngine::getSkeletonSSE(), which returns a c++ GeometricShape object
             cppSse = self.viewer.correspondenceEngine.getSkeletonSSE(sseIx)
+            print cppSse
 
             # create list of observed helices for this correspondence result
-            if cppSse.isHelix():
+            if True:
                 q1 = cppSse.getCornerCell3(1)
                 q2 = cppSse.getCornerCell3(2)
 
