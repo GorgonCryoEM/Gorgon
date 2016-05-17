@@ -33,6 +33,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog, SSEHelixCorrespondence):
         SSEHelixCorrespondence.__init__(self, args.skeleton, args.sequence, args.helix, args.output, False)
         self.viewer.correspondenceEngine = self.correspondenceEngine
         self.viewer.correspondenceLibrary = CorrespondenceLibrary()
+#         exit()
         
         dock = QtGui.QDockWidget("SSEHelixCorrespondenceFinder", self.app)
         dock.setWidget(self)
@@ -51,6 +52,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog, SSEHelixCorrespondence):
         self.selectedRow = 0
         self.dataLoaded = True
         self.allLoaded  = True
+#         exit()
 
     def createUI(self):
         self.ui = Ui_DialogSSEHelixCorrespondenceFinder()
@@ -219,6 +221,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog, SSEHelixCorrespondence):
             print "data not loaded"
         print "correspondence index at end is " + str(self.ui.comboBoxCorrespondences.currentIndex())
         print "end checkOk"
+#         exit()
     
 #     def loadSettings(self):
 #

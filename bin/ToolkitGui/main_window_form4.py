@@ -39,6 +39,7 @@ class MainWindowForm4(QtGui.QMainWindow):
         self.setWindowTitle(self.tr("Gorgon Toolkit - v" + version))
         pathname = os.path.abspath(os.path.dirname(sys.argv[0]))
         self.setWindowIcon(QtGui.QIcon(pathname + '/gorgon.ico'))
+#         exit()
         
     def load(self):
         self.form = self.sseViewer.helixCorrespondanceFinder
