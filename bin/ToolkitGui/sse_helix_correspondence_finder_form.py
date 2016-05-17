@@ -549,7 +549,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
         for i in range(self.resultCount):
             # create a Correspondence object and add it to the list
             # start from correspondenceEngine result
-            result = self.correspondenceEngine.getResult(i+1)
+            result = self.viewer.correspondenceEngine.getResult(i+1)
             matchList = [] # matchList holds the matches
             
             # iterate over all nodes in the matching from correspondenceEngine
@@ -724,7 +724,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
         # execute correspondence query and do cleanup
         memErr = False
         try:
-            self.resultCount = self.correspondenceEngine.executeQuery()
+            self.resultCount = self.viewer.correspondenceEngine.executeQuery()
         except MemoryError:
             print "memory error"
             self.resultCount=0
@@ -944,7 +944,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
                 if(not notMissing.has_key(i)):
                     self.viewer.renderer.setHelixColor(i, 0.5, 0.5, 0.5, 1.0)
 
-        self.correspondenceEngine.setVisibleCorrespondence(correspondenceIndex)
+        self.viewer.correspondenceEngine.setVisibleCorrespondence(correspondenceIndex)
         self.viewer.correspondenceLibrary.setCurrentCorrespondenceIndex(correspondenceIndex)
         self.viewer.modelChanged()
         self.loadingCorrespondance = False
@@ -955,18 +955,18 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
 #             self.viewer.setMaterials(self.colors["CorrespondenceFinder:BackboneTrace"])
             self.viewer.setMaterials()
             # calls Draw method of c++ SSECorrespondenceEngine object
-            self.correspondenceEngine.draw(0)
+            self.viewer.correspondenceEngine.draw(0)
             glPopAttrib()
         if True:
             # TODO: Move this color changing code somewhere else
             # set colors of all SSEs
             # Probably should use the setColor calls in previous sections.
-            for i in range(self.correspondenceEngine.getSkeletonSSECount()):
-                color = self.getIndexedHelixColor(i, self.correspondenceEngine.getSkeletonSSECount())
+            for i in range(self.viewer.correspondenceEngine.getSkeletonSSECount()):
+                color = self.getIndexedHelixColor(i, self.viewer.correspondenceEngine.getSkeletonSSECount())
             glPushAttrib(GL_LIGHTING_BIT)
 #             self.viewer.setMaterials(self.colors["CorrespondenceFinder:BackboneTrace"])
             self.viewer.setMaterials()
-            self.correspondenceEngine.drawAllPaths(0,True,True,True,True)
+            self.viewer.correspondenceEngine.drawAllPaths(0,True,True,True,True)
             glPopAttrib()
             
     def rebuildGraph(self):
