@@ -120,43 +120,43 @@ namespace Visualization {
                     Vec3F corner1 = GetHelixCorner(i, 0);
                     Vec3F corner2 = GetHelixCorner(i, 1);
                     cout << "Drawing selected cylinder. Size of helix flips is " << helixFlips.size() << endl;
-//                    if(helixFlips.size()  > 0){
-//                        if(!helixFlips[i]){
+                    if(helixFlips.size()  > 0){
+                        if(!helixFlips[i]){
 
                             OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
                             drawSphere(corner2, 1.0);
                             OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
                             drawSphere(corner1, 1.0);
                             fflush(stdout);
-//                        }else{
+                        }else{
                             OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
                             drawSphere(corner1, 1.0);
                             OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
                             drawSphere(corner2, 1.0);
                             fflush(stdout);
-//                        }
-//                    }
+                        }
+                    }
 //                }
 
 
                 for(unsigned int j = 0; j < SSEIndices.size(); ++j){
-//                    if(SSEIndices[j] == i){
+                    if(SSEIndices[j] == i){
                         Vec3F corner1 = GetHelixCorner(i, 0);
                         Vec3F corner2 = GetHelixCorner(i, 1);
-//                        if(!helixFlips[i]){
+                        if(!helixFlips[i]){
                             OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
                             drawSphere(corner2, 1.0);
                             OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
                             drawSphere(corner1, 1.0);
                             fflush(stdout);
-//                        }else{
+                        }else{
                             OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
                             drawSphere(corner1, 1.0);
                             OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
                             drawSphere(corner2, 1.0);
                             fflush(stdout);
-//                        }
-//                    }
+                        }
+                    }
                 }
             }
 
