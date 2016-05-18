@@ -871,10 +871,10 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
                                                                    "\n   (" + str(int(matchPercentage)) + "%)"  )
                     cellItemObserved.setBackgroundColor(color)
                     self.ui.tableWidgetCorrespondenceList.setItem(sseRow, 1, cellItemObserved)
-#                     if match.observed.sseType == 'helix':
-#                         # color is stored in two places: the renderer and the correspondence engine. update both.
-#                         self.viewer.renderer.setHelixColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
-#                         self.correspondenceEngine.setSSEColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
+                    if match.observed.sseType == 'helix':
+                        # color is stored in two places: the renderer and the correspondence engine. update both.
+                        self.viewer.renderer.setHelixColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
+                        self.correspondenceEngine.setSSEColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
 #
 #                     if match.observed.sseType == 'sheet':
 #                         self.viewer.renderer.setSSEColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
