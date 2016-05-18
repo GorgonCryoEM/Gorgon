@@ -938,13 +938,3 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
             self.viewer.setMaterials()
             self.correspondenceEngine.drawAllPaths(0,True,True,True,True)
             glPopAttrib()
-        
-    def constraintAdded(self, state):
-        if(not self.loadingCorrespondance):
-            correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
-            if(correspondenceIndex >= 0):
-                corr = self.viewer.correspondenceLibrary.correspondenceList[correspondenceIndex]
-                for i in range(len(corr.matchList)):
-                    match = corr.matchList[i]
-                    match.constrained = (self.ui.tableWidgetCorrespondenceList.cellWidget(2*i, 2).checkState() == QtCore.Qt.Checked)
-                    
