@@ -45,6 +45,8 @@ namespace Visualization {
         virtual void loadSequence();
         virtual void loadSkeleton();
 
+        void setSSEColor(int index, float r, float g, float b, float a);
+
         int run();
 
     private:
@@ -93,6 +95,11 @@ namespace Visualization {
             printf("\033[32m\tReading Base file Took %f seconds.\n\033[0m", (double) (finish - start) / (double) CLOCKS_PER_SEC ) ;
             skeleton.print();
         #endif
+    }
+
+    // set the color of an SSE.
+    inline void SSEEngine::setSSEColor(int index, float r, float g, float b, float a) {
+        skeleton.skeletonHelixes[index]->SetColor(r, g, b, a);
     }
 
     inline int SSEEngine::run() {
