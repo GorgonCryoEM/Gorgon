@@ -32,6 +32,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
                 
         args = self.app.args
         self.viewer.correspondenceEngine = SSEEngine()
+        self.correspondenceEngine = self.viewer.correspondenceEngine
         self.viewer.correspondenceLibrary = CorrespondenceLibrary()
 #         exit()
         self.constants = IBackEnd()
@@ -381,19 +382,19 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
                 if match.predicted.type == 'helix':
                     if match.constrained:
                         if(match.observed):
-                            self.correspondenceEngine.setHelixConstraint(predictedGraphNode, 2*match.observed.label + 1)
+                            self.viewer.correspondenceEngine.setHelixConstraint(predictedGraphNode, 2*match.observed.label + 1)
                         else:
-                            self.correspondenceEngine.setHelixConstraint(predictedGraphNode, -1)
+                            self.viewer.correspondenceEngine.setHelixConstraint(predictedGraphNode, -1)
                 if match.predicted.type == 'strand':
                     if(not self.ui.checkBoxIncludeSheets.isChecked()):
                         self.userConstraints[i]=False # clear all strand constraints
                         match.constrained = False     # clear all strand constraints
-                        self.correspondenceEngine.setNodeConstraint(predictedGraphNode, -1)
+                        self.viewer.correspondenceEngine.setNodeConstraint(predictedGraphNode, -1)
                     elif(match.constrained):
                         if(match.observed):
-                            self.correspondenceEngine.setNodeConstraint(predictedGraphNode, match.observed.label + nObservedHelices + 1)
+                            self.viewer.correspondenceEngine.setNodeConstraint(predictedGraphNode, match.observed.label + nObservedHelices + 1)
                         else:
-                            self.correspondenceEngine.setNodeConstraint(predictedGraphNode, -1)
+                            self.viewer.correspondenceEngine.setNodeConstraint(predictedGraphNode, -1)
                 if (match.predicted.type) == 'strand':
                     predictedGraphNode += 1
                 if (match.predicted.type) == 'helix':
@@ -471,7 +472,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
             if match.predicted is not None:
                 if match.predicted.type == 'strand':
                     #print "reading constraints for strand " + str(sIx) + " (graph node " + str(graphIx) + ")"
-                    obsSheet = self.correspondenceEngine.getStrandConstraint(graphIx,0)
+                    obsSheet = self.viewer.correspondenceEngine.getStrandConstraint(graphIx,0)
                     constrained = (obsSheet != 0)
                     if (obsSheet == -1):
                         sheetNum = -1
@@ -484,9 +485,9 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
                     graphIx += 1
                 elif match.predicted.type == 'helix':
                     #print "reading constraints for helix " + str(hIx) + " (graph node " + str(graphIx) + ")"
-                    obsHelixFwd = self.correspondenceEngine.getHelixConstraintFwd(graphIx)
-                    obsHelixRev = self.correspondenceEngine.getHelixConstraintRev(graphIx)
-                    obsHelixUnk = self.correspondenceEngine.getHelixConstraintUnk(graphIx)
+                    obsHelixFwd = self.viewer.correspondenceEngine.getHelixConstraintFwd(graphIx)
+                    obsHelixRev = self.viewer.correspondenceEngine.getHelixConstraintRev(graphIx)
+                    obsHelixUnk = self.viewer.correspondenceEngine.getHelixConstraintUnk(graphIx)
                     #print "  fwd constraint = " + str(obsHelixFwd)
                     #print "  rev constraint = " + str(obsHelixRev)
                     #print "  unk constraint = " + str(obsHelixUnk)
@@ -514,7 +515,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
                     hIx += 1
                     graphIx += 2
         # now that constraints are stored, clear from c++ class
-        self.correspondenceEngine.clearAllConstraints()
+        self.viewer.correspondenceEngine.clearAllConstraints()
 
     def populateEmptyResults(self, library):
         """ add empty result before correspondence search is started """
@@ -876,11 +877,12 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
 #
 #                     if match.observed.sseType == 'sheet':
 #                         self.viewer.renderer.setSSEColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
-#                         self.correspondenceEngine.setSSEColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
+#                         self.viewer.correspondenceEngine.setSSEColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
 
                     notMissing[match.observed.label] = True
 
                 checkBox = QtGui.QCheckBox()
+                
                 self.ui.tableWidgetCorrespondenceList.setCellWidget(sseRow, 2, checkBox)
                 self.connect(checkBox, QtCore.SIGNAL("stateChanged (int)"), self.constraintAdded)
                 if(match.constrained):
