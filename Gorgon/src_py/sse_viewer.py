@@ -113,9 +113,9 @@ class SSEViewer(BaseViewer):
         # rebuild the set of sheets to render
         numHelicesSheets = self.correspondenceEngine.getSkeletonSSECount()
         self.renderer.unloadGraphSSEs()
-        for i in range(numHelicesSheets):
-            if self.correspondenceEngine.getSkeletonSSE(i).isSheet():
-                self.renderer.loadGraphSSE(i, self.correspondenceEngine.getSkeletonSSE(i), offsetx, offsety, offsetz, scalex, scaley, scalez)
+#         for i in range(numHelicesSheets):
+#             if self.correspondenceEngine.getSkeletonSSE(i).isSheet():
+#                 self.renderer.loadGraphSSE(i, self.correspondenceEngine.getSkeletonSSE(i), offsetx, offsety, offsetz, scalex, scaley, scalez)
 
     def createActions(self):
         openHelixAct = QtGui.QAction(self.tr("&Helix Annotations"), self)
