@@ -13,8 +13,6 @@ from Toolkit.sse.correspondence.StructurePrediction import StructurePrediction
 # from Explorer import Vec3
 import xml.dom.minidom
 
-from Toolkit.sse.sse_helix_correspondence import SSEHelixCorrespondence
-
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
@@ -43,7 +41,6 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
         self.app.addDockWidget(QtCore.Qt.LeftDockWidgetArea, dock)
         
         self.createUI()
-        self.ui.correspondences = self.ui.comboBoxCorrespondences
         
         self.executed = False
         self.colors = {}
