@@ -918,7 +918,6 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
             
                 checkBox = QtGui.QCheckBox()
                 self.ui.tableWidgetCorrespondenceList.setCellWidget(sseRow, 2, checkBox)
-                self.connect(checkBox, QtCore.SIGNAL("stateChanged (int)"), self.constraintAdded)
                 if(match.constrained):
                     self.ui.tableWidgetCorrespondenceList.cellWidget(sseRow, 2).setCheckState(QtCore.Qt.Checked)
                 else:
@@ -961,15 +960,6 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
             self.viewer.correspondenceEngine.draw(0)
             glPopAttrib()
             
-    def constraintAdded(self, state):
-        if(not self.loadingCorrespondance):
-            correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
-            if(correspondenceIndex >= 0):
-                corr = self.viewer.correspondenceLibrary.correspondenceList[correspondenceIndex]
-                for i in range(len(corr.matchList)):
-                    match = corr.matchList[i]
-                    match.constrained = (self.ui.tableWidgetCorrespondenceList.cellWidget(2*i, 2).checkState() == QtCore.Qt.Checked)
-                    
     def createActionsForCell(self, row, col):
         self.selectedRow = row/2
         for act in self.ui.tableWidgetCorrespondenceList.actions()[:]:
