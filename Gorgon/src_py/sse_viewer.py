@@ -50,8 +50,6 @@ class SSEViewer(BaseViewer):
         self.visualizationOptions.ui.checkBoxModel3Visible.setVisible(False)
         self.visualizationOptions.ui.pushButtonModel3Color.setVisible(False)
         
-        self.connect(self, QtCore.SIGNAL('elementSelected (int, int, int, int, int, int, QMouseEvent)'), self.updateCurrentMatch)
-        
         self.connect(self.app.viewers["volume"], QtCore.SIGNAL('modelLoaded()'), self.updateActionsAndMenus)
         self.connect(self.app.viewers["volume"], QtCore.SIGNAL('modelUnloaded()'), self.updateActionsAndMenus)
         self.connect(self, QtCore.SIGNAL('modelLoaded()'), self.updateActionsAndMenus)
