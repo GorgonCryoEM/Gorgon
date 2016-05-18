@@ -1,6 +1,6 @@
 # Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
 # Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
-# Description:   The main window of the Gorgon application 
+# Description:   The main window of the Gorgon application
 
 
 from PyQt4 import QtCore, QtGui
@@ -11,14 +11,16 @@ from window_manager import WindowManager
 from plugin_manager import PluginManager
 import sys, os
 
+
 class MainWindowForm(QtGui.QMainWindow):
+
     def __init__(self, version, parent=None):
         QtGui.QMainWindow.__init__(self, parent)
         self.version = version
         self.modules = []
         self.viewers = {}
-        self.menus = MenuManager(self)       
-        self.actions = ActionManager(self) 
+        self.menus = MenuManager(self)
+        self.actions = ActionManager(self)
         self.createUI()
         self.createActions()
         self.createMenus()
@@ -42,7 +44,7 @@ class MainWindowForm(QtGui.QMainWindow):
     def createActions(self):
         exitAct = QtGui.QAction(self.tr("E&xit"), self)
         exitAct.setShortcut(self.tr("Ctrl+Q"))
-        exitAct.setStatusTip(self.tr("Exit the application"))        
+        exitAct.setStatusTip(self.tr("Exit the application"))
         self.connect(exitAct, QtCore.SIGNAL("triggered()"), self.exitApplication)
         self.actions.addAction("exit_Application", exitAct)
                        
@@ -53,9 +55,9 @@ class MainWindowForm(QtGui.QMainWindow):
         self.menus.addMenu("file-export", self.tr("&Export"), "file")
         self.menus.addMenu("file-close", self.tr("&Close"), "file")
         self.menus.getMenu("file").addSeparator()
-        self.menus.addAction("file-exit", self.actions.getAction("exit_Application"), "file")        
-        #self.menus.addMenu("options", self.tr("&Options"))    
-        self.menus.addMenu("actions", self.tr("&Actions"))     
+        self.menus.addAction("file-exit", self.actions.getAction("exit_Application"), "file")
+        #self.menus.addMenu("options", self.tr("&Options"))
+        self.menus.addMenu("actions", self.tr("&Actions"))
         self.menus.addMenu("window", self.tr("&Window"))
         self.menus.addMenu("themes", self.tr("&Themes"))
         self.menus.addMenu("help", self.tr("&Help"))
@@ -90,19 +92,11 @@ class MainWindowForm(QtGui.QMainWindow):
     def closeEvent(self, event):
         exitText = "This will close Gorgon, you will lose all unsaved data.\nAre you sure?"
         
-        if (QtGui.QMessageBox.warning (self, self.tr("Exit Gorgon?"), self.tr(exitText), QtGui.QMessageBox.Yes | QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Yes) :
-            event.accept()
-        else :
-            event.ignore()
-
-
-    
     def dockLocationChanged(self, widget):
         def dockLocationChanged_widget(area):
             widget.area = area
         return dockLocationChanged_widget
     
-        
     def keyPressEvent(self, event):
         self.emitKeyPressed(event)
         
@@ -110,7 +104,7 @@ class MainWindowForm(QtGui.QMainWindow):
         self.emitKeyReleased(event)
         
     def emitKeyPressed(self, event):
-        self.emit(QtCore.SIGNAL("keyPressed(QKeyEvent)"), event);        
+        self.emit(QtCore.SIGNAL("keyPressed(QKeyEvent)"), event);
 
     def emitKeyReleased(self, event):
         self.emit(QtCore.SIGNAL("keyReleased(QKeyEvent)"), event);
