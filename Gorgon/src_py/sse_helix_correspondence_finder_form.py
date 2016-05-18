@@ -961,16 +961,6 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
             # calls Draw method of c++ SSECorrespondenceEngine object
             self.viewer.correspondenceEngine.draw(0)
             glPopAttrib()
-        if self.corrAct.isChecked() and self.dataLoaded and (self.ui.checkBoxShowAllPaths.isChecked() or self.ui.checkBoxShowHelixCorners.isChecked() or self.ui.checkBoxShowSheetCorners.isChecked() or self.ui.checkBoxShowSheetColors.isChecked() ):
-            # TODO: Move this color changing code somewhere else
-            # set colors of all SSEs
-            # Probably should use the setColor calls in previous sections.
-            for i in range(self.viewer.correspondenceEngine.getSkeletonSSECount()):
-                color = self.getIndexedHelixColor(i, self.viewer.correspondenceEngine.getSkeletonSSECount())
-            glPushAttrib(GL_LIGHTING_BIT)
-            self.viewer.setMaterials(self.app.themes.getColor("CorrespondenceFinder:BackboneTrace"))
-            self.viewer.correspondenceEngine.drawAllPaths(0,self.ui.checkBoxShowAllPaths.isChecked(),self.ui.checkBoxShowHelixCorners.isChecked(),self.ui.checkBoxShowSheetCorners.isChecked(),False)
-            glPopAttrib()
             
     def rebuildGraph(self):
         print "correspondence index before rebuilding is "
