@@ -1,6 +1,6 @@
 # Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
 # Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
-# Description:   A viewer for secondary structure elements 
+# Description:   A viewer for secondary structure elements
 
 
 from PyQt4 import QtGui, QtCore, QtOpenGL
@@ -22,18 +22,18 @@ class SSEViewer(BaseViewer):
     def __init__(self, main, parent=None):
         BaseViewer.__init__(self, main, parent)
         self.title = "Secondary Structure Element"
-        self.shortTitle = "SSE"              
+        self.shortTitle = "SSE"
         self.app.themes.addDefaultRGB("Secondary Structure Element:Model:0", 0, 180, 0, 255)
         self.app.themes.addDefaultRGB("Secondary Structure Element:Model:1", 120, 185, 255, 255)
         self.app.themes.addDefaultRGB("Secondary Structure Element:Model:2", 120, 185, 255, 255)
-        self.app.themes.addDefaultRGB("Secondary Structure Element:BoundingBox", 255, 255, 255, 255)          
+        self.app.themes.addDefaultRGB("Secondary Structure Element:BoundingBox", 255, 255, 255, 255)
         self.isClosedMesh = False
         self.helixFileName = ""
         self.sheetFileName = ""
         self.currentMatch = None
         self.showBox = False;
         self.helixLoaded = False
-        self.sheetLoaded = False        
+        self.sheetLoaded = False
         self.renderer = SSERenderer()
         self.correspondenceEngine = SSECorrespondenceEngine()
         self.createUI()
@@ -63,10 +63,8 @@ class SSEViewer(BaseViewer):
         self.createMenus()
         self.createChildWindows()
         self.updateActionsAndMenus()
-                  
+
     def createChildWindows(self):
-        self.sseBuilder = VolumeSSEBuilderForm(self.app, self, self)
-        self.sequencePredictor = SSESequencePredictorForm(self.app, self, self)
         self.helixCorrespondanceFinder = SSEHelixCorrespondenceFinderForm(self.app, self, self)
         
     def loadHelixDataFromFile(self, fileName):
@@ -76,7 +74,7 @@ class SSEViewer(BaseViewer):
             self.loaded = True
             self.helixLoaded = True
             self.emitModelLoaded()
-            self.emitViewerSetCenter()    
+            self.emitViewerSetCenter()
         except:
             QtGui.QMessageBox.critical(self, "Unable to load data file", "The file might be corrupt, or the format may not be supported.", "Ok")
 
@@ -98,7 +96,7 @@ class SSEViewer(BaseViewer):
             self.loaded = True
             self.sheetLoaded = True
             self.emitModelLoaded()
-            self.emitViewerSetCenter()        
+            self.emitViewerSetCenter()
         except:
             QtGui.QMessageBox.critical(self, "Unable to load data file", "The file might be corrupt, or the format may not be supported.", "Ok")
             self.loaded = False
@@ -142,11 +140,11 @@ class SSEViewer(BaseViewer):
 
         saveHelixAct = QtGui.QAction(self.tr("&Helix Annotations..."), self)
         saveHelixAct.setStatusTip(self.tr("Save helix annotations"))
-        self.app.actions.addAction("save_SSE_Helix", saveHelixAct)        
+        self.app.actions.addAction("save_SSE_Helix", saveHelixAct)
 
         saveSheetAct = QtGui.QAction(self.tr("&Sheet Annotations..."), self)
         saveSheetAct.setStatusTip(self.tr("Save sheet annotations"))
-        self.app.actions.addAction("save_SSE_Sheet", saveSheetAct)    
+        self.app.actions.addAction("save_SSE_Sheet", saveSheetAct)
                        
         closeAct = QtGui.QAction(self.tr("SSE Annotations"), self)
         closeAct.setStatusTip(self.tr("Close the loaded secondary structure element file"))
@@ -168,7 +166,7 @@ class SSEViewer(BaseViewer):
         self.app.actions.getAction("save_SSE_Helix").setEnabled(self.helixLoaded)
         self.app.actions.getAction("save_SSE_Sheet").setEnabled(self.sheetLoaded)
         self.app.actions.getAction("fit_SSE_Helix").setEnabled(self.loaded and self.app.viewers["volume"].loaded)
-    
+                        
     def fitSelectedSSEs(self):
         self.app.mainCamera.setCursor(QtCore.Qt.BusyCursor)        
         self.renderer.fitSelectedSSEs(self.app.viewers["volume"].renderer.getVolume())
