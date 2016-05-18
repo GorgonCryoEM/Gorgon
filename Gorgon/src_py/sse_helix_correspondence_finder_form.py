@@ -216,10 +216,6 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
     
     def loadWidget(self):
         BaseDockWidget.loadWidget(self)
-            
-    def dockVisibilityChanged(self, visible):
-        BaseDockWidget.dockVisibilityChanged(self, visible)
-        self.app.viewers['skeleton'].emitModelChanged()
 
     def fullGraphVisibilityChanged(self, visible):
         """Called when the visibility checkbox is checked."""
