@@ -884,7 +884,6 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
                 checkBox = QtGui.QCheckBox()
                 
                 self.ui.tableWidgetCorrespondenceList.setCellWidget(sseRow, 2, checkBox)
-                self.connect(checkBox, QtCore.SIGNAL("stateChanged (int)"), self.constraintAdded)
                 if(match.constrained):
                     self.ui.tableWidgetCorrespondenceList.cellWidget(sseRow, 2).setCheckState(QtCore.Qt.Checked)
                 else:
