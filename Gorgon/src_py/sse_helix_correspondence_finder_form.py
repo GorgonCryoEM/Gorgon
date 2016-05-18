@@ -83,16 +83,6 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
         self.ui.lineEditHelixLengthFile.setVisible(False)
         self.ui.pushButtonGetHelixLengthFile.setVisible(False)
           
-    # populate parameter boxes with default values for correspondence search
-    def loadDefaults(self):
-        self.ui.lineEditHelixLengthFile.setText("")
-        self.ui.lineEditHelixLocationFile.setText(self.viewer.helixFileName)
-        self.ui.lineEditSheetLocationFile.setText(self.viewer.sheetFileName)
-        self.ui.lineEditSkeletonFile.setText(self.app.viewers["skeleton"].fileName)
-        self.ui.lineEditSequenceFile.setText(self.app.viewers["calpha"].fileName)
-        self.ui.lineEditSettingsFile.setText("")
-        self.loadDefaultParams()
-
     def loadDefaultParams(self):
         self.ui.pushButtonExportToRosetta.setVisible(False)
         # Graph Settings tab
@@ -226,8 +216,6 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
     
     def loadWidget(self):
         BaseDockWidget.loadWidget(self)
-        if(self.app.actions.getAction("perform_SSEFindHelixCorrespondences").isChecked()):
-            self.loadDefaults()
             
     def dockVisibilityChanged(self, visible):
         BaseDockWidget.dockVisibilityChanged(self, visible)
