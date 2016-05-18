@@ -81,14 +81,12 @@ class SSEViewer(BaseViewer):
             self.loaded = False
         self.setCursor(QtCore.Qt.WaitCursor)
             
-    
     def loadHelixData(self):
         self.helixFileName = QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Helix Annotations"), "", self.tr(self.renderer.getSupportedHelixLoadFileFormats()))
         self.fileName = self.helixFileName;
-        if not self.helixFileName.isEmpty():  
+        if not self.helixFileName.isEmpty():
             self.loadHelixDataFromFile(self.helixFileName)
                     
-    
     def loadSheetDataFromFile(self, fileName):
         self.setCursor(QtCore.Qt.WaitCursor)
         try:
@@ -102,21 +100,15 @@ class SSEViewer(BaseViewer):
             self.loaded = False
         self.setCursor(QtCore.Qt.ArrowCursor)
         
-    
     def loadSheetData(self):
         self.sheetFileName = QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Sheet Annotations"), "", self.tr(self.renderer.getSupportedSheetLoadFileFormats()))
         self.fileName = self.sheetFileName;
-        if not self.sheetFileName.isEmpty():  
+        if not self.sheetFileName.isEmpty():
             self.loadSheetDataFromFile(self.sheetFileName)
             
     def unloadData(self):
-        self.loaded = False
-        self.helixLoaded = False
-        self.sheetLoaded = False
-        self.helixFileName = ""
-        self.sheetFileName = ""
-        BaseViewer.unloadData(self)
-          
+        pass
+
     def makeSheetSurfaces(self, offsetx, offsety, offsetz, scalex, scaley, scalez):
         # rebuild the set of sheets to render
         numHelicesSheets = self.correspondenceEngine.getSkeletonSSECount()
@@ -152,10 +144,11 @@ class SSEViewer(BaseViewer):
         self.app.actions.addAction("unload_SSE", closeAct)
 
         fitAct = QtGui.QAction(self.tr("Fit Selected Helices"), self)
-        fitAct.setShortcut(self.tr("Ctrl+F"))        
-        fitAct.setStatusTip(self.tr("Fit the selected Helices into the density"))        
+        fitAct.setShortcut(self.tr("Ctrl+F"))
+        fitAct.setStatusTip(self.tr("Fit the selected Helices into the density"))
         self.connect(fitAct, QtCore.SIGNAL("triggered()"), self.fitSelectedSSEs)
-        self.app.actions.addAction("fit_SSE_Helix", fitAct)        
+        self.app.actions.addAction("fit_SSE_Helix", fitAct)
+
     def createMenus(self):
         self.app.menus.addAction("file-close-sse", self.app.actions.getAction("unload_SSE"), "file-close");
         self.app.menus.addMenu("actions-sse", self.tr("Secondary Structure &Element"), "actions");
@@ -168,7 +161,7 @@ class SSEViewer(BaseViewer):
         self.app.actions.getAction("fit_SSE_Helix").setEnabled(self.loaded and self.app.viewers["volume"].loaded)
                         
     def fitSelectedSSEs(self):
-        self.app.mainCamera.setCursor(QtCore.Qt.BusyCursor)        
+        self.app.mainCamera.setCursor(QtCore.Qt.BusyCursor)
         self.renderer.fitSelectedSSEs(self.app.viewers["volume"].renderer.getVolume())
         self.emitModelChanged()
         self.app.mainCamera.setCursor(QtCore.Qt.ArrowCursor)
