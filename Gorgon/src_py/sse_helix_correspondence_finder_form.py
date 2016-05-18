@@ -61,7 +61,6 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
         self.connect(self.ui.pushButtonGetSettingsFile, QtCore.SIGNAL("pressed ()"), self.getSettingsFile)
 #         self.connect(self.ui.pushButtonReset, QtCore.SIGNAL("pressed ()"), self.loadDefaults)
         self.connect(self.ui.pushButtonOk, QtCore.SIGNAL("pressed ()"), self.accept)
-        self.connect(self.ui.pushButtonRebuildGraph, QtCore.SIGNAL("pressed ()"), self.rebuildGraph)
         self.connect(self.ui.comboBoxCorrespondences, QtCore.SIGNAL("currentIndexChanged (int)"), self.selectCorrespondence)
         self.connect(self.ui.checkBoxShowAllPaths, QtCore.SIGNAL("toggled (bool)"), self.fullGraphVisibilityChanged)
         self.connect(self.ui.checkBoxShowSheetCorners, QtCore.SIGNAL("toggled (bool)"), self.fullGraphVisibilityChanged)
@@ -962,19 +961,6 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
             self.viewer.correspondenceEngine.draw(0)
             glPopAttrib()
             
-    def rebuildGraph(self):
-        print "correspondence index before rebuilding is "
-        print self.ui.comboBoxCorrespondences.currentIndex()
-        self.ui.comboBoxCorrespondences.setCurrentIndex(-1)
-        print "correspondence index after setting to -1 is "
-        print self.ui.comboBoxCorrespondences.currentIndex()
-        self.setConstants()
-        self.checkOk()
-        self.viewer.makeSheetSurfaces(self.app.viewers['skeleton'].renderer.getOriginX(), self.app.viewers['skeleton'].renderer.getOriginY(), self.app.viewers['skeleton'].renderer.getOriginZ(), self.app.viewers['skeleton'].renderer.getSpacingX(), self.app.viewers['skeleton'].renderer.getSpacingY(), self.app.viewers['skeleton'].renderer.getSpacingZ())
-        self.viewer.emitModelChanged()
-        print "correspondence index after rebuilding is "
-        print self.ui.comboBoxCorrespondences.currentIndex()
-        
     def constraintAdded(self, state):
         if(not self.loadingCorrespondance):
             correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
