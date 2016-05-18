@@ -959,31 +959,6 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
             self.viewer.correspondenceEngine.draw(0)
             glPopAttrib()
             
-    def constrainSSE(self, pred, obs, dir):
-        correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
-        if(correspondenceIndex >= 0):
-            corr = self.viewer.correspondenceLibrary.correspondenceList[correspondenceIndex]
-            match = corr.matchList[pred]
-            match.constrained = True
-            if(obs == -1):
-                match.observed = None
-            else:
-                if match.predicted.type == 'helix':
-                    match.observed = self.viewer.correspondenceLibrary.structureObservation.helixDict[obs-1]
-                    if (dir == 1):
-                        match.directionConstrained = True
-                        match.direction = Match.FORWARD
-                    elif (dir == -1):
-                        match.directionConstrained = True
-                        match.direction = Match.REVERSE
-                    else:
-                        match.directionConstrained = False
-                            
-                if match.predicted.type == 'strand':
-                    match.observed = self.viewer.correspondenceLibrary.structureObservation.sheetDict[obs-1]
-                
-        self.selectCorrespondence(correspondenceIndex)
-
     def constrainObservedHelix(self, i):
         def constrainObservedHelix_i():
             correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
