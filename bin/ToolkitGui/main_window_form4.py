@@ -25,6 +25,7 @@ class MainWindowForm4(QtGui.QMainWindow):
         self.viewers = {}
         self.viewers['volume'] = self.volumeViewer
         self.viewers['skeleton'] = self.skeletonViewer
+        self.viewers['sse'] = self.sseViewer
         
         self.scene = []
         self.scene.append(self.volumeViewer)
