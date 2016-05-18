@@ -74,7 +74,6 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
         self.connect(self.ui.checkBoxMissingHelices, QtCore.SIGNAL("toggled (bool)"), self.missingHelixChanged)
         self.connect(self.app.viewers["skeleton"], QtCore.SIGNAL("modelDrawing()"), self.drawOverlay)
         self.ui.tableWidgetCorrespondenceList.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        self.connect(self.ui.tableWidgetCorrespondenceList, QtCore.SIGNAL("customContextMenuRequested (const QPoint&)"), self.customMenuRequested)
         self.connect(self.viewer, QtCore.SIGNAL("elementClicked (int, int, int, int, int, int, QMouseEvent)"), self.sseClicked)
         self.ui.label.setVisible(False)
         self.ui.lineEditHelixLengthFile.setVisible(False)
@@ -960,66 +959,6 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
             self.viewer.correspondenceEngine.draw(0)
             glPopAttrib()
             
-    def createActionsForCell(self, row, col):
-        self.selectedRow = row/2
-        for act in self.ui.tableWidgetCorrespondenceList.actions()[:]:
-            self.ui.tableWidgetCorrespondenceList.removeAction(act)
-        if(col == 1 and row%2==0):
-            observedHelices = self.viewer.correspondenceLibrary.structureObservation.helixDict
-            observedSheets = self.viewer.correspondenceLibrary.structureObservation.sheetDict
-            constrained = {}
-            
-            correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
-            if(correspondenceIndex >= 0):
-                corr = self.viewer.correspondenceLibrary.correspondenceList[correspondenceIndex]
-                for i in range(len(corr.matchList)):
-                    match = corr.matchList[i]
-                    if(match.constrained and match.observed):
-                        constrained[match.observed.label] = True
-                match = corr.matchList[row/2]
-                print "match at row=" + str(row)
-            else:
-                match = False
-            if match.predicted.type == 'helix':
-                for i in range(len(observedHelices)):
-                    constrainAction = QtGui.QAction(self.tr("Observed helix " + str(i+1) + " (Length: " + str(round(observedHelices[i].getLength(), 2)) + "A)"), self)
-                    constrainAction.setCheckable(True)
-                    if(match and match.observed):
-                        constrainAction.setChecked(match.observed.label == i)
-                    else:
-                        constrainAction.setChecked(False)
-                    constrainAction.setEnabled(not constrained.has_key(i))
-                    self.connect(constrainAction, QtCore.SIGNAL("triggered()"), self.constrainObservedHelix(i))
-                    self.ui.tableWidgetCorrespondenceList.addAction(constrainAction)
-            if match.predicted.type == 'strand' and self.ui.checkBoxIncludeSheets.isChecked():
-                numH = len(observedHelices)
-                for i in range(len(observedSheets)):
-                    constrainAction = QtGui.QAction(self.tr("Observed sheet " + str(i+numH+1)), self)
-                    #constrainAction = QtGui.QAction(self.tr("Observed sheet " + str(i+numH+1) + " (Area: " + str(round(observedSheets[i].getSize(), 2)) + " voxels)"), self)
-                    constrainAction.setCheckable(True)
-                    if(match and match.observed):
-                        constrainAction.setChecked(match.observed.label == i)
-                    else:
-                        constrainAction.setChecked(False)
-                    constrainAction.setEnabled(True)
-                    self.connect(constrainAction, QtCore.SIGNAL("triggered()"), self.constrainObservedSheet(i))
-                    self.ui.tableWidgetCorrespondenceList.addAction(constrainAction)
-                
-            constrainAction = QtGui.QAction(self.tr("Not observed"), self)
-            constrainAction.setCheckable(True)
-            constrainAction.setChecked(match and not match.observed)
-            constrainAction.setEnabled(True)
-            self.connect(constrainAction, QtCore.SIGNAL("triggered()"), self.constrainObservedHelix(-1))
-            self.ui.tableWidgetCorrespondenceList.addAction(constrainAction)
-
-    def customMenuRequested(self, point):
-        self.createActionsForCell(self.ui.tableWidgetCorrespondenceList.currentRow(), self.ui.tableWidgetCorrespondenceList.currentColumn())
-        if(len(self.ui.tableWidgetCorrespondenceList.actions()) > 0):
-            menu = QtGui.QMenu()
-            for act in self.ui.tableWidgetCorrespondenceList.actions()[:]:
-                menu.addAction(act)
-            menu.exec_(self.ui.tableWidgetCorrespondenceList.mapToGlobal(point), self.ui.tableWidgetCorrespondenceList.actions()[0])
-
     def constrainSSE(self, pred, obs, dir):
         correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
         if(correspondenceIndex >= 0):
