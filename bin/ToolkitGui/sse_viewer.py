@@ -3,7 +3,6 @@ from libpytoolkit import SSERenderer, SSEEngine
 from Explorer.base_viewer import BaseViewer
 # from sse_sequence_predictor_form import SSESequencePredictorForm
 from .sse_helix_correspondence_finder_form import SSEHelixCorrespondenceFinderForm
-# from .model_visualization_form import ModelVisualizationForm
 # from libpyGORGON import SSECorrespondenceEngine, SSECorrespondenceResult
 # from .volume_sse_builder_form import VolumeSSEBuilderForm
 from Toolkit import SSEHelixCorrespondence
@@ -32,13 +31,12 @@ class SSEViewer(BaseViewer):
         self.helixLoaded = False
         self.sheetLoaded = False
         self.renderer = SSERenderer()
-#         self.correspondenceEngine = SSEEngine()
+        self.correspondenceEngine = SSEEngine()
         self.createUI()
         self.selectEnabled = True
+        self.app.viewers["sse"] = self
         self.model2Visible = True
         self.model3Visible = False
-        self.loaded = True
-        self.modelVisible = True
 #         self.initVisualizationOptions(ModelVisualizationForm(self.app, self))
 #         self.visualizationOptions.ui.checkBoxModelVisible.setText("Show helices colored:")
 #         self.visualizationOptions.ui.checkBoxModel2Visible.setText("Show sheets colored:")
@@ -74,7 +72,6 @@ class SSEViewer(BaseViewer):
 #         self.sseBuilder = VolumeSSEBuilderForm(self.app, self, self)
 #         self.sequencePredictor = SSESequencePredictorForm(self.app, self, self)
         self.helixCorrespondanceFinder = SSEHelixCorrespondenceFinderForm(self.app, self)
-#         exit()
         
     def loadHelixDataFromFile(self, fileName):
         self.setCursor(QtCore.Qt.WaitCursor)
@@ -175,17 +172,15 @@ class SSEViewer(BaseViewer):
                     break
 
     def fitSelectedSSEs(self):
-#         self.app.mainCamera.setCursor(QtCore.Qt.BusyCursor)
         self.renderer.fitSelectedSSEs(self.app.volumeViewer.renderer.getVolume())
         self.modelChanged()
-#         self.app.mainCamera.setCursor(QtCore.Qt.ArrowCursor)
         
     def updateCorrespondences(self, corrs):
         self.correspondences  = corrs
         
     # Overridden
     def emitElementClicked(self, hitStack, event):
-        if (self.app.calphaViewer.displayStyle == self.app.calphaViewer.DisplayStyleRibbon):
+        if (self.app.viewers["calpha"].displayStyle == self.app.viewers["calpha"].DisplayStyleRibbon):
             if(self.app.mainCamera.mouseRightPressed and hitStack[0] == 0):
                 self.emit(QtCore.SIGNAL("SSERightClicked(PyQt_PyObject, PyQt_PyObject, QMouseEvent)"), hitStack[0], hitStack[1], event)
         else:

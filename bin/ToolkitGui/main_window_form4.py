@@ -18,14 +18,13 @@ class MainWindowForm4(QtGui.QMainWindow):
         self.menubar = self.menuBar()
         self.docksMenu = self.menubar.addMenu('&Docks')
         
+        self.viewers = {}
+        
         self.volumeViewer = VolumeViewer(self)
         self.skeletonViewer = SkeletonViewer(self)
         self.sseViewer    = SSEViewer(self)
-        
-        self.viewers = {}
         self.viewers['volume'] = self.volumeViewer
         self.viewers['skeleton'] = self.skeletonViewer
-        self.viewers['sse'] = self.sseViewer
         
         self.scene = []
         self.scene.append(self.volumeViewer)
