@@ -803,6 +803,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
         return QtGui.QColor.fromRgba(QtGui.qRgba(r*255, g*255, b*255, a*255))
         
     def selectCorrespondence(self, correspondenceIndex):
+        print "currentIndexChanged: ", correspondenceIndex
         self.loadingCorrespondance = True
         self.ui.tableWidgetCorrespondenceList.clearContents()
         if(correspondenceIndex >= 0):
