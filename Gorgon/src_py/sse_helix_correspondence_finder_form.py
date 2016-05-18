@@ -955,7 +955,12 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
         self.loadingCorrespondance = False
         
     def drawOverlay(self):
-        pass
+        if self.executed and self.corrAct.isChecked():
+            glPushAttrib(GL_LIGHTING_BIT)
+            self.viewer.setMaterials(self.app.themes.getColor("CorrespondenceFinder:BackboneTrace"))
+            # calls Draw method of c++ SSECorrespondenceEngine object
+            self.viewer.correspondenceEngine.draw(0)
+            glPopAttrib()
             
     def rebuildGraph(self):
         print "correspondence index before rebuilding is "
