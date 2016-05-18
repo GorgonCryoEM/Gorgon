@@ -60,7 +60,6 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
         self.connect(self.ui.pushButtonGetSequenceFile, QtCore.SIGNAL("pressed ()"), self.getSequenceFile)
         self.connect(self.ui.pushButtonGetSettingsFile, QtCore.SIGNAL("pressed ()"), self.getSettingsFile)
 #         self.connect(self.ui.pushButtonReset, QtCore.SIGNAL("pressed ()"), self.loadDefaults)
-        self.connect(self.ui.pushButtonCancel, QtCore.SIGNAL("pressed ()"), self.reject)
         self.connect(self.ui.pushButtonOk, QtCore.SIGNAL("pressed ()"), self.accept)
         self.connect(self.ui.pushButtonRebuildGraph, QtCore.SIGNAL("pressed ()"), self.rebuildGraph)
         self.connect(self.ui.comboBoxCorrespondences, QtCore.SIGNAL("currentIndexChanged (int)"), self.selectCorrespondence)
@@ -762,10 +761,6 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
         self.ui.tabWidget.setCurrentIndex(4)
         print "done with search"
                 
-    def reject(self):
-        self.executed = False
-        self.app.actions.getAction("perform_SSEFindHelixCorrespondences").trigger()
-            
     def getIndexedSheetColor(self, index, size):
         """returns a color for sheet 'index' out of 'size' sheets. colors will be orange or red."""
         # start and end are between 0 and 1
