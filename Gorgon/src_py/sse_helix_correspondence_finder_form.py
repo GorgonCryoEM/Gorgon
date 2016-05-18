@@ -515,67 +515,6 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
         self.ui.doubleSpinBoxSheetMissingPenaltyScaled.setEnabled(True)
         self.ui.doubleSpinBoxSheetMissingPenaltyScaled.setValue(self.viewer.correspondenceEngine.getConstantDouble("MISSING_SHEET_PENALTY_SCALED"))
 
-    def getConstraints(self):
-        print "Reading constraints from c++ layer to python layer"
-
-        corr = self.viewer.correspondenceLibrary.correspondenceList[0]
-        numH = len(self.viewer.correspondenceLibrary.structureObservation.helixDict)
-
-        # count number of helices and sheets in this correspondence
-        hIx = 1
-        sIx = 1
-        graphIx = 1
-        for i in range(len(corr.matchList)):
-            match = corr.matchList[i]
-            #print "object has type " + str(type(match.predicted))
-            if match.predicted is not None:
-                if match.predicted.type == 'strand':
-                    #print "reading constraints for strand " + str(sIx) + " (graph node " + str(graphIx) + ")"
-                    obsSheet = self.viewer.correspondenceEngine.getStrandConstraint(graphIx,0)
-                    constrained = (obsSheet != 0)
-                    if (obsSheet == -1):
-                        sheetNum = -1
-                    elif (obsSheet > 0):
-                        sheetNum = obsSheet - 2 * numH
-                    if constrained:
-                        print "strand " + str(sIx) + " (graph node " + str(graphIx) + ") is constrained to sheet " + str(sheetNum) + " (graph node " + str(obsSheet) + ")"
-                        self.constrainSSE(i, sheetNum, 0)
-                    sIx += 1
-                    graphIx += 1
-                elif match.predicted.type == 'helix':
-                    #print "reading constraints for helix " + str(hIx) + " (graph node " + str(graphIx) + ")"
-                    obsHelixFwd = self.viewer.correspondenceEngine.getHelixConstraintFwd(graphIx)
-                    obsHelixRev = self.viewer.correspondenceEngine.getHelixConstraintRev(graphIx)
-                    obsHelixUnk = self.viewer.correspondenceEngine.getHelixConstraintUnk(graphIx)
-                    #print "  fwd constraint = " + str(obsHelixFwd)
-                    #print "  rev constraint = " + str(obsHelixRev)
-                    #print "  unk constraint = " + str(obsHelixUnk)
-                    constrained = False
-                    if (obsHelixFwd == -1 or obsHelixRev==-1 or obsHelixUnk==-1):
-                        constrained = True
-                        helixNum = -1
-                    elif (obsHelixFwd != 0):
-                        constrained = True
-                        helixNum = (obsHelixFwd+1)/2
-                        helixDir = 1
-                    elif (obsHelixRev != 0):
-                        constrained = True
-                        helixNum = obsHelixRev/2
-                        helixDir = -1
-                    elif (obsHelixUnk != 0):
-                        constrained = True
-                        helixNum = (obsHelixUnk+1)/2
-                        helixDir = 0
-                    
-                    if (constrained):
-                        print "Helix " + str(hIx) + " (graph node " + str(graphIx) + ") is constrained to helix " + str(helixNum) + " in direction " + str(helixDir)
-                        self.constrainSSE(i, helixNum, helixDir)
-                        
-                    hIx += 1
-                    graphIx += 2
-        # now that constraints are stored, clear from c++ class
-        self.viewer.correspondenceEngine.clearAllConstraints()
-
     def populateEmptyResults(self, library):
         """ add empty result before correspondence search is started """
 
