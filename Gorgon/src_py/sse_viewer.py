@@ -161,10 +161,7 @@ class SSEViewer(BaseViewer):
         self.app.actions.getAction("fit_SSE_Helix").setEnabled(self.loaded and self.app.viewers["volume"].loaded)
                         
     def fitSelectedSSEs(self):
-        self.app.mainCamera.setCursor(QtCore.Qt.BusyCursor)
-        self.renderer.fitSelectedSSEs(self.app.viewers["volume"].renderer.getVolume())
-        self.emitModelChanged()
-        self.app.mainCamera.setCursor(QtCore.Qt.ArrowCursor)
+        pass
         
     def updateCorrespondences(self, corrs):
         self.correspondences  = corrs
