@@ -113,22 +113,6 @@ class SSEViewer(BaseViewer):
         if not self.sheetFileName.isEmpty():  
             self.loadSheetDataFromFile(self.sheetFileName)
             
-    def saveHelixData(self):
-        self.fileName = QtGui.QFileDialog.getSaveFileName(self, self.tr("Save Helix Annotations"), "", self.tr(self.renderer.getSupportedHelixSaveFileFormats()))
-        if not self.fileName.isEmpty():  
-            self.setCursor(QtCore.Qt.WaitCursor)
-            self.renderer.saveHelixFile(str(self.fileName))
-            self.dirty = False
-            self.setCursor(QtCore.Qt.ArrowCursor)
-
-    def saveSheetData(self):
-        self.fileName = QtGui.QFileDialog.getSaveFileName(self, self.tr("Save Sheet Annotations"), "", self.tr(self.renderer.getSupportedSheetSaveFileFormats()))
-        if not self.fileName.isEmpty():  
-            self.setCursor(QtCore.Qt.WaitCursor)
-            self.renderer.saveSheetFile(str(self.fileName))
-            self.dirty = False
-            self.setCursor(QtCore.Qt.ArrowCursor)
-
     def unloadData(self):
         self.loaded = False
         self.helixLoaded = False
@@ -160,12 +144,10 @@ class SSEViewer(BaseViewer):
 
         saveHelixAct = QtGui.QAction(self.tr("&Helix Annotations..."), self)
         saveHelixAct.setStatusTip(self.tr("Save helix annotations"))
-        self.connect(saveHelixAct, QtCore.SIGNAL("triggered()"), self.saveHelixData)
         self.app.actions.addAction("save_SSE_Helix", saveHelixAct)        
 
         saveSheetAct = QtGui.QAction(self.tr("&Sheet Annotations..."), self)
         saveSheetAct.setStatusTip(self.tr("Save sheet annotations"))
-        self.connect(saveSheetAct, QtCore.SIGNAL("triggered()"), self.saveSheetData)
         self.app.actions.addAction("save_SSE_Sheet", saveSheetAct)    
                        
         closeAct = QtGui.QAction(self.tr("SSE Annotations"), self)
