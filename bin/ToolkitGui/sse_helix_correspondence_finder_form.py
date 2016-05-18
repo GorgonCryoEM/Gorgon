@@ -724,6 +724,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
             self.viewer.correspondenceLibrary.correspondenceList = []
             self.viewer.correspondenceLibrary.correspondenceList.append(self.lastCorrespondence)
 
+        self.selectCorrespondence(self.ui.comboBoxCorrespondences.currentIndex())
         self.populateComboBox(self.viewer.correspondenceLibrary)
         self.viewer.modelChanged()
         self.drawOverlay()
