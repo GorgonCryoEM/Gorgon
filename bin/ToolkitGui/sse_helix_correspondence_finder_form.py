@@ -920,14 +920,14 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
         self.loadingCorrespondance = False
         
     def drawOverlay(self):
-        if True:
+        if self.executed:
             glPushAttrib(GL_LIGHTING_BIT)
 #             self.viewer.setMaterials(self.colors["CorrespondenceFinder:BackboneTrace"])
             self.viewer.setMaterials()
             # calls Draw method of c++ SSECorrespondenceEngine object
             self.correspondenceEngine.draw(0)
             glPopAttrib()
-        if True:
+        if self.dataLoaded and (self.ui.checkBoxShowAllPaths.isChecked() or self.ui.checkBoxShowHelixCorners.isChecked() or self.ui.checkBoxShowSheetCorners.isChecked() or self.ui.checkBoxShowSheetColors.isChecked() ):
             # TODO: Move this color changing code somewhere else
             # set colors of all SSEs
             # Probably should use the setColor calls in previous sections.
