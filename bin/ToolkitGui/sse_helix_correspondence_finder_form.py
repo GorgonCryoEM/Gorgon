@@ -64,7 +64,6 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
 #         self.connect(self.ui.pushButtonReset, QtCore.SIGNAL("pressed ()"), self.loadDefaults)
         self.connect(self.ui.pushButtonCancel, QtCore.SIGNAL("pressed ()"), self.reject)
         self.connect(self.ui.pushButtonOk, QtCore.SIGNAL("pressed ()"), self.accept)
-        self.connect(self.ui.pushButtonRebuildGraph, QtCore.SIGNAL("pressed ()"), self.rebuildGraph)
         self.connect(self.ui.comboBoxCorrespondences, QtCore.SIGNAL("currentIndexChanged (int)"), self.selectCorrespondence)
 #         self.connect(self.ui.pushButtonExportToRosetta, QtCore.SIGNAL("pressed ()"), self.exportToRosetta)
 #         self.connect(self.ui.checkBoxShowAllPaths, QtCore.SIGNAL("toggled (bool)"), self.fullGraphVisibilityChanged)
@@ -939,19 +938,6 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
             self.viewer.setMaterials()
             self.correspondenceEngine.drawAllPaths(0,True,True,True,True)
             glPopAttrib()
-            
-    def rebuildGraph(self):
-        print "correspondence index before rebuilding is "
-        print self.ui.comboBoxCorrespondences.currentIndex()
-        self.ui.comboBoxCorrespondences.setCurrentIndex(-1)
-        print "correspondence index after setting to -1 is "
-        print self.ui.comboBoxCorrespondences.currentIndex()
-        self.setConstants()
-        self.checkOk()
-        self.viewer.makeSheetSurfaces(self.app.skeletonViewer.renderer.getOriginX(), self.app.skeletonViewer.renderer.getOriginY(), self.app.skeletonViewer.renderer.getOriginZ(), self.app.skeletonViewer.renderer.getSpacingX(), self.app.skeletonViewer.renderer.getSpacingY(), self.app.skeletonViewer.renderer.getSpacingZ())
-        self.viewer.modelChanged()
-        print "correspondence index after rebuilding is "
-        print self.ui.comboBoxCorrespondences.currentIndex()
         
     def constraintAdded(self, state):
         if(not self.loadingCorrespondance):
