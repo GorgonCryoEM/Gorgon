@@ -25,8 +25,10 @@ namespace Visualization {
 
         int n1, n2, sse1, sse2;
         vector<Vec3I> path;
-        if(curInd >= 0) {
-            SSEResult result = getResult(curInd + 1);
+        if(curInd >= 0 && solutions.size() > 0) {
+            SSEResult result = solutions[curInd];
+//            if(result.getCost()<=0.0)
+//                return;
 
             //            #ifdef GORGON_DEBUG
             cout<<"\033[32mDEBUG: File:   SSEEngine.h"<<endl;
