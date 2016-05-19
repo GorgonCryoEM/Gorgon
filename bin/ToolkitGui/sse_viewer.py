@@ -73,6 +73,19 @@ class SSEViewer(BaseViewer):
 #         self.sequencePredictor = SSESequencePredictorForm(self.app, self, self)
         self.helixCorrespondanceFinder = SSEHelixCorrespondenceFinderForm(self.app, self)
         
+    def drawGL(self):
+#         BaseViewer.drawGL(self)
+        try:
+            for kk in range(3):
+                self.renderer.draw(kk, True)
+#             self.helixCorrespondanceFinder.drawOverlay()
+        except:
+            print "Problem in sseViewer::drawGL: renderer.draw"
+        try:
+            self.app.viewers['sse'].correspondenceEngine.draw(0)
+        except:
+            print "Problem in sseViewer::drawGL: correspondenceEngine.draw"
+
     def loadHelixDataFromFile(self, fileName):
         self.setCursor(QtCore.Qt.WaitCursor)
         try:
