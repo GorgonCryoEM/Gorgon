@@ -21,7 +21,7 @@ namespace Visualization {
         float p3 = -49.0;
         float R = 20.0;
         glColor3f(.2,.2,.8);
-        drawSphere(Vec3F(p1, p2, p3), R);
+//        drawSphere(Vec3F(p1, p2, p3), R);
 
         int n1, n2, sse1, sse2;
         vector<Vec3I> path;
@@ -152,7 +152,7 @@ namespace Visualization {
                     //GLfloat col = 1.0;
                     //                    glColor3f(startColorR, startColorG, startColorB);
                     glColor3f(.2,.4,.7);
-                    double sphereRadius = 50;
+                    double sphereRadius = 1;
                     //                    #ifdef GORGON_DEBUG
                     cout<<"\033[32mDEBUG: File:   SSEEngine.h"<<endl;
                     cout<<"DEBUG: Method: SSEEngine::draw(int)\033[0m"<<endl;
@@ -160,7 +160,7 @@ namespace Visualization {
 //                    cout<<path[0]<<endl;
                     //                    #endif
 
-                                        drawSphere(path[0], sphereRadius);
+                    drawSphere(path[0], sphereRadius);
                     /*
                     // Label the points with their graph node numbers
                     glColor3f(1.0, 1.0, 1.0);
@@ -221,7 +221,7 @@ namespace Visualization {
                     // draw labeled sphere at end of path
                     //GLfloat col = 1.0;
                     //glColor3f(col, col, col);
-                    double sphereRadius = 20.;
+                    double sphereRadius = 1.;
                     drawSphere(Vec3F(path[pathSize-1].X(), path[pathSize-1].Y(), path[pathSize-1].Z()), sphereRadius);
 
                     // Label the points with their graph node numbers
