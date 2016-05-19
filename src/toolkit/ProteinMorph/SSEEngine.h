@@ -93,7 +93,7 @@ namespace Visualization {
         finish = clock();
         #ifdef VERBOSE
             printf("\033[32m\tReading Base file Took %f seconds.\n\033[0m", (double) (finish - start) / (double) CLOCKS_PER_SEC ) ;
-            skeleton.print();
+//            skeleton.print();
         #endif
     }
 

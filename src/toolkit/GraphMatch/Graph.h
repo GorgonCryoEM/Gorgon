@@ -200,7 +200,7 @@ namespace GraphMatch {
 
 
         for(int i = 0; i < nodeCount; i++) {
-            printf("   %d\t", i+1);
+//            printf("   %d\t", i+1);
             for(int j = 0; j < nodeCount; j++) {
                 if(adjacencyMatrix[i][j][0] == GRAPHEDGE_HELIX) {
                     temp = 'H';
@@ -220,30 +220,30 @@ namespace GraphMatch {
                 }
 
                 if(adjacencyMatrix[i][j][1] == MAXINT) {
-                    printf(" %c         \t|", temp);
+//                    printf(" %c         \t|", temp);
                 } else {
                     //printf(" %c %d\t|", temp, (int)(adjacencyMatrix[i][j][1] + 0.5));
-                    printf(" %c %f\t|", temp, adjacencyMatrix[i][j][1]);
+//                    printf(" %c %f\t|", temp, adjacencyMatrix[i][j][1]);
                 }
             }
-            printf("\n");
+//            printf("\n");
         }
 
 #ifdef VERBOSE
         // print out the euclidean matrix
         printf("\n  Euclidean distances:\n");
-        for(int i = 0; i < nodeCount; i++) {
-            printf("   %d\t", i+1);
-            for(int j = 0; j < nodeCount; j++) {
-                temp = 'E';
-                if(euclideanMatrix[i][j] == MAXINT) {
-                    printf(" %c         \t|", temp);
-                } else {
-                    printf(" %c %f\t|", temp, euclideanMatrix[i][j]);
-                }
-            }
-            printf("\n");
-        }
+//        for(int i = 0; i < nodeCount; i++) {
+//            printf("   %d\t", i+1);
+//            for(int j = 0; j < nodeCount; j++) {
+//                temp = 'E';
+//                if(euclideanMatrix[i][j] == MAXINT) {
+//                    printf(" %c         \t|", temp);
+//                } else {
+//                    printf(" %c %f\t|", temp, euclideanMatrix[i][j]);
+//                }
+//            }
+//            printf("\n");
+//        }
 #endif
 
 #ifdef VERBOSE
@@ -553,7 +553,7 @@ namespace GraphMatch {
         }
 #ifdef VERBOSE
         cout << "=== graph after merging sheets ===" << endl;
-        print();
+//        print();
         cout << "=== ===" << endl;
 #endif
     }
