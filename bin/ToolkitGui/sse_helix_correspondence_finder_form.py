@@ -72,6 +72,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
 #         self.connect(self.ui.checkBoxMissingSheets, QtCore.SIGNAL("toggled (bool)"), self.missingSheetChanged)
 #         self.connect(self.ui.checkBoxMissingHelices, QtCore.SIGNAL("toggled (bool)"), self.missingHelixChanged)
 #         self.connect(self.app.skeletonViewer, QtCore.SIGNAL("modelDrawing()"), self.drawOverlay)
+#         self.app.volumeViewer.visualizationUpdated.connect(self.drawOverlay)
 #         self.ui.tableWidgetCorrespondenceList.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
 #         self.connect(self.ui.tableWidgetCorrespondenceList, QtCore.SIGNAL("customContextMenuRequested (const QPoint&)"), self.customMenuRequested)
 #         self.connect(self.viewer, QtCore.SIGNAL("elementClicked (int, int, int, int, int, int, QMouseEvent)"), self.sseClicked)
@@ -715,7 +716,6 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
 
         self.populateComboBox(self.app.viewers['sse'].correspondenceLibrary)
         self.app.viewers['sse'].modelChanged()
-        self.drawOverlay()
         self.ui.tabWidget.setCurrentIndex(4)
         print "done with search"
                 
@@ -911,6 +911,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
         self.app.viewers['sse'].correspondenceLibrary.setCurrentCorrespondenceIndex(correspondenceIndex)
         self.app.viewers['sse'].modelChanged()
         self.loadingCorrespondance = False
+#         self.drawOverlay()
         
     def drawOverlay(self):
         print termcolor.colored("...........In drawOverlay", 'red')
