@@ -300,12 +300,7 @@ namespace GraphMatch {
 
     // returns one of the results of a correspondence search
     inline SSEResult WongMatch::getResult(int rank) {
-        cout<<rank-1<<" of "<<solutions.size();
-        SSEResult res;
-        if(rank-1 > solutions.size() || rank-1<0)
-            return res;
-        else
-            return solutions.at(rank-1);
+        return solutions[rank - 1];
     }
 
     // prints correspondence search results
