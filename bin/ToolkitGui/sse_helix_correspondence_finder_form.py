@@ -645,6 +645,10 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
         includeStrands = self.constants.getConstantInt("INCLUDE_STRANDS")
         structPred = StructurePrediction.load(self.sequenceFileName, self.app, includeStrands)
         print "after calling StructurePrediction.load"
+#         cAlphaViewer = self.app.viewers['calpha']
+        sseViewer = self.app.viewers['sse']
+        skeletonViewer = self.app.viewers['skeleton']
+#         cAlphaViewer.structPred = structPred
 
         def vector3DFloatToTuple(v3df):
             return (v3df.x(), v3df.y(), v3df.z())
