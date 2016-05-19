@@ -150,8 +150,8 @@ namespace Visualization {
                     glEnd(); // test!!!
                     // draw labeled sphere at beginning of path
                     //GLfloat col = 1.0;
-                    //                    glColor3f(startColorR, startColorG, startColorB);
-                    glColor3f(.2,.4,.7);
+                                        glColor3f(startColorR, startColorG, startColorB);
+//                    glColor3f(.2,.4,.7);
                     double sphereRadius = 1;
                     //                    #ifdef GORGON_DEBUG
                     cout<<"\033[32mDEBUG: File:   SSEEngine.h"<<endl;
@@ -205,7 +205,7 @@ namespace Visualization {
 //                    cout<<path[j]<<endl;
                     //                    #endif
 
-                    glColor3f(.7,.7,.7);
+//                    glColor3f(.7,.7,.7);
                     //                    glVertex3f(pathx, pathy, pathz);
                     //glVertex3d(path[j].X()+offset, path[j].Y()+offset, path[j].Z()+offset);
                 }
