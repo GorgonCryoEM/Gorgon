@@ -11,17 +11,17 @@ using namespace std;
 
 namespace GraphMatch {
 
-    template <class T>
-    inline ostream & operator<<(ostream & out, const vector<T> & obj) {
-            for(typename vector<T>::const_iterator it=obj.begin();
-                    it!=obj.end();
-                    ++it)
-
-                out<<"\t\t\t"<<*it
-                <<endl;
-
-            return out;
-    }
+//    template <class T>
+//    inline ostream & operator<<(ostream & out, const vector<T> & obj) {
+//            for(typename vector<T>::const_iterator it=obj.begin();
+//                    it!=obj.end();
+//                    ++it)
+//
+//                out<<"\t\t\t"<<*it
+//                <<endl;
+//
+//            return out;
+//    }
 
     class SSEResult {
     public:
@@ -41,7 +41,7 @@ namespace GraphMatch {
 
         friend ostream & operator<<(ostream & out, const SSEResult & obj) {
             return out
-                    <<"corespondences: "<<obj.correspondence
+//                    <<"corespondences: "<<obj.correspondence
                     <<endl
                     <<"  cost: "<<obj.cost
                     <<"  helixCount: "<<obj.helixCount
