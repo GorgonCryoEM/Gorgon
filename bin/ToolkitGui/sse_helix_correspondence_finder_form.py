@@ -664,10 +664,10 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
             print cppSse
 
             # create list of observed helices for this correspondence result
-            if True:
-                q1 = cppSse.getCornerCell3(1)
-                q2 = cppSse.getCornerCell3(2)
-
+            if cppSse.isHelix():
+                q1 = vector3DFloatToTuple(cppSse.getCornerCell3(1))
+                q2 = vector3DFloatToTuple(cppSse.getCornerCell3(2))
+            
                 pyHelix = ObservedHelix(sseIx, q1, q2)
                 observedHelices[helixCount] = pyHelix
                 helixCount = helixCount + 1
