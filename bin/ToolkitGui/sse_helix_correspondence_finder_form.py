@@ -38,7 +38,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
         
         self.executed = False
         self.colors = {}
-        self.colors["CorrespondenceFinder:BackboneTrace"] = QtGui.QColor(255, 255, 255, 255)
+        self.colors["CorrespondenceFinder:BackboneTrace"] = QtGui.QColor(200, 155, 155, 180)
         self.loadingCorrespondance = False
         self.userConstraints = {}
         self.constraintActions = {}
