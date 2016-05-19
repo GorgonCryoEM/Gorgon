@@ -25,14 +25,8 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
 
     def __init__(self, main, parent=None):
         self.app = main
-#         self.viewer = self.app.sseViewer
-        
         QtGui.QDialog.__init__(self, main)
-                
-        args = self.app.args
         self.correspondenceEngine = SSEEngine()
-#         self.app.viewers['sse'].correspondenceLibrary = CorrespondenceLibrary()
-# #         exit()
         self.constants = IBackEnd()
         
         dock = QtGui.QDockWidget("SSEHelixCorrespondenceFinder", self.app)
@@ -719,7 +713,6 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
             self.app.viewers['sse'].correspondenceLibrary.correspondenceList = []
             self.app.viewers['sse'].correspondenceLibrary.correspondenceList.append(self.lastCorrespondence)
 
-#         self.selectCorrespondence(self.ui.comboBoxCorrespondences.currentIndex())
         self.populateComboBox(self.app.viewers['sse'].correspondenceLibrary)
         self.app.viewers['sse'].modelChanged()
         self.drawOverlay()
