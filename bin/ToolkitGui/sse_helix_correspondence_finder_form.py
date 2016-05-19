@@ -18,6 +18,7 @@ from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
 # import math
+import termcolor
 
 
 class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
@@ -919,6 +920,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
         self.loadingCorrespondance = False
         
     def drawOverlay(self):
+        print termcolor.colored("...........In drawOverlay", 'red')
         if self.executed:
             glPushAttrib(GL_LIGHTING_BIT)
 #             self.app.viewers['sse'].setMaterials(self.colors["CorrespondenceFinder:BackboneTrace"])
