@@ -80,11 +80,11 @@ namespace Visualization {
                     }
                 }
             }
-            cout<<"selectedPDBHelices.size(): "<<selectedPDBHelices.size()<<endl;
-            cout<<"SSEIndices.size(): "<<SSEIndices.size()<<endl;
+//            cout<<"selectedPDBHelices.size(): "<<selectedPDBHelices.size()<<endl;
+//            cout<<"SSEIndices.size(): "<<SSEIndices.size()<<endl;
 
             Point<double> pt;
-            cout<<"helices.size(): "<<helices.size()<<endl;
+//            cout<<"helices.size(): "<<helices.size()<<endl;
 
             for(int i = 0; i < (int)helices.size(); i++) {
                 glPushAttrib(GL_LIGHTING_BIT);
@@ -114,7 +114,7 @@ namespace Visualization {
                 glPopMatrix();
                 glPopAttrib();
 
-                cout<<"helices["<<i<<"]->GetSelected(): "<<helices[i]->GetSelected()<<endl;
+//                cout<<"helices["<<i<<"]->GetSelected(): "<<helices[i]->GetSelected()<<endl;
 //                if(helices[i]->GetSelected()) {
 
                     Vec3F corner1 = GetHelixCorner(i, 0);
