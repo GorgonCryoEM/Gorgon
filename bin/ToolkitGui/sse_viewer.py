@@ -149,11 +149,11 @@ class SSEViewer(BaseViewer):
           
     def makeSheetSurfaces(self, offsetx, offsety, offsetz, scalex, scaley, scalez):
         # rebuild the set of sheets to render
-        numHelicesSheets = self.helixCorrespondanceFinder.correspondenceEngine.getSkeletonSSECount()
+        numHelicesSheets = self.correspondenceEngine.getSkeletonSSECount()
         self.renderer.unloadGraphSSEs()
         for i in range(numHelicesSheets):
-            if self.helixCorrespondanceFinder.correspondenceEngine.getSkeletonSSE(i).isSheet():
-                self.renderer.loadGraphSSE(i, self.helixCorrespondanceFinder.correspondenceEngine.getSkeletonSSE(i), offsetx, offsety, offsetz, scalex, scaley, scalez)
+            if self.correspondenceEngine.getSkeletonSSE(i).isSheet():
+                self.renderer.loadGraphSSE(i, self.correspondenceEngine.getSkeletonSSE(i), offsetx, offsety, offsetz, scalex, scaley, scalez)
 
     def updateCurrentMatch(self, sseType, sseIndex):
         # When an element is selected in this viewer, if that item is a helix,

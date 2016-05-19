@@ -26,7 +26,6 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
     def __init__(self, main, parent=None):
         self.app = main
         QtGui.QDialog.__init__(self, main)
-        self.correspondenceEngine = SSEEngine()
         self.constants = IBackEnd()
         
         dock = QtGui.QDockWidget("SSEHelixCorrespondenceFinder", self.app)
