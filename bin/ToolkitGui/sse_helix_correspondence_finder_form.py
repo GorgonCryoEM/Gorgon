@@ -673,6 +673,25 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
                 observedHelices[helixCount] = pyHelix
                 helixCount = helixCount + 1
 
+            elif cppSse.isSheet():
+                cornerList = {}
+                cornerNum = 1
+                while True:
+                    corner = vector3DFloatToTuple(cppSse.getCornerCell2(cornerNum))
+                    lastSheet = ( corner == (0,0,0) )
+                    p1 = cAlphaViewer.worldToObjectCoordinates(skeletonViewer.objectToWorldCoordinates(corner))
+                    if lastSheet:
+                        break
+                    cornerList[corner] = p1
+                    print "adding sheet corner " + str(cornerNum) + " with coordinates (" + str(p1[0]) + "," + str(p1[1]) + "," + str(p1[2]) + ")"
+                    cornerNum = cornerNum + 1
+                print "done adding sheet corners."
+                pySheet = ObservedSheet(sseIx, cornerList)
+                # adding sheets to list of observedHelices
+                observedSheets[sheetCount] = pySheet
+                print "added a sheet to observedSheets. total number of sheets is now " + str(len(observedSheets))
+                sheetCount = sheetCount + 1
+        
         #TODO: Mike this raises an error!;
         print "found " + str(helixCount) + " helices and " + str(sheetCount) + " sheets"
         structObserv = StructureObservation(helixDict = observedHelices, sheetDict = observedSheets)
@@ -873,8 +892,12 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
 #                         self.app.viewers['sse'].renderer.setSSEColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
 #                         self.correspondenceEngine.setSSEColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
 
-                    notMissing[match.observed.label] = True
+                    if match.observed.sseType == 'sheet':
+                        self.app.viewers['sse'].renderer.setSSEColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
+                        self.app.viewers['sse'].correspondenceEngine.setSSEColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
 
+                    notMissing[match.observed.label] = True
+            
                 checkBox = QtGui.QCheckBox()
                 
                 self.ui.tableWidgetCorrespondenceList.setCellWidget(sseRow, 2, checkBox)
