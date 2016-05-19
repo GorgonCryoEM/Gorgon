@@ -255,7 +255,7 @@ namespace Visualization {
     }
 
      void SSEEngine::drawAllPaths(int sceneIndex, bool showPaths, bool showHelixCorners, bool showSheetCorners, bool showSheetColors) {
-        //std::cout << "SSECorrespondenceEngine::DrawAllPaths called" << std::endl;
+        std::cout << "SSECorrespondenceEngine::DrawAllPaths called" << std::endl;
         int n1, n2;
         vector<Vec3I> path;
         if (true) {

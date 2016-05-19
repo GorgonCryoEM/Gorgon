@@ -11,6 +11,8 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
+import termcolor
+
 
 class SSEViewer(BaseViewer):
 
@@ -76,12 +78,14 @@ class SSEViewer(BaseViewer):
     def drawGL(self):
 #         BaseViewer.drawGL(self)
         try:
+            print termcolor.colored('renderer.draw', 'yellow')
             for kk in range(3):
                 self.renderer.draw(kk, True)
 #             self.helixCorrespondanceFinder.drawOverlay()
         except:
             print "Problem in sseViewer::drawGL: renderer.draw"
         try:
+            print termcolor.colored('correspondenceEngine.draw', 'yellow')
             self.app.viewers['sse'].correspondenceEngine.draw(0)
         except:
             print "Problem in sseViewer::drawGL: correspondenceEngine.draw"
