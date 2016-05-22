@@ -33,9 +33,9 @@ namespace Protein_Morph {
         unsigned long long AddFace(TriangleMeshFace<TFace> face);
         unsigned long long AddFace(unsigned long long vertexHash0, unsigned long long vertexHash1, unsigned long long vertexHash2);
 
-        Vector3DFloat GetVertexNormal(unsigned long long vertexHash);
-        Vector3DFloat GetFaceNormal(unsigned long long faceHash);
-        void Draw(bool drawSurfaces, bool annotateSurfaces, bool fadeExtreme, int radius, Vector3DFloat center);
+        Vector3Float GetVertexNormal(unsigned long long vertexHash);
+        Vector3Float GetFaceNormal(unsigned long long faceHash);
+        void Draw(bool drawSurfaces, bool annotateSurfaces, bool fadeExtreme, int radius, Vector3Float center);
         void SaveFile(string fileName);
 
 
@@ -86,8 +86,8 @@ namespace Protein_Morph {
         face.vertexHashes[2] = vertexHash2;
         return AddFace(face);
     }
-    template <class TVertex, class TFace> Vector3DFloat TriangleMesh<TVertex, TFace>::GetVertexNormal(unsigned long long vertexHash) {
-        Vector3DFloat normal = Vector3DFloat(0,0,0);
+    template <class TVertex, class TFace> Vector3Float TriangleMesh<TVertex, TFace>::GetVertexNormal(unsigned long long vertexHash) {
+        Vector3Float normal = Vector3Float(0,0,0);
         for(unsigned int i = 0; i < vertices[vertexHash].faceHashes.size(); i++) {
             normal += GetFaceNormal(vertices[vertexHash].faceHashes[i]);
         }
@@ -95,9 +95,9 @@ namespace Protein_Morph {
         return normal;
     }
 
-    template <class TVertex, class TFace> Vector3DFloat TriangleMesh<TVertex, TFace>::GetFaceNormal(unsigned long long faceHash) {
+    template <class TVertex, class TFace> Vector3Float TriangleMesh<TVertex, TFace>::GetFaceNormal(unsigned long long faceHash) {
         TriangleMeshFace<TFace> face = faces[faceHash];
-        Vector3DFloat normal = (vertices[face.vertexHashes[1]].position - vertices[face.vertexHashes[0]].position) ^
+        Vector3Float normal = (vertices[face.vertexHashes[1]].position - vertices[face.vertexHashes[0]].position) ^
                                (vertices[face.vertexHashes[2]].position - vertices[face.vertexHashes[0]].position);
 
         normal.Normalize();
@@ -105,7 +105,7 @@ namespace Protein_Morph {
     }
 
 
-    template <class TVertex, class TFace> void TriangleMesh<TVertex, TFace>::Draw(bool drawSurfaces, bool annotateSurfaces, bool fadeExtreme, int radius, Vector3DFloat center) {
+    template <class TVertex, class TFace> void TriangleMesh<TVertex, TFace>::Draw(bool drawSurfaces, bool annotateSurfaces, bool fadeExtreme, int radius, Vector3Float center) {
         int k;
         if(drawSurfaces) {
             if(annotateSurfaces) {
@@ -119,7 +119,7 @@ namespace Protein_Morph {
                     glLoadName(i);
                 }
                 glBegin(GL_POLYGON);
-                Vector3DFloat normal;
+                Vector3Float normal;
                 bool drawTriangle = true;
                 if(fadeExtreme) {
                     for(unsigned int j = 0; j < 3; j++) {
@@ -151,7 +151,7 @@ namespace Protein_Morph {
         fprintf(outFile, "%d %d %d\n", (int)vertices.size(), (int)faces.size(), 0);
 
         map<unsigned long long, int> indexedVertices;
-        vector<Vector3DFloat> vertexList;
+        vector<Vector3Float> vertexList;
 
         int index = 0;
         for(typename TriangleMeshVertexType::iterator i = vertices.begin(); i != vertices.end(); i++) {

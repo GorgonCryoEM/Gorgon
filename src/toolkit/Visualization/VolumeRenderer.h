@@ -124,7 +124,7 @@ namespace Visualization {
         int viewingType;
         Volume * dataVolume;
         Volume * cuttingVolume;
-        Vector3DFloat radiusOrigin;
+        Vector3Float radiusOrigin;
         bool useDisplayRadius;
 
         VolumeSurfaceMeshType * surfaceMesh;
@@ -380,7 +380,7 @@ namespace Visualization {
                 glPushAttrib(GL_LIGHTING_BIT | GL_ENABLE_BIT);
                 glDisable(GL_LIGHTING);
                 glDisable(GL_CULL_FACE);
-                Vector3DFloat vertex;
+                Vector3Float vertex;
                 // The outside box
 
                 if(viewingType == VIEWING_TYPE_CROSS_SECTION) {
@@ -519,7 +519,7 @@ namespace Visualization {
                 for(iX = 0; iX < 2; iX++) {
                     for(iY = 0; iY < 2; iY++) {
                         for(iZ = 0; iZ < 2; iZ++) {
-                            cuttingVolume->setDataAt(iX, iY, iZ, (cuttingPlaneCenter - Vector3DFloat(iX * dataVolume->getSizeX(), iY * dataVolume->getSizeY(), iZ * dataVolume->getSizeZ()))* cuttingPlaneDirection);
+                            cuttingVolume->setDataAt(iX, iY, iZ, (cuttingPlaneCenter - Vector3Float(iX * dataVolume->getSizeX(), iY * dataVolume->getSizeY(), iZ * dataVolume->getSizeZ()))* cuttingPlaneDirection);
                         }
                     }
                 }
@@ -538,9 +538,9 @@ namespace Visualization {
             NonManifoldMesh_NoTags tempMesh;
 
 
-            Vector3DFloat modelCenter = Vector3DFloat( (minPts[0] + maxPts[0])/2.0, (minPts[1] + maxPts[1])/2.0, (minPts[2] + maxPts[2])/2.0);
-            Vector3DFloat center;
-            float distance = (Vector3DFloat(minPts[0], minPts[1], minPts[2]) - modelCenter).Length();
+            Vector3Float modelCenter = Vector3Float( (minPts[0] + maxPts[0])/2.0, (minPts[1] + maxPts[1])/2.0, (minPts[2] + maxPts[2])/2.0);
+            Vector3Float center;
+            float distance = (Vector3Float(minPts[0], minPts[1], minPts[2]) - modelCenter).Length();
             int iX, iY, iZ;
 
             for(float position = 1.0; position >= -1.0; position -= 0.01) {
@@ -554,7 +554,7 @@ namespace Visualization {
                     for(iX = 0; iX < 2; iX++) {
                         for(iY = 0; iY < 2; iY++) {
                             for(iZ = 0; iZ < 2; iZ++) {
-                                cuttingVolume->setDataAt(iX, iY, iZ, (center - Vector3DFloat(iX * dataVolume->getSizeX(), iY * dataVolume->getSizeY(), iZ * dataVolume->getSizeZ()))* cuttingPlaneDirection);
+                                cuttingVolume->setDataAt(iX, iY, iZ, (center - Vector3Float(iX * dataVolume->getSizeX(), iY * dataVolume->getSizeY(), iZ * dataVolume->getSizeZ()))* cuttingPlaneDirection);
                             }
                         }
                     }
@@ -754,7 +754,7 @@ namespace Visualization {
         int iCorner, iVertex, iVertexTest, iEdge, iTriangle, iFlagIndex, iEdgeFlags;
         float fOffset;
         float afCubeValue[8];
-        Vector3 asEdgeVertex[12];
+        Vector3Double asEdgeVertex[12];
         int vertexIds[12];
 
         //Make a local copy of the values at the cube's corners
@@ -795,7 +795,7 @@ namespace Visualization {
                         asEdgeVertex[iEdge][1] = (float)iY + ((float)a2iVertexOffset[ a2iEdgeConnection[iEdge][0] ][1] +  fOffset * (float)a2iEdgeDirection[iEdge][1]) * (float)iScale;
                         asEdgeVertex[iEdge][2] = (float)iZ + ((float)a2iVertexOffset[ a2iEdgeConnection[iEdge][0] ][2] +  fOffset * (float)a2iEdgeDirection[iEdge][2]) * (float)iScale;
 
-                        vertexIds[iEdge] = mesh->AddVertex(TriangleMeshVertex<bool>(Vector3DFloat(asEdgeVertex[iEdge][0], asEdgeVertex[iEdge][1], asEdgeVertex[iEdge][2])), GetHashKey(iX, iY, iZ, iEdge, iScale));
+                        vertexIds[iEdge] = mesh->AddVertex(TriangleMeshVertex<bool>(Vector3Float(asEdgeVertex[iEdge][0], asEdgeVertex[iEdge][1], asEdgeVertex[iEdge][2])), GetHashKey(iX, iY, iZ, iEdge, iScale));
                 }
         }
 
@@ -824,7 +824,7 @@ namespace Visualization {
         int iCorner, iVertex, iVertexTest, iEdge, iTriangle, iFlagIndex, iEdgeFlags;
         float fOffset;
         float afCubeValue[8];
-        Vector3 asEdgeVertex[12];
+        Vector3Double asEdgeVertex[12];
         int vertexIds[12];
 
         //Make a local copy of the values at the cube's corners
@@ -865,7 +865,7 @@ namespace Visualization {
                         asEdgeVertex[iEdge][1] = (float)iY + ((float)a2iVertexOffset[ a2iEdgeConnection[iEdge][0] ][1] +  fOffset * (float)a2iEdgeDirection[iEdge][1]) * (float)iScale;
                         asEdgeVertex[iEdge][2] = (float)iZ + ((float)a2iVertexOffset[ a2iEdgeConnection[iEdge][0] ][2] +  fOffset * (float)a2iEdgeDirection[iEdge][2]) * (float)iScale;
 
-                        vertexIds[iEdge] = mesh->AddHashedVertex(Vector3DFloat(asEdgeVertex[iEdge][0], asEdgeVertex[iEdge][1], asEdgeVertex[iEdge][2]), GetHashKey(iX, iY, iZ, iEdge, iScale));
+                        vertexIds[iEdge] = mesh->AddHashedVertex(Vector3Float(asEdgeVertex[iEdge][0], asEdgeVertex[iEdge][1], asEdgeVertex[iEdge][2]), GetHashKey(iX, iY, iZ, iEdge, iScale));
                 }
         }
 
@@ -936,7 +936,7 @@ namespace Visualization {
         displayRadius = radius;
     }
     void VolumeRenderer::SetDisplayRadiusOrigin(float radiusOriginX, float radiusOriginY, float radiusOriginZ) {
-        radiusOrigin = Vector3DFloat(radiusOriginX, radiusOriginY, radiusOriginZ);
+        radiusOrigin = Vector3Float(radiusOriginX, radiusOriginY, radiusOriginZ);
     }
 
     void VolumeRenderer::UseDisplayRadius(bool useRadius) {
