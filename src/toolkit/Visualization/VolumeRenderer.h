@@ -51,7 +51,7 @@ namespace Visualization {
     typedef OctreeNode<OctreeProjectionTestMinMaxStruct> VolumeRendererOctreeNodeType;
     typedef TriangleMesh<bool, bool> VolumeSurfaceMeshType;
 
-    class VolumeRenderer : public Renderer {
+    class VolumeRenderer : public Volume, public Renderer {
     public:
         VolumeRenderer();
         ~VolumeRenderer();
@@ -78,11 +78,9 @@ namespace Visualization {
         void Unload();
         void NormalizeVolume();
         void DownsampleVolume();
-        void PerformSmoothLaplacian(double convergenceRate, int iterations);
         Volume * GetVolume();
         Volume * PerformBinarySkeletonizationJu2007(double threshold, int minCurveSize, int minSurfaceSize);
         Volume * PerformGrayscaleSkeletonizationAbeysinghe2008(double startDensity, int stepCount, int minCurveSize, int minSurfaceSize, int curveRadius, int surfaceRadius, int skeletonSmoothenRadius);
-        Volume * PerformPreservingGrayscaleSkeletonizationAbeysinghe2008(NonManifoldMesh_Annotated * preserveMesh, double startDensity, int stepCount, int minCurveSize, int minSurfaceSize, int curveRadius, int surfaceRadius, int skeletonSmoothenRadius);
         void SetSpacing(float spX, float spY, float spZ);
         float GetSpacingX();
         float GetSpacingY();
@@ -106,7 +104,7 @@ namespace Visualization {
         void InitializeOctree();
         void InitializeOctreeTag(VolumeRendererOctreeNodeType * node);
         void CalculateOctreeNode(VolumeRendererOctreeNodeType * node);
-        void MarchingCube(Volume * vol, NonManifoldMesh_NoTags * mesh, const float iso_level, int iX, int iY, int iZ, int iScale);
+        void MarchingCube(Volume * vol, NonManifoldMesh * mesh, const float iso_level, int iX, int iY, int iZ, int iScale);
         void MarchingCube(Volume * vol, VolumeSurfaceMeshType * mesh, const float iso_level, int iX, int iY, int iZ, int iScale);
         int Smallest2ndPower(int value);
     private:
@@ -120,31 +118,33 @@ namespace Visualization {
         int sampleInterval;
         int displayRadius;
         int viewingType;
-        Volume * dataVolume;
+        Volume * volData;
         Volume * cuttingVolume;
         Vector3Float radiusOrigin;
         bool useDisplayRadius;
 
         VolumeSurfaceMeshType * surfaceMesh;
-        NonManifoldMesh_NoTags * cuttingMesh;
+        NonManifoldMesh * cuttingMesh;
         VolumeRendererOctreeType * octree;
         #ifdef _WIN32
             PFNGLTEXIMAGE3DPROC glTexImage3D;
         #endif
     };
 
-    VolumeRenderer::VolumeRenderer() {
+    VolumeRenderer::VolumeRenderer()
+        : Renderer()
+    {
         textureLoaded = false;
         useDisplayRadius = false;
         viewingType = VIEWING_TYPE_ISO_SURFACE;
         surfaceMesh = new VolumeSurfaceMeshType();
-        dataVolume = NULL;
+        volData = NULL;
         octree = NULL;
         surfaceValue = 1.5;
         displayRadius = 1;
         sampleInterval = 1;
         cuttingVolume = new Volume(2, 2, 2);
-        cuttingMesh = new NonManifoldMesh_NoTags();
+        cuttingMesh = new NonManifoldMesh();
         drawEnabled = false;
     }
 
@@ -154,8 +154,8 @@ namespace Visualization {
             textureLoaded = false;
         }
         delete surfaceMesh;
-        if(dataVolume != NULL) {
-            delete dataVolume;
+        if(volData != NULL) {
+            delete volData;
         }
         if(octree != NULL) {
             delete octree;
@@ -165,11 +165,11 @@ namespace Visualization {
     }
 
     float VolumeRenderer::GetMaxDensity(){
-        return dataVolume->getMax();
+        return volData->getMax();
     }
 
     float VolumeRenderer::GetMinDensity() {
-        return dataVolume->getMin();
+        return volData->getMin();
     }
 
     float VolumeRenderer::GetOffset(float fValue1, float fValue2, float fValueDesired) {
@@ -217,7 +217,7 @@ namespace Visualization {
         z += a2iEdgeHash[edge][3]*iScale;
 
         edge = a2iEdgeHash[edge][0];
-        return x * dataVolume->getSizeY() * dataVolume->getSizeZ() * 3 + y * dataVolume->getSizeZ() * 3 + z * 3 + edge;
+        return x * volData->getSizeY() * volData->getSizeZ() * 3 + y * volData->getSizeZ() * 3 + z * 3 + edge;
     }
 
     int VolumeRenderer::GetSampleInterval() const  {
@@ -266,7 +266,7 @@ namespace Visualization {
         return redraw;
     }
     void VolumeRenderer::DownsampleVolume() {
-        Volume * sourceVol = dataVolume;
+        Volume * sourceVol = volData;
         Volume * destVol = new Volume(sourceVol->getSizeX()/2, sourceVol->getSizeY()/2, sourceVol->getSizeZ()/2);
         double val;
 
@@ -295,7 +295,7 @@ namespace Visualization {
 
         delete math;
         delete sourceVol;
-        dataVolume = destVol;
+        volData = destVol;
         InitializeOctree();
         UpdateBoundingBox();
     }
@@ -379,7 +379,7 @@ namespace Visualization {
 
                             for(unsigned int j = 0; j < 2; j++) {
                                 vertex = cuttingMesh->vertices[cuttingMesh->GetVertexIndex(cuttingMesh->edges[i].vertexIds[j])].position;
-                                glVertex3f(vertex.X() * (float)dataVolume->getSizeX(), vertex.Y() * (float)dataVolume->getSizeY(), vertex.Z() * (float)dataVolume->getSizeZ());
+                                glVertex3f(vertex.X() * (float)volData->getSizeX(), vertex.Y() * (float)volData->getSizeY(), vertex.Z() * (float)volData->getSizeZ());
                             }
                         }
                     }
@@ -394,16 +394,16 @@ namespace Visualization {
                 //if(resident) {
                     glBindTexture(GL_TEXTURE_3D, textureName);
 
-                    double xRatio = (double)dataVolume->getSizeX() / (double)textureSizeX;
-                    double yRatio = (double)dataVolume->getSizeY() / (double)textureSizeY;
-                    double zRatio = (double)dataVolume->getSizeZ() / (double)textureSizeZ;
+                    double xRatio = (double)volData->getSizeX() / (double)textureSizeX;
+                    double yRatio = (double)volData->getSizeY() / (double)textureSizeY;
+                    double zRatio = (double)volData->getSizeZ() / (double)textureSizeZ;
 
                     for(unsigned int i = 0; i < cuttingMesh->faces.size(); i++) {
                         glBegin(GL_POLYGON);
                         for(unsigned int j = 0; j < cuttingMesh->faces[i].vertexIds.size(); j++) {
                             vertex = cuttingMesh->vertices[cuttingMesh->GetVertexIndex(cuttingMesh->faces[i].vertexIds[j])].position;
                             glTexCoord3d(vertex.X() * xRatio, vertex.Y()* yRatio, vertex.Z() * zRatio);
-                            glVertex3f(vertex.X() * (float)dataVolume->getSizeX(), vertex.Y() * (float)dataVolume->getSizeY(), vertex.Z() * (float)dataVolume->getSizeZ());
+                            glVertex3f(vertex.X() * (float)volData->getSizeX(), vertex.Y() * (float)volData->getSizeY(), vertex.Z() * (float)volData->getSizeZ());
                         }
                         glEnd();
                     }
@@ -426,7 +426,7 @@ namespace Visualization {
                 if((int)node->cellSize <= sampleInterval + sampleInterval) {
                     for(int i = 0; i < 8; i++) {
                         if(node->children[i] != NULL) {
-                            MarchingCube(dataVolume, surfaceMesh, surfaceValue, node->children[i]->pos[0], node->children[i]->pos[1], node->children[i]->pos[2], sampleInterval);
+                            MarchingCube(volData, surfaceMesh, surfaceValue, node->children[i]->pos[0], node->children[i]->pos[1], node->children[i]->pos[2], sampleInterval);
                         }
                     }
                 } else {
@@ -449,16 +449,16 @@ namespace Visualization {
             //appTimeManager.PopAndDisplayTime("Marching Cubes)  Clearing : %f seconds |");
             redraw = false;
             marchingCubeCallCount = 0;
-            if(drawEnabled && dataVolume != NULL) {
+            if(drawEnabled && volData != NULL) {
                 redraw = true;
                 int iX, iY, iZ;
-                int maxX = dataVolume->getSizeX();
-                int maxY = dataVolume->getSizeY();
-                int maxZ = dataVolume->getSizeZ();
+                int maxX = volData->getSizeX();
+                int maxY = volData->getSizeY();
+                int maxZ = volData->getSizeZ();
                 for(iX = 0; iX < maxX; iX+=sampleInterval) {
                     for(iY = 0; iY < maxY; iY+=sampleInterval) {
                         for(iZ = 0; iZ < maxZ; iZ+=sampleInterval) {
-                            MarchingCube(dataVolume, surfaceMesh, surfaceValue, iX, iY, iZ, sampleInterval);
+                            MarchingCube(volData, surfaceMesh, surfaceValue, iX, iY, iZ, sampleInterval);
                         }
                     }
                 }
@@ -495,7 +495,7 @@ namespace Visualization {
 
         bool redraw = false;
 
-        if(dataVolume != NULL) {
+        if(volData != NULL) {
             redraw = true;
 
             if((cuttingPlaneCenter.X() >= minPts[0]) && (cuttingPlaneCenter.X() <= maxPts[0]) &&
@@ -508,7 +508,7 @@ namespace Visualization {
                 for(iX = 0; iX < 2; iX++) {
                     for(iY = 0; iY < 2; iY++) {
                         for(iZ = 0; iZ < 2; iZ++) {
-                            cuttingVolume->setDataAt(iX, iY, iZ, (cuttingPlaneCenter - Vector3Float(iX * dataVolume->getSizeX(), iY * dataVolume->getSizeY(), iZ * dataVolume->getSizeZ()))* cuttingPlaneDirection);
+                            cuttingVolume->setDataAt(iX, iY, iZ, (cuttingPlaneCenter - Vector3Float(iX * volData->getSizeX(), iY * volData->getSizeY(), iZ * volData->getSizeZ()))* cuttingPlaneDirection);
                         }
                     }
                 }
@@ -522,9 +522,9 @@ namespace Visualization {
     bool VolumeRenderer::CalculateSolidRendering() {
         cuttingMesh->Clear();
         bool redraw = false;
-        if(dataVolume != NULL) {
+        if(volData != NULL) {
             redraw = true;
-            NonManifoldMesh_NoTags tempMesh;
+            NonManifoldMesh tempMesh;
 
 
             Vector3Float modelCenter = Vector3Float( (minPts[0] + maxPts[0])/2.0, (minPts[1] + maxPts[1])/2.0, (minPts[2] + maxPts[2])/2.0);
@@ -543,7 +543,7 @@ namespace Visualization {
                     for(iX = 0; iX < 2; iX++) {
                         for(iY = 0; iY < 2; iY++) {
                             for(iZ = 0; iZ < 2; iZ++) {
-                                cuttingVolume->setDataAt(iX, iY, iZ, (center - Vector3Float(iX * dataVolume->getSizeX(), iY * dataVolume->getSizeY(), iZ * dataVolume->getSizeZ()))* cuttingPlaneDirection);
+                                cuttingVolume->setDataAt(iX, iY, iZ, (center - Vector3Float(iX * volData->getSizeX(), iY * volData->getSizeY(), iZ * volData->getSizeZ()))* cuttingPlaneDirection);
                             }
                         }
                     }
@@ -573,10 +573,10 @@ namespace Visualization {
 
     void VolumeRenderer::LoadFile(string fileName) {
         Renderer::LoadFile(fileName);
-        if(dataVolume != NULL) {
-            delete dataVolume;
+        if(volData != NULL) {
+            delete volData;
         }
-        dataVolume = *MRCReaderPicker::pick(fileName.c_str())->getVolume();
+        volData = MRCReaderPicker::pick(fileName.c_str())->getVolume();
         InitializeOctree();
         UpdateBoundingBox();
 
@@ -584,7 +584,7 @@ namespace Visualization {
             glTexImage3D = (PFNGLTEXIMAGE3DPROC) wglGetProcAddress("glTexImage3D");
         #endif
 
-        SetDisplayRadiusOrigin(dataVolume->getSizeX()/2, dataVolume->getSizeY()/2, dataVolume->getSizeZ()/2);
+        SetDisplayRadiusOrigin(volData->getSizeX()/2, volData->getSizeY()/2, volData->getSizeZ()/2);
     }
 
     void VolumeRenderer::Load3DTextureSolidRendering() {
@@ -593,10 +593,10 @@ namespace Visualization {
             textureLoaded = false;
         }
 
-        if(dataVolume != NULL) {
-            textureSizeX = Smallest2ndPower(dataVolume->getSizeX());
-            textureSizeY = Smallest2ndPower(dataVolume->getSizeY());
-            textureSizeZ = Smallest2ndPower(dataVolume->getSizeZ());
+        if(volData != NULL) {
+            textureSizeX = Smallest2ndPower(volData->getSizeX());
+            textureSizeY = Smallest2ndPower(volData->getSizeY());
+            textureSizeZ = Smallest2ndPower(volData->getSizeZ());
             double maxVal = maxSurfaceValue;
             double minVal = surfaceValue;
             unsigned char val;
@@ -606,8 +606,8 @@ namespace Visualization {
             for(int z = 0; z < textureSizeZ; z++) {
                 for(int y = 0; y < textureSizeY; y++) {
                     for(int x = 0; x < textureSizeX; x++) {
-                        if((x < dataVolume->getSizeX()) && (y < dataVolume->getSizeY()) && (z < dataVolume->getSizeZ())) {
-                            val = (unsigned char)round((min(max(dataVolume->getDataAt(x, y, z), minVal), maxVal) - minVal) * 255.0 / (maxVal - minVal));
+                        if((x < volData->getSizeX()) && (y < volData->getSizeY()) && (z < volData->getSizeZ())) {
+                            val = (unsigned char)round((min(max((double)volData->getDataAt(x, y, z), minVal), maxVal) - minVal) * 255.0 / (maxVal - minVal));
                         } else {
                             val = 0;
                         }
@@ -641,17 +641,17 @@ namespace Visualization {
             textureLoaded = false;
         }
 
-        if(dataVolume != NULL) {
-            textureSizeX = Smallest2ndPower(dataVolume->getSizeX());
-            textureSizeY = Smallest2ndPower(dataVolume->getSizeY());
-            textureSizeZ = Smallest2ndPower(dataVolume->getSizeZ());
+        if(volData != NULL) {
+            textureSizeX = Smallest2ndPower(volData->getSizeX());
+            textureSizeY = Smallest2ndPower(volData->getSizeY());
+            textureSizeZ = Smallest2ndPower(volData->getSizeZ());
             double maxVal = maxSurfaceValue;
             double minVal = surfaceValue;
             unsigned char val;
 
             // Approximations to avoid division by zero
             if(isZero(minVal - maxVal, 0.000000000001)) {
-                maxVal = minVal + (dataVolume->getMax() - dataVolume->getMin()) / 1000.0;
+                maxVal = minVal + (volData->getMax() - volData->getMin()) / 1000.0;
             }
             if(isZero(minVal - maxVal, 0.000000000001)) {
                 maxVal = minVal + 0.0001;
@@ -662,8 +662,8 @@ namespace Visualization {
             for(int z = 0; z < textureSizeZ; z++) {
                 for(int y = 0; y < textureSizeY; y++) {
                     for(int x = 0; x < textureSizeX; x++) {
-                        if((x < dataVolume->getSizeX()) && (y < dataVolume->getSizeY()) && (z < dataVolume->getSizeZ())) {
-                            val = (unsigned char)round((min(max(dataVolume->getDataAt(x, y, z), minVal), maxVal) - minVal) * 255.0 / (maxVal - minVal));
+                        if((x < volData->getSizeX()) && (y < volData->getSizeY()) && (z < volData->getSizeZ())) {
+                            val = (unsigned char)round((min(max((double)volData->getDataAt(x, y, z), minVal), maxVal) - minVal) * 255.0 / (maxVal - minVal));
                         } else {
                             val = 0;
                         }
@@ -692,14 +692,14 @@ namespace Visualization {
     }
 
     void VolumeRenderer::SaveFile(string fileName) {
-        if(dataVolume != NULL) {
+        if(volData != NULL) {
             int pos = fileName.rfind(".") + 1;
             string extension = fileName.substr(pos, fileName.length()-pos);
 
             extension = StringUtils::StringToUpper(extension);
 
             if(strcmp(extension.c_str(), "MRC") == 0) {
-                dataVolume->toMRCFile((char *)fileName.c_str());
+                volData->toMRCFile((char *)fileName.c_str());
             } else {
                 printf("Input format %s not supported!\n", extension.c_str());
             }
@@ -777,7 +777,7 @@ namespace Visualization {
         }
     }
 
-    void VolumeRenderer::MarchingCube(Volume * vol, NonManifoldMesh_NoTags * mesh, const float iso_level, int iX, int iY, int iZ, int iScale){
+    void VolumeRenderer::MarchingCube(Volume * vol, NonManifoldMesh * mesh, const float iso_level, int iX, int iY, int iZ, int iScale){
         marchingCubeCallCount++;
         extern int aiCubeEdgeFlags[256];
         extern int a2iTriangleConnectionTable[256][16];
@@ -849,7 +849,7 @@ namespace Visualization {
 
 
     void VolumeRenderer::NormalizeVolume(){
-        dataVolume->normalize(0, 1);
+        volData->normalize(0, 1);
     }
     void VolumeRenderer::SetSampleInterval(const int size) {
         sampleInterval = size;
@@ -904,23 +904,12 @@ namespace Visualization {
         useDisplayRadius = useRadius;
     }
 
-    void VolumeRenderer::PerformSmoothLaplacian(double convergenceRate, int iterations) {
-        if(dataVolume != NULL) {
-            for(unsigned int i = 0; i < iterations; i++) {
-                this->dataVolume->smooth(convergenceRate);
-            }
-
-            SetSurfaceValue(surfaceValue);
-        }
-    }
-
-
     void VolumeRenderer::Unload() {
         Renderer::Unload();
-        if(dataVolume != NULL) {
-            delete dataVolume;
+        if(volData != NULL) {
+            delete volData;
         }
-        dataVolume = NULL;
+        volData = NULL;
         if(octree != NULL) {
             delete octree;
         }
@@ -934,7 +923,7 @@ namespace Visualization {
     }
 
     void VolumeRenderer::UpdateBoundingBox() {
-        if(dataVolume == NULL) {
+        if(volData == NULL) {
             for(int i = 0; i < 3; i++) {
                 minPts[i] = 0;
                 maxPts[i] = 1;
@@ -943,39 +932,25 @@ namespace Visualization {
             for(int i = 0; i < 3; i++) {
                 minPts[i] = 0;
             }
-            maxPts[0] = dataVolume->getSizeX()-1;
-            maxPts[1] = dataVolume->getSizeY()-1;
-            maxPts[2] = dataVolume->getSizeZ()-1;
+            maxPts[0] = volData->getSizeX()-1;
+            maxPts[1] = volData->getSizeY()-1;
+            maxPts[2] = volData->getSizeZ()-1;
         }
     }
 
     Volume * VolumeRenderer::PerformBinarySkeletonizationJu2007(double threshold, int minCurveSize, int minSurfaceSize) {
         VolumeSkeletonizer * skeletonizer = new VolumeSkeletonizer(0,0,0,DEFAULT_SKELETON_DIRECTION_RADIUS);
-        Volume * outputVol = skeletonizer->PerformPureJuSkeletonization(dataVolume, "", threshold, minCurveSize, minSurfaceSize);
+        Volume * outputVol = skeletonizer->PerformPureJuSkeletonization(volData, "", threshold, minCurveSize, minSurfaceSize);
         delete skeletonizer;
         return outputVol;
     }
 
     Volume * VolumeRenderer::PerformGrayscaleSkeletonizationAbeysinghe2008(double startDensity, int stepCount, int minCurveSize, int minSurfaceSize, int curveRadius, int surfaceRadius, int skeletonRadius) {
-        double stepSize = (dataVolume->getMax() - startDensity) / stepCount;
+        double stepSize = (volData->getMax() - startDensity) / stepCount;
         if(!isZero(stepSize)) {
             VolumeSkeletonizer * skeletonizer = new VolumeSkeletonizer(0, curveRadius, surfaceRadius, skeletonRadius);
-            Volume * outputVol = skeletonizer->PerformImmersionSkeletonizationAndPruning(dataVolume, NULL, startDensity, dataVolume->getMax(), stepSize, 0, 0, minCurveSize, minSurfaceSize, 0, 0, "", true, 1.0, DEFAULT_PRUNE_THRESHOLD, DEFAULT_PRUNE_THRESHOLD);
+            Volume * outputVol = skeletonizer->PerformImmersionSkeletonizationAndPruning(volData, NULL, startDensity, volData->getMax(), stepSize, 0, 0, minCurveSize, minSurfaceSize, 0, 0, "", true, 1.0, DEFAULT_PRUNE_THRESHOLD, DEFAULT_PRUNE_THRESHOLD);
             delete skeletonizer;
-            return outputVol;
-        } else {
-            return NULL;
-        }
-    }
-
-    Volume * VolumeRenderer::PerformPreservingGrayscaleSkeletonizationAbeysinghe2008(NonManifoldMesh_Annotated * preserveMesh, double startDensity, int stepCount, int minCurveSize, int minSurfaceSize, int curveRadius, int surfaceRadius, int skeletonRadius) {
-        double stepSize = (dataVolume->getMax() - startDensity) / stepCount;
-        if(!isZero(stepSize)) {
-            VolumeSkeletonizer * skeletonizer = new VolumeSkeletonizer(0, curveRadius, surfaceRadius, skeletonRadius);
-            Volume * preserveVol = preserveMesh->ToVolume();
-            Volume * outputVol = skeletonizer->PerformImmersionSkeletonizationAndPruning(dataVolume, preserveVol, startDensity, dataVolume->getMax(), stepSize, 0, 0, minCurveSize, minSurfaceSize, 0, 0, "", true, 1.0, DEFAULT_PRUNE_THRESHOLD, DEFAULT_PRUNE_THRESHOLD);
-            delete skeletonizer;
-            delete preserveVol;
             return outputVol;
         } else {
             return NULL;
@@ -983,63 +958,63 @@ namespace Visualization {
     }
 
     Volume * VolumeRenderer::GetVolume() {
-        return dataVolume;
+        return volData;
     }
 
     void VolumeRenderer::SetSpacing(float spX, float spY, float spZ) {
-        if(dataVolume != NULL) {
-            dataVolume->setSpacing(spX, spY, spZ);
+        if(volData != NULL) {
+            volData->setSpacing(spX, spY, spZ);
         } else {
             Renderer::SetSpacing(spX, spY, spZ);
         }
     }
 
     float VolumeRenderer::GetSpacingX() {
-        if(dataVolume != NULL) {
-            return dataVolume->getSpacingX();
+        if(volData != NULL) {
+            return volData->getSpacingX();
         }
         return Renderer::GetSpacingX();
     }
 
     float VolumeRenderer::GetSpacingY() {
-        if(dataVolume != NULL) {
-            return dataVolume->getSpacingY();
+        if(volData != NULL) {
+            return volData->getSpacingY();
         }
         return Renderer::GetSpacingY();
     }
 
     float VolumeRenderer::GetSpacingZ() {
-        if(dataVolume != NULL) {
-            return dataVolume->getSpacingZ();
+        if(volData != NULL) {
+            return volData->getSpacingZ();
         }
         return Renderer::GetSpacingZ();
     }
 
     void VolumeRenderer::SetOrigin(float orgX, float orgY, float orgZ) {
-        if(dataVolume != NULL) {
-            dataVolume->setOrigin(orgX, orgY, orgZ);
+        if(volData != NULL) {
+            volData->setOrigin(orgX, orgY, orgZ);
         } else {
             Renderer::SetOrigin(orgX, orgY, orgZ);
         }
     }
 
     float VolumeRenderer::GetOriginX() {
-        if(dataVolume != NULL) {
-            return dataVolume->getOriginX();
+        if(volData != NULL) {
+            return volData->getOriginX();
         }
         return Renderer::GetOriginX();
     }
 
     float VolumeRenderer::GetOriginY() {
-        if(dataVolume != NULL) {
-            return dataVolume->getOriginY();
+        if(volData != NULL) {
+            return volData->getOriginY();
         }
         return Renderer::GetOriginY();
     }
 
     float VolumeRenderer::GetOriginZ() {
-        if(dataVolume != NULL) {
-            return dataVolume->getOriginZ();
+        if(volData != NULL) {
+            return volData->getOriginZ();
         }
         return Renderer::GetOriginZ();
     }
