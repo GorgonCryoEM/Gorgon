@@ -115,6 +115,7 @@ namespace Protein_Morph {
         NonManifoldMesh SmoothLaplacian(double converganceRate);
         NonManifoldMesh SmoothLaplacian(double converganceRate, int iterations);
         static NonManifoldMesh * LoadOffFile(string fileName);
+        void Clear();
 
 
     public:
@@ -138,6 +139,15 @@ namespace Protein_Morph {
         }
     };
 
+    void NonManifoldMesh::Clear() {
+        vertices.clear();
+        edges.clear();
+        faces.clear();
+        vertexCount = 0;
+        edgeCount = 0;
+        faceCount = 0;
+        vertexHashMap.clear();
+    }
 
 
     NonManifoldMesh::NonManifoldMesh()
