@@ -7,6 +7,7 @@ from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
 import sys
+import argparse
 
 
 class GLWidget(QtOpenGL.QGLWidget):
@@ -29,6 +30,12 @@ class GLWidget(QtOpenGL.QGLWidget):
         
 
 def main():
+    parser = argparse.ArgumentParser(description='Gorgon Explorer')
+    
+    parser.add_argument('volume', action="store")
+    parser.add_argument('skeleton', action="store")
+    args = parser.parse_args()
+
     app = QtGui.QApplication(sys.argv)
 
     window = GLWidget()
