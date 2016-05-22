@@ -9,9 +9,11 @@
 #include "ProteinMorph/SSEEngine.h"
 #include "GraphMatch/PDBBond.h"
 #include "Readers/SEQReader.h"
+#include "Visualization/VolumeRenderer.h"
 
 using namespace SkeletonMaker;
 using namespace Protein_Morph;
+using namespace Visualization;
 
 using namespace boost::python;
 
@@ -60,8 +62,8 @@ BOOST_PYTHON_MODULE(@current_pylib@)
       .def("getSpacingX", &Volume::getSpacingX)
       .def("getSpacingY", &Volume::getSpacingY)
       .def("getSpacingZ", &Volume::getSpacingZ)
-//      .def("getMin", &Volume::getMin)
-//      .def("getMax", &Volume::getMax)
+      .def("getMin", &Volume::getMin)
+      .def("getMax", &Volume::getMax)
 //      .def("getDataAt", getDataAt1)
 //      .def("buildHistogram", &Volume::buildHistogram)
 //      .def("getHistogramBinValue", &Volume::getHistogramBinValue)
@@ -80,6 +82,11 @@ BOOST_PYTHON_MODULE(@current_pylib@)
       .def("loadFile", &Volume::loadFile)
       .def("saveFile", &Volume::saveFile)
 
+  ;
+  
+  class_<VolumeRenderer, bases<Volume> >("VolumeRenderer", init<>())
+      .def("getMin", &VolumeRenderer::getMin)
+      .def("getMax", &VolumeRenderer::getMax)
   ;
 
   class_<NonManifoldMesh, bases<Volume> >("NonManifoldMesh", init<>())
