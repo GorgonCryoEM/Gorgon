@@ -10,6 +10,7 @@ import sys
 import argparse
 
 from libpytoolkit import *
+import Explorer
 
 
 class GLWidget(QtOpenGL.QGLWidget):
