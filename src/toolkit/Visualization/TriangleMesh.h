@@ -132,7 +132,7 @@ namespace Protein_Morph {
                         k = faces[i].vertexHashes[j];
                         normal = GetVertexNormal(k);
                         glNormal3f(normal.X(), normal.Y(), normal.Z());
-                        glVertex3fv(vertices[k].position.values);
+                        glVertex3fv(vertices[k].position.getValues());
                     }
                 }
                 glEnd();

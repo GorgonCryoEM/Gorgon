@@ -70,6 +70,7 @@ namespace GraphMatch {
             Vector3<T> getOrthogonal() const;
             Vector3<T> rotate(Vector3<T> axis, T angle);
             Vector3<T> transform(Matrix<T> t);
+            T* getValues() const;
 //            T * begin();
 //            T * end();
 
@@ -101,6 +102,16 @@ namespace GraphMatch {
     Vector3<T>::Vector3()
             : x(0), y(0), z(0)
     {}
+
+    template <class T>
+    T* Vector3<T>::getValues() const {
+            T * vals = new T[3];
+            vals[0] = x;
+            vals[1] = y;
+            vals[2] = z;
+
+            return vals;
+    }
 
     template <class T>
     Vector3<T>::Vector3(const vector<T>& vec)
