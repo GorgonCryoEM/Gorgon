@@ -31,12 +31,6 @@ class MainWindowForm(QtGui.QMainWindow):
             self.dockWidgets.remove(dockwidget)
             dockwidget.dockLocationChanged.disconnect()
     
-    def isDockWidget(self, dockWidget):
-        isWidget = False
-        for widget in self.dockWidgets:
-            isWidget = isWidget or (widget == dockWidget)
-        return isWidget
-    
     def exitApplication(self):
         QtGui.qApp.closeAllWindows()
             
