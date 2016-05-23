@@ -6,6 +6,8 @@ from OpenGL.GLUT import *
 
 from libpytoolkit import *
 from cmath import *
+from .libs import Vec3
+
 
 class Camera(QtOpenGL.QGLWidget):
 
@@ -22,7 +24,9 @@ class Camera(QtOpenGL.QGLWidget):
         self.aspectRatio   = 1.0
         self.selectedScene = -1
         self.lightsEnabled = [True, False]
-        self.lightsPosition = [[1000,1000,1000], [-1000,-1000,-1000]]
+        self.lightsPosition = [Vec3(1000,1000,1000),
+							   Vec3(-1000,-1000,-1000)
+							   ]
         self.lightsUseEyePosition = [True, False]
         self.mouseMovePoint = QtCore.QPoint(0,0)
         self.mouseDownPoint = QtCore.QPoint(0,0)
@@ -33,19 +37,19 @@ class Camera(QtOpenGL.QGLWidget):
         self.fogDensity = 0.01
         self.fogEnabled = False
         
-        self.center = [0,0,0]
-        self.eye = [0,-4.1,0]
-        self.look = [0,1.1,0]
-        self.right = [1.1,0,0]
-        self.up = [0,0,1.1]
-        self.near = 0.11
-        self.far = 1000.01
+        self.center = Vec3(0.0,  0.0, 0.0)
+        self.eye    = Vec3(0.0, -4.1, 0.0)
+        self.look   = Vec3(0.0, 1.1, 0.0)
+        self.right  = Vec3(1.1, 0.0, 0.0)
+        self.up     = Vec3(0.0, 0.0, 1.1)
+        self.near    = 0.11
+        self.far     = 1000.01
         self.eyeZoom = 0.26
         
-        self.setCenter(0, 0, 0)
-        self.setEye(0, -4, 0)
-        self.setUp(0, 0, 1)
-        self.setEyeRotation(0, 0, 0)
+        self.setEyeRotation(0.0, 0.0, 0.0)
+        self.setCenter     (self.center)
+        self.setEye        (self.eye)
+        self.setUp         (self.up)
         self.lastPos = QtCore.QPoint()
         
         for i in range(len(self.scene)):
@@ -60,57 +64,57 @@ class Camera(QtOpenGL.QGLWidget):
             self.connect(s, QtCore.SIGNAL("modelVisualizationChanged()"), self.modelChanged)
             self.connect(s, QtCore.SIGNAL("mouseTrackingChanged()"), self.refreshMouseTracking)
     
-    def setEye(self, x, y, z):
-        if(self.eye != [x,y,z]):
-            self.eye = [x, y, z]
+    def setEye(self, v):
+        if(self.eye != v):
+            self.eye = v
             try:
-                self.look = vectorNormalize([self.center[0] - self.eye[0], self.center[1] - self.eye[1], self.center[2] - self.eye[2]])
-                self.right = vectorNormalize(vectorCrossProduct(self.look, self.up))            #print("Eye: right :", self.right)
-                self.up = vectorNormalize(vectorCrossProduct(self.right, self.look))
+                self.look  = (self.center - self.eye).normalize()
+                self.right = (self.look^self.up).normalize()            #print("Eye: right :", self.right)
+                self.up    = (self.right^self.look).normalize()
             except:
-                self.look = [0,1,0]
-                self.right = [1,0,0]
-                self.up = [0,0,1]
+                self.look  = Vec3(0,1,0)
+                self.right = Vec3(1,0,0)
+                self.up    = Vec3(0,0,1)
             self.setRendererCuttingPlanes()
             self.emitCameraChanged()
     
-    def setCenter(self, x, y, z):
-        if(self.center != [x,y,z]):
-            self.center = [x, y, z]
+    def setCenter(self, v):
+        if(self.center != v):
+            self.center = v
             try:
-                self.look = vectorNormalize([self.center[0] - self.eye[0], self.center[1] - self.eye[1], self.center[2] - self.eye[2]])
-                self.right = vectorNormalize(vectorCrossProduct(self.look, self.up))
+                self.look  = (self.center - self.eye).normalize()
+                self.right = (self.look^self.up).normalize()
             except:
-                self.look = [0,1,0]
-                self.right = [1,0,0]
+                self.look  = Vec3(0,1,0)
+                self.right = Vec3(1,0,0)
             self.setRendererCuttingPlanes()
             self.setRendererCenter()
             self.emitCameraChanged()
         
-    def setUp(self, x, y, z):
-        if(self.up != vectorNormalize([x, y, z])):
-            self.up = vectorNormalize([x, y, z])
+    def setUp(self, v):
+        if(self.up != v.normalize()):
+            self.up = v.normalize()
             try:
-                self.right = vectorNormalize(vectorCrossProduct(self.look, self.up))
-                self.up = vectorNormalize(vectorCrossProduct(self.right, self.look))
+                self.right = (self.look^self.up   ).normalize()
+                self.up    = (self.right^self.look).normalize()
             except:
-                self.right = [1,0,0]
+                self.right = Vec3(1,0,0)
             self.setRendererCuttingPlanes()
             self.emitCameraChanged()
         
     def setEyeRotation(self, yaw, pitch, roll):
-        newLook = vectorNormalize(vectorSubtract(vectorAdd(self.eye, vectorScalarMultiply(yaw, self.right)), self.center));
-        d = vectorDistance(self.eye, self.center)
-        newEye = vectorAdd(self.center, vectorScalarMultiply(d, newLook))
+        newLook = (self.eye + self.right*yaw - self.center).normalize()
+        d = (self.eye - self.center).length()
+        newEye = self.center + newLook*d
         
-        newLook = vectorNormalize(vectorSubtract(vectorAdd(newEye, vectorScalarMultiply(pitch, self.up)), self.center));
-        d = vectorDistance(newEye, self.center)
-        newEye = vectorAdd(self.center, vectorScalarMultiply(d, newLook))
+        newLook = (newEye+self.up*pitch - self.center).normalize()
+        d = (newEye - self.center).length()
+        newEye = self.center + newLook*d
         
-        self.setEye(newEye[0], newEye[1], newEye[2])
+        self.setEye(newEye)
         
-        newUp = vectorNormalize(vectorAdd(vectorScalarMultiply(roll*0.01, self.right), self.up))
-        self.setUp(newUp[0], newUp[1], newUp[2])
+        newUp = (self.right*roll*0.01 + self.up).normalize()
+        self.setUp(newUp)
             
     def setNearFarZoom(self, near, far, zoom):
         if((self.eyeZoom != zoom) or (self.near != near) or (self.far != far)):
@@ -151,13 +155,17 @@ class Camera(QtOpenGL.QGLWidget):
                     if maxPos[i] > sceneMax[i]:
                         sceneMax[i] = maxPos[i]
         
-        distance = vectorDistance(sceneMin, sceneMax)
-        [centerX, centerY, centerZ] = vectorScalarMultiply(0.5, vectorAdd(sceneMin, sceneMax))
+        sceneMin = Vec3(sceneMin)
+        sceneMax = Vec3(sceneMax)
+        
+        distance = (sceneMin - sceneMax).length()
+        center   = (sceneMin + sceneMax)*0.5
+        [centerX, centerY, centerZ] = [center.x(), center.y(), center.z()]
                      
-        self.setCenter(centerX, centerY, centerZ)
-        self.setEye(self.center[0], self.center[1], self.center[2] - distance)
-        self.setUp(0, -1, 0)
-        centerDistance = vectorDistance(self.eye, self.center)
+        self.setCenter(center)
+        self.setEye(Vec3(self.center[0], self.center[1], self.center[2] - distance))
+        self.setUp(Vec3(0, -1, 0))
+        centerDistance = (self.eye - self.center).length()
         self.setCuttingPlane(0.0)
         self.modelChanged()
          
@@ -165,10 +173,10 @@ class Camera(QtOpenGL.QGLWidget):
     
     def sceneSetCenterLocal(self, centerX, centerY, centerZ, distance):
         
-        self.setCenter(centerX, centerY, centerZ)
-        self.setEye(self.center[0], self.center[1], self.center[2] - distance)
-        self.setUp(0, -1, 0)
-        centerDistance = vectorDistance(self.eye, self.center)
+        self.setCenter(Vec3(centerX, centerY, centerZ))
+        self.setEye(Vec3(self.center[0], self.center[1], self.center[2] - distance))
+        self.setUp(Vec3(0, -1, 0))
+        centerDistance = (self.eye - self.center).length()
         self.setCuttingPlane(0.0)
         self.modelChanged()
          
@@ -356,7 +364,7 @@ class Camera(QtOpenGL.QGLWidget):
         
         p2 = gluUnProject(oglX, oglY, oglZ, modelview, projection, viewport)
         glPopMatrix()
-        return vectorSubtract([p2[0], p2[1], p2[2]], self.eye)
+        return Vec3(p2) - self.eye
                 
     def resizeGL(self, width, height):
         if(height > 0):
@@ -381,38 +389,38 @@ class Camera(QtOpenGL.QGLWidget):
         self.updateGL()
      
     def moveSelectedScene(self, dx, dy):
-        newDx = vectorDistance(self.eye, self.center) * abs(tan(pi * self.eyeZoom)) * dx / float(self.width())
-        newDy = vectorDistance(self.eye, self.center) * abs(tan(pi * self.eyeZoom)) * dy / float(self.height())
-        moveDirection = vectorAdd(vectorScalarMultiply(-newDy, self.up), vectorScalarMultiply(newDx, self.right))
-        dirVec = Vector3DFloat(moveDirection[0], moveDirection[1], moveDirection[2])
+        newDx = (self.eye - self.center).length() * abs(tan(pi * self.eyeZoom)) * dx / float(self.width())
+        newDy = (self.eye - self.center).length() * abs(tan(pi * self.eyeZoom)) * dy / float(self.height())
+        moveDirection = self.up*(-newDy) + self.right*newDx
+        dirVec = Vec3(moveDirection)
         for s in self.scene:
             if(s.renderer.selectionMove(dirVec)):
                 s.emitModelChanged()
 
     def rotateSelectedScene(self, dx, dy):
-        newDx = vectorDistance(self.eye, self.center) * abs(tan(pi * self.eyeZoom)) * dx / float(self.width())
-        newDy = vectorDistance(self.eye, self.center) * abs(tan(pi * self.eyeZoom)) * dy / float(self.height())
+        newDx = (self.eye - self.center).length() * abs(tan(pi * self.eyeZoom)) * dx / float(self.width())
+        newDy = (self.eye - self.center).length() * abs(tan(pi * self.eyeZoom)) * dy / float(self.height())
 
-        moveLength = vectorAdd(vectorScalarMultiply(-newDy, self.up), vectorScalarMultiply(newDx, self.right))
-        moveDirection = vectorNormalize(moveLength)
-        rotationAxis = vectorCrossProduct(moveDirection, self.look)
+        moveLength    = self.up*(-newDy) + self.right*newDx
+        moveDirection = moveLength.normalize()
+        rotationAxis  = moveDirection^self.look
         
-        rotationAxis3D = Vector3DFloat(rotationAxis[0], rotationAxis[1], rotationAxis[2])
-        centerOfMass = Vector3DFloat(0,0,0)
+        rotationAxis3D = Vec3(rotationAxis)
+        centerOfMass   = Vec3(0,0,0)
         
         totalCount = 0
         for s in self.scene:
             objectCount = s.renderer.selectionObjectCount()
             if(objectCount > 0):
                 totalCount = totalCount + objectCount
-                centerOfMass = centerOfMass + (s.objectToWorldCoordinatesVector(s.renderer.selectionCenterOfMass()) * float(objectCount))
+                centerOfMass = centerOfMass + (s.objectToWorldCoordinates(s.renderer.selectionCenterOfMass()) * float(objectCount))
         if(totalCount > 0):
             centerOfMass = centerOfMass * float(1.0 / totalCount)
 
         for s in self.scene:
-            selectionCOM = s.worldToObjectCoordinatesVector(centerOfMass)
-            selectionAxis = s.worldToObjectCoordinatesVector(rotationAxis3D)
-            if(s.renderer.selectionRotate(selectionCOM, selectionAxis, vectorSize(moveLength))):
+            selectionCOM  = s.worldToObjectCoordinates(centerOfMass)
+            selectionAxis = s.worldToObjectCoordinates(rotationAxis3D)
+            if(s.renderer.selectionRotate(selectionCOM, selectionAxis, moveLength.length())):
                 s.emitModelChanged()
                      
     def mousePressEvent(self, event):
@@ -471,13 +479,13 @@ class Camera(QtOpenGL.QGLWidget):
             if self.getSelectionMovementEnabled() and (event.modifiers() & QtCore.Qt.CTRL):                 # Translating the selection
                 self.moveSelectedScene(dx, dy)
             else:                                                   # Translating the scene
-                newDx = vectorDistance(self.eye, self.center) * abs(tan(pi * self.eyeZoom)) * dx / float(self.width())
-                newDy = vectorDistance(self.eye, self.center) * abs(tan(pi * self.eyeZoom)) * dy / float(self.height())
-                translation = vectorAdd(vectorScalarMultiply(newDy, self.up), vectorScalarMultiply(-newDx, self.right));
-                newEye = vectorAdd(self.eye, translation);
-                newCenter = vectorAdd(self.center, translation);
-                self.setEye(newEye[0], newEye[1], newEye[2])
-                self.setCenter(newCenter[0], newCenter[1], newCenter[2])
+                newDx = (self.eye - self.center).length() * abs(tan(pi * self.eyeZoom)) * dx / float(self.width())
+                newDy = (self.eye - self.center).length() * abs(tan(pi * self.eyeZoom)) * dy / float(self.height())
+                translation = self.up*newDy + self.right*(-newDx);
+                newEye = self.eye + translation;
+                newCenter = self.center + translation;
+                self.setEye(newEye)
+                self.setCenter(newCenter)
                 
         self.mouseMovePoint = QtCore.QPoint(event.pos())
 
@@ -496,11 +504,11 @@ class Camera(QtOpenGL.QGLWidget):
     def modelChanged(self):
         minDistance = 1000000000000.0
         maxDistance = 0.0
-        eyeDist = vectorDistance(self.eye, self.center)
+        eyeDist = (self.eye - self.center).length()
         for s in self.scene:
             if(s.loaded):
                 (center, distance) = s.getCenterAndDistance()
-                modelDist = vectorDistance(self.center, center)
+                modelDist = (self.center - center).length()
                 minDistance = min(minDistance, eyeDist - modelDist - distance/2.0)
                 maxDistance = max(maxDistance, eyeDist + modelDist + distance/2.0)
         self.setNearFarZoom(minDistance, maxDistance, self.eyeZoom)

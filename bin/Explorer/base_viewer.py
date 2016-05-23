@@ -6,6 +6,7 @@ from OpenGL.GLUT import *
 
 from libpytoolkit import VolumeRenderer
 from libpytoolkit import *
+from .libs import Vec3
 
 
 class BaseViewer(QtOpenGL.QGLWidget):
@@ -82,42 +83,30 @@ class BaseViewer(QtOpenGL.QGLWidget):
         origin = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]
         scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
 
-        return [objectCoords[0] * scale[0] + origin[0],
-                objectCoords[1] * scale[1] + origin[1],
-                objectCoords[2] * scale[2] + origin[2]
-                ]
+        return Vec3([objectCoords[i] * scale[i] + origin[i] for i in range(3)])
     
     def worldToObjectCoordinates(self, worldCoords):
         origin = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]
         scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
         
-        return [(worldCoords[0] - origin[0]) / scale[0],
-                (worldCoords[1] - origin[1]) / scale[1],
-                (worldCoords[2] - origin[2]) / scale[2]
-                ]
+        return Vec3([(worldCoords[i] - origin[i]) / scale[i] for i in range(3)])
 
     def objectVectorToWorldCoordinates(self, objectCoords):
         #Need to apply rotations
         scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
-        return [objectCoords[0] * scale[0],
-                objectCoords[1] * scale[1],
-                objectCoords[2] * scale[2]
-                ]
+        return Vec3([objectCoords[i] * scale[i] for i in range(3)])
     
     def worldVectorToObjectCoordinates(self, worldCoords):
         scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
-        return [worldCoords[0] / scale[0],
-                worldCoords[1] / scale[1],
-                worldCoords[2] / scale[2]
-                ]
+        return Vec3([worldCoords[i] / scale[i] for i in range(3)])
         
     def objectToWorldCoordinatesVector(self, objectCoords):
         coords = self.objectToWorldCoordinates([objectCoords.x(), objectCoords.y(), objectCoords.z()])
-        return Vector3DFloat(coords[0], coords[1], coords[2])
+        return Vector3Float(coords[0], coords[1], coords[2])
     
     def worldToObjectCoordinatesVector(self, worldCoords):
         coords = self.worldToObjectCoordinates([worldCoords.x(), worldCoords.y(), worldCoords.z()])
-        return Vector3DFloat(coords[0], coords[1], coords[2])
+        return Vector3Float(coords[0], coords[1], coords[2])
     
     def setBoundingBox(self, visible):
         self.showBox = visible
@@ -210,26 +199,18 @@ class BaseViewer(QtOpenGL.QGLWidget):
     def getBoundingBox(self):
         scale    = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
         location = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]
-        minPos = [(self.renderer.getMin(0)*scale[0] + location[0]),
-                  (self.renderer.getMin(1)*scale[1] + location[1]),
-                  (self.renderer.getMin(2)*scale[2] + location[2])]
-        maxPos = [(self.renderer.getMax(0)*scale[0] + location[0]),
-                  (self.renderer.getMax(1)*scale[1] + location[1]),
-                  (self.renderer.getMax(2)*scale[2] + location[2])]
+        minPos = Vec3([(self.renderer.getMin(i)*scale[i] + location[i]) for i in range(3)])
+        maxPos = Vec3([(self.renderer.getMax(i)*scale[i] + location[i]) for i in range(3)])
         return (minPos, maxPos)
         
     def getCenterAndDistance(self):
         scale    = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
         location = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]
-        minPos = [(self.renderer.getMin(0)*scale[0] + location[0]),
-                  (self.renderer.getMin(1)*scale[1] + location[1]),
-                  (self.renderer.getMin(2)*scale[2] + location[2])]
-        maxPos = [(self.renderer.getMax(0)*scale[0] + location[0]),
-                  (self.renderer.getMax(1)*scale[1] + location[1]),
-                  (self.renderer.getMax(2)*scale[2] + location[2])]
-        distance = vectorDistance(minPos, maxPos)
+        minPos = Vec3([(self.renderer.getMin(i)*scale[i] + location[i]) for i in range(3)])
+        maxPos = Vec3([(self.renderer.getMax(i)*scale[i] + location[i]) for i in range(3)])
+        distance = (minPos - maxPos).length()
 
-        center = vectorScalarMultiply(0.5, vectorAdd(minPos, maxPos))
+        center = (minPos + maxPos)*0.5
 
         return (center, distance)
 
