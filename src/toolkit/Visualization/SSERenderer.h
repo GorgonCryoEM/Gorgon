@@ -18,7 +18,7 @@
 //#include <ProteinMorph/SheetGenerator.h>
 //#include <GraphMatch/StandardGraph.h>
 #include "Readers/SkeletonReader.h"
-#include <GraphMatch/Shape.h>
+#include "GraphMatch/Shape.h"
 //#include <GraphMatch/VectorMath.h>
 //#include <MathTools/LinearSolver.h>
 //#include <ProteinMorph/SSEFlexibleFitter.h>

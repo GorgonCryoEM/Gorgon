@@ -1,9 +1,8 @@
-#ifndef TOOLKIT_GRAPHMATCH_LINKEDNODESTUB_H
-#define TOOLKIT_GRAPHMATCH_LINKEDNODESTUB_H
+#ifndef SRC_TOOLKIT_FOUNDATION_LINKEDNODESTUB_H
+#define SRC_TOOLKIT_FOUNDATION_LINKEDNODESTUB_H
 
 //#include "LinkedNode.h"
-
-using namespace std;
+#include <cstdlib>
 
 namespace GraphMatch {
 

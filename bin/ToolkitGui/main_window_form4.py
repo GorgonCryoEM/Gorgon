@@ -23,6 +23,10 @@ class MainWindowForm4(QtGui.QMainWindow):
         self.calphaViewer = CAlphaViewer(self)
         self.sseViewer    = SSEViewer(self)
         
+        self.viewers = {}
+        self.viewers['volume'] = self.volumeViewer
+        self.viewers['skeleton'] = self.skeletonViewer
+        
         self.scene = [self.volumeViewer, self.skeletonViewer, self.calphaViewer, self.sseViewer]
         
         self.mainCamera = Camera(self.scene, self)
@@ -39,18 +43,12 @@ class MainWindowForm4(QtGui.QMainWindow):
 #
         self.volumeViewer.load(self.args.volume)
         self.skeletonViewer.load(self.args.skeleton)
-        self.calphaViewer.loadSeq('groel-segment.seq')
-#         self.sseViewer.loadHelixDataFromFile('groel-segment.seq')
-#         self.sseViewer.loadHelixData()
-#         self.sseViewer.helixCorrespondanceFinder.viewer = self.sseViewer
-        self.form.sequenceFileName = QtCore.QString('groel-segment.seq')
-        self.form.helixFileName    = QtCore.QString('helices-densityMap.wrl')
-#
-        self.sseViewer.loadHelixDataFromFile('helices-densityMap.wrl')
-#         self.sseViewer.loadHelixData('helices-densityMap.wrl')
+        self.calphaViewer.loadSeq(self.args.sequence)
+        self.sseViewer.loadHelixDataFromFile(self.args.helix)
+
         self.form.ui.lineEditSkeletonFile.setText(self.args.skeleton)
-        self.form.ui.lineEditSequenceFile.setText('groel-segment.seq')
-        self.form.ui.lineEditHelixLocationFile.setText('helices-densityMap.wrl')
+        self.form.ui.lineEditSequenceFile.setText(self.args.sequence)
+        self.form.ui.lineEditHelixLocationFile.setText(self.args.helix)
 #         self.form.loadDefaults()
 #         self.form.setConstants()
 # #         self.form.lineEditSheetLocationFile.setText()

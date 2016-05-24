@@ -12,6 +12,8 @@ from Toolkit.sse.seq_model.Helix import Helix
 from Explorer import Vec3
 import xml.dom.minidom
 
+from Toolkit.sse.sse_helix_correspondence import SSEHelixCorrespondence
+
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
@@ -19,38 +21,45 @@ from OpenGL.GLUT import *
 import math
 
 
-class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
+class SSEHelixCorrespondenceFinderForm(QtGui.QDialog, SSEHelixCorrespondence):
 
     def __init__(self, main, parent=None):
-        QtGui.QDialog.__init__(self, main)
-        
         self.app = main
-#         self.viewer = self.app.sseViewer
+        self.viewer = parent
+        
+        QtGui.QDialog.__init__(self, main)
+                
+        args = self.app.args
+        SSEHelixCorrespondence.__init__(self, args.skeleton, args.sequence, args.helix, args.output, False)
+        
         dock = QtGui.QDockWidget("SSEHelixCorrespondenceFinder", self.app)
         dock.setWidget(self)
         dock.setAllowedAreas(QtCore.Qt.AllDockWidgetAreas)
         self.app.addDockWidget(QtCore.Qt.LeftDockWidgetArea, dock)
         
+        self.createUI()
+        self.ui.correspondences = self.ui.comboBoxCorrespondences
+        
         self.executed = False
         self.colors = {}
         self.colors["CorrespondenceFinder:BackboneTrace"] = QtGui.QColor(255, 255, 255, 255)
-        self.createUI()
         self.loadingCorrespondance = False
         self.userConstraints = {}
         self.constraintActions = {}
         self.selectedRow = 0
-        self.dataLoaded = False
+        self.dataLoaded = True
+        self.allLoaded  = True
 
     def createUI(self):
         self.ui = Ui_DialogSSEHelixCorrespondenceFinder()
         self.ui.setupUi(self)
-        self.connect(self.ui.pushButtonGetHelixLengthFile, QtCore.SIGNAL("pressed ()"), self.getHelixLengthFile)
-        self.connect(self.ui.pushButtonGetHelixLocationFile, QtCore.SIGNAL("pressed ()"), self.getHelixLocationFile)
-        self.connect(self.ui.pushButtonGetSheetLocationFile, QtCore.SIGNAL("pressed ()"), self.getSheetLocationFile)
-        self.connect(self.ui.pushButtonGetSkeletonFile, QtCore.SIGNAL("pressed ()"), self.getSkeletonFile)
-        self.connect(self.ui.pushButtonGetSequenceFile, QtCore.SIGNAL("pressed ()"), self.getSequenceFile)
-        self.connect(self.ui.pushButtonGetSettingsFile, QtCore.SIGNAL("pressed ()"), self.getSettingsFile)
-        self.connect(self.ui.pushButtonReset, QtCore.SIGNAL("pressed ()"), self.loadDefaults)
+#         self.connect(self.ui.pushButtonGetHelixLengthFile, QtCore.SIGNAL("pressed ()"), self.getHelixLengthFile)
+#         self.connect(self.ui.pushButtonGetHelixLocationFile, QtCore.SIGNAL("pressed ()"), self.getHelixLocationFile)
+#         self.connect(self.ui.pushButtonGetSheetLocationFile, QtCore.SIGNAL("pressed ()"), self.getSheetLocationFile)
+#         self.connect(self.ui.pushButtonGetSkeletonFile, QtCore.SIGNAL("pressed ()"), self.getSkeletonFile)
+#         self.connect(self.ui.pushButtonGetSequenceFile, QtCore.SIGNAL("pressed ()"), self.getSequenceFile)
+#         self.connect(self.ui.pushButtonGetSettingsFile, QtCore.SIGNAL("pressed ()"), self.getSettingsFile)
+#         self.connect(self.ui.pushButtonReset, QtCore.SIGNAL("pressed ()"), self.loadDefaults)
         self.connect(self.ui.pushButtonCancel, QtCore.SIGNAL("pressed ()"), self.reject)
         self.connect(self.ui.pushButtonOk, QtCore.SIGNAL("pressed ()"), self.accept)
         self.connect(self.ui.pushButtonRebuildGraph, QtCore.SIGNAL("pressed ()"), self.rebuildGraph)
@@ -745,6 +754,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
 
         self.populateComboBox(self.viewer.correspondenceLibrary)
         self.viewer.modelChanged()
+        self.drawOverlay()
         self.ui.tabWidget.setCurrentIndex(4)
         print "done with search"
                 
@@ -931,31 +941,33 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
             self.ui.tableWidgetCorrespondenceList.setVerticalHeaderLabels(rowLabels)
             
             observedHelices = self.viewer.correspondenceLibrary.structureObservation.helixDict
-#             for i in range(len(observedHelices)):
-#                 if(not notMissing.has_key(i)):
-#                     self.viewer.renderer.setHelixColor(i, 0.5, 0.5, 0.5, 1.0)
-                
-#         self.viewer.correspondenceEngine.setVisibleCorrespondence(correspondenceIndex)
-#         self.viewer.correspondenceLibrary.setCurrentCorrespondenceIndex(correspondenceIndex)
+            for i in range(len(observedHelices)):
+                if(not notMissing.has_key(i)):
+                    self.viewer.renderer.setHelixColor(i, 0.5, 0.5, 0.5, 1.0)
+
+        self.viewer.correspondenceEngine.setVisibleCorrespondence(correspondenceIndex)
+        self.viewer.correspondenceLibrary.setCurrentCorrespondenceIndex(correspondenceIndex)
         self.viewer.modelChanged()
         self.loadingCorrespondance = False
         
     def drawOverlay(self):
-        if self.executed and self.corrAct.isChecked():
+        if True:
             glPushAttrib(GL_LIGHTING_BIT)
-            self.viewer.setMaterials(self.colors["CorrespondenceFinder:BackboneTrace"])
+#             self.viewer.setMaterials(self.colors["CorrespondenceFinder:BackboneTrace"])
+            self.viewer.setMaterials()
             # calls Draw method of c++ SSECorrespondenceEngine object
             self.viewer.correspondenceEngine.draw(0)
             glPopAttrib()
-        if self.corrAct.isChecked() and self.dataLoaded and (self.ui.checkBoxShowAllPaths.isChecked() or self.ui.checkBoxShowHelixCorners.isChecked() or self.ui.checkBoxShowSheetCorners.isChecked() or self.ui.checkBoxShowSheetColors.isChecked() ):
+        if True:
             # TODO: Move this color changing code somewhere else
             # set colors of all SSEs
             # Probably should use the setColor calls in previous sections.
             for i in range(self.viewer.correspondenceEngine.getSkeletonSSECount()):
                 color = self.getIndexedHelixColor(i, self.viewer.correspondenceEngine.getSkeletonSSECount())
             glPushAttrib(GL_LIGHTING_BIT)
-            self.viewer.setMaterials(self.colors["CorrespondenceFinder:BackboneTrace"])
-            self.viewer.correspondenceEngine.drawAllPaths(0,self.ui.checkBoxShowAllPaths.isChecked(),self.ui.checkBoxShowHelixCorners.isChecked(),self.ui.checkBoxShowSheetCorners.isChecked(),False)
+#             self.viewer.setMaterials(self.colors["CorrespondenceFinder:BackboneTrace"])
+            self.viewer.setMaterials()
+            self.viewer.correspondenceEngine.drawAllPaths(0,True,True,True,True)
             glPopAttrib()
             
     def rebuildGraph(self):
@@ -1031,3 +1043,94 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
             constrainAction.setEnabled(True)
             self.connect(constrainAction, QtCore.SIGNAL("triggered()"), self.constrainObservedHelix(-1))
             self.ui.tableWidgetCorrespondenceList.addAction(constrainAction)
+
+#     def sseClicked(self, hit0, hit1, hit2, hit3, hit4, hit5, event):
+#         if(self.isVisible() and self.dataLoaded and ((hit0 == 0) or (hit0 == 1) or (hit0 == 2)) and (hit1 >= 0)):
+#             observedType = hit0
+#             observedSSE = hit1
+#             constrained = {}
+#             match = None
+#             matchKey = 0
+#             matchKeys = []
+#             correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
+#             numH = len(self.viewer.correspondenceLibrary.structureObservation.helixDict)
+#             if(correspondenceIndex >= 0):
+#                 corr = self.viewer.correspondenceLibrary.correspondenceList[correspondenceIndex]
+#                 for i in range(len(corr.matchList)):
+#                     m = corr.matchList[i]
+#                     if(m.constrained):
+#                         constrained[m.predicted.serialNo] = True
+#                     # find the index of the selected helix in the correspondence list
+#                     if observedType==0 and m.observed and m.observed.sseType == 'helix':
+#                         if(m.observed.label == observedSSE):
+#                             match = m
+#                             matchKey = i
+#                             matchKeys.append(i)
+#                     # find the index of the selected sheet in the correspondence list
+#                     if observedType==2 and m.observed and m.observed.sseType == 'sheet':
+#                         if(m.observed.label-numH+1 == observedSSE):
+#                             match = m
+#                             matchKey = i
+#                             matchKeys.append(i)
+#
+#             self.ui.tableWidgetCorrespondenceList.setRangeSelected(QtGui.QTableWidgetSelectionRange(0, 0, self.ui.tableWidgetCorrespondenceList.rowCount()-1, 2), False)
+#             if(match):
+#                 self.ui.tableWidgetCorrespondenceList.setRangeSelected(QtGui.QTableWidgetSelectionRange(0, 0, self.ui.tableWidgetCorrespondenceList.rowCount()-1, 2), False)
+#                 self.ui.tableWidgetCorrespondenceList.setRangeSelected(QtGui.QTableWidgetSelectionRange(matchKey*2, 0, matchKey*2, 2),True)
+#                 for matchItem in matchKeys:
+#                     self.ui.tableWidgetCorrespondenceList.setRangeSelected(QtGui.QTableWidgetSelectionRange(matchItem*2, 0, matchItem*2, 2),True)
+#
+#             if(self.app.mainCamera.mouseRightPressed):
+#                 predictedHelices = self.viewer.correspondenceLibrary.structurePrediction.helixDict
+#                 predictedStrands = self.viewer.correspondenceLibrary.structurePrediction.strandDict
+#                 predictedSSEs = self.viewer.correspondenceLibrary.structurePrediction.secelDict
+#                 menu = QtGui.QMenu(self.tr("Constrain observed SSE " + str(observedSSE+1)))
+#                 i_h = 0
+#                 i_s = 0
+#                 for i in range(len(predictedSSEs)):
+#                     if observedType==0 and predictedSSEs[i].type == 'helix':
+#                         constrainAction = QtGui.QAction(self.tr("Sequence #" + str(i+1) + ": Predicted helix " + str(predictedHelices[i_h].serialNo)), self)
+#
+#                         # bold if already selected
+#                         if corr.matchList[i].observed and corr.matchList[i].observed.label == observedSSE:
+#                             font=constrainAction.font()
+#                             font.setBold(True)
+#                             constrainAction.setFont(font)
+#
+#                         # checked if already constrained
+#                         constrainAction.setCheckable(True)
+#                         if(match and match.observed):
+#                             constrainAction.setChecked(corr.matchList[i].constrained and corr.matchList[i].observed!=None and corr.matchList[i].observed.label == observedSSE)
+#                         else:
+#                             constrainAction.setChecked(False)
+#
+#                         # checkable if not constrained to another helix
+#                         constrainAction.setEnabled( (not corr.matchList[i].constrained) or (corr.matchList[i].observed!=None and corr.matchList[i].observed.label == observedSSE) )
+#                         self.connect(constrainAction, QtCore.SIGNAL("triggered()"), self.constrainPredictedHelix(predictedHelices[i_h].serialNo, observedSSE, not constrainAction.isChecked()))
+#                         menu.addAction(constrainAction)
+#                         i_h += 1
+#
+#                     if observedType==2 and predictedSSEs[i].type == 'strand' and self.ui.checkBoxIncludeSheets.isChecked():
+#                         constrainAction = QtGui.QAction(self.tr("Sequence #" + str(i+1) + ": Predicted strand " + str(predictedStrands[i_s].serialNo)), self)
+#
+#                         # bold if already selected
+#                         if corr.matchList[i].observed and corr.matchList[i].observed.label-numH == observedSSE-1:
+#                             font=constrainAction.font()
+#                             font.setBold(True)
+#                             constrainAction.setFont(font)
+#
+#                         # checked if already constrained
+#                         constrainAction.setCheckable(True)
+#                         if(match and match.observed):
+#                             constrainAction.setChecked(corr.matchList[i].constrained and corr.matchList[i].observed!=None and corr.matchList[i].observed.label-numH == observedSSE-1)
+#                         else:
+#                             constrainAction.setChecked(False)
+#
+#                         # checkable if not constrained to another sheet
+#                         constrainAction.setEnabled( (not corr.matchList[i].constrained) or (corr.matchList[i].observed!=None and corr.matchList[i].observed.label-numH == observedSSE-1) )
+#                         self.connect(constrainAction, QtCore.SIGNAL("triggered()"), self.constrainPredictedStrand(i, observedSSE-1, not constrainAction.isChecked()))
+#                         menu.addAction(constrainAction)
+#                         i_s += 1
+#
+#                 menu.exec_(self.app.mainCamera.mapToGlobal(self.app.mainCamera.mouseDownPoint))
+#                 self.app.mainCamera.updateGL()
