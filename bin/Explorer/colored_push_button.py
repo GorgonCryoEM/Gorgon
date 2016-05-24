@@ -1,39 +1,34 @@
-from PyQt4 import QtCore, QtGui
+from PyQt4.QtGui import QWidget, QPushButton, QPainter, QColorDialog, QColor
+from PyQt4.QtCore import pyqtSignal
 
 
-class ColoredPushButton(QtGui.QPushButton):
+class ColoredPushButton(QPushButton):
     
+    valueChanged = pyqtSignal(QColor)
+
     def __init__(self, parent = None):
-        QtGui.QWidget.__init__(self, parent)
-        self.actualColor = QtGui.QColor.fromRgba(QtGui.qRgba(128, 128, 128, 255))
-        self.brush = QtGui.QBrush()
-        self.brush.setColor(self.actualColor)
-        self.brush.setStyle(QtCore.Qt.SolidPattern)
+        QWidget.__init__(self, parent)
+        self.color = QColor(128, 128, 128, 255)
         
-        self.connect(self, QtCore.SIGNAL("pressed ()"), self.buttonPressed)
-        self.colorPicker = ColorPickerForm()
+        self.clicked.connect(self.buttonPressed)
         
     def paintEvent(self, event):
-        QtGui.QPushButton.paintEvent(self, event)
-        painter = QtGui.QPainter()
+        painter = QPainter()
         painter.begin(self)
-        painter.fillRect(5, 4, self.width()-10, self.height()-8, self.brush)
+        painter.fillRect(5, 4, self.width()-10, self.height()-8, self.color)
         painter.end()
     
     def setColor(self, color):
-        if (self.actualColor != color):
-            self.actualColor = color;
-            self.brush.setColor(QtGui.QColor.fromRgba(QtGui.qRgba(color.red(), color.green(), color.blue(), 255)))
+        if(self.color != color):
+            self.color = color
             self.update()
+            self.valueChanged.emit(self.color)
     
     def color(self):
-        return self.actualColor
+        return self.color
         
     def buttonPressed(self):
-        self.colorPicker.setColor(self.actualColor)
-        if(self.colorPicker.exec_() == QtGui.QDialog.Accepted):
-            self.setColor(self.colorPicker.getColor())
-            self.emitColorChanged()
-    
-    def emitColorChanged(self):
-        self.emit(QtCore.SIGNAL("colorChanged()"))
+        color = QColorDialog().getColor(self.color, self, '', QColorDialog.ShowAlphaChannel)
+        
+        if color.isValid():
+            self.setColor(color)
