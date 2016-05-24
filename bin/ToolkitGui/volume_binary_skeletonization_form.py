@@ -61,7 +61,10 @@ class VolumeBinarySkeletonizationForm(QtGui.QDialog):
                 print "       Values:", self.getDensityThreshold(), self.getMinCurveLength(), self.getMinSurfaceSize()
                 skeleton = self.viewer.renderer.performBinarySkeletonizationJu2007(self.getDensityThreshold(), self.getMinCurveLength(), self.getMinSurfaceSize())
                 print "Skeleton after skeletonization: ", skeleton.getSize()
+                print "   Origin: ", [skeleton.getOriginX(), skeleton.getOriginY(), skeleton.getOriginZ()]
                 self.app.skeleton.loadVolume(skeleton)
+                print "After loadVolume()"
+                print "   Origin: ", [self.app.skeleton.renderer.getOriginX(), self.app.skeleton.renderer.getOriginY(), self.app.skeleton.renderer.getOriginZ()]
             self.setCursor(QtCore.Qt.ArrowCursor)
             self.close()
         else:

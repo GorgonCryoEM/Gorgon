@@ -17,7 +17,7 @@
 //#include <SkeletonMaker/VolumeSkeletonizer.h>
 //#include <GraySkeletonCPP/VolumeFormatConverter.h>
 //#include "MeshRenderer.h"
-//#include <ProteinMorph/NonManifoldMesh.h>
+//#include <ProteinMorph/SkeletonMesh.h>
 //#include <ProteinMorph/TriangleMesh.h>
 //#include <Foundation/Octree.h>
 
@@ -102,6 +102,7 @@ namespace Core {
 
         int getNonZeroVoxelCount();
         void print();
+        string str();
         void subtract(const Volume & vol);
         void applyMask(const Volume & mask, double maskValue, bool keepMaskValue);
         double getMin() const;
@@ -112,6 +113,10 @@ namespace Core {
         float getStdDev(); // Returns the population standard deviation of the values at all the voxels
 
         Volume markCellFace();
+
+        int getN6     (vector<Vec3I> &   n6, int x, int y, int z) const;
+        int getN6Count(int x, int y, int z) const;
+
         int getNumNeighbor6  (int ox, int oy, int oz);
         int isInternal2      (int ox, int oy, int oz);
         int hasCell          (int ox, int oy, int oz);
@@ -120,7 +125,7 @@ namespace Core {
         int isHelixEnd       (int ox, int oy, int oz);
         int isFeatureFace    (int ox, int oy, int oz);
         int isSheetEnd       (int ox, int oy, int oz);
-        int isSimple         (int ox, int oy, int oz);
+        bool isSimple         (int ox, int oy, int oz);
         int isPiercable      (int ox, int oy, int oz);
         int getNumPotComplex (int ox, int oy, int oz);
         int getNumPotComplex2(int ox, int oy, int oz);
@@ -145,7 +150,7 @@ namespace Core {
         void threshold( double thr, int out, int in, int boundary, bool markBoundary);
         void threshold2( double thr, int out, int in );
         void normalize( double min, double max );
-        Volume getDataRange(int x, int y, int z, int radius);
+        Volume getDataRange(int x, int y, int z, int radius) const;
         void toMRCFile( string fname );
 
         void Normalize();
@@ -153,11 +158,13 @@ namespace Core {
 
         virtual void load(string fileName);
         virtual void save(string fileName);
-        Volume PerformBinarySkeletonizationJu2007(double threshold, int minCurveSize, int minSurfaceSize);
-        Volume PerformGrayscaleSkeletonizationAbeysinghe2008(
-                double startDensity, int stepCount, int minCurveSize,
-                int minSurfaceSize, int curveRadius, int surfaceRadius,
-                int skeletonSmoothenRadius);
+        Volume binarySkeletonization(double threshold, int minCurveSize,
+                                     int minSurfaceSize);
+        Volume grayscaleSkeletonization(double startDensity, int stepCount,
+                                        int minCurveSize,
+                                        int minSurfaceSize, int curveRadius,
+                                        int surfaceRadius,
+                                        int skeletonSmoothenRadius);
 
         void buildHistogram(int binCount);
         int getHistogramBinValue(int binIx);

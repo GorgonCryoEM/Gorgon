@@ -9,12 +9,13 @@
 #define SRC_TOOLKIT_VISUALIZATION_ISOSURFACE_H_
 
 #include "DisplayType.h"
+#include "VolumeMesh.h"
 
 namespace Visualization {
 
     class IsoSurface : public DisplayType {
         public:
-            IsoSurface(const Volume & vol, Mesh & mesh);
+            IsoSurface(const Volume & vol, VolumeMesh & mesh);
             virtual ~IsoSurface();
 
             bool calculateDisplay();
@@ -30,7 +31,7 @@ namespace Visualization {
             Vec3F radiusOrigin;
             bool _useDisplayRadius;
 
-            Mesh & surfaceMesh;
+            VolumeMesh & surfaceMesh;
     };
 
 } /* namespace Visualization */

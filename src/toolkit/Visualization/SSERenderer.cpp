@@ -273,7 +273,7 @@ namespace Visualization {
 
     void SSERenderer::LoadSheetFile(string fileName) {
         if(helices.size() == 0) {
-            RendererBase::load(fileName);
+//            RendererBase::load(fileName);
         }
         //vector<Shape *> sheets;
         sheets.clear();
@@ -283,7 +283,7 @@ namespace Visualization {
     }
 
     void SSERenderer::SheetListToMesh(vector<Shape*> & sheets) {
-        sheetMesh = NonManifoldMesh();
+        sheetMesh = SkeletonMesh();
 
         Vec3D pt;
         vector<int> indices;

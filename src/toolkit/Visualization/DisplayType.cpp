@@ -84,7 +84,7 @@ namespace Visualization {
         return power;
     }
 
-    void MarchingCube(const Volume & vol, Mesh & mesh, const float iso_level, int iX, int iY, int iZ, int iScale){
+    void MarchingCube(const Volume & vol, MeshBase & mesh, const float iso_level, int iX, int iY, int iZ, int iScale){
         //        extern int aiCubeEdgeFlags[256];
         //        extern int a2iTriangleConnectionTable[256][16];
 

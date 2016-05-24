@@ -23,7 +23,6 @@
 ////#include <functional>
 //#include <Core/volume.h>
 //#include "MathTools/BasicDefines.h"
-#include "Visualization/DiscreteMesh.h"
 #include <MathTools/Combinatorics.h>
 
 using namespace std;

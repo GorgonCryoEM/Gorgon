@@ -8,28 +8,31 @@
 #ifndef SRC_TOOLKIT_VISUALIZATION_RENDERERBASE_H_
 #define SRC_TOOLKIT_VISUALIZATION_RENDERERBASE_H_
 
-#include "IsoSurface.h"
 #include "Core/volume.h"
-#include "Visualization/Mesh.h"
+#include "Visualization/MeshBase.h"
 
 using namespace Core;
 
 namespace Visualization {
 
-    class RendererBase : public Volume, public IsoSurface {
+    class RendererBase {
         public:
             RendererBase();
-
-            void load(string fileName);
-            void save(string fileName);
-
-            virtual void draw(int subSceneIndex, bool selectEnabled);
 
             virtual float getMinPos(int i) const;
             virtual float getMaxPos(int i) const;
 
+//            virtual int getSizeX() const;
+//            virtual int getSizeY() const;
+//            virtual int getSizeZ() const;
+            virtual float getSpacingX() const;
+            virtual float getSpacingY() const;
+            virtual float getSpacingZ() const;
+            virtual float getOriginX() const;
+            virtual float getOriginY() const;
+            virtual float getOriginZ() const;
+
         protected:
-            Mesh surfaceMesh;
     };
 }
 

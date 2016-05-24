@@ -24,11 +24,11 @@ class pySSEHunter(object):
         '''
         Skeleton
         '''
-        self.skeleton = MeshRenderer()
+        self.skeleton = SkeletonRenderer()
         self.logger.debug(self.volume)
         self.logger.debug("self.volume.getSize(): %d" % self.volume.getSize())
         self.logger.debug(self.skeleton)
-#         self.logger.debug("after MeshRenderer(): self.skeleton.getSize(): %d" % self.skeleton.getSize())
+#         self.logger.debug("after SkeletonRenderer(): self.skeleton.getSize(): %d" % self.skeleton.getSize())
         
         self.skeleton.loadFile(skeleton)
         self.logger.debug(self.skeleton)

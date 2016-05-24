@@ -847,7 +847,7 @@ namespace Visualization {
     }
 
     void CAlphaRenderer::loadFile(string fileName) {
-        RendererBase::load(fileName);
+//        RendererBase::load(fileName);
         atoms.clear();
         bonds.clear();
         atoms = PDBReader::ReadAtomPositions(fileName);
@@ -932,7 +932,7 @@ namespace Visualization {
         return PDBReader::WriteAtomPositions(atoms, fileName);
     }
 
-//      void CAlphaRenderer::GetSSEHunterAtoms(Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution, float threshold, float correlationCoeff, float skeletonCoeff, float geometryCoeff) {
+//      void CAlphaRenderer::GetSSEHunterAtoms(Volume * vol, SkeletonMesh_Annotated * skeleton, float resolution, float threshold, float correlationCoeff, float skeletonCoeff, float geometryCoeff) {
 //          Renderer::LoadFile("");
 //          atoms.clear();
 //          bonds.clear();

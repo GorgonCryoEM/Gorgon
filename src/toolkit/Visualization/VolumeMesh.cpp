@@ -1,85 +1,16 @@
 /*
- * Mesh.cpp
+ * VolumeMesh.cpp
  *
  * Author: shadow_walker <shadowwalkersb@gmail.com>
  *
  */
 
-#include "Mesh.h"
+#include "VolumeMesh.h"
 #include "GorgonGL.h"
-
-//using namespace std;
-////using namespace Foundation;
-//using namespace MathTools;
-//using namespace Protein_Morph;
 
 namespace Core {
 
-    Mesh::Mesh() {
-    }
-
-    Mesh::~Mesh() {
-    }
-
-    int Mesh::addVertex(Vec3F vertex, int id) {
-        vertices[id] = Vertex(vertex);
-        return id;
-    }
-
-    int Mesh::addFace(IdList face) {
-        TKey id = faces.size();
-        faces.push_back(face);
-
-        return id;
-    }
-
-    TKey Mesh::addFace(Vec3U vertex) {
-        IdList face;
-        for (int i = 0; i < 3; ++i) {
-            face.addId(vertex[i]);
-        }
-
-        TKey id = addFace(face);
-        for (int i = 0; i < 3; ++i) {
-            vertices[vertex[i]].addId(id);
-        }
-
-        return id;
-    }
-
-    MUV Mesh::getVertices() const {
-        return vertices;
-    }
-
-    void Mesh::clear() {
-        vertices.clear();
-        faces.clear();
-    }
-
-    Vec3F Mesh::getVertexNormal(TKey id) {
-        Vertex vertex = vertices[id];
-        CElem v = vertex.getIds();
-
-        Vec3F normal(0, 0, 0);
-        for(CElem::iterator it=v.begin(); it!=v.end(); ++it)
-                normal += getFaceNormal(*it);
-
-        normal.normalize();
-        return normal;
-    }
-
-    Vec3F Mesh::getFaceNormal(TKey id) {
-        IdList face = faces[id];
-        CElem v = face.getIds();
-
-        Vec3F normal = (vertices[v[1]] - vertices[v[0]])
-                     ^ (vertices[v[2]] - vertices[v[0]]);
-
-        normal.normalize();
-        return normal;
-    }
-
-    void Mesh::draw(bool drawSurfaces,
+    void VolumeMesh::draw(bool drawSurfaces,
                     bool annotateSurfaces,
                     bool fadeExtreme, int radius,
                     Vec3F center)
@@ -121,7 +52,7 @@ namespace Core {
         glFlush();
     }
 
-    void Mesh::save(string fileName) {
+    void VolumeMesh::save(string fileName) {
         FILE * outFile = fopen(fileName.c_str(), "wt");
         fprintf(outFile, "OFF\n");
         fprintf(outFile, "%d %d %d\n", (int)vertices.size(), (int)faces.size(), 0);

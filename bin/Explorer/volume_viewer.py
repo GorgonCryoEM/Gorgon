@@ -1,6 +1,6 @@
 from PyQt4 import QtGui, QtCore, QtOpenGL
 from base_viewer import BaseViewer
-from libpytoolkit import RendererBase
+from libpytoolkit import VolumeRenderer
 from string import split, upper
 
 from OpenGL.GL import *
@@ -15,7 +15,7 @@ class VolumeViewer(BaseViewer):
         super(VolumeViewer, self).__init__(main, parent)
         self.shortTitle = "VOL"
         
-        self.renderer = RendererBase()
+        self.renderer = VolumeRenderer()
         self.loaded = False
         
         self.setColor(QtGui.QColor(50, 200, 50, 150))

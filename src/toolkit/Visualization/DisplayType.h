@@ -17,19 +17,19 @@
 ////#include <string>
 ////#include <GraphMatch/VectorMath.h>
 ////#include "GlobalConstants.h"
-////#include "MeshRenderer.h"
+////#include "SkeletonRenderer.h"
 #include <Core/volume.h>
 ////#include <GraySkeletonCPP/GlobalDefinitions.h>
 ////#include <GraySkeletonCPP/VolumeSkeletonizer.h>
 ////#include <GraySkeletonCPP/VolumeFormatConverter.h>
-#include "NonManifoldMesh.h"
+#include "SkeletonMesh.h"
 //#include "MathTools/Vector3.h"
 //#include "MathTools/Dim3D.h"
 #include "Octree.h"
 ////#include <queue>
 //#include <Readers/reader.h>
 //#include <algorithm>
-//#include "Mesh.h"
+//#include "MeshBase.h"
 //#include "Foundation/StringUtils.h"
 
 using namespace std;
@@ -44,7 +44,7 @@ using namespace Core;
 namespace Visualization {
 
     int smallest2ndPower(int value);
-    void MarchingCube(const Volume & vol, Mesh & mesh,
+    void MarchingCube(const Volume & vol, MeshBase & mesh,
                       const float iso_level, int iX, int iY, int iZ,
                       int iScale);
 

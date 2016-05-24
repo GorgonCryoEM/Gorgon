@@ -9,7 +9,7 @@
 #define SRC_TOOLKIT_PROTEINMORPH_SSEHUNTER_H_
 
 //#include <Core/volume.h>
-#include "Visualization/NonManifoldMesh.h"
+#include "Visualization/SkeletonMesh.h"
 //#include <vector>
 //#include <algorithm>
 //#include <map>
@@ -18,7 +18,7 @@
 #include <MathTools/CrossCorrelation.h>
 #include <GraphMatch/PDBAtom.h>
 #include <SkeletonMaker/Skeletonizer.h>
-//#include <Gorgon/MeshRenderer.h>
+//#include <Gorgon/SkeletonRenderer.h>
 //#include <cmath>
 #include <iostream>
 #include <Core/GlobalDefinitions.h>
@@ -38,10 +38,6 @@ using namespace Core;
 
 namespace Protein_Morph {
 
-    /*
-     *
-     */
-
     enum RadialProfileType {GAUSSIAN, GAUSSIAN_DIP, POLYNOMIAL};
 
     class SSEHunter {
@@ -53,7 +49,7 @@ namespace Protein_Morph {
 
             void SetCorrelationScores(const Volume & vol, RadialProfileType type,
                                       float resolution, float deltaAltRadians);
-            void SetSkeletonScores(const Volume & vol, const NonManifoldMesh & skeleton,
+            void SetSkeletonScores(const Volume & vol, const SkeletonMesh & skeleton,
                                    float resolution);
             vector<vector<float> > GetAtomDistances();
             vector<float> GetLocalDirectionalityScores(const Volume & vol);

@@ -98,6 +98,14 @@ int Volume::id3=0;
         }
         return count;
     }
+
+    string Volume::str() {
+        ostringstream out;
+        out<<*this;
+
+        return out.str();
+    }
+
     void Volume::print() {
         for(int x = 0; x < getSizeX(); x++) {
             printf("{ ");
@@ -235,6 +243,25 @@ int Volume::id3=0;
         return fvol;
     }
 
+    int Volume::getN6(vector<Vec3I> & n6, int x, int y, int z) const {
+        int n6Count = 0;
+        n6.resize(6);
+        for(int i = 0; i < 6; i++) {
+            n6[n6Count][0] = x + VOLUME_NEIGHBORS_6[i][0];
+            n6[n6Count][1] = y + VOLUME_NEIGHBORS_6[i][1];
+            n6[n6Count][2] = z + VOLUME_NEIGHBORS_6[i][2];
+            if((*this)(n6[n6Count]) > 0) {
+                n6Count++;
+            }
+        }
+        return n6Count;
+    }
+
+    int Volume::getN6Count(int x, int y, int z) const {
+        vector<Vec3I> n6;
+        return getN6(n6, x, y, z);
+    }
+
     int Volume::hasCompleteSheet(int ox, int oy, int oz) {
         // Returns 1 if it lies in the middle of a sheet
         int temp = countIntEuler(ox, oy, oz);
@@ -333,7 +360,7 @@ int Volume::id3=0;
         return ( (hasCompleteSheet(ox, oy, oz) == 0) && isFeatureFace(ox, oy, oz));
     }
 
-    int Volume::isSimple(int ox, int oy, int oz) {
+    bool Volume::isSimple(int ox, int oy, int oz) {
         /* Test if this is a simple voxel */
         // int flag = 0 ;
         double vox[3][3][3];
@@ -346,10 +373,10 @@ int Volume::id3=0;
                 }
 
         if(countInt(vox) == 1 && countNeg(vox) == 1) {
-            return 1;
+            return true;
         }
         else {
-            return 0;
+            return false;
         }
 }
 
@@ -2621,7 +2648,7 @@ void Volume::normalize(double min, double max) {
 
 /* Set data at a pixel */
 
-Volume Volume::getDataRange(int x, int y, int z, int radius) {
+Volume Volume::getDataRange(int x, int y, int z, int radius) const {
     Volume range(radius * 2 + 1, radius * 2 + 1, radius * 2 + 1);
     for(int xx = x - radius; xx <= x + radius; xx++) {
         for(int yy = y - radius; yy <= y + radius; yy++) {
@@ -2770,15 +2797,20 @@ void Volume::downsample() {
 }
 
 void Volume::load(string inputFile) {
+//    #ifdef GORGON_DEBUG
+          cout<<"\033[32mDEBUG: File:   volume.cpp"<<endl;
+          cout<<"DEBUG: Method: Volume::load(string)\033[0m"<<endl;
+          cout<<*this<<endl;
+//    #endif
 
     *this = *MRCReaderPicker::pick(inputFile.c_str())->getVolume();
 
-#ifdef GORGON_DEBUG
-    cout<<"\033[35mDEBUG: File:   VolumeFormatConverter.h"<<endl;
-    cout<<"DEBUG: Method: VolumeFormatConverter::LoadVolume\033[0m"<<endl;
-    cout<<"DEBUG: Args: string, int, int, int, int\033[0m"<<endl;
-    cout<<getSize()<<endl;
-#endif
+//    #ifdef GORGON_DEBUG
+          cout<<"\033[32mDEBUG: File:   volume.cpp"<<endl;
+          cout<<"DEBUG: Method: Volume::load(string)\033[0m"<<endl;
+          cout<<*this<<endl;
+//    #endif
+
 }
 
 void Volume::save(string fileName) {
@@ -2795,36 +2827,37 @@ void Volume::save(string fileName) {
     }
 }
 
-Volume Volume::PerformBinarySkeletonizationJu2007(double threshold,
+Volume Volume::binarySkeletonization(double threshold,
                                                     int minCurveSize,
                                                     int minSurfaceSize)
 {
-    Skeletonizer skeletonizer(getOriginX(), getOriginY(), getOriginZ(),
-            DEFAULT_SKELETON_DIRECTION_RADIUS);
-//#ifdef GORGON_DEBUG
-    cout<<"DEBUG: File:   Volume.h"<<endl;
-    cout<<"DEBUG: Method: Volume::PerformBinarySkeletonizationJu2007"<<endl;
-    cout<<getSize()<<endl;
-//#endif
+    Skeletonizer skeletonizer(0, 0, 0,
+                              DEFAULT_SKELETON_DIRECTION_RADIUS);
+//    #ifdef GORGON_DEBUG
+          cout<<"\033[32mDEBUG: File:   volume.cpp"<<endl;
+          cout<<"DEBUG: Method: Volume::PerformBinarySkeletonizationJu2007(double, int, int)\033[0m"<<endl;
+          cout<<*this<<endl;
+//    #endif
 
     Volume outputVol = *skeletonizer.PerformPureJuSkeletonization(*this, "",
             threshold, minCurveSize, minSurfaceSize);
 
-    cout<<"outputVol->getNonZeroVoxelCount(): "<<outputVol.getNonZeroVoxelCount()<<endl;
-    cout<<"\t"<<threshold
-            <<"\t"<<minCurveSize
-            <<"\t"<<minSurfaceSize
-            <<endl;
-//#ifdef GORGON_DEBUG
-    cout<<"DEBUG: File:   Volume.h"<<endl;
-    cout<<"DEBUG: Method: Volume::PerformBinarySkeletonizationJu2007"<<endl;
-    cout<<"outputVol->getSize(): "<<outputVol.getSize()<<endl;
-//#endif
+//    #ifdef GORGON_DEBUG
+          cout<<"\033[32mDEBUG: File:   volume.cpp"<<endl;
+          cout<<"DEBUG: Method: Volume::PerformBinarySkeletonizationJu2007(double, int, int)\033[0m"<<endl;
+          cout<<"outputVol->getSize(): "<<outputVol.getSize()<<endl;
+          cout<<"outputVol->getNonZeroVoxelCount(): "<<outputVol.getNonZeroVoxelCount()<<endl;
+          cout<<"\t"<<threshold
+              <<"\t"<<minCurveSize
+              <<"\t"<<minSurfaceSize
+              <<endl;
+          cout<<outputVol<<endl;
+//    #endif
 
     return outputVol;
 }
 
-Volume Volume::PerformGrayscaleSkeletonizationAbeysinghe2008(
+Volume Volume::grayscaleSkeletonization(
         double startDensity, int stepCount, int minCurveSize,
         int minSurfaceSize, int curveRadius, int surfaceRadius,
         int skeletonRadius)
