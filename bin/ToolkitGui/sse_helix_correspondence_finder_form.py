@@ -1,15 +1,15 @@
 from PyQt4 import QtCore, QtGui
 from ui_dialog_sse_helix_correspondence_finder import Ui_DialogSSEHelixCorrespondenceFinder
-from libpytoolkit import SSEEngine, SSEResult, Vec3F
-from Toolkit.sse.correspondence.CorrespondenceLibrary import CorrespondenceLibrary
-from Toolkit.sse.correspondence.Correspondence import Correspondence
-from Toolkit.sse.correspondence.Match import Match
-from Toolkit.sse.correspondence.ObservedHelix import ObservedHelix
-from Toolkit.sse.correspondence.ObservedSheet import ObservedSheet
-from Toolkit.sse.correspondence.StructureObservation import StructureObservation
-from Toolkit.sse.correspondence.StructurePrediction import StructurePrediction
-from Toolkit.sse.seq_model.Helix import Helix
-from Explorer import Vec3
+# from libpytoolkit import SSEEngine, SSEResult, Vec3F
+# from Toolkit.sse.correspondence.CorrespondenceLibrary import CorrespondenceLibrary
+# from Toolkit.sse.correspondence.Correspondence import Correspondence
+# from Toolkit.sse.correspondence.Match import Match
+# from Toolkit.sse.correspondence.ObservedHelix import ObservedHelix
+# from Toolkit.sse.correspondence.ObservedSheet import ObservedSheet
+# from Toolkit.sse.correspondence.StructureObservation import StructureObservation
+# from Toolkit.sse.correspondence.StructurePrediction import StructurePrediction
+# from Toolkit.sse.seq_model.Helix import Helix
+# from Explorer import Vec3
 import xml.dom.minidom
 
 from Toolkit.sse.sse_helix_correspondence import SSEHelixCorrespondence
@@ -18,7 +18,7 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
-import math
+# import math
 
 
 class SSEHelixCorrespondenceFinderForm(QtGui.QDialog, SSEHelixCorrespondence):
@@ -83,15 +83,15 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog, SSEHelixCorrespondence):
         self.ui.lineEditHelixLengthFile.setVisible(False)
         self.ui.pushButtonGetHelixLengthFile.setVisible(False)
           
-    # populate parameter boxes with default values for correspondence search
-    def loadDefaults(self):
-        self.ui.lineEditHelixLengthFile.setText("")
-        self.ui.lineEditHelixLocationFile.setText(self.viewer.helixFileName)
-        self.ui.lineEditSheetLocationFile.setText(self.viewer.sheetFileName)
-        self.ui.lineEditSkeletonFile.setText(self.app.skeletonViewer.fileName)
-        self.ui.lineEditSequenceFile.setText(self.app.calphaViewer.fileName)
-        self.ui.lineEditSettingsFile.setText("")
-        self.loadDefaultParams()
+#     # populate parameter boxes with default values for correspondence search
+#     def loadDefaults(self):
+#         self.ui.lineEditHelixLengthFile.setText("")
+#         self.ui.lineEditHelixLocationFile.setText(self.viewer.helixFileName)
+#         self.ui.lineEditSheetLocationFile.setText(self.viewer.sheetFileName)
+#         self.ui.lineEditSkeletonFile.setText(self.app.skeletonViewer.fileName)
+#         self.ui.lineEditSequenceFile.setText(self.app.calphaViewer.fileName)
+#         self.ui.lineEditSettingsFile.setText("")
+#         self.loadDefaultParams()
 
     def loadDefaultParams(self):
         self.ui.pushButtonExportToRosetta.setVisible(False)
@@ -140,169 +140,169 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog, SSEHelixCorrespondence):
 
         self.checkOk()
         
-    def openFile(self, title, fileformats):
-        fileName = QtGui.QFileDialog.getOpenFileName(self, self.tr(title), "", self.tr(fileformats))
-        return fileName
-    
-    def getHelixLengthFile(self):
-        self.ui.lineEditHelixLengthFile.setText(self.openFile("Load Helix Length File", "SSE Hunter results (*.sse)"))
-        self.checkOk()
-#         self.bringToFront()
-
-    def getHelixLocationFile(self):
-        self.viewer.loadHelixData()
-        self.ui.lineEditHelixLocationFile.setText(self.viewer.helixFileName)
-        self.checkOk()
-#         self.bringToFront()
-
-    def getSheetLocationFile(self):
-        self.viewer.loadSheetData()
-        self.ui.lineEditSheetLocationFile.setText(self.viewer.sheetFileName)
-        self.checkOk()
-#         self.bringToFront()
-
-    def getSkeletonFile(self):
-        self.app.skeletonViewer.loadData()
-        self.ui.lineEditSkeletonFile.setText(self.app.skeletonViewer.fileName)
-        self.checkOk()
-#         self.bringToFront()
+#     def openFile(self, title, fileformats):
+#         fileName = QtGui.QFileDialog.getOpenFileName(self, self.tr(title), "", self.tr(fileformats))
+#         return fileName
+#
+#     def getHelixLengthFile(self):
+#         self.ui.lineEditHelixLengthFile.setText(self.openFile("Load Helix Length File", "SSE Hunter results (*.sse)"))
+#         self.checkOk()
+# #         self.bringToFront()
+#
+#     def getHelixLocationFile(self):
+#         self.viewer.loadHelixData()
+#         self.ui.lineEditHelixLocationFile.setText(self.viewer.helixFileName)
+#         self.checkOk()
+# #         self.bringToFront()
+#
+#     def getSheetLocationFile(self):
+#         self.viewer.loadSheetData()
+#         self.ui.lineEditSheetLocationFile.setText(self.viewer.sheetFileName)
+#         self.checkOk()
+# #         self.bringToFront()
+#
+#     def getSkeletonFile(self):
+#         self.app.skeletonViewer.loadData()
+#         self.ui.lineEditSkeletonFile.setText(self.app.skeletonViewer.fileName)
+#         self.checkOk()
+# #         self.bringToFront()
+#
+#     def getSequenceFile(self):
+#         """
+#         This loads a SEQ file or, for testing purposes, a PDB file.
+#         """
+#         self.ui.lineEditSequenceFile.setText(self.openFile("Load Sequence File", "Sequence with SSE predictions (*.seq)\nPDB Helix Annotations (*.pdb)"))
+#         self.checkOk()
+# #         self.bringToFront()
+#
+#     def getSettingsFile(self):
+#         """
+#         This loads a settings file, which contains filenames and search parameters.
+#         """
+#         self.ui.lineEditSettingsFile.setText(self.openFile("Load Settings File", "Settings File (*.txt)"))
+#         self.loadSettings()
+# #         self.bringToFront()
         
-    def getSequenceFile(self):
-        """
-        This loads a SEQ file or, for testing purposes, a PDB file.
-        """
-        self.ui.lineEditSequenceFile.setText(self.openFile("Load Sequence File", "Sequence with SSE predictions (*.seq)\nPDB Helix Annotations (*.pdb)"))
-        self.checkOk()
-#         self.bringToFront()
-
-    def getSettingsFile(self):
-        """
-        This loads a settings file, which contains filenames and search parameters.
-        """
-        self.ui.lineEditSettingsFile.setText(self.openFile("Load Settings File", "Settings File (*.txt)"))
-        self.loadSettings()
-#         self.bringToFront()
-        
-    def checkOk(self):
-        """
-        This checks if all files necessary for the correspondence search have been loaded. If so, the
-        correspondence search parameter tabs are enabled and a basic correspondence is created.   
-        """
-        print "begin checkOk"
-        print "correspondence index at beginning is "
-        print self.ui.comboBoxCorrespondences.currentIndex()
-
-        allLoaded = True
-
-        self.dataLoaded = True
-        self.ui.pushButtonOk.setEnabled(self.dataLoaded)
-        
-        self.ui.tabWidget.setTabEnabled(1, self.dataLoaded)
-        self.ui.tabWidget.setTabEnabled(2, self.dataLoaded)
-        self.ui.tabWidget.setTabEnabled(3, self.dataLoaded)
-        self.ui.tabWidget.setTabEnabled(4, self.dataLoaded)
-        if(True):
-            self.executed = False
-            self.createBasicCorrespondence()
-            print "after creating basic correspondence (1), secelDict has length " + str(len(self.viewer.correspondenceLibrary.structurePrediction.secelDict))
-            #self.createBasicCorrespondence()
-            print "after creating basic correspondence (2), secelDict has length " + str(len(self.viewer.correspondenceLibrary.structurePrediction.secelDict))
-            self.viewer.correspondenceLibrary.correspondenceList = self.populateEmptyResults(self.viewer.correspondenceLibrary)
-            print "correspondenceList has length " + str(len(self.viewer.correspondenceLibrary.correspondenceList))
-            self.populateComboBox(self.viewer.correspondenceLibrary)
-            self.viewer.makeSheetSurfaces(self.app.skeletonViewer.renderer.getOriginX(), self.app.skeletonViewer.renderer.getOriginY(), self.app.skeletonViewer.renderer.getOriginZ(), self.app.skeletonViewer.renderer.getSpacingX(), self.app.skeletonViewer.renderer.getSpacingY(), self.app.skeletonViewer.renderer.getSpacingZ())
-            if(allLoaded):
-                self.ui.tabWidget.setCurrentIndex(1)
-        else:
-            print "data not loaded"
-        print "correspondence index at end is " + str(self.ui.comboBoxCorrespondences.currentIndex())
-        print "end checkOk"
+#     def checkOk(self):
+#         """
+#         This checks if all files necessary for the correspondence search have been loaded. If so, the
+#         correspondence search parameter tabs are enabled and a basic correspondence is created.
+#         """
+#         print "begin checkOk"
+#         print "correspondence index at beginning is "
+#         print self.ui.comboBoxCorrespondences.currentIndex()
+#
+#         allLoaded = True
+#
+#         self.dataLoaded = True
+#         self.ui.pushButtonOk.setEnabled(self.dataLoaded)
+#
+#         self.ui.tabWidget.setTabEnabled(1, self.dataLoaded)
+#         self.ui.tabWidget.setTabEnabled(2, self.dataLoaded)
+#         self.ui.tabWidget.setTabEnabled(3, self.dataLoaded)
+#         self.ui.tabWidget.setTabEnabled(4, self.dataLoaded)
+#         if(True):
+#             self.executed = False
+#             self.createBasicCorrespondence()
+#             print "after creating basic correspondence (1), secelDict has length " + str(len(self.viewer.correspondenceLibrary.structurePrediction.secelDict))
+#             #self.createBasicCorrespondence()
+#             print "after creating basic correspondence (2), secelDict has length " + str(len(self.viewer.correspondenceLibrary.structurePrediction.secelDict))
+#             self.viewer.correspondenceLibrary.correspondenceList = self.populateEmptyResults(self.viewer.correspondenceLibrary)
+#             print "correspondenceList has length " + str(len(self.viewer.correspondenceLibrary.correspondenceList))
+#             self.populateComboBox(self.viewer.correspondenceLibrary)
+#             self.viewer.makeSheetSurfaces(self.app.skeletonViewer.renderer.getOriginX(), self.app.skeletonViewer.renderer.getOriginY(), self.app.skeletonViewer.renderer.getOriginZ(), self.app.skeletonViewer.renderer.getSpacingX(), self.app.skeletonViewer.renderer.getSpacingY(), self.app.skeletonViewer.renderer.getSpacingZ())
+#             if(allLoaded):
+#                 self.ui.tabWidget.setCurrentIndex(1)
+#         else:
+#             print "data not loaded"
+#         print "correspondence index at end is " + str(self.ui.comboBoxCorrespondences.currentIndex())
+#         print "end checkOk"
     
-    def loadSettings(self):
-        
-        if (not(self.ui.lineEditSettingsFile.text().isEmpty())):
-
-            print "loading default parameters"
-            self.loadDefaultParams()
-        
-            print "loading settings file"
-            oldCursor = self.cursor()
-            self.setCursor(QtCore.Qt.BusyCursor)
-                   
-            print "calling setConstantsFromFile"
-            self.setConstants()
-            self.viewer.correspondenceEngine.setConstantsFromFile(str(self.ui.lineEditSettingsFile.text()))
-    
-            print "copying constants from file to GUI"
-            self.getConstants()
-    
-            print "getting settings filename"
-            settingsFilename = str(self.ui.lineEditSettingsFile.text())
-            
-            #self.viewer.correspondenceEngine.printConstants
-            print "reading other filenames for parsing"
-            helixFilename = self.viewer.correspondenceEngine.getConstantString("VRML_HELIX_FILE_NAME")
-            print "helix filename is " + helixFilename
-            sheetFilename = self.viewer.correspondenceEngine.getConstantString("VRML_SHEET_FILE_NAME")
-            print "sheet filename is " + sheetFilename
-            sequenceFilename = self.viewer.correspondenceEngine.getConstantString("SEQUENCE_FILE_NAME")
-            print "sequence filename is " + sequenceFilename
-            skeletonFilename = self.viewer.correspondenceEngine.getConstantString("MRC_FILE_NAME")
-            print "skeleton filename is " + skeletonFilename
-            sseFilename = self.viewer.correspondenceEngine.getConstantString("SSE_FILE_NAME")
-            print "sse filename is " + sseFilename
-            
-            import os
-            path,settingsFile = os.path.split(settingsFilename)
-            ssePath,sseFile = os.path.split(sseFilename)
-            helixPath,helixFile = os.path.split(helixFilename)
-            sheetPath,sheetFile = os.path.split(sheetFilename)
-            skeletonPath,skeletonFile = os.path.split(skeletonFilename)
-            seqPath,seqFile = os.path.split(sequenceFilename)
-    
-            print "The path (raw) is " + path
-            path = path.replace('/', os.sep)  # replace forward slash with separator for this OS
-            path = path.replace('\\', os.sep) # replace backslash with separator for this OS
-            print "The path (fixed) is " + path
-    
-            settingsFilePath = path + os.sep + settingsFile
-            sseFilePath = path + os.sep + sseFile
-            helixFilePath = path + os.sep + helixFile
-            sheetFilePath = path + os.sep + sheetFile
-            skeletonFilePath = path + os.sep + skeletonFile
-            seqFilePath = path + os.sep + seqFile
-    
-            print "The settings file is " + settingsFilePath
-            print "The sse file is " + sseFilePath
-            print "The helix file is " + helixFilePath
-            print "The sheet file is " + sheetFilePath
-            print "The skeleton file is " + skeletonFilePath
-            print "The seq file is " + seqFilePath
-            
-            # store sequence filename
-            self.ui.lineEditSequenceFile.setText(seqFilePath)
-            
-            # load helix file and store the filename
-            self.viewer.loadHelixDataFromFile(helixFilePath)
-            self.ui.lineEditHelixLocationFile.setText(helixFilePath)
-    
-            # load sheet file and store the filename
-            self.viewer.loadSheetDataFromFile(sheetFilePath)
-            self.ui.lineEditSheetLocationFile.setText(sheetFilePath)
-    
-            # load skeleton file and store the filename
-            self.app.skeletonViewer.loadDataFromFile(skeletonFilePath)
-            self.ui.lineEditSkeletonFile.setText(skeletonFilePath)
-    
-            # store helix length filename
-            self.ui.lineEditHelixLengthFile.setText(sseFilePath)
-    
-            self.setCursor(oldCursor)
-            
-            self.checkOk()
-    
-            self.getConstraints()
-            print "done loading settings file"
+#     def loadSettings(self):
+#
+#         if (not(self.ui.lineEditSettingsFile.text().isEmpty())):
+#
+#             print "loading default parameters"
+#             self.loadDefaultParams()
+#
+#             print "loading settings file"
+#             oldCursor = self.cursor()
+#             self.setCursor(QtCore.Qt.BusyCursor)
+#
+#             print "calling setConstantsFromFile"
+#             self.setConstants()
+#             self.viewer.correspondenceEngine.setConstantsFromFile(str(self.ui.lineEditSettingsFile.text()))
+#
+#             print "copying constants from file to GUI"
+#             self.getConstants()
+#
+#             print "getting settings filename"
+#             settingsFilename = str(self.ui.lineEditSettingsFile.text())
+#
+#             #self.viewer.correspondenceEngine.printConstants
+#             print "reading other filenames for parsing"
+#             helixFilename = self.viewer.correspondenceEngine.getConstantString("VRML_HELIX_FILE_NAME")
+#             print "helix filename is " + helixFilename
+#             sheetFilename = self.viewer.correspondenceEngine.getConstantString("VRML_SHEET_FILE_NAME")
+#             print "sheet filename is " + sheetFilename
+#             sequenceFilename = self.viewer.correspondenceEngine.getConstantString("SEQUENCE_FILE_NAME")
+#             print "sequence filename is " + sequenceFilename
+#             skeletonFilename = self.viewer.correspondenceEngine.getConstantString("MRC_FILE_NAME")
+#             print "skeleton filename is " + skeletonFilename
+#             sseFilename = self.viewer.correspondenceEngine.getConstantString("SSE_FILE_NAME")
+#             print "sse filename is " + sseFilename
+#
+#             import os
+#             path,settingsFile = os.path.split(settingsFilename)
+#             ssePath,sseFile = os.path.split(sseFilename)
+#             helixPath,helixFile = os.path.split(helixFilename)
+#             sheetPath,sheetFile = os.path.split(sheetFilename)
+#             skeletonPath,skeletonFile = os.path.split(skeletonFilename)
+#             seqPath,seqFile = os.path.split(sequenceFilename)
+#
+#             print "The path (raw) is " + path
+#             path = path.replace('/', os.sep)  # replace forward slash with separator for this OS
+#             path = path.replace('\\', os.sep) # replace backslash with separator for this OS
+#             print "The path (fixed) is " + path
+#
+#             settingsFilePath = path + os.sep + settingsFile
+#             sseFilePath = path + os.sep + sseFile
+#             helixFilePath = path + os.sep + helixFile
+#             sheetFilePath = path + os.sep + sheetFile
+#             skeletonFilePath = path + os.sep + skeletonFile
+#             seqFilePath = path + os.sep + seqFile
+#
+#             print "The settings file is " + settingsFilePath
+#             print "The sse file is " + sseFilePath
+#             print "The helix file is " + helixFilePath
+#             print "The sheet file is " + sheetFilePath
+#             print "The skeleton file is " + skeletonFilePath
+#             print "The seq file is " + seqFilePath
+#
+#             # store sequence filename
+#             self.ui.lineEditSequenceFile.setText(seqFilePath)
+#
+#             # load helix file and store the filename
+#             self.viewer.loadHelixDataFromFile(helixFilePath)
+#             self.ui.lineEditHelixLocationFile.setText(helixFilePath)
+#
+#             # load sheet file and store the filename
+#             self.viewer.loadSheetDataFromFile(sheetFilePath)
+#             self.ui.lineEditSheetLocationFile.setText(sheetFilePath)
+#
+#             # load skeleton file and store the filename
+#             self.app.skeletonViewer.loadDataFromFile(skeletonFilePath)
+#             self.ui.lineEditSkeletonFile.setText(skeletonFilePath)
+#
+#             # store helix length filename
+#             self.ui.lineEditHelixLengthFile.setText(sseFilePath)
+#
+#             self.setCursor(oldCursor)
+#
+#             self.checkOk()
+#
+#             self.getConstraints()
+#             print "done loading settings file"
         
     def setConstants(self):
         #Data Sources tab
@@ -510,25 +510,25 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog, SSEHelixCorrespondence):
         # now that constraints are stored, clear from c++ class
         self.viewer.correspondenceEngine.clearAllConstraints()
 
-    def populateEmptyResults(self, library):
-        """ add empty result before correspondence search is started """
-
-        # create one empty result
-        corrList = []
-        matchList = []
-        
-        # build an empty correspondence result by creating an empty match for each secondary structure element.
-        for i in range(len(library.structurePrediction.secelDict)):
-            observed = None
-            predicted = library.structurePrediction.secelDict[i]
-            currentMatch = Match(observed, predicted, Match.FORWARD)
-            currentMatch.constrained = False
-            matchList.append(currentMatch)
-        corr = Correspondence(library=library, matchList=matchList, score=0)
-        self.lastCorrespondence = corr # used in accept() method
-        # add the empty correspondence to the list
-        corrList.append(corr)
-        return corrList
+#     def populateEmptyResults(self, library):
+#         """ add empty result before correspondence search is started """
+#
+#         # create one empty result
+#         corrList = []
+#         matchList = []
+#
+#         # build an empty correspondence result by creating an empty match for each secondary structure element.
+#         for i in range(len(library.structurePrediction.secelDict)):
+#             observed = None
+#             predicted = library.structurePrediction.secelDict[i]
+#             currentMatch = Match(observed, predicted, Match.FORWARD)
+#             currentMatch.constrained = False
+#             matchList.append(currentMatch)
+#         corr = Correspondence(library=library, matchList=matchList, score=0)
+#         self.lastCorrespondence = corr # used in accept() method
+#         # add the empty correspondence to the list
+#         corrList.append(corr)
+#         return corrList
             
     def populateResults(self, library):
 
@@ -626,87 +626,87 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog, SSEHelixCorrespondence):
             corr = library.correspondenceList[i]
             self.ui.comboBoxCorrespondences.addItem("Correspondence " + str(i+1) + " - [Cost: " + str(corr.score) + "]")
                    
-    def createBasicCorrespondence(self):
-        """Writes search parameters to correspondence object, loads predicted structure and observed structure, and creates correspondence library"""
-        print "creating basic correspondence"
-        oldCursor = self.cursor()
-        self.setCursor(QtCore.Qt.BusyCursor)
-
-        # put user-entered match parameters from UI into the correspondence object
-        print "setting constants"
-        self.setConstants()
-        
-        #Loading Predicted SSEs
-        print "loading predicted SSEs"
-        self.viewer.correspondenceEngine.loadSequenceGraph()
-        
-        print "before calling StructurePrediction.load"
-        print "sequenceFileName is " + str(self.sequenceFileName)
-        print "app is " + str(self.app)
-        includeStrands = self.viewer.correspondenceEngine.getConstantInt("INCLUDE_STRANDS")
-        structPred = StructurePrediction.load(self.sequenceFileName, self.app, includeStrands)
-        print "after calling StructurePrediction.load"
-        cAlphaViewer = self.app.calphaViewer
-        sseViewer = self.app.sseViewer
-        skeletonViewer = self.app.skeletonViewer
-        cAlphaViewer.structPred = structPred
-
-        def vector3DFloatToTuple(v3df):
-            return (v3df.x(), v3df.y(), v3df.z())
-        
-        #Loading Observed SSEs
-        print "loading observed SSEs"
-        self.viewer.correspondenceEngine.loadSkeletonGraph()
-        observedHelices = {}
-        helixCount = 0
-        observedSheets = {}
-        sheetCount = 0
-        sseCount = self.viewer.correspondenceEngine.getSkeletonSSECount()
-
-        print "adding helices to list of observed helices"
-        for sseIx in range(sseCount):
-            # call to c++ method QueryEngine::getSkeletonSSE(), which returns a c++ GeometricShape object
-            cppSse = self.viewer.correspondenceEngine.getSkeletonSSE(sseIx)
-            
-            # create list of observed helices for this correspondence result
-            if cppSse.isHelix():
-                q1 = cAlphaViewer.worldToObjectCoordinates(sseViewer.objectToWorldCoordinates(vector3DFloatToTuple(cppSse.getCornerCell3(1))))
-                q2 = cAlphaViewer.worldToObjectCoordinates(sseViewer.objectToWorldCoordinates(vector3DFloatToTuple(cppSse.getCornerCell3(2))))
-            
-                pyHelix = ObservedHelix(sseIx, q1, q2)
-                observedHelices[helixCount] = pyHelix
-                helixCount = helixCount + 1
-
-            elif cppSse.isSheet():
-                cornerList = {}
-                cornerNum = 1
-                while True:
-                    corner = vector3DFloatToTuple(cppSse.getCornerCell2(cornerNum))
-                    lastSheet = ( corner == (0,0,0) )
-                    p1 = cAlphaViewer.worldToObjectCoordinates(skeletonViewer.objectToWorldCoordinates(corner))
-                    if lastSheet:
-                        break
-                    cornerList[corner] = p1
-                    print "adding sheet corner " + str(cornerNum) + " with coordinates (" + str(p1[0]) + "," + str(p1[1]) + "," + str(p1[2]) + ")"
-                    cornerNum = cornerNum + 1
-                print "done adding sheet corners."
-                pySheet = ObservedSheet(sseIx, cornerList)
-                # adding sheets to list of observedHelices
-                observedSheets[sheetCount] = pySheet
-                print "added a sheet to observedSheets. total number of sheets is now " + str(len(observedSheets))
-                sheetCount = sheetCount + 1
-        
-        #TODO: Mike this raises an error!;
-        print "found " + str(helixCount) + " helices and " + str(sheetCount) + " sheets"
-        structObserv = StructureObservation(helixDict = observedHelices, sheetDict = observedSheets)
-        print "writing to correspondenceLibrary"
-
-        # create a new python CorrespondenceLibrary object
-        self.viewer.correspondenceLibrary = CorrespondenceLibrary(sp = structPred, so = structObserv)
-               
-        self.setCursor(oldCursor)
-        
-        print "finished creating basic correspondences"
+#     def createBasicCorrespondence(self):
+#         """Writes search parameters to correspondence object, loads predicted structure and observed structure, and creates correspondence library"""
+#         print "creating basic correspondence"
+#         oldCursor = self.cursor()
+#         self.setCursor(QtCore.Qt.BusyCursor)
+#
+#         # put user-entered match parameters from UI into the correspondence object
+#         print "setting constants"
+#         self.setConstants()
+#
+#         #Loading Predicted SSEs
+#         print "loading predicted SSEs"
+#         self.viewer.correspondenceEngine.loadSequenceGraph()
+#
+#         print "before calling StructurePrediction.load"
+#         print "sequenceFileName is " + str(self.sequenceFileName)
+#         print "app is " + str(self.app)
+#         includeStrands = self.viewer.correspondenceEngine.getConstantInt("INCLUDE_STRANDS")
+#         structPred = StructurePrediction.load(self.sequenceFileName, self.app, includeStrands)
+#         print "after calling StructurePrediction.load"
+#         cAlphaViewer = self.app.calphaViewer
+#         sseViewer = self.app.sseViewer
+#         skeletonViewer = self.app.skeletonViewer
+#         cAlphaViewer.structPred = structPred
+#
+#         def vector3DFloatToTuple(v3df):
+#             return (v3df.x(), v3df.y(), v3df.z())
+#
+#         #Loading Observed SSEs
+#         print "loading observed SSEs"
+#         self.viewer.correspondenceEngine.loadSkeletonGraph()
+#         observedHelices = {}
+#         helixCount = 0
+#         observedSheets = {}
+#         sheetCount = 0
+#         sseCount = self.viewer.correspondenceEngine.getSkeletonSSECount()
+#
+#         print "adding helices to list of observed helices"
+#         for sseIx in range(sseCount):
+#             # call to c++ method QueryEngine::getSkeletonSSE(), which returns a c++ GeometricShape object
+#             cppSse = self.viewer.correspondenceEngine.getSkeletonSSE(sseIx)
+#
+#             # create list of observed helices for this correspondence result
+#             if cppSse.isHelix():
+#                 q1 = cAlphaViewer.worldToObjectCoordinates(sseViewer.objectToWorldCoordinates(vector3DFloatToTuple(cppSse.getCornerCell3(1))))
+#                 q2 = cAlphaViewer.worldToObjectCoordinates(sseViewer.objectToWorldCoordinates(vector3DFloatToTuple(cppSse.getCornerCell3(2))))
+#
+#                 pyHelix = ObservedHelix(sseIx, q1, q2)
+#                 observedHelices[helixCount] = pyHelix
+#                 helixCount = helixCount + 1
+#
+#             elif cppSse.isSheet():
+#                 cornerList = {}
+#                 cornerNum = 1
+#                 while True:
+#                     corner = vector3DFloatToTuple(cppSse.getCornerCell2(cornerNum))
+#                     lastSheet = ( corner == (0,0,0) )
+#                     p1 = cAlphaViewer.worldToObjectCoordinates(skeletonViewer.objectToWorldCoordinates(corner))
+#                     if lastSheet:
+#                         break
+#                     cornerList[corner] = p1
+#                     print "adding sheet corner " + str(cornerNum) + " with coordinates (" + str(p1[0]) + "," + str(p1[1]) + "," + str(p1[2]) + ")"
+#                     cornerNum = cornerNum + 1
+#                 print "done adding sheet corners."
+#                 pySheet = ObservedSheet(sseIx, cornerList)
+#                 # adding sheets to list of observedHelices
+#                 observedSheets[sheetCount] = pySheet
+#                 print "added a sheet to observedSheets. total number of sheets is now " + str(len(observedSheets))
+#                 sheetCount = sheetCount + 1
+#
+#         #TODO: Mike this raises an error!;
+#         print "found " + str(helixCount) + " helices and " + str(sheetCount) + " sheets"
+#         structObserv = StructureObservation(helixDict = observedHelices, sheetDict = observedSheets)
+#         print "writing to correspondenceLibrary"
+#
+#         # create a new python CorrespondenceLibrary object
+#         self.viewer.correspondenceLibrary = CorrespondenceLibrary(sp = structPred, so = structObserv)
+#
+#         self.setCursor(oldCursor)
+#
+#         print "finished creating basic correspondences"
         
     def accept(self):
         print "beginning search"
@@ -834,121 +834,121 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog, SSEHelixCorrespondence):
                     
         return QtGui.QColor.fromRgba(QtGui.qRgba(r*255, g*255, b*255, a*255))
         
-    def selectCorrespondence(self, correspondenceIndex):
-        self.loadingCorrespondance = True
-        self.ui.tableWidgetCorrespondenceList.clearContents()
-        if(correspondenceIndex >= 0):
-            corr = self.viewer.correspondenceLibrary.correspondenceList[correspondenceIndex]
-            self.ui.tableWidgetCorrespondenceList.setRowCount(2*len(corr.matchList)-1)
-            notMissing = {}
-            
-            # count number of helices and sheets in this correspondence
-            helixCount = 0
-            sheetCount = 0
-            for i in range(len(corr.matchList)):
-                match = corr.matchList[i]
-                #print "object has type " + str(type(match.predicted))
-                if match.predicted is not None:
-                    if match.predicted.type == 'strand':
-                        # TODO: only count strands that are different. every sheet must be the same color!
-                        #print "found strand"
-                        sheetCount += 1
-                    elif match.predicted.type == 'helix':
-                        #print "found helix"
-                        helixCount += 1
-
-            helixIndex = 0
-            sheetIndex = 0
-
-            for i in range(len(corr.matchList)):
-                sseRow = 2*i
-                loopRow = 2*i+1
-                match = corr.matchList[i]
-                #color = self.getIndexedColor(i, len(corr.matchList))
-                if match.predicted is not None:
-                    if match.predicted.type == 'strand':
-                        if(match.observed):
-                            color = self.getIndexedSheetColor(match.observed.label - sheetCount, sheetCount)
-                        else:
-                            color = self.getIndexedColor(0,100)
-                        sheetIndex += 1
-                    elif match.predicted.type == 'helix':
-                        color = self.getIndexedHelixColor(helixIndex, helixCount)
-                        helixIndex += 1
-                    match.predicted.setColor(color)
-                if(match.predicted):
-                    cellItemPredicted =  QtGui.QTableWidgetItem(match.predicted.type + " " + str(match.predicted.serialNo) + " : " + str(match.predicted.label) +
-                                                                "\n  "  + str(round(match.predicted.getLengthInAngstroms(),2)) + "A length" +
-                                                                "\n  "  + str(match.predicted.getResidueCount()) + " residues")
-                                                                 
-                    cellItemPredicted.setBackgroundColor(color)
-                    self.ui.tableWidgetCorrespondenceList.setItem(sseRow, 0, cellItemPredicted)
-                if(match.observed):
-                    # compute the percentage of results that have the same match
-                    matchPercentage = 0.0
-                    for corresp in self.viewer.correspondenceLibrary.correspondenceList:
-                        if corresp.matchList[i].observed == match.observed:
-                            matchPercentage += 1
-                    matchPercentage /= len(self.viewer.correspondenceLibrary.correspondenceList)
-                    matchPercentage *= 100.0
-                    
-                    if match.observed.sseType == 'helix':
-                        cellItemObserved =  QtGui.QTableWidgetItem("helix " + str(match.observed.label+1) +
-                                                                   "\n  " + str(round(match.observed.getLength(), 2)) + "A length" +
-                                                                   "\n   (" + str(int(matchPercentage)) + "%) " + str(match.direction) )
-                    if match.observed.sseType == 'sheet':
-                        cellItemObserved =  QtGui.QTableWidgetItem("sheet " + str(match.observed.label+1) +
-                                                                   #"\n  " + str(round(match.observed.getLength(), 2)) + "A length" +
-                                                                   "\n   (" + str(int(matchPercentage)) + "%)"  )
-                    cellItemObserved.setBackgroundColor(color)
-                    self.ui.tableWidgetCorrespondenceList.setItem(sseRow, 1, cellItemObserved)
-#                     if match.observed.sseType == 'helix':
-#                         # color is stored in two places: the renderer and the correspondence engine. update both.
-#                         self.viewer.renderer.setHelixColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
-#                         self.viewer.correspondenceEngine.setSSEColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
+#     def selectCorrespondence(self, correspondenceIndex):
+#         self.loadingCorrespondance = True
+#         self.ui.tableWidgetCorrespondenceList.clearContents()
+#         if(correspondenceIndex >= 0):
+#             corr = self.viewer.correspondenceLibrary.correspondenceList[correspondenceIndex]
+#             self.ui.tableWidgetCorrespondenceList.setRowCount(2*len(corr.matchList)-1)
+#             notMissing = {}
 #
+#             # count number of helices and sheets in this correspondence
+#             helixCount = 0
+#             sheetCount = 0
+#             for i in range(len(corr.matchList)):
+#                 match = corr.matchList[i]
+#                 #print "object has type " + str(type(match.predicted))
+#                 if match.predicted is not None:
+#                     if match.predicted.type == 'strand':
+#                         # TODO: only count strands that are different. every sheet must be the same color!
+#                         #print "found strand"
+#                         sheetCount += 1
+#                     elif match.predicted.type == 'helix':
+#                         #print "found helix"
+#                         helixCount += 1
+#
+#             helixIndex = 0
+#             sheetIndex = 0
+#
+#             for i in range(len(corr.matchList)):
+#                 sseRow = 2*i
+#                 loopRow = 2*i+1
+#                 match = corr.matchList[i]
+#                 #color = self.getIndexedColor(i, len(corr.matchList))
+#                 if match.predicted is not None:
+#                     if match.predicted.type == 'strand':
+#                         if(match.observed):
+#                             color = self.getIndexedSheetColor(match.observed.label - sheetCount, sheetCount)
+#                         else:
+#                             color = self.getIndexedColor(0,100)
+#                         sheetIndex += 1
+#                     elif match.predicted.type == 'helix':
+#                         color = self.getIndexedHelixColor(helixIndex, helixCount)
+#                         helixIndex += 1
+#                     match.predicted.setColor(color)
+#                 if(match.predicted):
+#                     cellItemPredicted =  QtGui.QTableWidgetItem(match.predicted.type + " " + str(match.predicted.serialNo) + " : " + str(match.predicted.label) +
+#                                                                 "\n  "  + str(round(match.predicted.getLengthInAngstroms(),2)) + "A length" +
+#                                                                 "\n  "  + str(match.predicted.getResidueCount()) + " residues")
+#
+#                     cellItemPredicted.setBackgroundColor(color)
+#                     self.ui.tableWidgetCorrespondenceList.setItem(sseRow, 0, cellItemPredicted)
+#                 if(match.observed):
+#                     # compute the percentage of results that have the same match
+#                     matchPercentage = 0.0
+#                     for corresp in self.viewer.correspondenceLibrary.correspondenceList:
+#                         if corresp.matchList[i].observed == match.observed:
+#                             matchPercentage += 1
+#                     matchPercentage /= len(self.viewer.correspondenceLibrary.correspondenceList)
+#                     matchPercentage *= 100.0
+#
+#                     if match.observed.sseType == 'helix':
+#                         cellItemObserved =  QtGui.QTableWidgetItem("helix " + str(match.observed.label+1) +
+#                                                                    "\n  " + str(round(match.observed.getLength(), 2)) + "A length" +
+#                                                                    "\n   (" + str(int(matchPercentage)) + "%) " + str(match.direction) )
 #                     if match.observed.sseType == 'sheet':
-#                         self.viewer.renderer.setSSEColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
-#                         self.viewer.correspondenceEngine.setSSEColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
-
-                    notMissing[match.observed.label] = True
-            
-                checkBox = QtGui.QCheckBox()
-                self.ui.tableWidgetCorrespondenceList.setCellWidget(sseRow, 2, checkBox)
-                self.connect(checkBox, QtCore.SIGNAL("stateChanged (int)"), self.constraintAdded)
-                if(match.constrained):
-                    self.ui.tableWidgetCorrespondenceList.cellWidget(sseRow, 2).setCheckState(QtCore.Qt.Checked)
-                else:
-                    #print "i=" + str(i)
-                    self.ui.tableWidgetCorrespondenceList.cellWidget(sseRow, 2).setCheckState(QtCore.Qt.Unchecked)
-                    
-                self.ui.tableWidgetCorrespondenceList.resizeRowToContents(sseRow)
-
-                # add row with loop info
-                if (i < len(corr.matchList)-1 ):
-                    resCount = corr.matchList[i+1].predicted.startIndex - corr.matchList[i].predicted.stopIndex
-                    cellItemLoop =  QtGui.QTableWidgetItem("loop: " + str(resCount) + " residues")
-                    self.ui.tableWidgetCorrespondenceList.setItem(loopRow, 0, cellItemLoop)
-                    self.ui.tableWidgetCorrespondenceList.resizeRowToContents(loopRow)
-     
-            # relabel rows of table
-            rowLabels = []
-            for i in range(len(corr.matchList)):
-                rowLabels.append(str(i+1))
-                if i < len(corr.matchList)-1:
-                    rowLabels.append(" ")
-            #print "rowLabels string has " + str(len(rowLabels)) + " elements."
-            self.ui.tableWidgetCorrespondenceList.setVerticalHeaderLabels(rowLabels)
-            
-            observedHelices = self.viewer.correspondenceLibrary.structureObservation.helixDict
-            for i in range(len(observedHelices)):
-                if(not notMissing.has_key(i)):
-                    self.viewer.renderer.setHelixColor(i, 0.5, 0.5, 0.5, 1.0)
-
-        self.viewer.correspondenceEngine.setVisibleCorrespondence(correspondenceIndex)
-        self.viewer.correspondenceLibrary.setCurrentCorrespondenceIndex(correspondenceIndex)
-        self.viewer.modelChanged()
-        self.loadingCorrespondance = False
+#                         cellItemObserved =  QtGui.QTableWidgetItem("sheet " + str(match.observed.label+1) +
+#                                                                    #"\n  " + str(round(match.observed.getLength(), 2)) + "A length" +
+#                                                                    "\n   (" + str(int(matchPercentage)) + "%)"  )
+#                     cellItemObserved.setBackgroundColor(color)
+#                     self.ui.tableWidgetCorrespondenceList.setItem(sseRow, 1, cellItemObserved)
+# #                     if match.observed.sseType == 'helix':
+# #                         # color is stored in two places: the renderer and the correspondence engine. update both.
+# #                         self.viewer.renderer.setHelixColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
+# #                         self.viewer.correspondenceEngine.setSSEColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
+# #
+# #                     if match.observed.sseType == 'sheet':
+# #                         self.viewer.renderer.setSSEColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
+# #                         self.viewer.correspondenceEngine.setSSEColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
+#
+#                     notMissing[match.observed.label] = True
+#
+#                 checkBox = QtGui.QCheckBox()
+#                 self.ui.tableWidgetCorrespondenceList.setCellWidget(sseRow, 2, checkBox)
+#                 self.connect(checkBox, QtCore.SIGNAL("stateChanged (int)"), self.constraintAdded)
+#                 if(match.constrained):
+#                     self.ui.tableWidgetCorrespondenceList.cellWidget(sseRow, 2).setCheckState(QtCore.Qt.Checked)
+#                 else:
+#                     #print "i=" + str(i)
+#                     self.ui.tableWidgetCorrespondenceList.cellWidget(sseRow, 2).setCheckState(QtCore.Qt.Unchecked)
+#
+#                 self.ui.tableWidgetCorrespondenceList.resizeRowToContents(sseRow)
+#
+#                 # add row with loop info
+#                 if (i < len(corr.matchList)-1 ):
+#                     resCount = corr.matchList[i+1].predicted.startIndex - corr.matchList[i].predicted.stopIndex
+#                     cellItemLoop =  QtGui.QTableWidgetItem("loop: " + str(resCount) + " residues")
+#                     self.ui.tableWidgetCorrespondenceList.setItem(loopRow, 0, cellItemLoop)
+#                     self.ui.tableWidgetCorrespondenceList.resizeRowToContents(loopRow)
+#
+#             # relabel rows of table
+#             rowLabels = []
+#             for i in range(len(corr.matchList)):
+#                 rowLabels.append(str(i+1))
+#                 if i < len(corr.matchList)-1:
+#                     rowLabels.append(" ")
+#             #print "rowLabels string has " + str(len(rowLabels)) + " elements."
+#             self.ui.tableWidgetCorrespondenceList.setVerticalHeaderLabels(rowLabels)
+#
+#             observedHelices = self.viewer.correspondenceLibrary.structureObservation.helixDict
+#             for i in range(len(observedHelices)):
+#                 if(not notMissing.has_key(i)):
+#                     self.viewer.renderer.setHelixColor(i, 0.5, 0.5, 0.5, 1.0)
+#
+#         self.viewer.correspondenceEngine.setVisibleCorrespondence(correspondenceIndex)
+#         self.viewer.correspondenceLibrary.setCurrentCorrespondenceIndex(correspondenceIndex)
+#         self.viewer.modelChanged()
+#         self.loadingCorrespondance = False
         
     def drawOverlay(self):
         if True:
@@ -992,57 +992,57 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog, SSEHelixCorrespondence):
                     match = corr.matchList[i]
                     match.constrained = (self.ui.tableWidgetCorrespondenceList.cellWidget(2*i, 2).checkState() == QtCore.Qt.Checked)
                     
-    def createActionsForCell(self, row, col):
-        self.selectedRow = row/2
-        for act in self.ui.tableWidgetCorrespondenceList.actions()[:]:
-            self.ui.tableWidgetCorrespondenceList.removeAction(act)
-        if(col == 1 and row%2==0):
-            observedHelices = self.viewer.correspondenceLibrary.structureObservation.helixDict
-            observedSheets = self.viewer.correspondenceLibrary.structureObservation.sheetDict
-            constrained = {}
-            
-            correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
-            if(correspondenceIndex >= 0):
-                corr = self.viewer.correspondenceLibrary.correspondenceList[correspondenceIndex]
-                for i in range(len(corr.matchList)):
-                    match = corr.matchList[i]
-                    if(match.constrained and match.observed):
-                        constrained[match.observed.label] = True
-                match = corr.matchList[row/2]
-                print "match at row=" + str(row)
-            else:
-                match = False
-            if match.predicted.type == 'helix':
-                for i in range(len(observedHelices)):
-                    constrainAction = QtGui.QAction(self.tr("Observed helix " + str(i+1) + " (Length: " + str(round(observedHelices[i].getLength(), 2)) + "A)"), self)
-                    constrainAction.setCheckable(True)
-                    if(match and match.observed):
-                        constrainAction.setChecked(match.observed.label == i)
-                    else:
-                        constrainAction.setChecked(False)
-                    constrainAction.setEnabled(not constrained.has_key(i))
-                    self.connect(constrainAction, QtCore.SIGNAL("triggered()"), self.constrainObservedHelix(i))
-                    self.ui.tableWidgetCorrespondenceList.addAction(constrainAction)
-            if match.predicted.type == 'strand' and self.ui.checkBoxIncludeSheets.isChecked():
-                numH = len(observedHelices)
-                for i in range(len(observedSheets)):
-                    constrainAction = QtGui.QAction(self.tr("Observed sheet " + str(i+numH+1)), self)
-                    #constrainAction = QtGui.QAction(self.tr("Observed sheet " + str(i+numH+1) + " (Area: " + str(round(observedSheets[i].getSize(), 2)) + " voxels)"), self)
-                    constrainAction.setCheckable(True)
-                    if(match and match.observed):
-                        constrainAction.setChecked(match.observed.label == i)
-                    else:
-                        constrainAction.setChecked(False)
-                    constrainAction.setEnabled(True)
-                    self.connect(constrainAction, QtCore.SIGNAL("triggered()"), self.constrainObservedSheet(i))
-                    self.ui.tableWidgetCorrespondenceList.addAction(constrainAction)
-                
-            constrainAction = QtGui.QAction(self.tr("Not observed"), self)
-            constrainAction.setCheckable(True)
-            constrainAction.setChecked(match and not match.observed)
-            constrainAction.setEnabled(True)
-            self.connect(constrainAction, QtCore.SIGNAL("triggered()"), self.constrainObservedHelix(-1))
-            self.ui.tableWidgetCorrespondenceList.addAction(constrainAction)
+#     def createActionsForCell(self, row, col):
+#         self.selectedRow = row/2
+#         for act in self.ui.tableWidgetCorrespondenceList.actions()[:]:
+#             self.ui.tableWidgetCorrespondenceList.removeAction(act)
+#         if(col == 1 and row%2==0):
+#             observedHelices = self.viewer.correspondenceLibrary.structureObservation.helixDict
+#             observedSheets = self.viewer.correspondenceLibrary.structureObservation.sheetDict
+#             constrained = {}
+#
+#             correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
+#             if(correspondenceIndex >= 0):
+#                 corr = self.viewer.correspondenceLibrary.correspondenceList[correspondenceIndex]
+#                 for i in range(len(corr.matchList)):
+#                     match = corr.matchList[i]
+#                     if(match.constrained and match.observed):
+#                         constrained[match.observed.label] = True
+#                 match = corr.matchList[row/2]
+#                 print "match at row=" + str(row)
+#             else:
+#                 match = False
+#             if match.predicted.type == 'helix':
+#                 for i in range(len(observedHelices)):
+#                     constrainAction = QtGui.QAction(self.tr("Observed helix " + str(i+1) + " (Length: " + str(round(observedHelices[i].getLength(), 2)) + "A)"), self)
+#                     constrainAction.setCheckable(True)
+#                     if(match and match.observed):
+#                         constrainAction.setChecked(match.observed.label == i)
+#                     else:
+#                         constrainAction.setChecked(False)
+#                     constrainAction.setEnabled(not constrained.has_key(i))
+#                     self.connect(constrainAction, QtCore.SIGNAL("triggered()"), self.constrainObservedHelix(i))
+#                     self.ui.tableWidgetCorrespondenceList.addAction(constrainAction)
+#             if match.predicted.type == 'strand' and self.ui.checkBoxIncludeSheets.isChecked():
+#                 numH = len(observedHelices)
+#                 for i in range(len(observedSheets)):
+#                     constrainAction = QtGui.QAction(self.tr("Observed sheet " + str(i+numH+1)), self)
+#                     #constrainAction = QtGui.QAction(self.tr("Observed sheet " + str(i+numH+1) + " (Area: " + str(round(observedSheets[i].getSize(), 2)) + " voxels)"), self)
+#                     constrainAction.setCheckable(True)
+#                     if(match and match.observed):
+#                         constrainAction.setChecked(match.observed.label == i)
+#                     else:
+#                         constrainAction.setChecked(False)
+#                     constrainAction.setEnabled(True)
+#                     self.connect(constrainAction, QtCore.SIGNAL("triggered()"), self.constrainObservedSheet(i))
+#                     self.ui.tableWidgetCorrespondenceList.addAction(constrainAction)
+#
+#             constrainAction = QtGui.QAction(self.tr("Not observed"), self)
+#             constrainAction.setCheckable(True)
+#             constrainAction.setChecked(match and not match.observed)
+#             constrainAction.setEnabled(True)
+#             self.connect(constrainAction, QtCore.SIGNAL("triggered()"), self.constrainObservedHelix(-1))
+#             self.ui.tableWidgetCorrespondenceList.addAction(constrainAction)
 
 #     def sseClicked(self, hit0, hit1, hit2, hit3, hit4, hit5, event):
 #         if(self.isVisible() and self.dataLoaded and ((hit0 == 0) or (hit0 == 1) or (hit0 == 2)) and (hit1 >= 0)):
