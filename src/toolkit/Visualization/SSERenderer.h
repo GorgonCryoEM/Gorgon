@@ -25,7 +25,6 @@
 //#include <ProteinMorph/SSECorrespondenceNode.h>
 //#include <vector>
 //#include <map>
-#include <boost/tuple/tuple.hpp>
 
 //using namespace Protein_Morph;
 //using namespace GraySkeletonCPP;
@@ -33,7 +32,6 @@ using namespace GraphMatch;
 //using namespace MathTools;
 //using namespace SkeletonMaker;
 //using namespace std;
-using namespace boost::tuples;
 using namespace Core;
 
 namespace Visualization {
@@ -83,8 +81,8 @@ namespace Visualization {
             void SaveHelixFileVRML(FILE* fout);
             vector<Shape*> helices;
             vector<Shape*> sheets;
-            NonManifoldMesh * sheetMesh;
-            NonManifoldMesh * graphSheetMesh;
+            NonManifoldMesh sheetMesh;
+            NonManifoldMesh graphSheetMesh;
             int sheetCount;
             int graphSheetCount;
             bool selectedSheets[256];
@@ -93,7 +91,7 @@ namespace Visualization {
 
             vector<bool> helixFlips;
             vector<int> selectedHelices;
-            vector < boost::tuple<int,int> > corrs;
+            vector < pair<int,int> > corrs;
             vector<int> selectedPDBHelices;
     };
 

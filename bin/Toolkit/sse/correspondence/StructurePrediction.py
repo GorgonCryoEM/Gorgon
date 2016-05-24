@@ -73,7 +73,7 @@ are interpreted as sequence, and the second half are treated as
 structure predictions. The actual file reading and interpreting is 
 handled in C++.
         '''
-        print "StructurePrediction.load called. cls = " + str(cls) + ", filename = " + str(filename) + "qparent = " + str(qparent)
+        print "StructurePrediction.load called. cls = " + str(cls) + ", filename = " + str(filename) + " qparent = " + str(qparent)
 
         #secelIndex=0
         secelDict={}

@@ -15,8 +15,6 @@ namespace Visualization {
 
     SSERenderer::SSERenderer() {
         helices.clear();
-        sheetMesh = NULL;
-        graphSheetMesh = NULL;
         sheetCount = 0;
         graphSheetCount = 0;
         selectedHelices.clear();
@@ -28,9 +26,6 @@ namespace Visualization {
         }
         for(unsigned int i = 0; i < sheets.size(); i++) {
             delete sheets[i];
-        }
-        if(sheetMesh != NULL) {
-            delete sheetMesh;
         }
     }
 
@@ -78,10 +73,10 @@ namespace Visualization {
             vector<int> SSEIndices;
 
             for(unsigned int i = 0; i < corrs.size(); ++i){
-                int SSEIndex = get<0> (corrs[i]);
+                int SSEIndex = corrs[i].first;
                 for(unsigned int k = 0; k < selectedPDBHelices.size(); ++k){
                     if(selectedPDBHelices[k] == SSEIndex){
-                        SSEIndices.push_back( get<1>( corrs[i]) );
+                        SSEIndices.push_back(corrs[i].second);
                     }
                 }
             }
@@ -99,12 +94,12 @@ namespace Visualization {
 
                 }
 
-//                if(helices[i]->GetSelected()) {
+                if(helices[i]->GetSelected()) {
 
                     glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
                     glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
 
-//                }
+                }
                 glPushMatrix();
                 glMultMatrixd(helices[i]->GetWorldToObjectMatrix().mat);
                 glRotated(90, 1, 0, 0);
@@ -170,7 +165,7 @@ namespace Visualization {
             }
 
         }
-        else if((subSceneIndex == 1) && (sheetMesh != NULL)) {
+        else if(subSceneIndex == 1) {
 
             int k;
             if(selectEnabled) {
@@ -190,7 +185,7 @@ namespace Visualization {
                 glPopName();
             }
         }
-        else if((subSceneIndex == 2) && (graphSheetMesh != NULL)) {
+        else if(subSceneIndex == 2) {
             int k;
             if(selectEnabled) {
                 glPushName(0);
@@ -249,7 +244,7 @@ namespace Visualization {
     }
 
     void SSERenderer::LoadHelixFileVRML(string fileName) {
-        SkeletonReader::ReadHelixFile((char *)fileName.c_str(), NULL, helices);
+        SkeletonReader::ReadHelixFile(fileName, "", helices);
     }
 
     void SSERenderer::LoadHelixFile(string fileName) {
@@ -282,19 +277,13 @@ namespace Visualization {
         }
         //vector<Shape *> sheets;
         sheets.clear();
-        if(sheetMesh != NULL) {
-            delete sheetMesh;
-        }
         SkeletonReader::ReadSheetFile((char *)fileName.c_str(), sheets);
 
         SheetListToMesh(sheets);
     }
 
     void SSERenderer::SheetListToMesh(vector<Shape*> & sheets) {
-        if(sheetMesh != NULL) {
-            delete sheetMesh;
-        }
-        sheetMesh = new NonManifoldMesh();
+        sheetMesh = NonManifoldMesh();
 
         Vec3D pt;
         vector<int> indices;
@@ -308,7 +297,7 @@ namespace Visualization {
             indices.clear();
             for(unsigned int j = 0; j < sheets[i]->polygonPoints.size(); j++) {
                 pt = sheets[i]->polygonPoints[j];
-                indices.push_back(sheetMesh->addVertex(Vec3F(pt[0], pt[1], pt[2])));
+                indices.push_back(sheetMesh.addVertex(Vec3F(pt[0], pt[1], pt[2])));
             }
 
             for(unsigned int j = 0; j < sheets[i]->polygons.size(); j++) {
@@ -317,7 +306,7 @@ namespace Visualization {
                 ppp[0] = indices[pp.pointIndex1];
                 ppp[1] = indices[pp.pointIndex2];
                 ppp[2] = indices[pp.pointIndex3];
-                sheetMesh->addFace(ppp);
+                sheetMesh.addFace(ppp);
             }
         }
         indices.clear();
@@ -332,23 +321,10 @@ namespace Visualization {
             delete sheets[i];
         }
         sheets.clear();
-        if(sheetMesh != NULL) {
-            delete sheetMesh;
-        }
-        sheetMesh = NULL;
-        if(graphSheetMesh != NULL) {
-            delete graphSheetMesh;
-        }
-        graphSheetMesh = NULL;
     }
 
     void SSERenderer::UnloadGraphSSEs() {
         graphSheetCount = 0;
-        if(graphSheetMesh != NULL) {
-            delete graphSheetMesh;
-        }
-        graphSheetMesh = NULL;
-
     }
 
     void SSERenderer::SetHelixColor(int index, float r, float g, float b, float a) {
@@ -494,7 +470,7 @@ namespace Visualization {
         else
             corrs.clear();
         for(int i=0; i < flatCorrespondences.size(); i = i+2){
-            corrs.push_back(boost::tuple<int, int>(flatCorrespondences[i], flatCorrespondences[i+1]));
+            corrs.push_back(make_pair(flatCorrespondences[i], flatCorrespondences[i+1]));
         }
     }
     void SSERenderer::SetSelectedPDBHelices(vector<int> indices){

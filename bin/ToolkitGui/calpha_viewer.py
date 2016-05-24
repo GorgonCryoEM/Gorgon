@@ -3,10 +3,10 @@ from libpytoolkit import CAlphaRenderer
 from Explorer.base_viewer import BaseViewer
 from .calpha_choose_chain_to_load_form import CAlphaChooseChainToLoadForm
 from .calpha_atom_placer_form import CAlphaAtomPlacerForm
-# from calpha_sequence_dock import CAlphaSequenceDock
+from .calpha_sequence_dock import CAlphaSequenceDock
 from Toolkit.sse.seq_model.Chain import Chain
 # from atom_visualization_form import AtomVisualizationForm
-# from correspondence.StructurePrediction import StructurePrediction
+from Toolkit.sse.correspondence.StructurePrediction import StructurePrediction
 from .calpha_choose_chain_model import CAlphaChooseChainModel
 # from calpha_flexible_fitting_form import CAlphaFlexibleFittingForm
 
@@ -59,6 +59,7 @@ class CAlphaViewer(BaseViewer):
         self.ribbonMouseMapping[0] = {}
         self.ribbonMouseMapping[1] = {}
         self.ribbonMouseMapping[2] = {}
+        self.createActions()
       
    # Overridden
     def initializeGLDisplayType(self):
@@ -74,7 +75,7 @@ class CAlphaViewer(BaseViewer):
             self.displayStyle = style
             self.renderer.setDisplayStyle(self.displayStyle)
             self.setAtomColorsAndVisibility(self.displayStyle)
-            self.emitModelChanged()
+            self.modelChanged()
 
     #Overridden
     def getDrawColors(self):
@@ -283,7 +284,7 @@ class CAlphaViewer(BaseViewer):
     def setAtomColor(self, color):
         self.app.themes.addColor(self.title + ":" + "Atom", color)
         self.setAllAtomColor(color)
-        self.emitModelChanged()
+        self.modelChanged()
         
     def setBondColor(self, color):
         oldColor = self.getBondColor()
@@ -308,22 +309,22 @@ class CAlphaViewer(BaseViewer):
     def setCarbonColor(self, color):
         self.app.themes.addColor(self.title + ":" + "Carbon", color)
         self.setSpecificAtomColor('C', color)
-        self.emitModelChanged()
+        self.modelChanged()
         
     def setNitrogenColor(self, color):
         self.app.themes.addColor(self.title + ":" + "Nitrogen", color)
         self.setSpecificAtomColor('N', color)
-        self.emitModelChanged()
+        self.modelChanged()
         
     def setOxygenColor(self, color):
         self.app.themes.addColor(self.title + ":" + "Oxygen", color)
         self.setSpecificAtomColor('O', color)
-        self.emitModelChanged()
+        self.modelChanged()
         
     def setSulphurColor(self, color):
         self.app.themes.addColor(self.title + ":" + "Sulphur", color)
         self.setSpecificAtomColor('S', color)
-        self.emitModelChanged()
+        self.modelChanged()
         
     def getAtomColor(self):
         return self.colors[self.title + ":" + "Atom" ]
@@ -363,25 +364,25 @@ class CAlphaViewer(BaseViewer):
     def setHelixVisibility(self, visible):
         self.helicesVisible = visible
         self.setAtomColorsAndVisibility(self.displayStyle)
-        self.emitModelChanged()
+        self.modelChanged()
     
     def setLoopVisibility(self, visible):
         self.loopsVisible = visible
         self.setAtomColorsAndVisibility(self.displayStyle)
-        self.emitModelChanged()
+        self.modelChanged()
     
     def setStrandVisibility(self, visible):
         self.strandsVisible = visible
         self.setAtomColorsAndVisibility(self.displayStyle)
-        self.emitModelChanged()
+        self.modelChanged()
     
     def setSegments(self, num_segments):
         self.renderer.setNumSegments(num_segments)
-        self.emitModelChanged()
+        self.modelChanged()
         
     def setSlices(self, num_slices):
         self.renderer.setNumSlices(num_slices)
-        self.emitModelChanged()
+        self.modelChanged()
     
     def centerOnSelectedAtoms(self, *argv):
         # This centers the CAMERA on the last selected atom.
@@ -420,7 +421,7 @@ class CAlphaViewer(BaseViewer):
             y = pos.y()*self.renderer.getSpacingY() + self.renderer.getOriginY()
             z = pos.z()*self.renderer.getSpacingZ() + self.renderer.getOriginZ()
             self.app.mainCamera.setCenter( x, y, z )
-            self.emitModelChanged()
+            self.modelChanged()
     
     def createUI(self):
         self.createChildWindows()
@@ -430,6 +431,13 @@ class CAlphaViewer(BaseViewer):
 #         self.chooseChainModel = CAlphaChooseChainModel(self.app, self)
 #         self.flexibleFitter = CAlphaFlexibleFittingForm(self.app, self)
         
+    def createActions(self):
+        seqDockAct = QtGui.QAction(self.tr("Semi-&automatic Atom Placement..."), self)
+        seqDockAct.setStatusTip(self.tr("Perform partly automated atom placement"))
+        seqDockAct.setCheckable(True)
+        seqDockAct.setChecked(False)
+        self.app.docksMenu.addAction(seqDockAct)
+
         def showDock():
             loaded = True
             if not self.structPred:
@@ -438,7 +446,7 @@ class CAlphaViewer(BaseViewer):
                 self.main_chain = self.structPred.chain
             if loaded:
                 CAlphaSequenceDock.changeDockVisibility(self.app, self, self.structPred, self.main_chain)
-#         self.connect(seqDockAct, QtCore.SIGNAL("triggered()"), showDock)
+        self.connect(seqDockAct, QtCore.SIGNAL("triggered()"), showDock)
 #         self.app.actions.addAction("seqDock", seqDockAct)
     
     def loadSSEHunterData(self, fileName):
@@ -461,8 +469,8 @@ class CAlphaViewer(BaseViewer):
             self.unloadData()
         self.fileName = ""
         
-        volumeViewer = self.app.viewers["volume"]
-        skeletonViewer = self.app.viewers["skeleton"]
+        volumeViewer = self.app.volumeViewer
+        skeletonViewer = self.app.skeletonViewer
         self.renderer.getSSEHunterAtoms(volumeViewer.renderer.getVolume(), skeletonViewer.renderer.getMesh(), resolution, threshold, correlationCoefficient, skeletonCoefficient, geometryCoefficient)
 
         self.dirty = False
@@ -473,7 +481,7 @@ class CAlphaViewer(BaseViewer):
         
     def updateTotalScoreSSEHunterAtoms(self, correlationCoefficient, skeletonCoefficient, geometryCoefficient):
         self.renderer.updateTotalScoreSSEHunterAtoms(correlationCoefficient, skeletonCoefficient, geometryCoefficient)
-        self.emitModelChanged()
+        self.modelChanged()
         
     def loadData(self):
         #Overwriting the function in BaseViewer
@@ -533,13 +541,13 @@ class CAlphaViewer(BaseViewer):
         self.loadedChains = []
         BaseViewer.unloadData(self)
     
-    def loadSeq(self):
+    def loadSeq(self, fileName):
         """
 This function loads a SEQ file and creates a StructurePrediction object.
         """
-        fileName = QtGui.QFileDialog.getOpenFileName( self, self.tr('Open Sequence'), '',
-                                            self.tr('Sequence possibly with SSE predictions (*.seq)') )
-        fileName = str(fileName)
+#         fileName = QtGui.QFileDialog.getOpenFileName( self, self.tr('Open Sequence'), '',
+#                                             self.tr('Sequence possibly with SSE predictions (*.seq)') )
+#         fileName = str(fileName)
         if fileName:
             self.structPred = StructurePrediction.load(fileName, self.app)
             return True
