@@ -1,6 +1,6 @@
 from PyQt4 import QtGui, QtCore, QtOpenGL
 from base_viewer import BaseViewer
-from libpytoolkit import Display
+from libpytoolkit import RendererBase
 from libpytoolkit import drawSphere, drawLine, drawCylinder
 from libpytoolkit import Vec3F
 from .libs import Vec3
@@ -23,7 +23,7 @@ class Sphere(BaseViewer):
         self.center = Vec3(30., 10., 10.)
         self.R      = 10.
         
-        self.renderer = Display()
+        self.renderer = RendererBase()
         
         self.loaded           = True
         self.setColor(QtGui.QColor(120, 18, 80, 150))

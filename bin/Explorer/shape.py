@@ -1,6 +1,6 @@
 from PyQt4 import QtGui, QtCore, QtOpenGL
 from base_viewer import BaseViewer
-from libpytoolkit import Display
+from libpytoolkit import RendererBase
 from libpytoolkit import RendererBase
 from .libs import Vec3
 
@@ -14,7 +14,7 @@ class Shape(BaseViewer):
     def __init__(self, main):
         super(Shape, self).__init__(main)
         
-        self.renderer = Display()
+        self.renderer = RendererBase()
         self.s = RendererBase()
 
     def setColor(self, r, g, b, a):

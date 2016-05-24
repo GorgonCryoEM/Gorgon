@@ -4,7 +4,7 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
-from libpytoolkit import Display
+from libpytoolkit import RendererBase
 from libpytoolkit import *
 from .libs import Vec3
 from .ui_common import Ui_Common

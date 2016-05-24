@@ -1,5 +1,5 @@
 /*
- * DisplayBase.h
+ * DisplayType.h
  *
  * Author: shadow_walker <shadowwalkersb@gmail.com>
  *
@@ -56,29 +56,25 @@ namespace Visualization {
         typedef int PFNGLTEXIMAGE3DPROC;
     #endif
 
-    class DisplayBase : public Volume {
+    class DisplayType {
         public:
-            DisplayBase();
-            virtual ~DisplayBase();
+            DisplayType(const Volume & vol);
+            virtual ~DisplayType();
 
             float getSurfaceValue() const;
             int getSampleInterval() const;
-            virtual void draw(int subSceneIndex, bool selectEnabled);
-            void load(string fileName);
-            void save(string fileName);
             void setViewingType(const int type);
             void setSampleInterval(const int size);
             void setSurfaceValue(const float value);
             void setMaxSurfaceValue(const float value);
             void unload();
 
-            virtual float getMinPos(int i) const;
-            virtual float getMaxPos(int i) const;
-
             virtual bool calculateDisplay();
             virtual void load3DTexture();
 
     protected:
+        const Volume &vol;
+
         bool textureLoaded;
         Dim3D<int> textureSize;
         GLuint textureName;
@@ -97,4 +93,4 @@ namespace Visualization {
 
 } /* namespace Visualization */
 
-#endif /* SRC_TOOLKIT_DISPLAYBASE_H_ */
+#endif /* SRC_TOOLKIT_DISPLAYTYPE_H_ */

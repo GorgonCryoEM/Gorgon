@@ -9,8 +9,9 @@
 #include "SkeletonMaker/Skeletonizer.h"
 #include <MathTools/Vector3.h>
 
-namespace GraySkeletonCPP {
+using namespace GraySkeletonCPP;
 
+namespace Core {
 
     DiscreteMesh::DiscreteMesh(int sX, int sY, int sZ)
             : Volume(sX, sY, sZ),

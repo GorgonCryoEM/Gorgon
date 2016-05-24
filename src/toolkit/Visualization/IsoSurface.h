@@ -8,21 +8,16 @@
 #ifndef SRC_TOOLKIT_VISUALIZATION_ISOSURFACE_H_
 #define SRC_TOOLKIT_VISUALIZATION_ISOSURFACE_H_
 
-#include "DisplayBase.h"
+#include "DisplayType.h"
 
 namespace Visualization {
 
-    /*
-     *
-     */
-    class IsoSurface : public DisplayBase {
+    class IsoSurface : public DisplayType {
         public:
-            IsoSurface();
+            IsoSurface(const Volume & vol, Mesh & mesh);
             virtual ~IsoSurface();
 
             bool calculateDisplay();
-
-            void draw(int subSceneIndex, bool selectEnabled);
 
             void setDisplayRadius(const int radius);
             void setDisplayRadiusOrigin(float radiusOriginX,
@@ -30,12 +25,12 @@ namespace Visualization {
                                         float radiusOriginZ);
             void useDisplayRadius(bool useRadius);
 
-        private:
+        protected:
             int displayRadius;
             Vec3F radiusOrigin;
             bool _useDisplayRadius;
 
-            Mesh surfaceMesh;
+            Mesh & surfaceMesh;
     };
 
 } /* namespace Visualization */

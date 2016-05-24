@@ -7,29 +7,11 @@
 #include <fstream>
 #include <iomanip>
 
-//using namespace SkeletonMaker;
+using namespace SkeletonMaker;
 using namespace Foundation;
 using namespace GraySkeletonCPP;
 
-namespace SkeletonMaker {
-
-    struct gridPoint {
-            int x, y, z;
-
-            gridPoint(){}
-            gridPoint(int xx, int yy, int zz)
-            : x(xx), y(yy), z(zz)
-            {}
-    };
-
-    inline ostream & operator<<(ostream & out, const gridPoint & obj){
-        return out
-                <<"{"
-                <<obj.x<<", "
-                <<obj.y<<", "
-                <<obj.z
-                <<"}";
-    }
+namespace Core {
 
 #ifdef GORGON_DEBUG
 int Volume::id0=0;

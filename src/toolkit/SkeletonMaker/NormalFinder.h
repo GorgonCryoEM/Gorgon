@@ -14,13 +14,10 @@
 
 //using namespace std;
 //using namespace GraphMatch;
-using namespace SkeletonMaker;
+using namespace Core;
 
 namespace GraySkeletonCPP {
 
-    /*
-     *
-     */
     const int nodeVectors[6][3] = {{-1,0,0}, {0,1,0}, {1,0,0}, {0,-1,0}, {0,0,-1}, {0,0,1}};
 
     class NormalFinder {

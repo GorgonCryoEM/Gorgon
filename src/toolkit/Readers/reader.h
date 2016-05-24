@@ -12,6 +12,8 @@
 
 #include "Core/volume.h"
 
+using namespace Core;
+
 namespace SkeletonMaker {
     class VolumeReader
     {

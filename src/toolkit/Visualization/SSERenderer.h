@@ -8,7 +8,7 @@
 #ifndef SRC_TOOLKIT_VISUALIZATION_SSERENDERER_H_
 #define SRC_TOOLKIT_VISUALIZATION_SSERENDERER_H_
 
-#include "Display.h"
+#include "RendererBase.h"
 #include "MathTools/Vector3.h"
 #include "NonManifoldMesh.h"
 #include "Core/Point.h"
@@ -38,7 +38,7 @@ namespace Visualization {
 
     const float HELIX_LENGTH_TO_RESIDUE_RATIO = 1.54;
 
-    class SSERenderer : public Display {
+    class SSERenderer : public RendererBase {
         public:
             SSERenderer();
             virtual ~SSERenderer();

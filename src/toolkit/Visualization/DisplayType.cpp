@@ -1,16 +1,18 @@
 /*
- * DisplayBase.cpp
+ * DisplayType.cpp
  *
  * Author: shadow_walker <shadowwalkersb@gmail.com>
  *
  */
 
-#include "DisplayBase.h"
+#include "DisplayType.h"
+
 #include "Foundation/StringUtils.h"
 
 namespace Visualization {
 
-    DisplayBase::DisplayBase()
+    DisplayType::DisplayType(const Volume & v)
+            : vol(v)
     {
         textureLoaded = false;
         viewingType = VIEWING_TYPE_ISO_SURFACE;
@@ -18,113 +20,55 @@ namespace Visualization {
         sampleInterval = 1;
     }
 
-    DisplayBase::~DisplayBase() {
+    DisplayType::~DisplayType() {
         if(textureLoaded) {
             glDeleteTextures(1, &textureName);
             textureLoaded = false;
         }
     }
 
-    float DisplayBase::getSurfaceValue() const {
+    float DisplayType::getSurfaceValue() const {
         return surfaceValue;
     }
 
-    int DisplayBase::getSampleInterval() const  {
+    int DisplayType::getSampleInterval() const  {
         return sampleInterval;
     }
 
-    void DisplayBase::setViewingType(const int type) {
+    void DisplayType::setViewingType(const int type) {
         viewingType = type;
 
         load3DTexture();
         calculateDisplay();
     }
 
-    void DisplayBase::draw(int subSceneIndex, bool selectEnabled) {
-    }
-
-    bool DisplayBase::calculateDisplay() {
+    bool DisplayType::calculateDisplay() {
         return false;
     }
 
-    float DisplayBase::getMinPos(int i) const {
-        return 0.0;
+    void DisplayType::load3DTexture() {
     }
 
-    float DisplayBase::getMaxPos(int i) const {
-        float result;
-        switch(i) {
-            case 0:
-                result = float(getSizeX()-1);
-                break;
-            case 1:
-                result = float(getSizeY()-1);
-                break;
-            case 2:
-                result = float(getSizeZ()-1);
-                break;
-        }
-
-        return result;
-    }
-
-    void DisplayBase::load3DTexture() {
-    }
-
-    void DisplayBase::load(string fileName) {
-//        #ifdef GORGON_DEBUG
-              cout<<"\033[32mDEBUG: File:   DisplayBase.cpp"<<endl;
-              cout<<"DEBUG: Method: DisplayBase::load(string)\033[0m"<<endl;
-              cout<<(Volume)(*this)<<endl;
-//        #endif
-
-        Volume::load(fileName);
-
-//        #ifdef GORGON_DEBUG
-              cout<<"\033[32mDEBUG: File:   DisplayBase.cpp"<<endl;
-              cout<<"DEBUG: After load()\033[0m"<<endl;
-              cout<<(Volume)(*this)<<endl;
-//        #endif
-
-        #ifdef _WIN32
-            glTexImage3D = (PFNGLTEXIMAGE3DPROC) wglGetProcAddress("glTexImage3D");
-        #endif
-
-    }
-
-    void DisplayBase::save(string fileName) {
-        int pos = fileName.rfind(".") + 1;
-        string extension = fileName.substr(pos, fileName.length()-pos);
-
-        extension = StringUtils::StringToUpper(extension);
-
-        if(strcmp(extension.c_str(), "MRC") == 0) {
-            toMRCFile((char *)fileName.c_str());
-        } else {
-            printf("Input format %s not supported!\n", extension.c_str());
-        }
-    }
-
-    void DisplayBase::setSampleInterval(const int size) {
+    void DisplayType::setSampleInterval(const int size) {
         sampleInterval = size;
 
         calculateDisplay();
     }
 
-    void DisplayBase::setSurfaceValue(const float value) {
+    void DisplayType::setSurfaceValue(const float value) {
         surfaceValue = value;
 
         calculateDisplay();
         load3DTexture();
     }
 
-    void DisplayBase::setMaxSurfaceValue(const float value) {
+    void DisplayType::setMaxSurfaceValue(const float value) {
         maxSurfaceValue = value;
 
         load3DTexture();
     }
 
-    void DisplayBase::unload() {
+    void DisplayType::unload() {
         if(textureLoaded) {
             glDeleteTextures(1, &textureName);
             textureLoaded = false;
