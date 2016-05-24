@@ -10,7 +10,7 @@ import sys
 import argparse
 
 from libpytoolkit import *
-import Explorer
+from Explorer import MainWindowForm
 
 
 class GLWidget(QtOpenGL.QGLWidget):
@@ -40,13 +40,13 @@ def main():
     args = parser.parse_args()
 
     app = QtGui.QApplication(sys.argv)
+        
+    window = MainWindowForm('2.2.3')
 
-    window = GLWidget()
-    window.showNormal()
+    window.resize(800, 600)
     window.show()
     window.raise_()
-    window.resize(800, 800)
-    window.move(300,50)
+    window.volumeViewer.loadDataFromFile(args.volume)
     
     sys.exit(app.exec_())
 
