@@ -8,6 +8,8 @@
 #include "SSERenderer.h"
 #include "Shapes.h"
 #include "Foundation/StringUtils.h"
+#include "MathTools/LinearSolver.h"
+#include "Foundation/OpenGLUtils.h"
 
 namespace Visualization {
 
@@ -47,6 +49,12 @@ namespace Visualization {
         helices.push_back(newHelix);
     }
 
+    void SSERenderer::FinalizeHelix() {
+        Vec3F p1, p2;
+        LinearSolver::FindBestFitLine(p1, p2, tempSSEPoints);
+        AddHelix(p1, p2);
+    }
+
     void SSERenderer::StartNewSSE() {
         tempSSEPoints.clear();
     }
@@ -79,20 +87,22 @@ namespace Visualization {
             }
 
             Point<double> pt;
+            cout<<"helices.size(): "<<helices.size()<<endl;
+
             for(int i = 0; i < (int)helices.size(); i++) {
                 glPushAttrib(GL_LIGHTING_BIT);
-//                if(isObjectSpecificColoring) {
-//                    helices[i]->GetColor(colorR, colorG, colorB, colorA);
-//                    OpenGLUtils::SetColor(colorR, colorG, colorB, colorA);
+                if(helices[i]->isObjectSpecificColoring) {
+                    helices[i]->GetColor(colorR, colorG, colorB, colorA);
+                    OpenGLUtils::SetColor(colorR, colorG, colorB, colorA);
 
-//                }
+                }
 
-//                if(helices[i]->GetSelected()) {
+                if(helices[i]->GetSelected()) {
 
                     glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
                     glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
 
-//                }
+                }
                 glPushMatrix();
                 glMultMatrixd(helices[i]->GetWorldToObjectMatrix().mat);
                 glRotated(90, 1, 0, 0);
@@ -107,7 +117,8 @@ namespace Visualization {
                 glPopMatrix();
                 glPopAttrib();
 
-//                if(helices[i]->GetSelected()) {
+                cout<<"helices["<<i<<"]->GetSelected(): "<<helices[i]->GetSelected()<<endl;
+                if(helices[i]->GetSelected()) {
 
                     Vec3F corner1 = GetHelixCorner(i, 0);
                     Vec3F corner2 = GetHelixCorner(i, 1);
@@ -115,20 +126,20 @@ namespace Visualization {
                     if(helixFlips.size()  > 0){
                         if(!helixFlips[i]){
 
-//                            OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
+                            OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
                             drawSphere(corner2, 1.0);
-//                            OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
+                            OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
                             drawSphere(corner1, 1.0);
                             fflush(stdout);
                         }else{
-//                            OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
+                            OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
                             drawSphere(corner1, 1.0);
-//                            OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
+                            OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
                             drawSphere(corner2, 1.0);
                             fflush(stdout);
                         }
                     }
-//                }
+                }
 
 
                 for(unsigned int j = 0; j < SSEIndices.size(); ++j){
@@ -136,15 +147,15 @@ namespace Visualization {
                         Vec3F corner1 = GetHelixCorner(i, 0);
                         Vec3F corner2 = GetHelixCorner(i, 1);
                         if(!helixFlips[i]){
-//                            OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
+                            OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
                             drawSphere(corner2, 1.0);
-//                            OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
+                            OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
                             drawSphere(corner1, 1.0);
                             fflush(stdout);
                         }else{
-//                            OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
+                            OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
                             drawSphere(corner1, 1.0);
-//                            OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
+                            OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
                             drawSphere(corner2, 1.0);
                             fflush(stdout);
                         }
@@ -192,7 +203,7 @@ namespace Visualization {
 
             glPushAttrib(GL_LIGHTING_BIT);
             glDisable(GL_LIGHTING);
-//            OpenGLUtils::SetColor(0.0, 0.0, 0.0, 1.0);
+            OpenGLUtils::SetColor(0.0, 0.0, 0.0, 1.0);
             glPopAttrib();
             // end graph-type sheet rendering code
 

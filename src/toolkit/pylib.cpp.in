@@ -14,12 +14,53 @@
 #include "Visualization/Shapes.h"
 #include "Visualization/CAlphaRenderer.h"
 #include "Visualization/SSERenderer.h"
+#include "MathTools/LinearSolver.h"
+#include <boost/python/to_python_converter.hpp>
 
 using namespace SkeletonMaker;
 using namespace Protein_Morph;
 using namespace Visualization;
 
 using namespace boost::python;
+namespace python = boost::python;
+
+
+
+template <class T>
+struct vector_from_python {
+    vector_from_python() {
+        python::converter::registry::push_back(&convertible, &construct, python::type_id<vector<T> >());
+    }
+
+    static void* convertible(PyObject* obj_ptr) {
+        if (!(PyList_Check(obj_ptr) || PyTuple_Check(obj_ptr) || PyIter_Check(obj_ptr)  || PyRange_Check(obj_ptr))) {
+            return 0;
+        }
+        return obj_ptr;
+    }
+
+
+    static void construct(PyObject* obj_ptr, python::converter::rvalue_from_python_stage1_data* data) {
+        void* storage = ((python::converter::rvalue_from_python_storage<vector<T> >*)data)->storage.bytes;
+        new (storage) vector<T>();
+        data->convertible = storage;
+        vector<T>& result = *((vector<T>*) storage);
+        python::handle<> obj_iter(PyObject_GetIter(obj_ptr));
+        while(1) {
+            python::handle<> py_elem_hdl(python::allow_null(PyIter_Next(obj_iter.get())));
+            if (PyErr_Occurred()) {
+                python::throw_error_already_set();
+            }
+            if (!py_elem_hdl.get()) {
+                break;
+            }
+
+            python::object py_elem_obj(py_elem_hdl);
+            python::extract<T> elem_proxy(py_elem_obj);
+            result.push_back(elem_proxy());
+        }
+    }
+};
 
 BOOST_PYTHON_MODULE(@current_pylib@)
 {
@@ -31,6 +72,9 @@ BOOST_PYTHON_MODULE(@current_pylib@)
     
     class_<std::vector<unsigned long long> >("std::vector<unsigned long long>")
             .def(vector_indexing_suite<std::vector<unsigned long long> >() );
+
+    class_<std::vector<Vec3F> >("std::vector<GraphMatch::Vector3<float> >")
+            .def(vector_indexing_suite<std::vector<Vec3F> >() );
 
 //    class_<std::vector<int> >("std::vector<int>")
 //            .def(vector_indexing_suite<std::vector<int> >() );
@@ -47,8 +91,8 @@ BOOST_PYTHON_MODULE(@current_pylib@)
 //
 //    vector_from_python<unsigned long long>();
 
-//    vector_from_python<Vec3F>();
-//    vector_from_python< std::vector<Vec3F> >();
+    vector_from_python<Vec3F>();
+    vector_from_python< std::vector<Vec3F> >();
 //
 //
 ////  tuple3_to_python<Vec3I>();
@@ -217,25 +261,25 @@ BOOST_PYTHON_MODULE(@current_pylib@)
   ;
   
   class_< SSERenderer, bases<Display> >("SSERenderer", init<>())
-//      .def("draw", &SSERenderer::Draw)
+      .def("draw", &SSERenderer::Draw)
 //      .def("drawBoundingBox", &SSERenderer::DrawBoundingBox)
-//      .def("loadHelixFile", &SSERenderer::LoadHelixFile)
-//      .def("loadSheetFile", &SSERenderer::LoadSheetFile)
-//      .def("saveHelixFile", &SSERenderer::SaveHelixFile)
+      .def("loadHelixFile", &SSERenderer::LoadHelixFile)
+      .def("loadSheetFile", &SSERenderer::LoadSheetFile)
+      .def("saveHelixFile", &SSERenderer::SaveHelixFile)
 //      .def("saveSheetFile", &SSERenderer::SaveSheetFile)
 //      .def("loadGraphSSE", &SSERenderer::LoadGraphSSE)
-//      .def("unloadGraphSSEs", &SSERenderer::UnloadGraphSSEs)
-//      .def("unload", &SSERenderer::Unload)
-//      .def("selectionRotate", &SSERenderer::SelectionRotate)
+      .def("unloadGraphSSEs", &SSERenderer::UnloadGraphSSEs)
+      .def("unload", &SSERenderer::Unload)
+      .def("selectionRotate", &SSERenderer::SelectionRotate)
 //      .def("selectionObjectCount", &SSERenderer::SelectionObjectCount)
 //      .def("selectionCenterOfMass", &SSERenderer::SelectionCenterOfMass)
 //      .def("selectionMove", &SSERenderer::SelectionMove)
 //      .def("selectionClear", &SSERenderer::SelectionClear)        
 //      .def("selectionToggle", &SSERenderer::SelectionToggle)  
-//      .def("getSupportedHelixLoadFileFormats", &SSERenderer::GetSupportedHelixLoadFileFormats)
-//      .def("getSupportedHelixSaveFileFormats", &SSERenderer::GetSupportedHelixSaveFileFormats)
-//      .def("getSupportedSheetLoadFileFormats", &SSERenderer::GetSupportedSheetLoadFileFormats)
-//      .def("getSupportedSheetSaveFileFormats", &SSERenderer::GetSupportedSheetSaveFileFormats)
+      .def("getSupportedHelixLoadFileFormats", &SSERenderer::GetSupportedHelixLoadFileFormats)
+      .def("getSupportedHelixSaveFileFormats", &SSERenderer::GetSupportedHelixSaveFileFormats)
+      .def("getSupportedSheetLoadFileFormats", &SSERenderer::GetSupportedSheetLoadFileFormats)
+      .def("getSupportedSheetSaveFileFormats", &SSERenderer::GetSupportedSheetSaveFileFormats)
 //      .def("getMin", &SSERenderer::GetMin)
 //      .def("getMax", &SSERenderer::GetMax)
 //      .def("get3DCoordinates", &SSERenderer::Get3DCoordinates)
@@ -251,23 +295,23 @@ BOOST_PYTHON_MODULE(@current_pylib@)
 //      .def("getOriginY", &SSERenderer::GetOriginY)
 //      .def("getOriginZ", &SSERenderer::GetOriginZ)
 //      .def("fitSelectedSSEs", &SSERenderer::FitSelectedSSEs)      
-//      .def("startNewSSE", &SSERenderer::StartNewSSE)
-//      .def("addSSEPoint", &SSERenderer::AddSSEPoint)
+      .def("startNewSSE", &SSERenderer::StartNewSSE)
+      .def("addSSEPoint", &SSERenderer::AddSSEPoint)
 //      .def("finalizeSheet", &SSERenderer::FinalizeSheet)
-//      .def("finalizeHelix", &SSERenderer::FinalizeHelix)
-//      .def("addHelix", &SSERenderer::AddHelix)
+      .def("finalizeHelix", &SSERenderer::FinalizeHelix)
+      .def("addHelix", &SSERenderer::AddHelix)
 //      .def("setObjectSpecificColoring", &SSERenderer::SetObjectSpecificColoring)
 //      .def("removeSelectedSSEs", &SSERenderer::RemoveSelectedSSEs)
-//      .def("removeHelices", &SSERenderer::RemoveHelices)
-//      .def("getHelixCount", &SSERenderer::GetHelixCount)
-//      .def("getHelixCorner", &SSERenderer::GetHelixCorner)
+      .def("removeHelices", &SSERenderer::RemoveHelices)
+      .def("getHelixCount", &SSERenderer::GetHelixCount)
+      .def("getHelixCorner", &SSERenderer::GetHelixCorner)
 //      .def("setDisplayStyle", &SSERenderer::SetDisplayStyle)
 //      .def("updateBoundingBox", &SSERenderer::UpdateBoundingBox)
-//      .def("getSelectedHelixIndices", &SSERenderer::GetSelectedHelixIndices)
-//      .def("setSSEOrientationFlips", &SSERenderer::SetSSEOrientationFlips)
-//      .def("setHelixCorrs", &SSERenderer::SetHelixCorrs)
-//      .def("setSelectedPDBHelices", &SSERenderer::SetSelectedPDBHelices)
-//      .def("clearOtherHighlights", &SSERenderer::ClearOtherHighlights)
+      .def("getSelectedHelixIndices", &SSERenderer::GetSelectedHelixIndices)
+      .def("setSSEOrientationFlips", &SSERenderer::SetSSEOrientationFlips)
+      .def("setHelixCorrs", &SSERenderer::SetHelixCorrs)
+      .def("setSelectedPDBHelices", &SSERenderer::SetSelectedPDBHelices)
+      .def("clearOtherHighlights", &SSERenderer::ClearOtherHighlights)
   ;
 //
 //
@@ -279,17 +323,17 @@ BOOST_PYTHON_MODULE(@current_pylib@)
   class_< CAlphaRenderer, bases<Display> >("CAlphaRenderer", init<>())
 //        .def("draw", &CAlphaRenderer::Draw)
 //        .def("drawBoundingBox", &CAlphaRenderer::DrawBoundingBox)
-//        .def("loadFile", &CAlphaRenderer::LoadFile)
-        .def("loadSSEHunterFile", &CAlphaRenderer::LoadSSEHunterFile)
+        .def("loadFile", &CAlphaRenderer::loadFile)
+        .def("loadSSEHunterFile", &CAlphaRenderer::loadSSEHunterFile)
 //        .def("saveSSEHunterFile", &CAlphaRenderer::SaveSSEHunterFile)
 ////      .def("getSSEHunterAtoms", &CAlphaRenderer::GetSSEHunterAtoms)
 //        .def("updateTotalScoreSSEHunterAtoms", &CAlphaRenderer::UpdateTotalScoreSSEHunterAtoms)
-//        .def("colorSSEHunterAtoms", &CAlphaRenderer::ColorSSEHunterAtoms)
+        .def("colorSSEHunterAtoms", &CAlphaRenderer::colorSSEHunterAtoms)
 //        .def("saveFile", &CAlphaRenderer::SaveFile)
 //        .def("unload", &CAlphaRenderer::Unload)
 //        .def("selectionRotate", &CAlphaRenderer::SelectionRotate)
 //        .def("selectionObjectCount", &CAlphaRenderer::SelectionObjectCount)
-//        .def("selectionAtomCount", &CAlphaRenderer::SelectionAtomCount)
+        .def("selectionAtomCount", &CAlphaRenderer::selectionAtomCount)
 //        .def("selectionCenterOfMass", &CAlphaRenderer::SelectionCenterOfMass)
 //        .def("selectionMove", &CAlphaRenderer::SelectionMove)
 //        .def("selectionClear", &CAlphaRenderer::SelectionClear)     
@@ -300,16 +344,16 @@ BOOST_PYTHON_MODULE(@current_pylib@)
 //        .def("getMin", &CAlphaRenderer::GetMin)
 //        .def("getMax", &CAlphaRenderer::GetMax)
 //        .def("get3DCoordinates", &CAlphaRenderer::Get3DCoordinates)
-        .def("addAtom", &CAlphaRenderer::AddAtom, return_value_policy<reference_existing_object>())
-//        .def("getAtom", &CAlphaRenderer::GetAtom, return_value_policy<reference_existing_object>())
-//        .def("getSelectedAtom", &CAlphaRenderer::GetSelectedAtom, return_value_policy<reference_existing_object>())
-//        .def("getAtomCount", &CAlphaRenderer::GetAtomCount)
-        .def("getAtomHashes", &CAlphaRenderer::GetAtomHashes)
+        .def("addAtom", &CAlphaRenderer::addAtom, return_value_policy<reference_existing_object>())
+        .def("getAtom", &CAlphaRenderer::getAtom, return_value_policy<reference_existing_object>())
+        .def("getSelectedAtom", &CAlphaRenderer::getSelectedAtom, return_value_policy<reference_existing_object>())
+        .def("getAtomCount", &CAlphaRenderer::getAtomCount)
+        .def("getAtomHashes", &CAlphaRenderer::getAtomHashes)
 //        .def("deleteAtom", &CAlphaRenderer::DeleteAtom)     
-//        .def("addBond", &CAlphaRenderer::AddBond)
-//        .def("getBond", &CAlphaRenderer::GetBond, return_value_policy<reference_existing_object>())
-//        .def("getBondIndex", &CAlphaRenderer::GetBondIndex)     
-//        .def("getBondCount", &CAlphaRenderer::GetBondCount)
+        .def("addBond", &CAlphaRenderer::addBond)
+        .def("getBond", &CAlphaRenderer::getBond, return_value_policy<reference_existing_object>())
+        .def("getBondIndex", &CAlphaRenderer::getBondIndex)     
+        .def("getBondCount", &CAlphaRenderer::getBondCount)
 //        .def("deleteBond", &CAlphaRenderer::DeleteBond)     
 //        .def("addSideChainBond", &CAlphaRenderer::AddSideChainBond)
 //        .def("getSideChainBond", &CAlphaRenderer::GetSideChainBond, return_value_policy<reference_existing_object>())
@@ -329,11 +373,11 @@ BOOST_PYTHON_MODULE(@current_pylib@)
 //        .def("setObjectSpecificColoring", &CAlphaRenderer::SetObjectSpecificColoring)
 //        .def("updateBoundingBox", &CAlphaRenderer::UpdateBoundingBox)
 //        .def("startHelix", &CAlphaRenderer::StartHelix)
-//        .def("addHelixElement", &CAlphaRenderer::AddHelixElement)
+        .def("addHelixElement", &CAlphaRenderer::addHelixElement)
 //        .def("startStrand", &CAlphaRenderer::StartStrand)
 //        .def("addStrandElement", &CAlphaRenderer::AddStrandElement)
 //        .def("startLoop", &CAlphaRenderer::StartLoop)
-//        .def("addLoopElement", &CAlphaRenderer::AddLoopElement)
+        .def("addLoopElement", &CAlphaRenderer::addLoopElement)
 //        .def("cleanSecondaryStructures", &CAlphaRenderer::CleanSecondaryStructures)
 //        .def("setNumSegments", &CAlphaRenderer::SetNumSegments)
 //        .def("setNumSlices", &CAlphaRenderer::SetNumSlices)
@@ -346,9 +390,9 @@ BOOST_PYTHON_MODULE(@current_pylib@)
 //        .def("startHelix", &CAlphaRenderer::StartHelix)
 //        .def("addHelixElement", &CAlphaRenderer::AddHelixElement)
 //        .def("startStrand", &CAlphaRenderer::StartStrand)
-//        .def("addStrandElement", &CAlphaRenderer::AddStrandElement)
+        .def("addStrandElement", &CAlphaRenderer::addStrandElement)
 //        .def("startLoop", &CAlphaRenderer::StartLoop)
-//        .def("addLoopElement", &CAlphaRenderer::AddLoopElement)
+        .def("addLoopElement", &CAlphaRenderer::addLoopElement)
 //        .def("cleanSecondaryStructures", &CAlphaRenderer::CleanSecondaryStructures)
 //        .def("setNumSegments", &CAlphaRenderer::SetNumSegments)
 //        .def("setNumSlices", &CAlphaRenderer::SetNumSlices)
@@ -618,4 +662,10 @@ BOOST_PYTHON_MODULE(@current_pylib@)
         .def("setMax", &MinMax::setMax)
     ;
 
+    class_<LinearSolver>("LinearSolver")
+        .def("findBestFitLine", &LinearSolver::FindBestFitLine)
+        .staticmethod("findBestFitLine")
+        .def("sumDistSqrd", LinearSolver::SumDistSqrd)
+        .staticmethod("sumDistSqrd")
+    ;
 }

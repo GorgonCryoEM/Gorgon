@@ -8,17 +8,11 @@
 #include "CAlphaRenderer.h"
 #include "Shapes.h"
 #include "ProteinMorph/HermiteCurve.h"
+#include "Foundation/OpenGLUtils.h"
 
 namespace Visualization {
 
     CAlphaRenderer::CAlphaRenderer() {
-        atoms.clear();
-        bonds.clear();
-        sidechainBonds.clear();
-        selectedHelixIndices.clear();
-        selectedStrandIndices.clear();
-        featureVecs.clear();
-
         NUM_SEGMENTS = 10;
         NUM_SLICES = 10;
         HELIX_HERMITE_FACTOR = 4.7;
@@ -39,33 +33,26 @@ namespace Visualization {
     }
 
     CAlphaRenderer::~CAlphaRenderer() {
-        atoms.clear();
-        bonds.clear();
-        sidechainBonds.clear();
-        selectedHelixIndices.clear();
-        selectedStrandIndices.clear();
-        selectedLoopIndices.clear();
-        featureVecs.clear();
     }
 
-    vector<int> CAlphaRenderer::GetSelectedHelixIndices(){
+    vector<int> CAlphaRenderer::getSelectedHelixIndices(){
         return selectedHelixIndices;
     }
 
-    PDBAtom * CAlphaRenderer::AddAtom(PDBAtom atom) {
+    PDBAtom * CAlphaRenderer::addAtom(PDBAtom atom) {
         atoms[atom.GetHashKey()] = atom;
         return &atoms[atom.GetHashKey()];
     }
 
-    void CAlphaRenderer::AddBond(PDBBond bond) {
+    void CAlphaRenderer::addBond(PDBBond bond) {
         bonds.push_back(bond);
     }
 
-    void CAlphaRenderer::AddSideChainBond(PDBBond bond) {
+    void CAlphaRenderer::addSideChainBond(PDBBond bond) {
         sidechainBonds.push_back(bond);
     }
 
-    void CAlphaRenderer::DrawBackboneModel(int subSceneIndex, bool selectEnabled) {
+    void CAlphaRenderer::drawBackboneModel(int subSceneIndex, bool selectEnabled) {
         GLfloat emissionColor[4] = {1.0, 1.0, 1.0, 1.0};
 
         if(subSceneIndex == 0) { // Drawing Atoms
@@ -81,7 +68,7 @@ namespace Visualization {
                         glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
                         glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
                     } else {
-//                        OpenGLUtils::SetColor(it->second.GetColorR(), it->second.GetColorG(), it->second.GetColorB(), it->second.GetColorA());
+                        OpenGLUtils::SetColor(it->second.GetColorR(), it->second.GetColorG(), it->second.GetColorB(), it->second.GetColorA());
                     }
 
                     if(selectEnabled){
@@ -118,11 +105,11 @@ namespace Visualization {
                 }
                 float length = (atoms[bonds[i].GetAtom0Ix()].GetPosition() - atoms[bonds[i].GetAtom1Ix()].GetPosition()).length();
                 if(length > 4.2) {
-//                    OpenGLUtils::SetColor(1.0, 0, 0, 1.0);
+                    OpenGLUtils::SetColor(1.0, 0, 0, 1.0);
                 }
 
                 if(length < 3.3) {
-//                    OpenGLUtils::SetColor(0, 0, 1.0, 1.0);
+                    OpenGLUtils::SetColor(0, 0, 1.0, 1.0);
                 }
 
                 if(atoms[bonds[i].GetAtom0Ix()].GetVisible() && atoms[bonds[i].GetAtom1Ix()].GetVisible()) {
@@ -143,7 +130,7 @@ namespace Visualization {
         }
     }
 
-    void CAlphaRenderer::DrawRibbonModel(int subSceneIndex, bool selectEnabled) {
+    void CAlphaRenderer::drawRibbonModel(int subSceneIndex, bool selectEnabled) {
         if(selectEnabled) {
             glPushName(subSceneIndex);
             glPushName(0);
@@ -161,10 +148,10 @@ namespace Visualization {
 
             //if(subSceneIndex == 0){
             for(unsigned int i = 0; i < corrs.size(); ++i){
-                int SSEIndex = get<1> (corrs[i]);
+                int SSEIndex = corrs[i].second;
                 for(unsigned int k = 0; k < selectedSSEHelices.size(); ++k){
                     if(selectedSSEHelices[k] == SSEIndex){
-                        PDBIndices.push_back( get<0>( corrs[i]) );
+                        PDBIndices.push_back(corrs[i].first);
                     }
                 }
             }
@@ -182,13 +169,13 @@ namespace Visualization {
                     glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
                     glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
                 }
-                map<int, boost::tuple<float,float,float> >::iterator iter = helixColors.begin();
+                map<int, Vec3F >::iterator iter = helixColors.begin();
                 iter = helixColors.find(i);
                 if(iter != helixColors.end()){
 
-//                    OpenGLUtils::SetColor(get<0>(helixColors[i]), get<1>(helixColors[i]), get<2>(helixColors[i]), 1.0);
+                    OpenGLUtils::SetColor(helixColors[i][0], helixColors[i][1], helixColors[i][2], 1.0);
                 }else{
-                    //OpenGLUtils::SetColor(0.8,0.8,0.8,1.0);
+                    OpenGLUtils::SetColor(0.8,0.8,0.8,1.0);
                 }
 
                 if(currentSecel.atomHashes.size() > 0){
@@ -198,7 +185,7 @@ namespace Visualization {
                     Vec3F preSecelAtomPos = atoms.find(firstAtom.GetPrevCAHash())->second.GetPosition();
                     Vec3F postSecelAtomPos = atoms.find(lastAtom.GetNextCAHash())->second.GetPosition();
 
-                    vector<Vec3F> points = CreatePointVector(firstAtom, lastAtom);
+                    vector<Vec3F> points = createPointVector(firstAtom, lastAtom);
                     vector<Vec3F> tangents = vector<Vec3F>(points);
                     vector<Vec3F> axes = vector<Vec3F>(points);
                     vector<Vec3F> interpPoints = vector<Vec3F>((points.size()-1)*NUM_SEGMENTS + 1);
@@ -223,7 +210,7 @@ namespace Visualization {
                     HermiteCurve curve;
                     Vec3F m0, m1;
 
-                    CreateHelixAxesTangentsAndPoints(axes, tangents, interpPoints, points, preSecelAtomPos, postSecelAtomPos, HELIX_ALPHA, HELIX_BETA, HELIX_HERMITE_FACTOR);
+                    createHelixAxesTangentsAndPoints(axes, tangents, interpPoints, points, preSecelAtomPos, postSecelAtomPos, HELIX_ALPHA, HELIX_BETA, HELIX_HERMITE_FACTOR);
 
                     for(unsigned int x = 0; x < points.size()-1; ++x){
 
@@ -309,10 +296,10 @@ namespace Visualization {
                     }
                     switch (renderingType){
                         case 0:
-                            DrawTube(renderingPoints, renderingNormals, interpPoints.size() - 1, flatSlices);
+                            drawTube(renderingPoints, renderingNormals, interpPoints.size() - 1, flatSlices);
                             break;
                         case 1:
-                            DrawTube(renderingPoints, renderingNormals, interpPoints.size() - 1, 4);
+                            drawTube(renderingPoints, renderingNormals, interpPoints.size() - 1, 4);
                             break;
                         default:
                             break;
@@ -326,14 +313,14 @@ namespace Visualization {
                     glPushAttrib(GL_LIGHTING_BIT);
 
                     if(featureVecs.size() > 0){
-//                        OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
-                        drawSphere(featureVecs[i].get<0>(), 1.0);
-//                        OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
-                        drawSphere(featureVecs[i].get<1>(), 1.0);
+                        OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
+                        drawSphere(featureVecs[i].first, 1.0);
+                        OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
+                        drawSphere(featureVecs[i].second, 1.0);
                     }else{
-//                        OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
+                        OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
                         drawSphere(atoms[aHelices[i].atomHashes[0]].GetPosition(), 1.0);
-//                        OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
+                        OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
                         drawSphere(atoms[aHelices[i].atomHashes[aHelices[i].atomHashes.size()-1]].GetPosition(), 1.0);
                     }
 
@@ -348,9 +335,9 @@ namespace Visualization {
                 for(unsigned int j = 0; j < PDBIndices.size(); ++j){
                     if(PDBIndices[j] == i){
                         glPushAttrib(GL_LIGHTING_BIT);
-//                        OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
+                        OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
                         drawSphere(atoms[aHelices[i].atomHashes[0]].GetPosition(), 1.0);
-//                        OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
+                        OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
                         drawSphere(atoms[aHelices[i].atomHashes[aHelices[i].atomHashes.size()-1]].GetPosition(), 1.0);
                         glPopAttrib();
                     }
@@ -385,7 +372,7 @@ namespace Visualization {
                     Vec3F preSecelAtomPos = atoms.find(firstAtom.GetPrevCAHash())->second.GetPosition();
                     Vec3F postSecelAtomPos = atoms.find(lastAtom.GetNextCAHash())->second.GetPosition();
 
-                    vector<Vec3F> points = CreatePointVector(firstAtom, lastAtom);
+                    vector<Vec3F> points = createPointVector(firstAtom, lastAtom);
                     int num_interp_points = (points.size() - 1)*NUM_SEGMENTS + 1;
                     int num_rendering_points = num_interp_points*4;
                     switch (renderingType){
@@ -399,7 +386,7 @@ namespace Visualization {
                             cout << "bstrands" << endl;
                     }
                     vector<Vec3F> renderingPoints(num_rendering_points);
-                    vector<Vec3F> normals = CreateStrandNormals(points, preSecelAtomPos, postSecelAtomPos);
+                    vector<Vec3F> normals = createStrandNormals(points, preSecelAtomPos, postSecelAtomPos);
                     vector<Vec3F> renderingNormals(renderingPoints);
                     double arrowhead_factor = 1.0;
                     //vector<Vector3DFloat> boxpositions(8);
@@ -408,7 +395,7 @@ namespace Visualization {
                     bool LAPLACIAN_SMOOTHING = true;
                     int SMOOTHING_STEPS = 1;
                     if(LAPLACIAN_SMOOTHING){
-                        points = LaplacianSmoothing(points, SMOOTHING_STEPS);
+                        points = laplacianSmoothing(points, SMOOTHING_STEPS);
                     }
 
                     for(unsigned int i = 0; i < points.size()-1; ++i){
@@ -498,10 +485,10 @@ namespace Visualization {
                     }
                     switch (renderingType){
                         case 0:
-                            DrawTube(renderingPoints, renderingNormals, num_interp_points - 1, 2);
+                            drawTube(renderingPoints, renderingNormals, num_interp_points - 1, 2);
                             break;
                         case 1:
-                            DrawTube(renderingPoints, renderingNormals, num_interp_points - 1, 4);
+                            drawTube(renderingPoints, renderingNormals, num_interp_points - 1, 4);
                             break;
                         default:
                             cout << "should not have reached bstrand drawtube default" << endl;
@@ -523,9 +510,9 @@ namespace Visualization {
                     OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
                     drawSphere(featureVecs[i].get<1>(), 1.0);
                     }else{*/
-//                    OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
+                    OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
                     drawSphere(pos1, 1.0);
-//                    OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
+                    OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
                     drawSphere(pos2, 1.0);
                     /*}*/
 
@@ -566,12 +553,12 @@ namespace Visualization {
                     Vec3F preSecelAtomPos = atoms.find(firstAtom.GetPrevCAHash())->second.GetPosition();
                     Vec3F postSecelAtomPos = atoms.find(lastAtom.GetNextCAHash())->second.GetPosition();
 
-                    vector<Vec3F> points = CreatePointVector(firstAtom, lastAtom);
+                    vector<Vec3F> points = createPointVector(firstAtom, lastAtom);
                     vector<Vec3F> normals(points.size());
-                    normals = CreateStrandNormals(points, preSecelAtomPos, postSecelAtomPos);
+                    normals = createStrandNormals(points, preSecelAtomPos, postSecelAtomPos);
 
                     // generate smoothed interpolated points
-                    vector<Vec3F> interpolatedPoints = InterpolateLoopPoints(points, preSecelAtomPos, postSecelAtomPos, NUM_SEGMENTS);
+                    vector<Vec3F> interpolatedPoints = interpolateLoopPoints(points, preSecelAtomPos, postSecelAtomPos, NUM_SEGMENTS);
                     int ptsize = interpolatedPoints.size();
 
                     // create vectors to hold the vertices and normals of our loop polygon
@@ -696,21 +683,21 @@ namespace Visualization {
                     }
                     float r,g,b,a;
                     if(currentSecel.selected == true){
-//                        OpenGLUtils::GetColor(r,g,b,a);
-//                        OpenGLUtils::SetColor(hlt_r, hlt_g, hlt_b, hlt_a);
+                        OpenGLUtils::GetColor(r,g,b,a);
+                        OpenGLUtils::SetColor(hlt_r, hlt_g, hlt_b, hlt_a);
                     }
                     switch (renderingType){
                         case 0:
-                            DrawTube(renderingPoints, renderingNormals, interpolatedPoints.size() - 1, 2);
+                            drawTube(renderingPoints, renderingNormals, interpolatedPoints.size() - 1, 2);
                             break;
                         case 1:
-                            DrawTube(renderingPoints, renderingNormals, interpolatedPoints.size() - 1, NUM_SLICES);
+                            drawTube(renderingPoints, renderingNormals, interpolatedPoints.size() - 1, NUM_SLICES);
                             break;
                         default:
                             cout << "shouldn't have reached loop drawtube default case" << endl;
                     }
                     if(currentSecel.selected == true){
-//                        OpenGLUtils::SetColor(r,g,b,a);
+                        OpenGLUtils::SetColor(r,g,b,a);
                     }
                 }
 
@@ -729,9 +716,9 @@ namespace Visualization {
                     OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
                     drawSphere(featureVecs[i].get<1>(), 1.0);
                     }else{*/
-//                    OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
+                    OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
                     drawSphere(pos1, 1.0);
-//                    OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
+                    OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
                     drawSphere(pos2, 1.0);
                     /*}*/
 
@@ -749,7 +736,7 @@ namespace Visualization {
         }
     }
 
-    void CAlphaRenderer::DrawSideChainModel(int subSceneIndex, bool selectEnabled) {
+    void CAlphaRenderer::drawSideChainModel(int subSceneIndex, bool selectEnabled) {
         GLfloat emissionColor[4] = {1.0, 1.0, 1.0, 1.0};
         float r,g,b,a;
 
@@ -766,7 +753,7 @@ namespace Visualization {
                     glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
                 } else {
                     i->second.GetColor(r, g, b, a);
-//                    OpenGLUtils::SetColor(r,g,b,a);
+                    OpenGLUtils::SetColor(r,g,b,a);
                 }
 
                 if(selectEnabled){
@@ -809,10 +796,10 @@ namespace Visualization {
                     } else {
                         vc = (v1 + v2) * 0.5;
                         atoms[sidechainBonds[i].GetAtom0Ix()].GetColor(r, g, b, a);
-//                        OpenGLUtils::SetColor(r,g,b,a);
+                        OpenGLUtils::SetColor(r,g,b,a);
                         drawCylinder(v1, vc, 0.1, 6, 2);
                         atoms[sidechainBonds[i].GetAtom1Ix()].GetColor(r, g, b, a);
-//                        OpenGLUtils::SetColor(r,g,b,a);
+                        OpenGLUtils::SetColor(r,g,b,a);
                         drawCylinder(vc, v2, 0.1, 6, 2);
                     }
                 }
@@ -826,28 +813,28 @@ namespace Visualization {
             for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {
                 glPushAttrib(GL_LIGHTING_BIT);
                 i->second.GetColor(r, g, b, a);
-//                OpenGLUtils::SetColor(r,g,b,a);
+                OpenGLUtils::SetColor(r,g,b,a);
                 drawSphere(i->second.GetPosition(), 0.1);
                 glPopAttrib();
             }
         }
     }
 
-    void CAlphaRenderer::Draw(int subSceneIndex, bool selectEnabled) {
-        switch(displayStyle) {
-            case CALPHA_DISPLAY_STYLE_BACKBONE: // Backbone only
-                DrawBackboneModel(subSceneIndex, selectEnabled);
-                break;
-            case CALPHA_DISPLAY_STYLE_RIBBON: // Ribbon mode
-                DrawRibbonModel(subSceneIndex, selectEnabled);
-                break;
-            case CALPHA_DISPLAY_STYLE_SIDE_CHAIN: // Side chains
-                DrawSideChainModel(subSceneIndex, selectEnabled);
-                break;
-        }
+    void CAlphaRenderer::draw(int subSceneIndex, bool selectEnabled) {
+//        switch(displayStyle) {
+//            case CALPHA_DISPLAY_STYLE_BACKBONE: // Backbone only
+                drawBackboneModel(subSceneIndex, selectEnabled);
+//                break;
+//            case CALPHA_DISPLAY_STYLE_RIBBON: // Ribbon mode
+                drawRibbonModel(subSceneIndex, selectEnabled);
+//                break;
+//            case CALPHA_DISPLAY_STYLE_SIDE_CHAIN: // Side chains
+                drawSideChainModel(subSceneIndex, selectEnabled);
+//                break;
+//        }
     }
 
-    PDBAtom * CAlphaRenderer::GetAtomFromHitStack(int subsceneIndex, bool forceTrue, int ix0, int ix1, int ix2, int ix3, int ix4) {
+    PDBAtom * CAlphaRenderer::getAtomFromHitStack(int subsceneIndex, bool forceTrue, int ix0, int ix1, int ix2, int ix3, int ix4) {
         if(subsceneIndex == 0) {
             //TODO: possibly implement mouse picking using ray intersection
             AtomMapType::iterator it = atoms.find(atomHashKeys.at(ix0));
@@ -859,7 +846,7 @@ namespace Visualization {
         return NULL;
     }
 
-    void CAlphaRenderer::LoadFile(string fileName) {
+    void CAlphaRenderer::loadFile(string fileName) {
         Display::load(fileName);
         atoms.clear();
         bonds.clear();
@@ -903,8 +890,8 @@ namespace Visualization {
         sortedSerials.clear();
     }
 
-    void CAlphaRenderer::LoadSSEHunterFile(string fileName) {
-        Display::load(fileName);
+    void CAlphaRenderer::loadSSEHunterFile(string fileName) {
+//        Display::load(fileName);
         atoms.clear();
         bonds.clear();
         atoms = PDBReader::ReadAtomPositions(fileName);
@@ -941,7 +928,7 @@ namespace Visualization {
             i->second.SetColor(r, g, b, 1.0f);
         }
     }
-    bool CAlphaRenderer::SaveSSEHunterFile(string fileName) {
+    bool CAlphaRenderer::saveSSEHunterFile(string fileName) {
         return PDBReader::WriteAtomPositions(atoms, fileName);
     }
 
@@ -957,14 +944,14 @@ namespace Visualization {
 //          ColorSSEHunterAtoms();
 //      }
 
-    void CAlphaRenderer::UpdateTotalScoreSSEHunterAtoms(float correlationCoeff, float skeletonCoeff, float geometryCoeff) {
+    void CAlphaRenderer::updateTotalScoreSSEHunterAtoms(float correlationCoeff, float skeletonCoeff, float geometryCoeff) {
         for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {
             i->second.SetTempFactor( i->second.GetTotalScore(correlationCoeff, skeletonCoeff, geometryCoeff) );
         }
-        ColorSSEHunterAtoms();
+        colorSSEHunterAtoms();
     }
 
-    void CAlphaRenderer::ColorSSEHunterAtoms() {
+    void CAlphaRenderer::colorSSEHunterAtoms() {
         float maxTempFactor = -10000.0f, minTempFactor = 10000.0f;
         float tempFactor;
 
@@ -998,8 +985,8 @@ namespace Visualization {
         }
     }
 
-    int CAlphaRenderer::SelectionObjectCount(){
-        int count = SelectionAtomCount();
+    int CAlphaRenderer::selectionObjectCount(){
+        int count = selectionAtomCount();
         for(unsigned int i = 0; i < bonds.size(); i++) {
             if(bonds[i].GetSelected()) {
                 count++;
@@ -1008,7 +995,7 @@ namespace Visualization {
         return count;
     }
 
-    int CAlphaRenderer::SelectionAtomCount(){
+    int CAlphaRenderer::selectionAtomCount(){
         int count = 0;
         for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {
             if(i->second.GetSelected()) {
@@ -1019,7 +1006,7 @@ namespace Visualization {
     }
 
 
-    Vec3F CAlphaRenderer::SelectionCenterOfMass() {
+    Vec3F CAlphaRenderer::selectionCenterOfMass() {
         int count = 0;
         Vec3F centerOfMass = Vec3F(0,0,0);
         for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {
@@ -1043,7 +1030,7 @@ namespace Visualization {
         return centerOfMass;
     }
 
-    bool CAlphaRenderer::SelectionRotate(Vec3F centerOfMass, Vec3F rotationAxis, float angle) {
+    bool CAlphaRenderer::selectionRotate(Vec3F centerOfMass, Vec3F rotationAxis, float angle) {
         bool rotated = false;
         Vec3D centerOfMassP3(centerOfMass.X(), centerOfMass.Y(), centerOfMass.Z());
         Vec3D rotationV3(rotationAxis.X(), rotationAxis.Y(), rotationAxis.Z());
@@ -1062,7 +1049,7 @@ namespace Visualization {
         return rotated;
     }
 
-    bool CAlphaRenderer::SelectionMove(Vec3F moveDirection) {
+    bool CAlphaRenderer::selectionMove(Vec3F moveDirection) {
         bool moved = false;
         for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {
             if(i->second.GetSelected()) {
@@ -1095,11 +1082,11 @@ namespace Visualization {
 
     }
 
-    void CAlphaRenderer::ClearOtherHighlights(){
+    void CAlphaRenderer::clearOtherHighlights(){
         selectedSSEHelices.clear();
     }
 
-    void CAlphaRenderer::SelectionToggle(int subsceneIndex, bool forceTrue, int ix0, int ix1, int ix2, int ix3, int ix4) {
+    void CAlphaRenderer::selectionToggle(int subsceneIndex, bool forceTrue, int ix0, int ix1, int ix2, int ix3, int ix4) {
 //        Display::SelectionToggle(subsceneIndex, forceTrue, ix0, ix1, ix2, ix3, ix4);
         AtomMapType::iterator it;
         PDBAtom * a;
@@ -1167,32 +1154,32 @@ namespace Visualization {
         cout << "Finished updating selected secel" << endl;
     }
 
-    void CAlphaRenderer::Unload() {
+    void CAlphaRenderer::unload() {
         atoms.clear();
         bonds.clear();
         sidechainBonds.clear();
     }
 
-    string CAlphaRenderer::GetSupportedLoadFileFormats() {
+    string CAlphaRenderer::getSupportedLoadFileFormats() {
         return "Atom Positions (*.pdb)";
     }
 
-    string CAlphaRenderer::GetSupportedSaveFileFormats() {
+    string CAlphaRenderer::getSupportedSaveFileFormats() {
         return "Atom Positions (*.atom)";
     }
-    PDBAtom * CAlphaRenderer::GetAtom(unsigned long long index) {
+    PDBAtom * CAlphaRenderer::getAtom(unsigned long long index) {
         return &atoms[index];
     }
 
-    PDBBond * CAlphaRenderer::GetBond(int index) {
+    PDBBond * CAlphaRenderer::getBond(int index) {
         return &bonds[index];
     }
 
-    PDBBond * CAlphaRenderer::GetSideChainBond(int index) {
+    PDBBond * CAlphaRenderer::getSideChainBond(int index) {
         return &sidechainBonds[index];
     }
 
-    PDBAtom * CAlphaRenderer::GetSelectedAtom(unsigned int selectionId) {
+    PDBAtom * CAlphaRenderer::getSelectedAtom(unsigned int selectionId) {
         //Python uses this with SelectionAtomCount() to get all the selected atoms
         int count = 0;
         for(AtomMapType::iterator it = atoms.begin(); it != atoms.end(); it++) {
@@ -1206,7 +1193,7 @@ namespace Visualization {
         return NULL;
     }
 
-    vector<unsigned long long> CAlphaRenderer::GetAtomHashes() {
+    vector<unsigned long long> CAlphaRenderer::getAtomHashes() {
         vector<unsigned long long> atomHashes;
         for (AtomMapType::iterator it = atoms.begin(); it != atoms.end(); it++) {
             atomHashes.push_back(it->first);
@@ -1214,7 +1201,7 @@ namespace Visualization {
         return atomHashes;
     }
 
-    int CAlphaRenderer::GetBondIndex(unsigned long long atom0, unsigned long long atom1) {
+    int CAlphaRenderer::getBondIndex(unsigned long long atom0, unsigned long long atom1) {
         for(unsigned int i = 0; i < bonds.size(); i++) {
             if(((bonds[i].GetAtom0Ix() == atom0) && (bonds[i].GetAtom1Ix() == atom1)) ||
                 ((bonds[i].GetAtom0Ix() == atom1) && (bonds[i].GetAtom1Ix() == atom0))) {
@@ -1224,7 +1211,7 @@ namespace Visualization {
         return -1;
     }
 
-    int CAlphaRenderer::GetSideChainBondIndex(unsigned long long atom0, unsigned long long atom1) {
+    int CAlphaRenderer::getSideChainBondIndex(unsigned long long atom0, unsigned long long atom1) {
         for(unsigned int i = 0; i < sidechainBonds.size(); i++) {
             if(((sidechainBonds[i].GetAtom0Ix() == atom0) && (sidechainBonds[i].GetAtom1Ix() == atom1)) ||
                 ((sidechainBonds[i].GetAtom0Ix() == atom1) && (sidechainBonds[i].GetAtom1Ix() == atom0))) {
@@ -1234,31 +1221,31 @@ namespace Visualization {
         return -1;
     }
 
-    int CAlphaRenderer::GetAtomCount() {
+    int CAlphaRenderer::getAtomCount() {
         return atoms.size();
     }
 
-    int CAlphaRenderer::GetBondCount() {
+    int CAlphaRenderer::getBondCount() {
         return bonds.size();
     }
 
-    int CAlphaRenderer::GetSideChainBondCount() {
+    int CAlphaRenderer::getSideChainBondCount() {
         return sidechainBonds.size();
     }
 
-    void CAlphaRenderer::DeleteAtom(unsigned long long index) {
+    void CAlphaRenderer::deleteAtom(unsigned long long index) {
         atoms.erase(atoms.find(index));
     }
 
-    void CAlphaRenderer::DeleteBond(int index) {
+    void CAlphaRenderer::deleteBond(int index) {
         bonds.erase(bonds.begin() + index);
     }
 
-    void CAlphaRenderer::DeleteSideChainBond(int index) {
+    void CAlphaRenderer::deleteSideChainBond(int index) {
         sidechainBonds.erase(sidechainBonds.begin() + index);
     }
 
-    Vec3F CAlphaRenderer::Get3DCoordinates(int subsceneIndex, int ix0, int ix1, int ix2, int ix3, int ix4) {
+    Vec3F CAlphaRenderer::get3DCoordinates(int subsceneIndex, int ix0, int ix1, int ix2, int ix3, int ix4) {
         Vec3F position;
         switch(subsceneIndex) {
             case(0):
@@ -1279,82 +1266,82 @@ namespace Visualization {
         return position;
     }
 
-    void CAlphaRenderer::TransformAllAtomLocations(MatrixFloat transform) {
+    void CAlphaRenderer::transformAllAtomLocations(MatrixFloat transform) {
         for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {
             i->second.Transform(transform);
         }
     }
 
-    int CAlphaRenderer::StartHelix() {
+    int CAlphaRenderer::startHelix() {
         aHelices.push_back(Secel());
         return aHelices.size() - 1;
     }
 
-    void CAlphaRenderer::AddHelixElement(int index, unsigned long long hashKey){
+    void CAlphaRenderer::addHelixElement(int index, unsigned long long hashKey){
         aHelices[index].atomHashes.push_back(hashKey);
     }
 
-    int CAlphaRenderer::StartStrand() {
+    int CAlphaRenderer::startStrand() {
         bStrands.push_back(Secel());
         return bStrands.size() - 1;
     }
 
-    void CAlphaRenderer::AddStrandElement(int index, unsigned long long hashKey){
+    void CAlphaRenderer::addStrandElement(int index, unsigned long long hashKey){
         bStrands[index].atomHashes.push_back(hashKey);
     }
 
-    int CAlphaRenderer::StartLoop() {
+    int CAlphaRenderer::startLoop() {
         loops.push_back(Secel());
         return loops.size() - 1;
     }
 
-    void CAlphaRenderer::AddLoopElement(int index, unsigned long long hashKey){
+    void CAlphaRenderer::addLoopElement(int index, unsigned long long hashKey){
         loops[index].atomHashes.push_back(hashKey);
     }
 
-    bool CAlphaRenderer::CleanSecondaryStructures(){
+    bool CAlphaRenderer::cleanSecondaryStructures(){
         aHelices.clear();
         bStrands.clear();
         loops.clear();
         return true;
     }
 
-    void CAlphaRenderer::SetHelixCorrs(  vector < int > flatCorrespondences){
+    void CAlphaRenderer::setHelixCorrs(  vector < int > flatCorrespondences){
         if(flatCorrespondences.size() %2 != 0)
             return;
         else
             corrs.clear();
         for(int i=0; i < flatCorrespondences.size(); i = i+2){
-            corrs.push_back(boost::tuple<int, int>(flatCorrespondences[i], flatCorrespondences[i+1]));
+            corrs.push_back(make_pair(flatCorrespondences[i], flatCorrespondences[i+1]));
         }
     }
 
-    void CAlphaRenderer::SetFeatureVecs(vector<Vec3F> flatFeatureVecs){
+    void CAlphaRenderer::setFeatureVecs(vector<Vec3F> flatFeatureVecs){
         if(flatFeatureVecs.size() %2 != 0)
             return;
         else
             featureVecs.clear();
         for(int i=0; i < flatFeatureVecs.size(); i = i+2){
-            featureVecs.push_back(boost::tuple<Vec3F, Vec3F>(flatFeatureVecs[i], flatFeatureVecs[i+1]));
+            featureVecs.push_back(make_pair(flatFeatureVecs[i], flatFeatureVecs[i+1]));
         }
 
     }
-    void CAlphaRenderer::SetSelectedSSEHelices(vector<int> indices){
+    void CAlphaRenderer::setSelectedSSEHelices(vector<int> indices){
         selectedSSEHelices.clear();
         selectedSSEHelices = indices;
     }
 
-    void CAlphaRenderer::SetHelixColor(int helixNum, float r, float g, float b){
+    void CAlphaRenderer::setHelixColor(int helixNum, float r, float g, float b){
         cout << "setting helix color " << helixNum << " to (" << r << ", " << g << ", " << b << ")" <<endl;
         helixColors.erase(helixNum);
-        helixColors.insert(pair<int, boost::tuple<float, float, float> >(helixNum, boost::tuple<float, float, float>(r,g,b)));
+        helixColors.insert(make_pair(helixNum, Vec3F(r,g,b)));
     }
 
     // creates a vector of Vector3DFloats that represents the locations of all the PDBAtoms
     // starting with start and ending with end; it does not error check, so incorrectly
     // ordered points will break this method.  there are more efficient ways to handle this
     // functionality, but this seems simple and flexible enough
-    vector<Vec3F> CAlphaRenderer::CreatePointVector(PDBAtom start, PDBAtom end){
+    vector<Vec3F> CAlphaRenderer::createPointVector(PDBAtom start, PDBAtom end){
         vector<Vec3F> points;
 
         PDBAtom current = start;
@@ -1373,7 +1360,7 @@ namespace Visualization {
     // implementation of Laplacian smoothing for a vector of Vector3DFloats (treats them like points)
     // creating copies of "points" twice seems unnecessary, but I am unsure about the performance cost,
     // so I am leaving it for simplicity of implementation
-    vector<Vec3F> CAlphaRenderer::LaplacianSmoothing(vector<Vec3F> points, int steps){
+    vector<Vec3F> CAlphaRenderer::laplacianSmoothing(vector<Vec3F> points, int steps){
         vector<Vec3F> pointsTemp(points);
         vector<Vec3F> smoothedPoints(points);
 
@@ -1388,7 +1375,7 @@ namespace Visualization {
     }
 
     // unsure of what behavior should be if points.size() < 3; in molscript the strand is skipped in this case
-    vector<Vec3F> CAlphaRenderer::CreateStrandNormals(vector<Vec3F> points, Vec3F previous, Vec3F next){
+    vector<Vec3F> CAlphaRenderer::createStrandNormals(vector<Vec3F> points, Vec3F previous, Vec3F next){
         vector<Vec3F> normals(points);
         int ptsSize = points.size();
 
@@ -1443,7 +1430,7 @@ namespace Visualization {
         return smoothedNormals;
     }
 
-    void CAlphaRenderer::CreateHelixAxesTangentsAndPoints(vector<Vec3F>& axes, vector<Vec3F>& tangents, vector<Vec3F>& interpPoints, std::vector<Vec3F> points, Vec3F previous, Vec3F next, double HELIX_ALPHA, double HELIX_BETA, double HELIX_HERMITE_FACTOR){
+    void CAlphaRenderer::createHelixAxesTangentsAndPoints(vector<Vec3F>& axes, vector<Vec3F>& tangents, vector<Vec3F>& interpPoints, std::vector<Vec3F> points, Vec3F previous, Vec3F next, double HELIX_ALPHA, double HELIX_BETA, double HELIX_HERMITE_FACTOR){
         if(points.size() > 2){
 
             for(int i = 0; i < points.size() - 1; ++i){
@@ -1473,7 +1460,7 @@ namespace Visualization {
     }
 
     // method works like drawing the side of a cylinder with only one stack and 4 slices
-    void CAlphaRenderer::DrawOpenBox(std::vector<Vec3F> points, std::vector<Vec3F> normals){
+    void CAlphaRenderer::drawOpenBox(std::vector<Vec3F> points, std::vector<Vec3F> normals){
         glBegin(GL_TRIANGLE_STRIP);
 
         for (int j = 0, runlength = points.size() + 2; j < runlength; ++j){
@@ -1487,7 +1474,7 @@ namespace Visualization {
 
 
     // renders a set of points and normals assuming that they are laid out like the side of a cylinder's points and normals
-    void CAlphaRenderer::DrawTube(std::vector<Vec3F> points, std::vector<Vec3F> normals, int stacks, int slices){
+    void CAlphaRenderer::drawTube(std::vector<Vec3F> points, std::vector<Vec3F> normals, int stacks, int slices){
         //glLightModeli ( GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE );
         //glDisable(GL_CULL_FACE);
         switch (renderingType){
@@ -1517,7 +1504,7 @@ namespace Visualization {
         }
     }
 
-    vector<Vec3F> CAlphaRenderer::InterpolateLoopPoints(std::vector<Vec3F> points, Vec3F previous, Vec3F next, int NUM_SECTIONS){
+    vector<Vec3F> CAlphaRenderer::interpolateLoopPoints(std::vector<Vec3F> points, Vec3F previous, Vec3F next, int NUM_SECTIONS){
         HermiteCurve curve;
         Vec3F m0, m1;
         vector<Vec3F> pointstemp(points);
@@ -1526,7 +1513,7 @@ namespace Visualization {
         double HERMITE_FACTOR = 0.5;
         int LOOP_SLICES = 10;
         if(LAPLACIAN_SMOOTHING){
-            pointstemp = LaplacianSmoothing(points, SMOOTHING_STEPS);
+            pointstemp = laplacianSmoothing(points, SMOOTHING_STEPS);
         }
 
         vector<Vec3F> interpolatedPoints((pointstemp.size()-1)*(NUM_SEGMENTS));
@@ -1557,34 +1544,12 @@ namespace Visualization {
         return interpolatedPoints;
     }
 
-    void CAlphaRenderer::SetNumSegments(int segments){
+    void CAlphaRenderer::setNumSegments(int segments){
         NUM_SEGMENTS = segments;
     }
 
-    void CAlphaRenderer::SetNumSlices(int slices){
+    void CAlphaRenderer::setNumSlices(int slices){
         NUM_SLICES = slices;
-    }
-
-    void CAlphaRenderer::SetHltRValue(int col){
-        //hlt_r = ((double)col)/100.0;
-        hlt_r = ((double)col)/1000.0;
-        //thinRibbThickness = hlt_r;
-        cout << "hlt_r: " << hlt_r << endl;
-    }
-
-    void CAlphaRenderer::SetHltGValue(int col){
-        hlt_g = ((double)col)/100.0;
-        cout << "hlt_g: " << hlt_g << endl;
-    }
-
-    void CAlphaRenderer::SetHltBValue(int col){
-        hlt_b = ((double)col)/100.0;
-        cout << "hlt_b: " << hlt_b << endl;
-    }
-
-    void CAlphaRenderer::SetHltAValue(int col){
-        hlt_a = ((double)col)/100.0;
-        cout << "hlt_a: " << hlt_a << endl;
     }
 
 } /* namespace Visualization */

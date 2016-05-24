@@ -152,6 +152,8 @@ BOOST_PYTHON_MODULE(lib${legacy_trgt_name})
 	        .def(vector_indexing_suite<std::vector<float> >() );
 	class_<std::vector<std::vector<float> > >("std::vector<std::vector<float> >")
 	        .def(vector_indexing_suite<std::vector<std::vector<float> > >() );
+	class_<std::vector<unsigned long long> >("std::vector<unsigned long long>")
+	            .def(vector_indexing_suite<std::vector<unsigned long long> >() );
 
 	class_<std::vector<int> >("std::vector<int>")
 	        .def(vector_indexing_suite<std::vector<int> >() );

@@ -22,6 +22,7 @@ namespace GraphMatch {
     class Shape {
     public:
         Shape();
+        bool GetSelected();
         bool IsHelix();
         bool IsSheet();
         bool IsInsideShape(Vec3D p);
@@ -42,12 +43,16 @@ namespace GraphMatch {
         void Translate(Vector3<double> translationVector);
         void SetCenter(Vec3D center);
         void SetCenter(Vec3F center);
+        void SetColor(float r, float g, float b, float a);
         void SetHeight(double height);
         void SetRadius(double radius);
         void GetRotationAxisAndAngle(Vec3F &axis, double &angle);
         static Shape * CreateHelix(Vec3F p1, Vec3F p2, float radius);
         static void WriteToFile(vector<Shape*> & helices, FILE * fileName);
+        void GetColor(float & r, float & g, float & b, float & a);
+        void SetSelected(bool selected);
 
+        virtual void setObjectSpecificColoring(bool objectSpecific);
 
         Vec3D GetWorldCoordinates(Vec3D point);
         Point3Pair GetCornerCell(int node);
@@ -68,6 +73,7 @@ namespace GraphMatch {
         vector<Polygon> polygons;
         Vec3F internalToRealScale;
         Vec3F internalToRealOrigin;
+        bool isObjectSpecificColoring;
 
     private:
         Matrix4 worldToObject;
@@ -77,6 +83,11 @@ namespace GraphMatch {
         double  height;
         Matrix4 rotationMatrix;
         Matrix4 inverseRotationMatrix;
+        float colorR;
+        float colorG;
+        float colorB;
+        float colorA;
+        bool selected;
     };
 
     inline Shape::Shape() {
@@ -84,6 +95,18 @@ namespace GraphMatch {
         objectToWorld = Matrix4::identity();
         rotationMatrix = Matrix4::identity();
         inverseRotationMatrix = Matrix4::identity();
+        internalCells.clear();
+        colorR = 0.0f;
+        colorG = 1.0f;
+        colorB = 0.0f;
+        colorA = 1.0f;
+        selected = false;
+
+        isObjectSpecificColoring = false;
+    }
+
+    inline bool Shape::GetSelected() {
+        return selected;
     }
 
     inline bool Shape::IsHelix() {
@@ -101,6 +124,10 @@ namespace GraphMatch {
         } else {
             return IsInsidePolygon(newPoint);
         }
+    }
+
+    inline void Shape::setObjectSpecificColoring(bool objectSpecific) {
+        isObjectSpecificColoring = objectSpecific;
     }
 
     inline bool Shape::IsInsideShape(Vec3F p) {
@@ -187,6 +214,7 @@ namespace GraphMatch {
     inline int Shape::getType() {
         return shapeType;
     }
+
     inline Matrix4 Shape::GetRotationMatrix() {
         return rotationMatrix;
     }
@@ -360,6 +388,7 @@ namespace GraphMatch {
         }
         return result;
     }
+
     inline void Shape::Rotate(Vector3<double> axis, double angle){
         rotationMatrix = Matrix4::rotation(axis, angle) * rotationMatrix;
         inverseRotationMatrix = inverseRotationMatrix * Matrix4::rotation(axis, -angle);
@@ -370,6 +399,13 @@ namespace GraphMatch {
 
         centerPoint = centerPoint + translationVector;
         UpdateWorldToObjectMatrix();
+    }
+
+    inline void Shape::SetColor(float r, float g, float b, float a) {
+        colorR = r;
+        colorG = g;
+        colorB = b;
+        colorA = a;
     }
 
     inline void Shape::SetCenter(Vec3D center) {
@@ -392,9 +428,20 @@ namespace GraphMatch {
         UpdateWorldToObjectMatrix();
     }
 
+    inline void Shape::GetColor(float & r, float & g, float & b, float & a) {
+        r = colorR;
+        g = colorG;
+        b = colorB;
+        a = colorA;
+    }
+
     inline void Shape::UpdateWorldToObjectMatrix() {
         worldToObject = Matrix4::translation(centerPoint) * rotationMatrix * Matrix4::scaling(radius*2, height, radius*2);
         objectToWorld = Matrix4::scaling(1.0/(radius*2.0), 1.0/height, 1.0/(radius*2.0)) * inverseRotationMatrix * Matrix4::translation(Vec3D(-centerPoint[0], -centerPoint[1], -centerPoint[2]));
+    }
+
+    inline void Shape::SetSelected(bool selected) {
+        this->selected = selected;
     }
 
     inline void Shape::GetRotationAxisAndAngle(Vec3F &axis, double &angle) {
@@ -470,6 +517,7 @@ namespace GraphMatch {
         axis = Vec3F((float)x, (float)y, (float)z);
         return;
     }
+
     inline Shape * Shape::CreateHelix(Vec3F p1, Vec3F p2, float radius) {
         Shape * newHelix = new Shape();
         newHelix->shapeType = GRAPHEDGE_HELIX;
