@@ -10,9 +10,6 @@
 
 namespace Core {
 
-    /*
-     *
-     */
     template <class T>
     struct Point {
             Point();

@@ -36,7 +36,7 @@ using namespace std;
 		};
 
 
-		Graph * Matcher::loadSequence() {
+		inline Graph * Matcher::loadSequence() {
 			#ifdef GORGON_DEBUG
 				cout << "In QueryEngine::LoadSequenceGraph" << endl;
 			#endif
@@ -61,7 +61,7 @@ using namespace std;
 			return graph;
 		}
 
-		Graph * Matcher::loadSkeleton() {
+		inline Graph * Matcher::loadSkeleton() {
 			clock_t start, finish;
 			Graph * graph;
 			#ifdef VERBOSE
@@ -78,7 +78,7 @@ using namespace std;
 		}
 
 
-		int Matcher::match(Graph * sequenceGraph, Graph * skeletonGraph) {
+		inline int Matcher::match(Graph * sequenceGraph, Graph * skeletonGraph) {
 			clock_t start;
 
 			PERFORMANCE_COMPARISON_MODE = false;
@@ -97,11 +97,11 @@ using namespace std;
 			return matchCount;
 		}
 
-		SSEResult Matcher::GetSolution(int rank) {
+		inline SSEResult Matcher::GetSolution(int rank) {
 			return matcher->GetResult(rank);
 		}
 
-		void Matcher::destruct() {
+		inline void Matcher::destruct() {
 			delete matcher;
 		}
 	}

@@ -5,6 +5,7 @@
 //#include <vector>
 //#include <MathTools/MathLib.h>
 #include "Core/GlobalConstants.h"
+#include "GraphMatch/Constants.h"
 
 //using namespace std;
 using namespace MathTools;
@@ -78,22 +79,22 @@ namespace GraphMatch {
         Matrix4 inverseRotationMatrix;
     };
 
-    Shape::Shape() {
+    inline Shape::Shape() {
         worldToObject = Matrix4::identity();
         objectToWorld = Matrix4::identity();
         rotationMatrix = Matrix4::identity();
         inverseRotationMatrix = Matrix4::identity();
     }
 
-    bool Shape::IsHelix() {
+    inline bool Shape::IsHelix() {
         return (shapeType == GRAPHEDGE_HELIX);
     }
 
-    bool Shape::IsSheet() {
+    inline bool Shape::IsSheet() {
         return (shapeType != GRAPHEDGE_HELIX);
     }
 
-    bool Shape::IsInsideShape(Vec3D point) {
+    inline bool Shape::IsInsideShape(Vec3D point) {
         Vec3D newPoint = Vec3D(point[0], point[1], point[2]);
         if(shapeType == GRAPHEDGE_HELIX) {
             return IsInsideCylinder(newPoint);
@@ -102,11 +103,11 @@ namespace GraphMatch {
         }
     }
 
-    bool Shape::IsInsideShape(Vec3F p) {
+    inline bool Shape::IsInsideShape(Vec3F p) {
         return IsInsideShape(Vec3D(p.X(), p.Y(), p.Z()));
     }
 
-    bool Shape::IsInsidePolygon(Vec3D p) {
+    inline bool Shape::IsInsidePolygon(Vec3D p) {
         Polygon poly;
         Vec3D a,b,c,q;
         double l1, l2;
@@ -146,7 +147,7 @@ namespace GraphMatch {
     }
 
     // returns the minimum distance between a point p and a Shape
-    double Shape::MinimumDistanceToPoint(Vec3D P) {
+    inline double Shape::MinimumDistanceToPoint(Vec3D P) {
         Vec3D pt;
         double d;
         double dmin = MAXDOUBLE;
@@ -160,20 +161,20 @@ namespace GraphMatch {
         return dmin;
     }
 
-    bool Shape::IsInsideCylinder(Vec3D point) {
+    inline bool Shape::IsInsideCylinder(Vec3D point) {
         point = objectToWorld * point;
         return ((point[0]*point[0] + point[2]*point[2] <= 0.25) && (abs(point[1]) <= 0.5));
     }
 
-    double Shape::GetHeight() {
+    inline double Shape::GetHeight() {
         return height;
     }
 
-    double Shape::GetRadius(){
+    inline double Shape::GetRadius(){
         return radius;
     }
 
-    int Shape::GetLocationInVector(vector<Point3Pair> v, Point3Pair point) {
+    inline int Shape::GetLocationInVector(vector<Point3Pair> v, Point3Pair point) {
         int loc = -1;
         for(unsigned int i = 0; (i < v.size() && loc < 0); i++) {
             if(v[i] == point) {
@@ -183,25 +184,25 @@ namespace GraphMatch {
         return loc;
     }
 
-    int Shape::getType() {
+    inline int Shape::getType() {
         return shapeType;
     }
-    Matrix4 Shape::GetRotationMatrix() {
+    inline Matrix4 Shape::GetRotationMatrix() {
         return rotationMatrix;
     }
 
-    Matrix4 Shape::GetWorldToObjectMatrix() {
+    inline Matrix4 Shape::GetWorldToObjectMatrix() {
         return worldToObject;
     }
-    Vec3D Shape::GetCenter() {
+    inline Vec3D Shape::GetCenter() {
         return centerPoint;
     }
 
-    Vec3D Shape::GetWorldCoordinates(Vec3D point) {
+    inline Vec3D Shape::GetWorldCoordinates(Vec3D point) {
         return worldToObject * point;
     }
 
-    Point3Pair Shape::GetCornerCell(int node) {
+    inline Point3Pair Shape::GetCornerCell(int node) {
         for(unsigned int i = 0; i < cornerCells.size(); i++) {
             if(cornerCells[i].node == node) {
                 return cornerCells[i];
@@ -211,12 +212,12 @@ namespace GraphMatch {
         return Point3Pair(0,0,0,0);
     }
 
-    Vec3F Shape::GetCornerCell2(int node) {
+    inline Vec3F Shape::GetCornerCell2(int node) {
         Point3Pair cell = GetCornerCell(node);
         return Vec3F((float)cell.x, (float)cell.y, (float)cell.z);
     }
 
-    Vec3F Shape::GetCornerCell3(int node) {
+    inline Vec3F Shape::GetCornerCell3(int node) {
         Vec3D pt;
 
         if(node == 1) {
@@ -229,12 +230,12 @@ namespace GraphMatch {
     }
 
 
-    void Shape::AddInternalCell(Point3Pair point) {
+    inline void Shape::AddInternalCell(Point3Pair point) {
         internalCells.push_back(point);
     }
 
     // Search through all voxels inside a helix to find the two corners, which have only one neighbor in the helix.
-    void Shape::FindCornerCellsInHelix() {
+    inline void Shape::FindCornerCellsInHelix() {
 
         // array to help iterate over 6 neighbor voxels
         int d[6][3];
@@ -330,7 +331,7 @@ namespace GraphMatch {
         assert(cornerCells.size() >= 2);
     }
 
-    double Shape::GetCornerCellsMaxLength() {
+    inline double Shape::GetCornerCellsMaxLength() {
         double length = 0;
         for(int i = 0; i < (int)cornerCells.size() - 1; i++) {
             for(int j = i+1; j < (int)cornerCells.size(); j++) {
@@ -340,7 +341,7 @@ namespace GraphMatch {
         return length;
     }
 
-    vector<Vec3D> Shape::GetMaxLengthCorners() {
+    inline vector<Vec3D> Shape::GetMaxLengthCorners() {
         cout << "getting max length corners " <<  (int)polygonPoints.size() << endl;
         double length = 0.0;
         vector<Vec3D> result;
@@ -359,44 +360,44 @@ namespace GraphMatch {
         }
         return result;
     }
-    void Shape::Rotate(Vector3<double> axis, double angle){
+    inline void Shape::Rotate(Vector3<double> axis, double angle){
         rotationMatrix = Matrix4::rotation(axis, angle) * rotationMatrix;
         inverseRotationMatrix = inverseRotationMatrix * Matrix4::rotation(axis, -angle);
         UpdateWorldToObjectMatrix();
     }
 
-    void Shape::Translate(Vector3<double> translationVector){
+    inline void Shape::Translate(Vector3<double> translationVector){
 
         centerPoint = centerPoint + translationVector;
         UpdateWorldToObjectMatrix();
     }
 
-    void Shape::SetCenter(Vec3D center) {
+    inline void Shape::SetCenter(Vec3D center) {
         this->centerPoint = center;
         UpdateWorldToObjectMatrix();
     }
 
-    void Shape::SetCenter(Vec3F center) {
+    inline void Shape::SetCenter(Vec3F center) {
         SetCenter(Vec3D(center.X(), center.Y(), center.Z()));
     }
 
-    void Shape::SetHeight(double height) {
+    inline void Shape::SetHeight(double height) {
         this->height = height;
         this->length = height;
         UpdateWorldToObjectMatrix();
     }
 
-    void Shape::SetRadius(double radius) {
+    inline void Shape::SetRadius(double radius) {
         this->radius = radius;
         UpdateWorldToObjectMatrix();
     }
 
-    void Shape::UpdateWorldToObjectMatrix() {
+    inline void Shape::UpdateWorldToObjectMatrix() {
         worldToObject = Matrix4::translation(centerPoint) * rotationMatrix * Matrix4::scaling(radius*2, height, radius*2);
         objectToWorld = Matrix4::scaling(1.0/(radius*2.0), 1.0/height, 1.0/(radius*2.0)) * inverseRotationMatrix * Matrix4::translation(Vec3D(-centerPoint[0], -centerPoint[1], -centerPoint[2]));
     }
 
-    void Shape::GetRotationAxisAndAngle(Vec3F &axis, double &angle) {
+    inline void Shape::GetRotationAxisAndAngle(Vec3F &axis, double &angle) {
         double x,y,z;
         double epsilon = 0.01;
         double epsilon2 = 0.1;
@@ -469,7 +470,7 @@ namespace GraphMatch {
         axis = Vec3F((float)x, (float)y, (float)z);
         return;
     }
-    Shape * Shape::CreateHelix(Vec3F p1, Vec3F p2, float radius) {
+    inline Shape * Shape::CreateHelix(Vec3F p1, Vec3F p2, float radius) {
         Shape * newHelix = new Shape();
         newHelix->shapeType = GRAPHEDGE_HELIX;
         Vec3F center = (p1+p2) * 0.5;
@@ -487,7 +488,7 @@ namespace GraphMatch {
         return newHelix;
     }
 
-    void Shape::WriteToFile(vector<Shape*> & helices, FILE * fout) {
+    inline void Shape::WriteToFile(vector<Shape*> & helices, FILE * fout) {
         Vec3D center;
         Vec3F start, end, axis;
         double angle;

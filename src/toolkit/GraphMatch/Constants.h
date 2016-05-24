@@ -92,41 +92,41 @@ namespace GraphMatch {
     const float HELIX_C_ALPHA_TO_ANGSTROMS = 1.5f;
     const float LOOP_C_ALPHA_TO_ANGSTROMS = 3.8f / 1.5f; // 1.5 works well on test data
 
-    string SSE_FILE_NAME;
-    string VRML_HELIX_FILE_NAME;
-    string VRML_SHEET_FILE_NAME;
-    string SEQUENCE_FILE_NAME;
-    string SEQUENCE_FILE_TYPE;
-    string MRC_FILE_NAME;
-    double MAXIMUM_DISTANCE_SHEET_SKELETON = 0.0;
-    int MINIMUM_SHEET_SIZE = 10;
-    double EUCLIDEAN_DISTANCE_THRESHOLD = 15;
-    int BORDER_MARGIN_THRESHOLD = 3;
-    bool NORMALIZE_GRAPHS = true;
-    double EUCLIDEAN_VOXEL_TO_PDB_RATIO = 2.0;
-    double MISSING_HELIX_PENALTY = 2;
-    double MISSING_SHEET_PENALTY = 2;
-    double MISSING_HELIX_PENALTY_SCALED = 0;
-    double MISSING_SHEET_PENALTY_SCALED = 1;
-    double EUCLIDEAN_LOOP_PENALTY = 5;
-    double START_END_MISSING_HELIX_PENALTY = 5;
-    double HELIX_WEIGHT_COEFFICIENT = 1.0;
-    double LOOP_WEIGHT_COEFFICIENT = 0.25;
-    double SHEET_CAPACITY_COEFFICIENT = 10000000.0;
-    double SHEET_MERGE_THRESHOLD = 3.0;
-    double MISSING_HELIX_LENGTH = 8;
-    double MISSING_SHEET_LENGTH = 8;
-    double SHEET_SELF_LOOP_LENGTH = 4.0 * LOOP_C_ALPHA_TO_ANGSTROMS;
-    double SHEET_WEIGHT_COEFFICIENT = 1.0;
-    int COST_FUNCTION = 1;   // 1 : |a-b|		2 : |a-b|/(a+b)		3:|a-b|^2
-    int INCLUDE_STRANDS = 0;   // 0 : no		1 : yes
-    double VOXEL_SIZE = 1;
-    bool TRANSLATE_VOLUMETRIC_COORDINATES = false;
-    int MISSING_HELIX_COUNT = -1;
-    int MISSING_SHEET_COUNT = -1;
-    bool PERFORMANCE_COMPARISON_MODE = false;
-    int SOLUTION[MAX_NODES];
-    int D26[26][3] = {
+    static string SSE_FILE_NAME;
+    static string VRML_HELIX_FILE_NAME;
+    static string VRML_SHEET_FILE_NAME;
+    static string SEQUENCE_FILE_NAME;
+    static string SEQUENCE_FILE_TYPE;
+    static string MRC_FILE_NAME;
+    static double MAXIMUM_DISTANCE_SHEET_SKELETON = 0.0;
+    static int MINIMUM_SHEET_SIZE = 10;
+    static double EUCLIDEAN_DISTANCE_THRESHOLD = 15;
+    static int BORDER_MARGIN_THRESHOLD = 3;
+    static bool NORMALIZE_GRAPHS = true;
+    static double EUCLIDEAN_VOXEL_TO_PDB_RATIO = 2.0;
+    static double MISSING_HELIX_PENALTY = 2;
+    static double MISSING_SHEET_PENALTY = 2;
+    static double MISSING_HELIX_PENALTY_SCALED = 0;
+    static double MISSING_SHEET_PENALTY_SCALED = 1;
+    static double EUCLIDEAN_LOOP_PENALTY = 5;
+    static double START_END_MISSING_HELIX_PENALTY = 5;
+    static double HELIX_WEIGHT_COEFFICIENT = 1.0;
+    static double LOOP_WEIGHT_COEFFICIENT = 0.25;
+    static double SHEET_CAPACITY_COEFFICIENT = 10000000.0;
+    static double SHEET_MERGE_THRESHOLD = 3.0;
+    static double MISSING_HELIX_LENGTH = 8;
+    static double MISSING_SHEET_LENGTH = 8;
+    static double SHEET_SELF_LOOP_LENGTH = 4.0 * LOOP_C_ALPHA_TO_ANGSTROMS;
+    static double SHEET_WEIGHT_COEFFICIENT = 1.0;
+    static int COST_FUNCTION = 1;   // 1 : |a-b|		2 : |a-b|/(a+b)		3:|a-b|^2
+    static int INCLUDE_STRANDS = 0;   // 0 : no		1 : yes
+    static double VOXEL_SIZE = 1;
+    static bool TRANSLATE_VOLUMETRIC_COORDINATES = false;
+    static int MISSING_HELIX_COUNT = -1;
+    static int MISSING_SHEET_COUNT = -1;
+    static bool PERFORMANCE_COMPARISON_MODE = false;
+    static int SOLUTION[MAX_NODES];
+    static int D26[26][3] = {
         {-1,-1,-1}, {-1, -1, 0}, {-1, -1, 1},
         {-1,0,-1},  {-1, 0, 0},  {-1, 0, 1},
         {-1,1,-1},  {-1, 1, 0},  {-1, 1, 1},
@@ -136,7 +136,7 @@ namespace GraphMatch {
         {1,-1,-1},  {1, -1, 0},  {1, -1, 1},
         {1,0,-1},   {1, 0, 0},   {1, 0, 1},
         {1,1,-1},   {1, 1, 0},   {1, 1, 1}};
-    int BACK26[26] = {
+    static int BACK26[26] = {
         25, 24, 23,
         22, 21, 20,
         19, 18, 17,
@@ -150,10 +150,10 @@ namespace GraphMatch {
 
 
     // Private fields.. not to be used!!!
-    int allowedConstraints[MAX_NODES][MAX_NODES];
-    unsigned int nAllowedConstraints[MAX_NODES];
-    int notAllowedConstraints[MAX_NODES][MAX_NODES];
-    unsigned int nNotAllowedConstraints[MAX_NODES];
+    static int allowedConstraints[MAX_NODES][MAX_NODES];
+    static unsigned int nAllowedConstraints[MAX_NODES];
+    static int notAllowedConstraints[MAX_NODES][MAX_NODES];
+    static unsigned int nNotAllowedConstraints[MAX_NODES];
 
     inline void ClearAllowedConstraints() {
         for(int i = 0; i < MAX_NODES; i++) {
@@ -486,7 +486,7 @@ namespace GraphMatch {
     }
 
 
-    void DisplayConstants()
+    inline void DisplayConstants()
     {
     #ifdef VERBOSE
         std::cout << "Constants...\n";
@@ -550,7 +550,7 @@ namespace GraphMatch {
     #endif //VERBOSE
     }
 
-    bool IsNodeAssignmentAllowed(int patternNode, int baseNode) {
+    inline bool IsNodeAssignmentAllowed(int patternNode, int baseNode) {
         bool isAllowed;
 
         // Returning true if no constraints are specified.
@@ -569,7 +569,7 @@ namespace GraphMatch {
         return isAllowed;
     }
 
-    bool IsNodeConstrained(int patternNode) {
+    inline bool IsNodeConstrained(int patternNode) {
         return (nAllowedConstraints[patternNode-1] != 0) || (nNotAllowedConstraints[patternNode-1] != 0);
     }
 }

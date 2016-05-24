@@ -28,23 +28,23 @@ namespace GraphMatch {
         string getID();
     };
 
-    bool SecStruct::IsHelix() {
+    inline bool SecStruct::IsHelix() {
         return (sseType == GRAPHEDGE_HELIX);
     }
 
-    bool SecStruct::IsSheet() {
+    inline bool SecStruct::IsSheet() {
         return (sseType == GRAPHEDGE_SHEET);
     }
 
-    int SecStruct::GetLengthResidues() {
+    inline int SecStruct::GetLengthResidues() {
         return (endPosition - startPosition + 1);
     }
 
-    int SecStruct::GetLengthBonds() {
+    inline int SecStruct::GetLengthBonds() {
         return (endPosition - startPosition);
     }
 
-    float SecStruct::GetLengthAngstroms() {
+    inline float SecStruct::GetLengthAngstroms() {
         if(IsHelix()) {
             return (float)(endPosition - startPosition + 1) * HELIX_C_ALPHA_TO_ANGSTROMS;
         } else {
@@ -52,19 +52,19 @@ namespace GraphMatch {
         }
     }
 
-    int SecStruct::GetSerialNumber() {
+    inline int SecStruct::GetSerialNumber() {
         return serialNumber;
     }
 
-    int SecStruct::GetStartPosition() {
+    inline int SecStruct::GetStartPosition() {
         return startPosition;
     }
 
-    int SecStruct::GetEndPosition() {
+    inline int SecStruct::GetEndPosition() {
         return endPosition;
     }
 
-    string SecStruct::getID() {
+    inline string SecStruct::getID() {
         return ID;
     }
 }
