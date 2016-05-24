@@ -71,7 +71,6 @@ namespace SkeletonMaker {
     public:
         Volume();
         Volume(int x, int y, int z, float val=0.0);
-        Volume(const Volume& obj);
         virtual ~Volume( );
 
         int getHashKey(int x, int y, int z, int edge, int iScale) const;
@@ -90,7 +89,7 @@ namespace SkeletonMaker {
         float getMean(); // Returns the mean value of all the voxels
         float getStdDev(); // Returns the population standard deviation of the values at all the voxels
 
-        Volume * markCellFace();
+        Volume markCellFace();
         int getNumNeighbor6  (int ox, int oy, int oz);
         int isInternal2      (int ox, int oy, int oz);
         int hasCell          (int ox, int oy, int oz);
@@ -132,8 +131,8 @@ namespace SkeletonMaker {
 
         virtual void load(string fileName);
         virtual void save(string fileName);
-        Volume * PerformBinarySkeletonizationJu2007(double threshold, int minCurveSize, int minSurfaceSize);
-        Volume * PerformGrayscaleSkeletonizationAbeysinghe2008(
+        Volume PerformBinarySkeletonizationJu2007(double threshold, int minCurveSize, int minSurfaceSize);
+        Volume PerformGrayscaleSkeletonizationAbeysinghe2008(
                 double startDensity, int stepCount, int minCurveSize,
                 int minSurfaceSize, int curveRadius, int surfaceRadius,
                 int skeletonSmoothenRadius);
@@ -149,13 +148,8 @@ namespace SkeletonMaker {
 
 
     private:
-
-        VolumeData * getVolumeData();
         vector<int> histogram;
 
-    protected:
-        VolumeData * volData;
-//----------------------
     public:
         Volume * getVolume();
         void setVolume(Volume *vol);

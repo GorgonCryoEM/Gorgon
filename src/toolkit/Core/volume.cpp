@@ -44,37 +44,10 @@ int Volume::id3=0;
     void Volume::setVolume(Volume *vol) {
         *this = *vol;
     }
-    //-----------------------------------
-
-    Volume::Volume(const Volume& obj)
-    : VolumeData(static_cast<VolumeData>(obj)), histogram(obj.histogram), volData(
-            dynamic_cast<VolumeData *>(this))
-    {
-#ifdef GORGON_DEBUG
-        cout<<"\033[32mDEBUG: File:   volume.cpp"<<endl;
-        cout<<"DEBUG: Method: Volume::Volume(const Volume&)\033[0m"<<endl;
-        cout<<"Id1: "<<id1<<endl;
-        id1++;
-
-        cout<<"\033[35mobj.size: "<<obj.getSize()<<endl;
-        cout<<"this->size: "<<this->getSize()<<"\033[0m"<<endl;
-#endif
-
-    }
-
-    Volume::Volume()
-    : VolumeData(), volData(getVolumeData())
-    {
-#ifdef GORGON_DEBUG
-        cout<<"\033[32mDEBUG: File:   volume.h"<<endl;
-        cout<<"DEBUG: Method: Volume::Volume()\033[0m"<<endl;
-        cout<<"Id0: "<<id0<<endl;
-        id0++;
-#endif
-    }
+    Volume::Volume() {}
 
     Volume::Volume(int x, int y, int z, float val)
-    : VolumeData(x, y, z, val), volData(getVolumeData())
+    : VolumeData(x, y, z, val)
     {
 #ifdef GORGON_DEBUG
         cout<<"\033[32mDEBUG: File:   volume.cpp"<<endl;
@@ -86,10 +59,6 @@ int Volume::id3=0;
     }
 
     Volume::~Volume() {
-    }
-
-    VolumeData * Volume::getVolumeData() {
-        return dynamic_cast<VolumeData *>(this);
     }
 
     float Volume::getOffset(float fValue1, float fValue2, float fValueDesired) const {
@@ -260,15 +229,12 @@ int Volume::id3=0;
         return 1;
     }
 
-    Volume * Volume::markCellFace() {
-        int i, j, k;
-        Volume* fvol = new Volume(getSizeX(), getSizeY(), getSizeZ());
+    Volume Volume::markCellFace() {
+        Volume fvol(getSizeX(), getSizeY(), getSizeZ());
 
-        //return fvol ;
-
-        for(i = 0; i < getSizeX(); i++)
-            for(j = 0; j < getSizeY(); j++)
-                for(k = 0; k < getSizeZ(); k++) {
+        for(int i = 0; i < getSizeX(); i++)
+            for(int j = 0; j < getSizeY(); j++)
+                for(int k = 0; k < getSizeZ(); k++) {
                     if((*this)(i, j, k) >= 0) {
                         if(hasCell(i, j, k)) {
                             for(int m = 0; m < 6; m++) {
@@ -276,7 +242,7 @@ int Volume::id3=0;
                                 int ny = j + neighbor6[m][1];
                                 int nz = k + neighbor6[m][2];
                                 if(!hasCell(nx, ny, nz)) {
-                                    (*fvol)(i, j, k) = (double) (1 << m);
+                                    fvol(i, j, k) = (double) (1 << m);
                                     break;
                                 }
                             }
@@ -1928,7 +1894,7 @@ int Volume::erodeSheet(int disthr) {
     threshold(0.1f, -1, 0);
 
     /* Debug: remove cells */
-    Volume* facevol = markCellFace();
+    Volume facevol = markCellFace();
     /* End debugging */
 
     // Next, initialize the linked queue
@@ -2146,7 +2112,6 @@ int Volume::erodeSheet(int disthr) {
 #endif
     threshold(0, 0, 1);
 
-    delete facevol;
     delete fvol;
     delete queue2;
     delete queue3;
@@ -2666,7 +2631,7 @@ void Volume::normalize(double min, double max) {
     double irange = imax - imin;
     double range = max - min;
 
-    int size = volData->getMaxIndex();
+    int size = getMaxIndex();
     for(int i = 0; i < size; i++) {
         (*this)(i) = ( ((*this)(i) - (float)imin) / (float)irange) * (float)range + (float)min;
     }
@@ -2721,7 +2686,7 @@ void Volume::toMRCFile(string fname) {
 
     double dmin = 100000, dmax = -100000;
     int i;
-    int size = volData->getMaxIndex();
+    int size = getMaxIndex();
     for(i = 0; i < size; i++) {
         float val = (float)(*this)(i);
         if(val < dmin) {
@@ -2763,7 +2728,7 @@ void Volume::toMRCFile(string fname) {
 
 // Returns the mean value of all the voxels
 float Volume::getMean() {
-    int N = volData->getMaxIndex();
+    int N = getMaxIndex();
     double mass = 0;
     for(int i = 0; i < N; i++)
         mass += (*this)(i);
@@ -2773,7 +2738,7 @@ float Volume::getMean() {
 
 // Returns the population standard deviation of the values at all the voxels
 float Volume::getStdDev() {
-    int N = volData->getMaxIndex();
+    int N = getMaxIndex();
 
     //Calculate the standard deviation of all the voxels in the image
     double voxel_sum = 0;
@@ -2824,7 +2789,7 @@ void Volume::downsample() {
 
 void Volume::load(string inputFile) {
 
-    *volData = *MRCReaderPicker::pick(inputFile.c_str())->getVolume();
+    *this = *MRCReaderPicker::pick(inputFile.c_str())->getVolume();
 
 #ifdef GORGON_DEBUG
     cout<<"\033[35mDEBUG: File:   VolumeFormatConverter.h"<<endl;
@@ -2848,11 +2813,11 @@ void Volume::save(string fileName) {
     }
 }
 
-Volume * Volume::PerformBinarySkeletonizationJu2007(double threshold,
+Volume Volume::PerformBinarySkeletonizationJu2007(double threshold,
                                                     int minCurveSize,
                                                     int minSurfaceSize)
 {
-    Skeletonizer * skeletonizer = new Skeletonizer(0, 0, 0,
+    Skeletonizer skeletonizer(getOriginX(), getOriginY(), getOriginZ(),
             DEFAULT_SKELETON_DIRECTION_RADIUS);
 //#ifdef GORGON_DEBUG
     cout<<"DEBUG: File:   Volume.h"<<endl;
@@ -2860,10 +2825,10 @@ Volume * Volume::PerformBinarySkeletonizationJu2007(double threshold,
     cout<<getSize()<<endl;
 //#endif
 
-    Volume * outputVol = skeletonizer->PerformPureJuSkeletonization(*this, "",
+    Volume outputVol = *skeletonizer.PerformPureJuSkeletonization(*this, "",
             threshold, minCurveSize, minSurfaceSize);
-    delete skeletonizer;
-    cout<<"outputVol->getNonZeroVoxelCount(): "<<outputVol->getNonZeroVoxelCount()<<endl;
+
+    cout<<"outputVol->getNonZeroVoxelCount(): "<<outputVol.getNonZeroVoxelCount()<<endl;
     cout<<"\t"<<threshold
             <<"\t"<<minCurveSize
             <<"\t"<<minSurfaceSize
@@ -2871,31 +2836,27 @@ Volume * Volume::PerformBinarySkeletonizationJu2007(double threshold,
 //#ifdef GORGON_DEBUG
     cout<<"DEBUG: File:   Volume.h"<<endl;
     cout<<"DEBUG: Method: Volume::PerformBinarySkeletonizationJu2007"<<endl;
-    cout<<"outputVol->getSize(): "<<outputVol->getSize()<<endl;
+    cout<<"outputVol->getSize(): "<<outputVol.getSize()<<endl;
 //#endif
 
     return outputVol;
 }
 
-Volume * Volume::PerformGrayscaleSkeletonizationAbeysinghe2008(
+Volume Volume::PerformGrayscaleSkeletonizationAbeysinghe2008(
         double startDensity, int stepCount, int minCurveSize,
         int minSurfaceSize, int curveRadius, int surfaceRadius,
         int skeletonRadius)
 {
     double stepSize = (getMax() - startDensity) / stepCount;
     if(!isZero(stepSize)) {
-        Skeletonizer * skeletonizer = new Skeletonizer(0,
+        Skeletonizer skeletonizer(0,
                 curveRadius, surfaceRadius, skeletonRadius);
-        Volume * outputVol =
-                skeletonizer->PerformImmersionSkeletonizationAndPruning(*this,
+        Volume outputVol =
+                *skeletonizer.PerformImmersionSkeletonizationAndPruning(*this,
                         NULL, startDensity, getMax(), stepSize, 0, 0,
                         minCurveSize, minSurfaceSize, 0, 0, "", true, 1.0,
                         DEFAULT_PRUNE_THRESHOLD, DEFAULT_PRUNE_THRESHOLD);
-        delete skeletonizer;
         return outputVol;
-    }
-    else {
-        return NULL;
     }
 }
 

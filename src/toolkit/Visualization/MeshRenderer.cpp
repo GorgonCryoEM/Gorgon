@@ -51,14 +51,15 @@ namespace Visualization {
         if(extension == "OFF") {
             mesh = NonManifoldMesh::loadOffFile(fileName);
         } else if(extension == "MRC" || extension == "ATOM") {
-            Volume volume = *MRCReaderPicker::pick(fileName.c_str())->getVolume();
+            Volume::load(fileName);
             #ifdef GORGON_DEBUG
                   cout<<"\033[36mDEBUG: After VolumeFormatConverter::LoadVolume(fileName)"<<endl;
                   cout<<"FileName: "<<fileName<<endl;
-                  cout<<volume->getSize()<<"\033[0m"<<endl;
+                  cout<<(Volume)(*this)<<"\033[0m"<<endl;
             #endif
 
-            mesh = NonManifoldMesh(volume);
+            mesh = NonManifoldMesh(*this);
+
 #ifdef GORGON_DEBUG
       cout<<"\033[35m"<<mesh.getSize()<<"\033[0m"<<endl;
 #endif

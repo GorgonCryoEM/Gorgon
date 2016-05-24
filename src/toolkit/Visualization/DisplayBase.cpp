@@ -93,19 +93,15 @@ namespace Visualization {
     }
 
     void DisplayBase::save(string fileName) {
-        if(volData != NULL) {
-            int pos = fileName.rfind(".") + 1;
-            string extension = fileName.substr(pos, fileName.length()-pos);
+        int pos = fileName.rfind(".") + 1;
+        string extension = fileName.substr(pos, fileName.length()-pos);
 
-            extension = StringUtils::StringToUpper(extension);
+        extension = StringUtils::StringToUpper(extension);
 
-            if(strcmp(extension.c_str(), "MRC") == 0) {
-                toMRCFile((char *)fileName.c_str());
-            } else {
-                printf("Input format %s not supported!\n", extension.c_str());
-            }
-
-
+        if(strcmp(extension.c_str(), "MRC") == 0) {
+            toMRCFile((char *)fileName.c_str());
+        } else {
+            printf("Input format %s not supported!\n", extension.c_str());
         }
     }
 
