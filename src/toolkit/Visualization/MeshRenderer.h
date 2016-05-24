@@ -35,6 +35,8 @@ namespace Visualization {
 
             void setLineThickness(int thickness);
             void draw(int subSceneIndex, bool selectEnabled);
+
+            void loadVolume(Volume src);
         private:
             NonManifoldMesh mesh;
             vector<Vec3F> intersectionPoints;

@@ -17,12 +17,12 @@ namespace Core {
     }
 
     NonManifoldMesh::NonManifoldMesh(const Volume & src) {
-#ifdef GORGON_DEBUG
+//#ifdef GORGON_DEBUG
         cout<<"\033[33mDEBUG: File:   NonManifoldMesh.h"<<endl;
         cout<<"DEBUG: Method: NonManifoldMesh::NonManifoldMesh\033[0m"<<endl;
         cout<<"DEBUG: Args: Volume*\033[0m"<<endl;
         cout<<"src.getSize(): "<<src.getSize()<<endl;
-#endif
+//#endif
 
         int lVertices[src.getSize()];
 
@@ -31,19 +31,30 @@ namespace Core {
         setOrigin(src.getOriginObj());
         setSpacing(src.getSpacingObj());
 
+        cout<<"After size assignment:"<<getSize()<<endl;
+        cout<<"After size assignment:"<<getSizeX()<<endl;
+        cout<<"After size assignment:"<<getSizeY()<<endl;
+        cout<<"After size assignment:"<<getSizeZ()<<endl;
+        cout<<"After size assignment:"<<size<<endl;
+
         // Adding vertices
         for(int x = 0; x < src.getSizeX(); x++) {
             for(int y = 0; y < src.getSizeY(); y++) {
                 for(int z = 0; z < src.getSizeZ(); z++) {
                     Vec3I pos(x, y, z);
+//                    cout<<pos<<endl;
                     int i = src.getIndex(pos);
                     lVertices[i] = -1;
                     int value = (int)round(src(i));
-                    if(value > 0)
+//                    cout<<"val: "<<value<<endl;
+                    if(value > 0) {
                         lVertices[i] = addVertex(Vec3F(x, y, z));
+//                    cout<<lVertices[i]<<endl;
+                    }
                 }
             }
         }
+        cout<<"After loop 1:\n"<<*this<<endl;
 
         //Adding edges
         int ens[3][3] = {{1,0,0}, {0,1,0}, {0,0,1}};
@@ -90,10 +101,12 @@ namespace Core {
             }
         }
 
-#ifdef GORGON_DEBUG
+//#ifdef GORGON_DEBUG
         cout<<"\033[33mDEBUG: END"<<endl;
+        cout<<getSize()<<endl;
+        cout<<*this<<endl;
         cout<<"DEBUG: Method: NonManifoldMesh::NonManifoldMesh\n\033[0m"<<endl;
-#endif
+//#endif
 
     }
 

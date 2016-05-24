@@ -2854,20 +2854,25 @@ Volume * Volume::PerformBinarySkeletonizationJu2007(double threshold,
 {
     Skeletonizer * skeletonizer = new Skeletonizer(0, 0, 0,
             DEFAULT_SKELETON_DIRECTION_RADIUS);
-#ifdef GORGON_DEBUG
+//#ifdef GORGON_DEBUG
     cout<<"DEBUG: File:   Volume.h"<<endl;
     cout<<"DEBUG: Method: Volume::PerformBinarySkeletonizationJu2007"<<endl;
     cout<<getSize()<<endl;
-#endif
+//#endif
 
     Volume * outputVol = skeletonizer->PerformPureJuSkeletonization(*this, "",
             threshold, minCurveSize, minSurfaceSize);
     delete skeletonizer;
-#ifdef GORGON_DEBUG
+    cout<<"outputVol->getNonZeroVoxelCount(): "<<outputVol->getNonZeroVoxelCount()<<endl;
+    cout<<"\t"<<threshold
+            <<"\t"<<minCurveSize
+            <<"\t"<<minSurfaceSize
+            <<endl;
+//#ifdef GORGON_DEBUG
     cout<<"DEBUG: File:   Volume.h"<<endl;
     cout<<"DEBUG: Method: Volume::PerformBinarySkeletonizationJu2007"<<endl;
     cout<<"outputVol->getSize(): "<<outputVol->getSize()<<endl;
-#endif
+//#endif
 
     return outputVol;
 }

@@ -24,3 +24,16 @@ class SkeletonViewer(BaseViewer):
         self.lineThickness = 3
         self.renderer.setLineThickness(self.lineThickness)
 
+    def loadVolume(self, volume):
+#         if(self.loaded):
+#             self.unloadData
+        print "SkeletonViewer.loadVolume()"
+        print volume.getSize()
+        
+        self.renderer.loadVolume(volume)
+        print self.renderer.getMesh().getSize()
+        self.setScale(self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ())
+        self.loaded = True
+        self.modelLoadedPreDraw()
+        self.modelChanged()
+        self.centerAllRequested.emit()
