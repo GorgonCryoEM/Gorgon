@@ -78,7 +78,7 @@ class VolumeGrayscaleSkeletonizationForm(QtGui.QDialog):
             self.close()
         else:
             QtGui.QMessageBox.critical(None, "Source volume unloaded", "A volume must be loaded to perform skeletonization", QtGui.QMessageBox.Ok, QtGui.QMessageBox.NoButton)
-        BaseDialogWidget.accept(self)
+#         BaseDialogWidget.accept(self)
     
     def getCitationHtml(self, title, author, journal):
         return "<b>" + title + "</b><br>" + author + "<br><i>" + journal + "</i>"

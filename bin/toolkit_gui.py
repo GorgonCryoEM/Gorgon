@@ -12,6 +12,7 @@ import argparse
 from ToolkitGui import MainWindowForm
 from ToolkitGui import MainWindowForm2
 from ToolkitGui import MainWindowForm3
+from ToolkitGui import MainWindowForm4
 
 
 def main():
@@ -26,7 +27,8 @@ def main():
 
 #     windows = [MainWindowForm('2.2.2', args), MainWindowForm2('2.2.3', args)]
     windows = []
-    windows.append(MainWindowForm3('2.2.4', args))
+#     windows.append(MainWindowForm3('2.2.4', args))
+    windows.append(MainWindowForm4('2.2.5', args))
 #     window = MainWindowForm('2.2.2', args)
     
     for window in windows:

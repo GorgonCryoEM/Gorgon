@@ -85,6 +85,8 @@ namespace Visualization {
                     }
                 }
             }
+            cout<<"selectedPDBHelices.size(): "<<selectedPDBHelices.size()<<endl;
+            cout<<"SSEIndices.size(): "<<SSEIndices.size()<<endl;
 
             Point<double> pt;
             cout<<"helices.size(): "<<helices.size()<<endl;
@@ -97,12 +99,12 @@ namespace Visualization {
 
                 }
 
-                if(helices[i]->GetSelected()) {
+//                if(helices[i]->GetSelected()) {
 
                     glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
                     glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
 
-                }
+//                }
                 glPushMatrix();
                 glMultMatrixd(helices[i]->GetWorldToObjectMatrix().mat);
                 glRotated(90, 1, 0, 0);
@@ -118,7 +120,7 @@ namespace Visualization {
                 glPopAttrib();
 
                 cout<<"helices["<<i<<"]->GetSelected(): "<<helices[i]->GetSelected()<<endl;
-                if(helices[i]->GetSelected()) {
+//                if(helices[i]->GetSelected()) {
 
                     Vec3F corner1 = GetHelixCorner(i, 0);
                     Vec3F corner2 = GetHelixCorner(i, 1);
@@ -139,7 +141,7 @@ namespace Visualization {
                             fflush(stdout);
                         }
                     }
-                }
+//                }
 
 
                 for(unsigned int j = 0; j < SSEIndices.size(); ++j){
@@ -242,6 +244,8 @@ namespace Visualization {
         }
 
         fclose(fin);
+        cout<<"       SSERenderer::LoadHelixFileSSE"<<endl;
+        cout<<"helices.size(): "<<helices.size()<<endl;
     }
 
     void SSERenderer::LoadHelixFileVRML(string fileName) {
@@ -249,13 +253,15 @@ namespace Visualization {
     }
 
     void SSERenderer::LoadHelixFile(string fileName) {
-
-        if(sheetMesh == NULL) {
-            Display::load(fileName);
-        }
         for(unsigned int i = 0; i < helices.size(); i++) {
             delete helices[i];
         }
+//        #ifdef GORGON_DEBUG
+              cout<<"\033[32mDEBUG: File:   SSERenderer.cpp"<<endl;
+              cout<<"DEBUG: Method: SSERenderer::LoadHelixFile(string)\033[0m"<<endl;
+              cout<<"YAY"<<endl;
+//        #endif
+
         helices.clear();
 
         int pos = fileName.rfind(".") + 1;
@@ -343,6 +349,24 @@ namespace Visualization {
         }
         graphSheetMesh = NULL;
 
+    }
+
+    void SSERenderer::SetHelixColor(int index, float r, float g, float b, float a) {
+        helices[index]->SetColor(r, g, b, a);
+    }
+
+    void SSERenderer::SetSheetColor(int index, float r, float g, float b, float a) {
+        sheets[index]->SetColor(r, g, b, a);
+    }
+
+    // set the color of an SSE. assumes that SSEs are indexed with helices first and sheets second.
+    void SSERenderer::SetSSEColor(int index, float r, float g, float b, float a) {
+        int numHelices = helices.size();
+        if (index < numHelices) {
+            helices[index]->SetColor(r, g, b, a);
+        } else {
+            sheets[index - numHelices]->SetColor(r, g, b, a);
+        }
     }
 
     bool SSERenderer::SelectionRotate(Vec3F centerOfMass, Vec3F rotationAxis, float angle) {

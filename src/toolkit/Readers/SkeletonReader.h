@@ -684,6 +684,12 @@ namespace GraphMatch {
     }
 
     void SkeletonReader::ReadHelixFile(string helixFile, string sseFile, vector<Shape*> & helixes){
+//        #ifdef GORGON_DEBUG
+              cout<<"\033[32mDEBUG: File:   SkeletonReader.h"<<endl;
+              cout<<"DEBUG: Method: SkeletonReader::ReadHelixFile(string, string, vector<Shape*>&)\033[0m"<<endl;
+              cout<<"Im in!"<<endl;
+//        #endif
+
         ifstream fin(helixFile.c_str());
         if (!fin) {
             cout<<"Error reading helix input file "<<helixFile<<".  Skipping helices.\n" ;
