@@ -11,6 +11,7 @@ import argparse
 
 from ToolkitGui import MainWindowForm
 from ToolkitGui import MainWindowForm2
+from ToolkitGui import MainWindowForm3
 
 
 def main():
@@ -18,11 +19,14 @@ def main():
     
     parser.add_argument('volume', action="store")
     parser.add_argument('skeleton', action="store")
+    parser.add_argument('output', action="store")
     args = parser.parse_args()
 
     app = QtGui.QApplication(sys.argv)
 
-    windows = [MainWindowForm('2.2.2', args), MainWindowForm2('2.2.3', args)]
+#     windows = [MainWindowForm('2.2.2', args), MainWindowForm2('2.2.3', args)]
+    windows = []
+    windows.append(MainWindowForm3('2.2.4', args))
 #     window = MainWindowForm('2.2.2', args)
     
     for window in windows:
