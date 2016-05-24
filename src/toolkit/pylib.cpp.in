@@ -7,6 +7,7 @@
 #include "ProteinMorph/CAlpha.h"
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include "ProteinMorph/SSEEngine.h"
+#include "GraphMatch/IBackEnd.h"
 #include "GraphMatch/PDBBond.h"
 #include "Readers/SEQReader.h"
 #include "Visualization/RendererBase.h"
@@ -142,7 +143,9 @@ BOOST_PYTHON_MODULE(@current_pylib@)
   ;
   
 //  BOOST_PYTHON_FUNCTION_OVERLOADS(cylinder_overloads, drawCylinder, 3, 5)
-    def("drawSphere",   drawSphere);
+    def("drawSphere",   drawSphere<Vec3F>);
+    def("drawSphere",   drawSphere<Vec3D>);
+    def("drawSphere",   drawSphere<Vec3I>);
     def("drawCylinder", drawCylinder);
 //    def("drawCylinder", drawCylinder, cylinder_overloads());
     def("drawLine",     drawLine);
@@ -496,12 +499,12 @@ BOOST_PYTHON_MODULE(@current_pylib@)
   
   class_<SSEResult>("SSEResult", init<>())
 //        .def("getNodeString", &SSEResult::GetNodeString)
-        .def("getCost", &SSEResult::GetCost)
-        .def("getNodeCount", &SSEResult::GetNodeCount)
-        .def("getHelixCount", &SSEResult::GetHelixCount)
+        .def("getCost", &SSEResult::getCost)
+        .def("getNodeCount", &SSEResult::getNodeCount)
+        .def("getHelixCount", &SSEResult::getHelixCount)
 //        .def("getSheetCount", &SSEResult::GetSheetCount)
-        .def("getSkeletonNode", &SSEResult::GetSkeletonNode)
-        .def("nodeToHelix", &SSEResult::NodeToHelix)      
+        .def("getSkeletonNode", &SSEResult::getSkeletonNode)
+        .def("nodeToHelix", &SSEResult::nodeToHelix)      
     ;
 
     class_<SecStruct>("SecStruct", init<>())
@@ -520,44 +523,47 @@ BOOST_PYTHON_MODULE(@current_pylib@)
         .def("getCornerCell3", &Shape::GetCornerCell3)
     ;
 
-    bool (SSEEngine::*SetConstant1)(string, string)   = &SSEEngine::SetConstant;
-    bool (SSEEngine::*SetConstant2)(string, double)   = &SSEEngine::SetConstant;
-    bool (SSEEngine::*SetConstant3)(string, int)      = &SSEEngine::SetConstant;
-    bool (SSEEngine::*SetConstant4)(string, bool)     = &SSEEngine::SetConstant;
+    bool (IBackEnd::*setConstant1)(string, string)   = &IBackEnd::setConstant;
+    bool (IBackEnd::*setConstant2)(string, double)   = &IBackEnd::setConstant;
+    bool (IBackEnd::*setConstant3)(string, int)      = &IBackEnd::setConstant;
+    bool (IBackEnd::*setConstant4)(string, bool)     = &IBackEnd::setConstant;
 
+    class_<IBackEnd>("IBackEnd", init<>())
+        .def("setConstant", setConstant1)
+        .def("setConstant", setConstant2)
+        .def("setConstant", setConstant3)
+        .def("setConstant", setConstant4)
+        .def("getConstantString",   &IBackEnd::getConstantString)
+        .def("getConstantDouble",   &IBackEnd::getConstantDouble)
+        .def("getConstantInt",      &IBackEnd::getConstantInt)
+        .def("getConstantBool",     &IBackEnd::getConstantBool)
+        .def("clearAllConstraints", &IBackEnd::clearAllConstraints)          
+    ;
+    
     class_<SSEEngine>("SSEEngine", init<>())
-        .def("setConstant", SetConstant1)
-        .def("setConstant", SetConstant2)
-        .def("setConstantInt", SetConstant3)
-        .def("setConstantBool", SetConstant4)
-        .def("getConstantString", &SSEEngine::GetConstantString)
-        .def("getConstantDouble", &SSEEngine::GetConstantDouble)
-        .def("getConstantInt", &SSEEngine::GetConstantInt)
-        .def("getConstantBool", &SSEEngine::GetConstantBool)
-        .def("clearAllConstraints", &SSEEngine::ClearAllConstraints)          
 //        .def("setHelixConstraint", &SSEEngine::SetHelixConstraint)            
 //        .def("getHelixConstraintFwd", &SSEEngine::GetHelixConstraintFwd)          
 //        .def("getHelixConstraintRev", &SSEEngine::GetHelixConstraintRev)          
 //        .def("getHelixConstraintUnk", &SSEEngine::GetHelixConstraintUnk)
 //        .def("getStrandConstraint", &SSEEngine::GetStrandConstraint)          
 //        .def("setNodeConstraint", &SSEEngine::SetNodeConstraint)          
-//        .def("setSSEColor", &SSEEngine::SetSSEColor)          
+        .def("setSSEColor", &SSEEngine::setSSEColor)          
 //        .def("setConstantsFromFile", &SSEEngine::SetConstantsFromFile)        
         .def("saveCorrespondenceToFile", &SSEEngine::save)
         .def("loadSkeletonGraph", &SSEEngine::loadSkeleton)
         .def("loadSequenceGraph", &SSEEngine::loadSequence)
 //        .def("loadCorrespondenceFromFile", &SSEEngine::load)
-        .def("executeQuery", &SSEEngine::ExecuteQuery)
-        .def("cleanupMemory", &SSEEngine::CleanupMemory)
-        .def("getResult", &SSEEngine::GetResult)
+        .def("executeQuery", &SSEEngine::run)
+//        .def("cleanupMemory", &SSEEngine::cleanupMemory)
+        .def("getResult", &SSEEngine::getResult)
 //        .def("getResultCount", &SSEEngine::GetResultCount)
 //        .def("getSupportedLoadFileFormats", &SSEEngine::getSupportedLoadFileFormats)
 //        .def("getSupportedSaveFileFormats", &SSEEngine::getSupportedSaveFileFormats)
-        .def("getSkeletonSSE", &SSEEngine::GetSkeletonSSE, return_value_policy<reference_existing_object>())
+        .def("getSkeletonSSE", &SSEEngine::getSkeletonSSE, return_value_policy<reference_existing_object>())
 //        .def("getSequenceSSE", &SSEEngine::GetSequenceSSE, return_value_policy<reference_existing_object>())
-        .def("getSkeletonSSECount", &SSEEngine::GetSkeletonSSECount)
+        .def("getSkeletonSSECount", &SSEEngine::getSkeletonSSECount)
 //        .def("getSequenceSSECount", &SSEEngine::GetSequenceSSECount)
-        .def("setVisibleCorrespondence", &SSEEngine::SetVisibleCorrespondence)
+        .def("setVisibleCorrespondence", &SSEEngine::setVisibleCorrespondence)
         .def("draw", &SSEEngine::draw)
         .def("drawAllPaths", &SSEEngine::drawAllPaths)
 //        .def("initializePathFinder", &SSEEngine::InitializePathFinder)

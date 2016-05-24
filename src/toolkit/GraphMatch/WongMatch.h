@@ -4,7 +4,7 @@
 #define TOOLKIT_GRAPHMATCH_WONGMATCH_H
 
 //#include "Graph.h"
-#include "Foundation/LinkedNode.h"
+#include "Foundation/Node.h"
 //#include "NodeList.h"
 //#include "Core/GlobalConstants.h"
 #include "PathGenerator.h"
@@ -21,17 +21,22 @@ namespace GraphMatch {
 
     class WongMatch {
         public:
-            Graph * patternGraph;
-            Graph * baseGraph;
+            Graph & patternGraph;
+            Graph & baseGraph;
         public:
-            WongMatch(Graph * patternGraph, Graph * baseGraph);
-            WongMatch(Graph * patternGraph, Graph * baseGraph,
-                      int missingHelixCount, int missingSheetCount
+            WongMatch(Graph & pGraph, Graph & bGraph,
+                      int missingHelixCount =0, int missingSheetCount =0
                       );
             ~WongMatch();
-            int RunMatching(clock_t startTime);
-            SSEResult GetResult(int rank);
-            void SaveResults();
+            int run(clock_t startTime);
+            SSEResult getResult(int rank);
+            void saveResults();
+
+            void set_MISSING_HELIX_COUNT(int n);
+            void set_MISSING_SHEET_COUNT(int n);
+
+        protected:
+            vector<SSEResult> solutions;
 
         private:
 #ifdef VERBOSE
@@ -39,13 +44,12 @@ namespace GraphMatch {
             clock_t timeInGetB;
             clock_t timeInQueue;
 #endif
-            LinkedNode * currentNode;
+            Node * currentNode;
 
-            typedef Pair<double, LinkedNode *> Elem;
-            priority_queue<Elem> * queue;
+            typedef Pair<double, Node *> Elem;
+            priority_queue<Elem> q;
 
-            vector<LinkedNodeStub*> usedNodes;
-            vector<SSEResult> solutions;
+            vector<NodeStub*> usedNodes;
             int nMissHelix;
             int nMissSheet;
             int nExpand;
@@ -53,35 +57,38 @@ namespace GraphMatch {
             int longestMatch;
             PathGenerator * pathGenerator;
 
+        protected:
+            void init(Graph & pGraph, Graph & bGraph);
         private:
-            void Init(Graph * patternGraph, Graph * baseGraph);
-            double GetC(int p, int qp);
-            double GetC(int j, int p, int qj, int qp);
-            double GetCost(int d, int m, int qj, int qp, bool debugMsg);
-            double GetPenaltyCost(int d, int m, bool debugMsg);
-            double GetCPrime(int a, int b, int c, int d);
-            double GetK(int p, int qp);
-            double GetKPrime(int i, int q);
-            double GetF();
-            void PopBestNode(); // Gets the best (first) node from the active nodes list.
-            bool ExpandNode(LinkedNodeStub * currentStub); // Expands all the children of the current node.
-            void NormalizeGraphs();
-            void NormalizeSheets();
+            double getC(int p, int qp);
+            double getC(int j, int p, int qj, int qp);
+            double getCost(int d, int m, int qj, int qp, bool debugMsg);
+            double getPenaltyCost(int d, int m, bool debugMsg);
+            double getCPrime(int a, int b, int c, int d);
+            double getK(int p, int qp);
+            double getKPrime(int i, int q);
+            double getF();
+            void popBestNode(); // Gets the best (first) node from the active nodes list.
+            bool expandNode(NodeStub * currentStub); // Expands all the children of the current node.
+            void normalizeGraphs();
+            void normalizeSheets();
             int bestMatches[RESULT_COUNT][MAX_NODES];
 
     };
 
-    WongMatch::WongMatch(Graph * patternGraph,
-                         Graph * baseGraph)
-    {
-        Init(patternGraph, baseGraph);
+    void WongMatch::set_MISSING_HELIX_COUNT(int n) {
+        nMissHelix = n;
+    }
+    void WongMatch::set_MISSING_SHEET_COUNT(int n) {
+        nMissSheet = n;
     }
 
-    WongMatch::WongMatch(Graph * patternGraph,
-                         Graph * baseGraph, int missingHelixCount,
+    WongMatch::WongMatch(Graph & pGraph, Graph & bGraph,
+                         int missingHelixCount,
                          int missingSheetCount)
+                : patternGraph(pGraph), baseGraph(bGraph)
     {
-        Init(patternGraph, baseGraph);
+//        init(patternGraph, baseGraph);
         this->nMissHelix = missingHelixCount;
         this->nMissSheet = missingSheetCount;
     }
@@ -91,35 +98,33 @@ namespace GraphMatch {
             delete usedNodes[i];
         }
 
-        LinkedNode * tempNode;
-        while(!queue->empty()) {
-            Elem res = queue->top();
+        Node * tempNode;
+        while(!q.empty()) {
+            Elem res = q.top();
             tempNode = res.second;
             delete tempNode;
-            queue->pop();
+            q.pop();
         }
 
-        delete queue;
         delete pathGenerator;
     }
 
-    inline void WongMatch::Init(Graph * patternGraph,
-                         Graph * baseGraph)
+    inline void WongMatch::init(Graph & pGraph, Graph & bGraph)
     {
 #ifdef VERBOSE
         cout << "Initializing search" << endl;
-        cout << "Base graph has " << baseGraph->GetHelixCount()
-             << " helices and " << baseGraph->GetSheetCount() << " sheets."
+        cout << "Base graph has " << baseGraph.getHelixCount()
+             << " helices and " << baseGraph.getSheetCount() << " sheets."
              << endl;
-        cout << "Pattern graph has " << patternGraph->GetHelixCount()
-             << " helices and " << patternGraph->GetSheetCount() << " sheets."
+        cout << "Pattern graph has " << patternGraph.getHelixCount()
+             << " helices and " << patternGraph.getSheetCount() << " sheets."
              << endl;
 #endif
         usedNodes.clear();
 #ifdef VERBOSE
         cout << "Creating priority queue" << endl;
 #endif
-        queue = new priority_queue<Elem>();
+        q = priority_queue<Elem>();
 #ifdef VERBOSE
         cout << "Loading pattern graph" << endl;
 #endif
@@ -133,7 +138,7 @@ namespace GraphMatch {
 #ifdef VERBOSE
         cout << "Finding the number of missing helices and sheets" << endl;
 #endif
-        nMissHelix = (patternGraph->GetNodeCount() - baseGraph->GetNodeCount()) / 2;
+        nMissHelix = (patternGraph.getNodeCount() - baseGraph.getNodeCount()) / 2;
         if(nMissHelix < 0) {
             nMissHelix = 0;
         }
@@ -148,8 +153,8 @@ namespace GraphMatch {
         int patternHelixNodes = 0;
         int patternSheetNodes = 0;
 
-        for(int i = 0; i < baseGraph->GetNodeCount(); i++) {
-            switch((int) (baseGraph->adjacencyMatrix[i][i][0] + 0.01)) {
+        for(int i = 0; i < baseGraph.getNodeCount(); i++) {
+            switch((int) (baseGraph.adjacencyMatrix[i][i][0] + 0.01)) {
                 case (GRAPHNODE_HELIX):
                     baseHelixNodes++;
                     break;
@@ -165,8 +170,8 @@ namespace GraphMatch {
              << baseSheetNodes << " sheet nodes." << endl;
 #endif
 
-        for(int i = 0; i < patternGraph->GetNodeCount(); i++) {
-            switch((int) (patternGraph->adjacencyMatrix[i][i][0] + 0.01)) {
+        for(int i = 0; i < patternGraph.getNodeCount(); i++) {
+            switch((int) (patternGraph.adjacencyMatrix[i][i][0] + 0.01)) {
                 case (GRAPHNODE_HELIX):
                     patternHelixNodes++;
                     break;
@@ -195,8 +200,8 @@ namespace GraphMatch {
 #endif
 
         if(!PERFORMANCE_COMPARISON_MODE) {
-            NormalizeGraphs();
-            NormalizeSheets();
+            normalizeGraphs();
+            normalizeSheets();
         }
         foundCount = 0;
         longestMatch = 0;
@@ -207,19 +212,19 @@ namespace GraphMatch {
 #endif
 
         // create and set up a new node to start the search
-        currentNode = new LinkedNode();
-        for(int j = 1; j <= patternGraph->nodeCount; j++) {
-            LinkedNode::AddNodeToBitmap(currentNode->m1Bitmap, j);
+        currentNode = new Node();
+        for(int j = 1; j <= patternGraph.nodeCount; j++) {
+            Node::AddNodeToBitmap(currentNode->m1Bitmap, j);
         }
-        for(int j = 1; j <= baseGraph->nodeCount; j++) {
-            LinkedNode::AddNodeToBitmap(currentNode->m2Bitmap, j);
+        for(int j = 1; j <= baseGraph.nodeCount; j++) {
+            Node::AddNodeToBitmap(currentNode->m2Bitmap, j);
         }
-        queue->push(Elem(currentNode->cost, currentNode));
-        pathGenerator = new PathGenerator(baseGraph);
+        q.push(Elem(currentNode->cost, currentNode));
+        pathGenerator = new PathGenerator(&baseGraph);
     }
 
     // searches for correspondences between the pattern graph and base graph.
-    inline int WongMatch::RunMatching(clock_t startTime) {
+    inline int WongMatch::run(clock_t startTime) {
 #ifdef VERBOSE
         cout << "Starting to search for correspondences." << endl;
         DisplayConstants();
@@ -228,13 +233,13 @@ namespace GraphMatch {
         clock_t finishTime;
         // repeat the following loop until all results are found
         while(continueLoop) {
-            PopBestNode();
+            popBestNode();
             if(currentNode == NULL) {
                 break;
             }
 
             // if currentNode contains a complete sequence match, add it to the solutions list
-            if(currentNode->depth == patternGraph->nodeCount) {
+            if(currentNode->depth == patternGraph.nodeCount) {
                 finishTime = clock();
                 foundCount++;
                 printf(": (%d expanded) (%f seconds) (%d parent size)\n",
@@ -244,7 +249,7 @@ namespace GraphMatch {
 #ifdef _WIN32
                 flushall();
 #endif
-                int numHelices = baseGraph->GetHelixCount();
+                int numHelices = baseGraph.getHelixCount();
                 solutions.push_back(SSEResult(currentNode,
                                                             numHelices
                                                             )
@@ -258,8 +263,8 @@ namespace GraphMatch {
                 // otherwise, expand currentNode and adds its children to usedNodes
             }
             else {
-                LinkedNodeStub * currentStub = new LinkedNodeStub(*currentNode);
-                if(ExpandNode(currentStub)) {
+                NodeStub * currentStub = new NodeStub(*currentNode);
+                if(expandNode(currentStub)) {
                     usedNodes.push_back(currentStub);
                 }
                 else {
@@ -268,7 +273,7 @@ namespace GraphMatch {
                 delete currentNode;
             }
             // continue until desired number of results are found
-            continueLoop = (foundCount < RESULT_COUNT) && (!queue->empty());
+            continueLoop = (foundCount < RESULT_COUNT) && (!q.empty());
         }
 
         //Cleaning up memory
@@ -277,12 +282,12 @@ namespace GraphMatch {
         }
         usedNodes.clear();
 
-        LinkedNode * tempNode;
-        while(!queue->empty()) {
-            Elem res = queue->top();
+        Node * tempNode;
+        while(!q.empty()) {
+            Elem res = q.top();
             tempNode = res.second;
             delete tempNode;
-            queue->pop();
+            q.pop();
         }
 
 #ifdef VERBOSE
@@ -294,12 +299,12 @@ namespace GraphMatch {
     }
 
     // returns one of the results of a correspondence search
-    inline SSEResult WongMatch::GetResult(int rank) {
+    inline SSEResult WongMatch::getResult(int rank) {
         return solutions[rank - 1];
     }
 
     // prints correspondence search results
-    inline void WongMatch::SaveResults() {
+    inline void WongMatch::saveResults() {
 #ifdef VERBOSE
         printf("Time taken in GetA %f\n", timeInGetA / (double)CLOCKS_PER_SEC);
         printf("Time taken in GetB %f\n", timeInGetB / (double)CLOCKS_PER_SEC);
@@ -310,14 +315,14 @@ namespace GraphMatch {
 
     // returns the cost of matching node p in the pattern graph to node qp in the base graph
     // this method does not include any cost for matching strands to sheets.
-    inline double WongMatch::GetC(int p, int qp) {
-        double cost = GetC(p, p, qp, qp);
+    inline double WongMatch::getC(int p, int qp) {
+        double cost = getC(p, p, qp, qp);
 
         // if sheet-to-strand match, compute the cost of the match based on the unused sheet capacity and the strand length
-        if(   (int) (patternGraph->adjacencyMatrix[ p-1][ p-1][0] + 0.01) == GRAPHNODE_SHEET
-           && (int) (   baseGraph->adjacencyMatrix[qp-1][qp-1][0] + 0.01)== GRAPHNODE_SHEET
+        if(   (int) (patternGraph.adjacencyMatrix[ p-1][ p-1][0] + 0.01) == GRAPHNODE_SHEET
+           && (int) (   baseGraph.adjacencyMatrix[qp-1][qp-1][0] + 0.01)== GRAPHNODE_SHEET
           )
-            cost = abs(patternGraph->nodeWeights[p-1] - baseGraph->nodeWeights[qp-1]);
+            cost = abs(patternGraph.nodeWeights[p-1] - baseGraph.nodeWeights[qp-1]);
 
         return cost;
     }
@@ -329,35 +334,35 @@ namespace GraphMatch {
     //   j != p and qj == qp -- edge match cost, special case where same sheet revisited by two consecutive nodes
     //   j != p and qj != qp -- edge match cost
     // note: only the first case is ever used, as all calls to this method have j=p and qj=qp.
-    inline double WongMatch::GetC(int j, int p, int qj, int qp) {
+    inline double WongMatch::getC(int j, int p, int qj, int qp) {
 
         double jpCost;
         double qjqpCost;
         double typeCost = 0;
 
         // if no edge exists between j and p
-        if(patternGraph->adjacencyMatrix[j - 1][p - 1][1] == MAXINT)
+        if(patternGraph.adjacencyMatrix[j - 1][p - 1][1] == MAXINT)
             jpCost = 1000;
         else {
             // if edge exists or if j == p
-            jpCost = patternGraph->adjacencyMatrix[j - 1][p - 1][1];
+            jpCost = patternGraph.adjacencyMatrix[j - 1][p - 1][1];
         }
 
         // if no edge exists between qj and qp
-        if(baseGraph->adjacencyMatrix[qj - 1][qp - 1][1] == MAXINT)
+        if(baseGraph.adjacencyMatrix[qj - 1][qp - 1][1] == MAXINT)
             qjqpCost = 1000;
         else {
             // if edge exists or if qj == qp
-            qjqpCost = baseGraph->adjacencyMatrix[qj - 1][qp - 1][1];
+            qjqpCost = baseGraph.adjacencyMatrix[qj - 1][qp - 1][1];
         }
 
         // if edge types or node types do not match. cost set here may be recomputed in next block.
-        if(patternGraph->adjacencyMatrix[j-1][p-1][0] != baseGraph->adjacencyMatrix[qj-1][qp-1][0])
+        if(patternGraph.adjacencyMatrix[j-1][p-1][0] != baseGraph.adjacencyMatrix[qj-1][qp-1][0])
             typeCost = 1000;
 
         // case where a sheet is revisited by two consecutive strands
-        if(    (int) (patternGraph->adjacencyMatrix[ j-1][ p-1][0] + 0.01) == GRAPHEDGE_LOOP
-            && (int) (   baseGraph->adjacencyMatrix[qj-1][qp-1][0] + 0.01) == GRAPHNODE_SHEET
+        if(    (int) (patternGraph.adjacencyMatrix[ j-1][ p-1][0] + 0.01) == GRAPHEDGE_LOOP
+            && (int) (   baseGraph.adjacencyMatrix[qj-1][qp-1][0] + 0.01) == GRAPHNODE_SHEET
           )
             typeCost = 0;
 
@@ -369,7 +374,7 @@ namespace GraphMatch {
     // m is the number of missing helices or sheets in the pattern graph
     // qj is the start node in the base graph
     // qp is the end node in the base graph
-    inline double WongMatch::GetCost(int d, int m, int qj, int qp, bool debugMsg) {
+    inline double WongMatch::getCost(int d, int m, int qj, int qp, bool debugMsg) {
         // TODO: Fix patthernLength and baseLength for sheet-to-sheet case.
         double patternLength = 0;
         double baseLength;
@@ -380,15 +385,15 @@ namespace GraphMatch {
 
         // Adding the length of the skipped helixes
         for(int i = 1; i < m; i++) {
-            patternLength += patternGraph->adjacencyMatrix[d+i-1][d+i-1][1];
+            patternLength += patternGraph.adjacencyMatrix[d+i-1][d+i-1][1];
 
-            if(patternGraph->adjacencyMatrix[d+i-1][d+i-1][0] == GRAPHNODE_SHEET) {
-                patternLength += patternGraph->nodeWeights[d + i - 1];
+            if(patternGraph.adjacencyMatrix[d+i-1][d+i-1][0] == GRAPHNODE_SHEET) {
+                patternLength += patternGraph.nodeWeights[d + i - 1];
                 skippedSheets++;
 #ifdef VERBOSE
                 if(debugMsg) {
                     cout << "  -- found strand " << d + i << ", adding "
-                         << patternGraph->nodeWeights[d + i - 1]
+                         << patternGraph.nodeWeights[d + i - 1]
                          << " to patternLength" << endl;
                 }
 #endif
@@ -402,11 +407,11 @@ namespace GraphMatch {
         bool firstIsLoop = false;
         bool lastIsLoop = false;
         for(int i = 0; i < m; i++) {
-            lastIsLoop =((int) (patternGraph->adjacencyMatrix[d+i-1][d+i][0] + 0.01) == GRAPHEDGE_LOOP);
+            lastIsLoop =((int) (patternGraph.adjacencyMatrix[d+i-1][d+i][0] + 0.01) == GRAPHEDGE_LOOP);
             if(i == 0)
                 firstIsLoop = lastIsLoop;
 
-            patternLength += patternGraph->adjacencyMatrix[d+i-1][d+i][1];
+            patternLength += patternGraph.adjacencyMatrix[d+i-1][d+i][1];
         }
         // TODO: Fix, has bug. But getting closer.
         skippedHelices = skippedHelices / 2;
@@ -417,7 +422,7 @@ namespace GraphMatch {
         // if edge begins with an unmatched node in the base graph
         if(qj == -1) { // special handling for missing helixes at the ends
             baseLength = 0;
-            switch((int) (patternGraph->adjacencyMatrix[d-1][d][0] + 0.01)) {
+            switch((int) (patternGraph.adjacencyMatrix[d-1][d][0] + 0.01)) {
                 case (GRAPHEDGE_HELIX):
                     weight = HELIX_WEIGHT_COEFFICIENT;
                     break;
@@ -430,10 +435,10 @@ namespace GraphMatch {
             }
         }
         else {
-            assert(baseGraph->EdgeExists(qj - 1, qp - 1));
-            baseLength = baseGraph->adjacencyMatrix[qj - 1][qp - 1][1];
-            euclideanEstimate = ((int) (baseGraph->adjacencyMatrix[qj-1][qp-1][0] + 0.01) == GRAPHEDGE_LOOP_EUCLIDEAN);
-            switch((int) (baseGraph->adjacencyMatrix[qj-1][qp-1][0] + 0.01)) {
+            assert(baseGraph.edgeExists(qj - 1, qp - 1));
+            baseLength = baseGraph.adjacencyMatrix[qj - 1][qp - 1][1];
+            euclideanEstimate = ((int) (baseGraph.adjacencyMatrix[qj-1][qp-1][0] + 0.01) == GRAPHEDGE_LOOP_EUCLIDEAN);
+            switch((int) (baseGraph.adjacencyMatrix[qj-1][qp-1][0] + 0.01)) {
                 case (GRAPHEDGE_HELIX):
                     weight = HELIX_WEIGHT_COEFFICIENT;
                     break;
@@ -449,14 +454,14 @@ namespace GraphMatch {
 
         if(m == 1) { // not a skip edge
             if( (qj != -1) && // first node in pattern graph is matched
-                ! ( ((int) (patternGraph->adjacencyMatrix[d-1][d][0] + 0.01) == (int) (baseGraph->adjacencyMatrix[qj-1][qp-1][0] + 0.01)))
+                ! ( ((int) (patternGraph.adjacencyMatrix[d-1][d][0] + 0.01) == (int) (baseGraph.adjacencyMatrix[qj-1][qp-1][0] + 0.01)))
                && // types don't match exactly
-                 ! (    ((int) (patternGraph->adjacencyMatrix[ d-1]   [d][0] + 0.01) == GRAPHEDGE_LOOP)
-                     && ((int) (baseGraph->adjacencyMatrix   [qj-1][qp-1][0] + 0.01) == GRAPHEDGE_LOOP_EUCLIDEAN)
+                 ! (    ((int) (patternGraph.adjacencyMatrix[ d-1]   [d][0] + 0.01) == GRAPHEDGE_LOOP)
+                     && ((int) (baseGraph.adjacencyMatrix   [qj-1][qp-1][0] + 0.01) == GRAPHEDGE_LOOP_EUCLIDEAN)
                    )
                && // not a loop-Euclidianloop match
-               ! (    ((int) (patternGraph->adjacencyMatrix[ d-1]   [d][0] + 0.01) == GRAPHEDGE_LOOP)
-                   && ((int) (baseGraph->adjacencyMatrix   [qj-1][qp-1][0] + 0.01) == GRAPHNODE_SHEET)
+               ! (    ((int) (patternGraph.adjacencyMatrix[ d-1]   [d][0] + 0.01) == GRAPHEDGE_LOOP)
+                   && ((int) (baseGraph.adjacencyMatrix   [qj-1][qp-1][0] + 0.01) == GRAPHNODE_SHEET)
                  )
               ) { // not a loop-sheet match
                 return -1;
@@ -464,7 +469,7 @@ namespace GraphMatch {
 #ifdef VERBOSE
             if(debugMsg) {
                 cout << "  -- euclidean dist = "
-                     << baseGraph->euclideanMatrix[qj - 1][qp - 1]
+                     << baseGraph.euclideanMatrix[qj - 1][qp - 1]
                      << ", patternLength = "
                      << patternLength
                      << ", loop fudge factor = "
@@ -475,16 +480,16 @@ namespace GraphMatch {
             }
             if(debugMsg) {
                 cout << "  -- scalar ratio required = "
-                     << baseGraph->euclideanMatrix[qj - 1][qp - 1] / patternLength
+                     << baseGraph.euclideanMatrix[qj - 1][qp - 1] / patternLength
                      << ", additive headroom = "
-                     << baseGraph->euclideanMatrix[qj - 1][qp - 1] - patternLength
+                     << baseGraph.euclideanMatrix[qj - 1][qp - 1] - patternLength
                      << endl;
             }
 #endif
 
             if(    (qj!=-1)
-                && ((int) (patternGraph->adjacencyMatrix[d - 1][d][0] + 0.01) == GRAPHEDGE_HELIX)
-                && (baseGraph->euclideanMatrix[qj-1][qp-1] > patternLength * EUCLIDEAN_VOXEL_TO_PDB_RATIO / HELIX_C_ALPHA_TO_ANGSTROMS)
+                && ((int) (patternGraph.adjacencyMatrix[d - 1][d][0] + 0.01) == GRAPHEDGE_HELIX)
+                && (baseGraph.euclideanMatrix[qj-1][qp-1] > patternLength * EUCLIDEAN_VOXEL_TO_PDB_RATIO / HELIX_C_ALPHA_TO_ANGSTROMS)
                ) {
 #ifdef VERBOSE
                 if(debugMsg) {
@@ -494,12 +499,12 @@ namespace GraphMatch {
                 return -1;
             }
             else if( (qj!= -1)
-                     && ((int) (patternGraph->adjacencyMatrix[d-1][d][0] + 0.01) == GRAPHEDGE_LOOP)
+                     && ((int) (patternGraph.adjacencyMatrix[d-1][d][0] + 0.01) == GRAPHEDGE_LOOP)
                    ) {
-                       if( (   (int) (patternGraph->adjacencyMatrix[d-1][d-1][0] + 0.01) == GRAPHNODE_SHEET
-                            || (int) (patternGraph->adjacencyMatrix[d]    [d][0] + 0.01) == GRAPHNODE_SHEET
+                       if( (   (int) (patternGraph.adjacencyMatrix[d-1][d-1][0] + 0.01) == GRAPHNODE_SHEET
+                            || (int) (patternGraph.adjacencyMatrix[d]    [d][0] + 0.01) == GRAPHNODE_SHEET
                            )
-                          && (baseGraph->euclideanMatrix[qj-1][qp-1] > patternLength*1.0* EUCLIDEAN_VOXEL_TO_PDB_RATIO / LOOP_C_ALPHA_TO_ANGSTROMS)
+                          && (baseGraph.euclideanMatrix[qj-1][qp-1] > patternLength*1.0* EUCLIDEAN_VOXEL_TO_PDB_RATIO / LOOP_C_ALPHA_TO_ANGSTROMS)
                          ) {
 #ifdef VERBOSE
                     if(debugMsg) {
@@ -508,11 +513,11 @@ namespace GraphMatch {
 #endif
                             return -1;
                            }
-                if( (    (int) (patternGraph->adjacencyMatrix[d-1][d-1][0] + 0.01) != GRAPHNODE_SHEET
-                      && (int) (patternGraph->adjacencyMatrix[d]    [d][0] + 0.01) != GRAPHNODE_SHEET
+                if( (    (int) (patternGraph.adjacencyMatrix[d-1][d-1][0] + 0.01) != GRAPHNODE_SHEET
+                      && (int) (patternGraph.adjacencyMatrix[d]    [d][0] + 0.01) != GRAPHNODE_SHEET
                     )
                    &&
-                    (baseGraph->euclideanMatrix[qj-1][qp-1] > patternLength * EUCLIDEAN_VOXEL_TO_PDB_RATIO / LOOP_C_ALPHA_TO_ANGSTROMS)
+                    (baseGraph.euclideanMatrix[qj-1][qp-1] > patternLength * EUCLIDEAN_VOXEL_TO_PDB_RATIO / LOOP_C_ALPHA_TO_ANGSTROMS)
                   ) {
 #ifdef VERBOSE
                     if(debugMsg) {
@@ -527,18 +532,18 @@ namespace GraphMatch {
             // not sure if these checks really help or if they just waste time
                 if(! (firstIsLoop && lastIsLoop)
                    || // pattern graph edge doesn't start and end with loops OR
-                     ( ( ((int) (baseGraph->adjacencyMatrix[qj - 1][qp - 1][0] + 0.01) != GRAPHEDGE_LOOP))
+                     ( ( ((int) (baseGraph.adjacencyMatrix[qj - 1][qp - 1][0] + 0.01) != GRAPHEDGE_LOOP))
                         &&// (base graph edge not a loop AND
-                       ( ((int) (baseGraph->adjacencyMatrix[qj - 1][qp - 1][0] + 0.01) != GRAPHEDGE_LOOP_EUCLIDEAN))
+                       ( ((int) (baseGraph.adjacencyMatrix[qj - 1][qp - 1][0] + 0.01) != GRAPHEDGE_LOOP_EUCLIDEAN))
                         &&	// base graph edge not a Euclidian loop AND
-                       ( ((int) (baseGraph->adjacencyMatrix[qj - 1][qp - 1][0] + 0.01) != GRAPHNODE_SHEET))
+                       ( ((int) (baseGraph.adjacencyMatrix[qj - 1][qp - 1][0] + 0.01) != GRAPHNODE_SHEET))
                      )
                    ) {// base graph edge not a sheet)
                       return -1;
                       }
                 // check here to sum up the parts of the skip edge and compare to the euclidian distance, if it's a euclidian edge in the base graph
                 if( (qj != -1)
-                   && (baseGraph->euclideanMatrix[qj - 1][qp - 1] > (patternLength * EUCLIDEAN_VOXEL_TO_PDB_RATIO))
+                   && (baseGraph.euclideanMatrix[qj - 1][qp - 1] > (patternLength * EUCLIDEAN_VOXEL_TO_PDB_RATIO))
                   ) {
                       return -1;
                     }
@@ -559,18 +564,18 @@ namespace GraphMatch {
         return 0;
     }
 
-    inline double WongMatch::GetF() {
+    inline double WongMatch::getF() {
         return currentNode->costGStar;
     }
 
-    inline void WongMatch::PopBestNode() {
+    inline void WongMatch::popBestNode() {
 #ifdef VERBOSE
         clock_t start = clock();
 #endif
         double cost;
-        Elem res = queue->top();
+        Elem res = q.top();
         currentNode = res.second;
-        queue->pop();
+        q.pop();
 #ifdef VERBOSE
         timeInQueue += clock() - start;
 #endif
@@ -578,24 +583,24 @@ namespace GraphMatch {
 
     // add in penalties for skipped helices and sheets
     // m is the number of nodes involved in the match. m=1 is no skipped helices or sheets.
-    inline double WongMatch::GetPenaltyCost(int d, int m, bool debugMsg) {
+    inline double WongMatch::getPenaltyCost(int d, int m, bool debugMsg) {
         double cost = 0.0;
-        int lastPatternNode = patternGraph->GetNodeCount() - 1;
+        int lastPatternNode = patternGraph.getNodeCount() - 1;
         bool startAtBeginning = (d == 0);
         bool finishAtEnd = (d + m - 1 == lastPatternNode);
         bool pastFirst = true;
         bool firstHelixFound = false;
         for(int k = d; k < d + m - 1; k++) {
             // add penalties for all skipped helices
-            if((int) (patternGraph->adjacencyMatrix[k][k+1][0] + 0.01) == GRAPHEDGE_HELIX) {
+            if((int) (patternGraph.adjacencyMatrix[k][k+1][0] + 0.01) == GRAPHEDGE_HELIX) {
                 cost += MISSING_HELIX_PENALTY;
-                cost += patternGraph->adjacencyMatrix[k][k + 1][1] * MISSING_HELIX_PENALTY_SCALED;
+                cost += patternGraph.adjacencyMatrix[k][k + 1][1] * MISSING_HELIX_PENALTY_SCALED;
 #ifdef VERBOSE
                 if(debugMsg) {
                     cout << "  -- adding missing helix penalties: fixed="
                          << MISSING_HELIX_PENALTY
                          << ", scaled="
-                         << patternGraph->nodeWeights[k] * MISSING_HELIX_PENALTY_SCALED
+                         << patternGraph.nodeWeights[k] * MISSING_HELIX_PENALTY_SCALED
                          << endl;
                 }
 #endif
@@ -622,16 +627,16 @@ namespace GraphMatch {
             // add penalties for skipped strands, unless the strand falls at the beginning of the sequence and is not the first node
             else if(  (startAtBeginning || pastFirst)
                      &&
-                      ((int) (patternGraph->adjacencyMatrix[k][k][0] + 0.01) == GRAPHNODE_SHEET)
+                      ((int) (patternGraph.adjacencyMatrix[k][k][0] + 0.01) == GRAPHNODE_SHEET)
                     ) {
                         cost += MISSING_SHEET_PENALTY;
-                        cost += patternGraph->nodeWeights[k] * MISSING_SHEET_PENALTY_SCALED;
+                        cost += patternGraph.nodeWeights[k] * MISSING_SHEET_PENALTY_SCALED;
 #ifdef VERBOSE
                 if(debugMsg) {
                     cout << "  -- adding missing sheet penalties: fixed="
                          << MISSING_SHEET_PENALTY
                          << ", scaled="
-                         << patternGraph->nodeWeights[k] * MISSING_SHEET_PENALTY_SCALED
+                         << patternGraph.nodeWeights[k] * MISSING_SHEET_PENALTY_SCALED
                          << endl;
                 }
 #endif
@@ -640,10 +645,10 @@ namespace GraphMatch {
         }
 
         if(   finishAtEnd
-           && patternGraph->adjacencyMatrix[lastPatternNode-1][lastPatternNode-1][0] + 0.01 == GRAPHNODE_SHEET
+           && patternGraph.adjacencyMatrix[lastPatternNode-1][lastPatternNode-1][0] + 0.01 == GRAPHNODE_SHEET
           ) {
                 cost += MISSING_SHEET_PENALTY;
-                cost += patternGraph->nodeWeights[lastPatternNode-1]*MISSING_SHEET_PENALTY_SCALED;
+                cost += patternGraph.nodeWeights[lastPatternNode-1]*MISSING_SHEET_PENALTY_SCALED;
             }
         return cost;
     }
@@ -653,11 +658,11 @@ namespace GraphMatch {
     // if an edge is found, match the pattern graph to that edge and add the match to the queue.
     // also match edges that include skip edges in the pattern graph
     // costs of matches are determined by the GetC method
-    inline bool WongMatch::ExpandNode(LinkedNodeStub * currentStub) {
+    inline bool WongMatch::expandNode(NodeStub * currentStub) {
         bool expanded = false;
         nExpand++;
 
-        LinkedNode * temp;
+        Node * temp;
         double edgeCost;
 #ifdef VERBOSE
         if(longestMatch < currentNode->depth) {
@@ -666,19 +671,19 @@ namespace GraphMatch {
         }
 #endif
 
-        int currentM1Top = patternGraph->nodeCount - currentNode->depth; // remaining unmatched nodes in sequence
+        int currentM1Top = patternGraph.nodeCount - currentNode->depth; // remaining unmatched nodes in sequence
         bool notConstrained;
 
         // Expanding nodes with a real terminal node
         // for every node i in baseGraph
-        for(int i = 1; i <= baseGraph->nodeCount; i++) {
+        for(int i = 1; i <= baseGraph.nodeCount; i++) {
             // if:
             //   currentNode is at level 0 of tree
             //   or
             //   i is in the currentNode bitmap, and there is an edge in baseGraph between currentNode and node i
             if(    (currentNode->depth == 0)
-                || (LinkedNode::IsNodeInBitmap(currentNode->m2Bitmap, i)
-                     && baseGraph->EdgeExists(currentNode->n2Node - 1, i - 1)
+                || (Node::IsNodeInBitmap(currentNode->m2Bitmap, i)
+                     && baseGraph.edgeExists(currentNode->n2Node - 1, i - 1)
                    )
                 ) {
                     int skippedHelixNodes = 0;
@@ -709,17 +714,17 @@ namespace GraphMatch {
                         // create new current node. i is the index of the new node(?), j is the number of skipped nodes.
 
                         // check whether i is a revisitable node (a sheet)
-                        bool revisitable = ((int) (baseGraph->adjacencyMatrix[i-1][i-1][0] + 0.01) == GRAPHNODE_SHEET);
+                        bool revisitable = ((int) (baseGraph.adjacencyMatrix[i-1][i-1][0] + 0.01) == GRAPHNODE_SHEET);
 
                         if(   ( (temp->depth == 0)
                                 && (j > 0)
                               )
-                           || ( (patternGraph->nodeCount - currentNode->depth == 0)
+                           || ( (patternGraph.nodeCount - currentNode->depth == 0)
                                 && (currentNode->n2Node == -1)
                               )
                           ) {
                                 if(    skippedHelixNodes == 0
-                                    && patternGraph->adjacencyMatrix[0][0][0] == GRAPHNODE_HELIX
+                                    && patternGraph.adjacencyMatrix[0][0][0] == GRAPHNODE_HELIX
                                   ) {
                                         skippedHelixNodes = 1;
 #ifdef VERBOSE
@@ -731,7 +736,7 @@ namespace GraphMatch {
 
                         // generate a current node, marking it as revisitable or not depending on result from test
                         // the constructor marches forward along the sequence, skipping j nodes
-                        currentNode = new LinkedNode(currentNode, currentStub,
+                        currentNode = new Node(currentNode, currentStub,
                                                 i, skippedHelixNodes,
                                                 skippedSheetNodes, revisitable);
 
@@ -741,7 +746,7 @@ namespace GraphMatch {
                         if(   (    (temp->depth == 0)
                                 && (j > 0)
                               )
-                           || (    (patternGraph->nodeCount - currentNode->depth == 0)
+                           || (    (patternGraph.nodeCount - currentNode->depth == 0)
                                 && (currentNode->n2Node == -1)
                               )
                           ) {
@@ -753,20 +758,20 @@ namespace GraphMatch {
                         if(temp->depth == 0)
                             edgeCost = 0;
                         else
-                            edgeCost = GetCost(temp->n1Node, j+1, temp->n2Node, currentNode->n2Node, false);
+                            edgeCost = getCost(temp->n1Node, j+1, temp->n2Node, currentNode->n2Node, false);
 
                         // if this is an allowed match:
                         if(edgeCost >= 0) {
                             //worked! currentNode->costGStar += temp->costGStar + edgeCost + GetC(currentNode->n1Node, currentNode->n2Node, currentNode);
                             currentNode->costGStar +=  temp->costGStar
                                                      + edgeCost
-                                                     + GetC(currentNode->n1Node, currentNode->n2Node);
+                                                     + getC(currentNode->n1Node, currentNode->n2Node);
 
                             // add costs for skipped helices and sheets
-                            currentNode->costGStar += GetPenaltyCost(temp->n1Node, j+1, false);
+                            currentNode->costGStar += getPenaltyCost(temp->n1Node, j+1, false);
 
-                            currentNode->cost = GetF();
-                            queue->push(Elem(currentNode->cost, currentNode));
+                            currentNode->cost = getF();
+                            q.push(Elem(currentNode->cost, currentNode));
                             expanded = true;
                         }
                         else { // not an allowed match
@@ -776,7 +781,7 @@ namespace GraphMatch {
                         currentNode = temp;
                     }
                     // if this node is a helix, increment j by one more to prepare for the next iteration
-                    switch((int) (patternGraph->adjacencyMatrix[currentNode->n1Node+j][currentNode->n1Node + j][0] + 0.01)) {
+                    switch((int) (patternGraph.adjacencyMatrix[currentNode->n1Node+j][currentNode->n1Node + j][0] + 0.01)) {
                         case GRAPHNODE_HELIX:
                             skippedHelixNodes += 2;
                             j += 2;
@@ -798,12 +803,12 @@ namespace GraphMatch {
         int remainingSheetNodes = 0;
         int remainingHelixNodes = 0;
         for(int l  = currentNode->n1Node + 1;
-                l <= patternGraph->nodeCount;
+                l <= patternGraph.nodeCount;
                 l++)
         {
-            if(patternGraph->adjacencyMatrix[l-1][l-1][0] == GRAPHNODE_HELIX)
+            if(patternGraph.adjacencyMatrix[l-1][l-1][0] == GRAPHNODE_HELIX)
                 remainingHelixNodes++;
-            else if(patternGraph->adjacencyMatrix[l-1][l-1][0] == GRAPHNODE_SHEET)
+            else if(patternGraph.adjacencyMatrix[l-1][l-1][0] == GRAPHNODE_SHEET)
                 remainingSheetNodes++;
         }
 
@@ -814,7 +819,7 @@ namespace GraphMatch {
         {
             notConstrained = true;
             for(int k = currentNode->n1Node + 1;
-                    k <= patternGraph->nodeCount;
+                    k <= patternGraph.nodeCount;
                     k++)
             {
                 notConstrained = notConstrained && IsNodeAssignmentAllowed(k,-1);
@@ -822,49 +827,49 @@ namespace GraphMatch {
 
             if(notConstrained) {
                 temp = currentNode;
-                currentNode = new LinkedNode(*temp);
-                currentNode->depth = (char)patternGraph->nodeCount;
+                currentNode = new Node(*temp);
+                currentNode->depth = (char)patternGraph.nodeCount;
                 currentNode->costGStar  = temp->costGStar;
-                currentNode->costGStar += GetPenaltyCost(temp->n1Node, remainingHelixNodes + remainingSheetNodes, false);
+                currentNode->costGStar += getPenaltyCost(temp->n1Node, remainingHelixNodes + remainingSheetNodes, false);
                 currentNode->cost = currentNode->costGStar;
-                queue->push(Elem(currentNode->cost, currentNode));
+                q.push(Elem(currentNode->cost, currentNode));
                 currentNode = temp;
             }
         }
         return expanded;
     }
 
-    inline void WongMatch::NormalizeGraphs() {
+    inline void WongMatch::normalizeGraphs() {
 #ifdef VERBOSE
         printf("Normalizing Graphs\n");
         printf("\tNormalizing the base graph from Angstroms to amino acids\nNormalized Graph:\n");
 #endif
-        for(int i = 0; i < baseGraph->nodeCount; i++) {
-            for(int j = 0; j < baseGraph->nodeCount; j++) {
+        for(int i = 0; i < baseGraph.nodeCount; i++) {
+            for(int j = 0; j < baseGraph.nodeCount; j++) {
                 // base graph
-                if(   baseGraph->adjacencyMatrix[i][j][1] != MAXINT
-                   && baseGraph->adjacencyMatrix[i][j][0] == GRAPHEDGE_HELIX
+                if(   baseGraph.adjacencyMatrix[i][j][1] != MAXINT
+                   && baseGraph.adjacencyMatrix[i][j][0] == GRAPHEDGE_HELIX
                   )
                 {
-                    baseGraph->SetCost(i+1, j+1, baseGraph->adjacencyMatrix[i][j][1] / HELIX_C_ALPHA_TO_ANGSTROMS);
+                    baseGraph.setCost(i+1, j+1, baseGraph.adjacencyMatrix[i][j][1] / HELIX_C_ALPHA_TO_ANGSTROMS);
                 }
-                else if(baseGraph->adjacencyMatrix[i][j][1] != MAXINT)
-                    baseGraph->SetCost(i + 1, j + 1, baseGraph->adjacencyMatrix[i][j][1] / LOOP_C_ALPHA_TO_ANGSTROMS);
+                else if(baseGraph.adjacencyMatrix[i][j][1] != MAXINT)
+                    baseGraph.setCost(i + 1, j + 1, baseGraph.adjacencyMatrix[i][j][1] / LOOP_C_ALPHA_TO_ANGSTROMS);
 
                 // euclidean distance matrix
-                if(baseGraph->adjacencyMatrix[i][j][0] == GRAPHEDGE_HELIX)
-                    baseGraph->euclideanMatrix[i][j] = baseGraph->euclideanMatrix[i][j] / HELIX_C_ALPHA_TO_ANGSTROMS;
+                if(baseGraph.adjacencyMatrix[i][j][0] == GRAPHEDGE_HELIX)
+                    baseGraph.euclideanMatrix[i][j] = baseGraph.euclideanMatrix[i][j] / HELIX_C_ALPHA_TO_ANGSTROMS;
                 else
-                    baseGraph->euclideanMatrix[i][j] = baseGraph->euclideanMatrix[i][j] / LOOP_C_ALPHA_TO_ANGSTROMS;
+                    baseGraph.euclideanMatrix[i][j] = baseGraph.euclideanMatrix[i][j] / LOOP_C_ALPHA_TO_ANGSTROMS;
             }
         }
 
 #ifdef VERBOSE
-        baseGraph->print();
+//        baseGraph.print();
 #endif
     }
 
-    inline void WongMatch::NormalizeSheets() {
+    inline void WongMatch::normalizeSheets() {
 #ifdef VERBOSE
         printf("\tNormalizing the sheet nodes in the base graph based on sheet ratio\nNormalized Graph:\n");
 #endif
@@ -872,21 +877,21 @@ namespace GraphMatch {
         double totalSheetSize = 0;
         double totalStrandLength = 0;
 
-        for(int i = 0; i < (int)baseGraph->skeletonHelixes.size(); i++) {
-            if(baseGraph->skeletonHelixes[i]->shapeType == GRAPHEDGE_SHEET) {
-                totalSheetSize += (double)baseGraph->skeletonHelixes[i]->length;
+        for(int i = 0; i < (int)baseGraph.skeletonHelixes.size(); i++) {
+            if(baseGraph.skeletonHelixes[i]->shapeType == GRAPHEDGE_SHEET) {
+                totalSheetSize += (double)baseGraph.skeletonHelixes[i]->length;
 #ifdef VERBOSE
                 cout << "after sheet " << i << ", total sheet size is now " << totalSheetSize << endl;
 #endif
             }
         }
 
-        for(int i = 0; i < (int)patternGraph->pdbStructures.size(); i++) {
-            if(patternGraph->pdbStructures[i]->sseType == GRAPHEDGE_SHEET) {
-                totalStrandLength += patternGraph->pdbStructures[i]->GetLengthResidues();
+        for(int i = 0; i < (int)patternGraph.pdbStructures.size(); i++) {
+            if(patternGraph.pdbStructures[i]->sseType == GRAPHEDGE_SHEET) {
+                totalStrandLength += patternGraph.pdbStructures[i]->GetLengthResidues();
 #ifdef VERBOSE
                 cout << "After adding strand " << i << " with length "
-                     << patternGraph->pdbStructures[i]->GetLengthResidues()
+                     << patternGraph.pdbStructures[i]->GetLengthResidues()
                      << ", total strand length is now " << totalStrandLength
                      << endl;
 #endif
@@ -899,17 +904,17 @@ namespace GraphMatch {
         cout << "sheet sizes must be scaled by a factor of " << ratio << endl;
         printf("\tNormalizing the base graph sheets from voxels to scaled voxels\nNormalized Graph:\n");
 #endif
-        for(int i = 0; i < baseGraph->nodeCount; i++) {
-            if(baseGraph->adjacencyMatrix[i][i][1] != MAXINT && baseGraph->adjacencyMatrix[i][i][0] == GRAPHNODE_SHEET) {
+        for(int i = 0; i < baseGraph.nodeCount; i++) {
+            if(baseGraph.adjacencyMatrix[i][i][1] != MAXINT && baseGraph.adjacencyMatrix[i][i][0] == GRAPHNODE_SHEET) {
                 // scale the sheet weight to the # of amino acids
-                baseGraph->SetCost(i + 1, baseGraph->nodeWeights[i] * ratio);
+                baseGraph.setCost(i + 1, baseGraph.nodeWeights[i] * ratio);
                 // take sqrt for matching algorithm
-                baseGraph->SetCost(i + 1, sqrt(baseGraph->nodeWeights[i]));
+                baseGraph.setCost(i + 1, sqrt(baseGraph.nodeWeights[i]));
             }
         }
 
 #ifdef VERBOSE
-        baseGraph->print();
+//        baseGraph.print();
 #endif
     }
 }

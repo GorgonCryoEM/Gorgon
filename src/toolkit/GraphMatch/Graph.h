@@ -1,5 +1,5 @@
-#ifndef TOOLKIT_GRAPHMATCH_STANDARDGRAPH_H
-#define TOOLKIT_GRAPHMATCH_STANDARDGRAPH_H
+#ifndef TOOLKIT_GRAPHMATCH_GRAPH_H
+#define TOOLKIT_GRAPHMATCH_GRAPH_H
 
 #include <cassert>
 #include <vector>
@@ -21,24 +21,24 @@ namespace GraphMatch {
 
     public:
         // Constructors
-        Graph(int nodeCount);
+        Graph(int nodeCount=0);
         Graph(char* fname);
         ~Graph();
 
-        int GetType(int i, int j); // The type of the edge (index starting from 1)
-        double GetCost(int i, int j); // The cost based on the graph labels (index starting from 1)
-        int GetNodeCount(); // Returns the number of nodes
-        int GetHelixCount(); // Returns the number of helices
-        int GetSheetCount(); // Returns the number of sheets
-        void SetType(int i, int j, int type); // The type of the edge (index starting from 1)
-        void SetCost(int i, int j, double cost); // The cost based on the graph labels (index starting from 1)
-        void SetCost(int i, double cost); // The cost of a node
-        void SetNodeCount(int nodeCount); // Sets the number of nodes
+        int getType(int i, int j); // The type of the edge (index starting from 1)
+        double getCost(int i, int j); // The cost based on the graph labels (index starting from 1)
+        int getNodeCount(); // Returns the number of nodes
+        int getHelixCount(); // Returns the number of helices
+        int getSheetCount(); // Returns the number of sheets
+        void setType(int i, int j, int type); // The type of the edge (index starting from 1)
+        void setCost(int i, int j, double cost); // The cost based on the graph labels (index starting from 1)
+        void setCost(int i, double cost); // The cost of a node
+        void setNodeCount(int nodeCount); // Sets the number of nodes
         void print();
-        void GenerateEuclidianMatrix(Volume * vol);
-        vector<Matcher2Helix> GetHelixLengths();
-        bool EdgeExists(int n, int m);
-        void MergeSheets(double maxDist); // Merge all sheets separated by maxDist or less
+        void generateEuclidianMatrix(Volume * vol);
+        vector<Matcher2Helix> getHelixLengths();
+        bool edgeExists(int n, int m);
+        void mergeSheets(double maxDist); // Merge all sheets separated by maxDist or less
     public:
         double adjacencyMatrix[MAX_NODES][MAX_NODES][2]; // 0th dimension edge type... 1st dimension distance
         double nodeWeights[MAX_NODES];
@@ -107,26 +107,26 @@ namespace GraphMatch {
         this->pdbStructures.clear();
     }
 
-    inline bool Graph::EdgeExists(int n, int m) {
+    inline bool Graph::edgeExists(int n, int m) {
         return (fabs(adjacencyMatrix[n][m][1] - MAXINT) > 0.01);
     }
 
-    inline int Graph::GetType(int i, int j) {
+    inline int Graph::getType(int i, int j) {
         return (int)adjacencyMatrix[i-1][j-1][0];
     }
 
-    inline double Graph::GetCost(int i, int j) {
+    inline double Graph::getCost(int i, int j) {
         if(adjacencyMatrix[i-1][j-1][1] == MAXINT) {
             return 1000;
         } else {
             return adjacencyMatrix[i-1][j-1][1];
         }
     }
-    inline int Graph::GetNodeCount() {
+    inline int Graph::getNodeCount() {
         return nodeCount;
     }
 
-    inline int Graph::GetHelixCount() {
+    inline int Graph::getHelixCount() {
         int count = 0;
         for (int i = 0; i < nodeCount; i++) {
             if (adjacencyMatrix[i][i][0] == GRAPHNODE_HELIX) {
@@ -136,7 +136,7 @@ namespace GraphMatch {
         return (count/2);
     }
 
-    inline int Graph::GetSheetCount() {
+    inline int Graph::getSheetCount() {
         int count = 0;
         for (int i = 0; i < nodeCount; i++) {
             if (adjacencyMatrix[i][i][0] == GRAPHNODE_SHEET) {
@@ -146,22 +146,22 @@ namespace GraphMatch {
         return count;
     }
 
-    inline void Graph::SetType(int i, int j, int type) {
+    inline void Graph::setType(int i, int j, int type) {
         assert(((i >= 1) && (i <= nodeCount) && (j >= 1) && (j <= nodeCount)));
         adjacencyMatrix[i-1][j-1][0] = type;
     }
 
-    inline void Graph::SetCost(int i, int j, double cost) {
+    inline void Graph::setCost(int i, int j, double cost) {
         assert(((i >= 1) && (i <= nodeCount) && (j >= 1) && (j <= nodeCount)));
         adjacencyMatrix[i-1][j-1][1] = cost;
     }
 
-    inline void Graph::SetCost(int i, double cost) {
+    inline void Graph::setCost(int i, double cost) {
         assert((i >= 1) && (i <= nodeCount));
         nodeWeights[i-1] = cost;
     }
 
-    inline void Graph::SetNodeCount(int nodeCount) {
+    inline void Graph::setNodeCount(int nodeCount) {
         this->nodeCount = nodeCount;
     }
 
@@ -200,7 +200,7 @@ namespace GraphMatch {
 
 
         for(int i = 0; i < nodeCount; i++) {
-            printf("   %d\t", i+1);
+//            printf("   %d\t", i+1);
             for(int j = 0; j < nodeCount; j++) {
                 if(adjacencyMatrix[i][j][0] == GRAPHEDGE_HELIX) {
                     temp = 'H';
@@ -220,30 +220,30 @@ namespace GraphMatch {
                 }
 
                 if(adjacencyMatrix[i][j][1] == MAXINT) {
-                    printf(" %c         \t|", temp);
+//                    printf(" %c         \t|", temp);
                 } else {
                     //printf(" %c %d\t|", temp, (int)(adjacencyMatrix[i][j][1] + 0.5));
-                    printf(" %c %f\t|", temp, adjacencyMatrix[i][j][1]);
+//                    printf(" %c %f\t|", temp, adjacencyMatrix[i][j][1]);
                 }
             }
-            printf("\n");
+//            printf("\n");
         }
 
 #ifdef VERBOSE
         // print out the euclidean matrix
         printf("\n  Euclidean distances:\n");
-        for(int i = 0; i < nodeCount; i++) {
-            printf("   %d\t", i+1);
-            for(int j = 0; j < nodeCount; j++) {
-                temp = 'E';
-                if(euclideanMatrix[i][j] == MAXINT) {
-                    printf(" %c         \t|", temp);
-                } else {
-                    printf(" %c %f\t|", temp, euclideanMatrix[i][j]);
-                }
-            }
-            printf("\n");
-        }
+//        for(int i = 0; i < nodeCount; i++) {
+//            printf("   %d\t", i+1);
+//            for(int j = 0; j < nodeCount; j++) {
+//                temp = 'E';
+//                if(euclideanMatrix[i][j] == MAXINT) {
+//                    printf(" %c         \t|", temp);
+//                } else {
+//                    printf(" %c %f\t|", temp, euclideanMatrix[i][j]);
+//                }
+//            }
+//            printf("\n");
+//        }
 #endif
 
 #ifdef VERBOSE
@@ -274,7 +274,7 @@ namespace GraphMatch {
         printf("Graph Density %f%%,   (With Euclidean edges %f%%)\n", used * 100 / (nodeCount * nodeCount), (used + euclideanUsed) * 100 / (nodeCount * nodeCount));
     }
 
-    inline vector<Matcher2Helix> Graph::GetHelixLengths() {
+    inline vector<Matcher2Helix> Graph::getHelixLengths() {
         vector<Matcher2Helix> helixes;
         helixes.clear();
         for(int i = 0 ; i < (int)pdbStructures.size(); i++) {
@@ -289,7 +289,7 @@ namespace GraphMatch {
 
     // measures Euclidian distance between all pairs of nodes, stores the distances in euclidianMatrix, and adds
     // graph edges (stored in adjacencyMatrix) where the Euclidian distance is below EUCLIDEAN_DISTANCE_THRESHOLD
-    inline void Graph::GenerateEuclidianMatrix(Volume * vol) {
+    inline void Graph::generateEuclidianMatrix(Volume * vol) {
         double xSpacing = vol->getSpacingX();
         double ySpacing = vol->getSpacingY();
         double zSpacing = vol->getSpacingZ();
@@ -391,14 +391,14 @@ namespace GraphMatch {
     }
 
     // Merge all sheets separated by maxDist or less
-    inline void Graph::MergeSheets(double maxDist) {
+    inline void Graph::mergeSheets(double maxDist) {
 #ifdef VERBOSE
         cout << "=== graph before merging sheets ===" << endl;
         print();
         cout << "=== ===" << endl;
 #endif
-        int firstSheet = GetHelixCount();
-        int numSheets = GetSheetCount();
+        int firstSheet = getHelixCount();
+        int numSheets = getSheetCount();
 #ifdef VERBOSE
         cout << "beginning merge with " << firstSheet << " helices and " << numSheets << " sheets. maxDist = " << maxDist << ". size of helixes vector is " << skeletonHelixes.size() << endl;
 #endif
@@ -553,7 +553,7 @@ namespace GraphMatch {
         }
 #ifdef VERBOSE
         cout << "=== graph after merging sheets ===" << endl;
-        print();
+//        print();
         cout << "=== ===" << endl;
 #endif
     }

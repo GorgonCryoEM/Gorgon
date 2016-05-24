@@ -1,9 +1,9 @@
 #ifndef TOOLKIT_GRAPHMATCH_PATHGENERATOR_H
 #define TOOLKIT_GRAPHMATCH_PATHGENERATOR_H
 
-//#include "Graph.h"
-//#include "LinkedNode.h"
-//#include "LinkedNodeStub.h"
+#include "Graph.h"
+//#include "Node.h"
+//#include "NodeStub.h"
 //#include <Core/volume.h>
 //#include "VectorMath.h"
 #include <vector>
@@ -17,7 +17,7 @@ namespace GraphMatch {
     public:
         PathGenerator(Graph * graph);
         void GenerateGraph(GraphNode * node, char * outFileName);
-        void GenerateGraph(LinkedNodeStub * node, char * outFileName);
+        void GenerateGraph(NodeStub * node, char * outFileName);
         bool MarkPath(int startHelix, int startCorner, int endHelix, int endCorner, const Volume & skeletonVol, Volume & newVol);
 
     private:
@@ -61,14 +61,14 @@ namespace GraphMatch {
         newVol.toMRCFile(outFileName);
     }
 
-    void PathGenerator::GenerateGraph(LinkedNodeStub * node, char * outFileName)  {
+    void PathGenerator::GenerateGraph(NodeStub * node, char * outFileName)  {
         Volume * skeletonVol = graph->skeletonVolume;
         Volume * newVol = new Volume(*skeletonVol);
 
         int startHelix = -1, startCorner = -1, endHelix = -1, endCorner = -1;
         bool marked;
 
-        for(LinkedNodeStub * currentNode = node;
+        for(NodeStub * currentNode = node;
             currentNode->parentNode != NULL;
             currentNode = currentNode->parentNode
            )
