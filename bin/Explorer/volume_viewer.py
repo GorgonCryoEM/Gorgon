@@ -19,21 +19,11 @@ class VolumeViewer(BaseViewer):
 
         self.renderer = Display()
         self.loaded = False
-        self.createUI()
+        self.surfaceEditor = VolumeSurfaceEditorForm(self.app, self)
         self.initVisualizationOptions(ModelVisualizationForm(self.app, self))
                       
-    def createUI(self):
-        self.surfaceEditor = VolumeSurfaceEditorForm(self.app, self, self)
-    
-    def processMouseWheel(self, amount, event):
-        if(event.modifiers() & QtCore.Qt.CTRL):
-            range = self.surfaceEditor.ui.histogram.maximumValue() - self.surfaceEditor.ui.histogram.minimumValue()
-            delta = range * amount / 100.0
-            
-            self.surfaceEditor.ui.histogram.setLowerValue(self.surfaceEditor.ui.histogram.lowerValue() - delta)
-    
     def setCenter(self, center):
         coords = self.worldToObjectCoordinates(center)
         [x, y, z] = [coords.x(), coords.y(), coords.z()]
         self.renderer.setDisplayRadiusOrigin(x, y, z)
-        return self.surfaceEditor.ui.checkBoxUseRadius.isChecked()
+        return True

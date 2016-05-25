@@ -9,6 +9,9 @@ class MainWindowForm(QtGui.QMainWindow):
 
     def __init__(self, version):
         super(MainWindowForm, self).__init__()
+        
+        self.menubar = self.menuBar()
+        self.docksMenu = self.menubar.addMenu('&Docks')
 
         self.scene = Scene(self)
         scenes = self.scene.getShapes()
@@ -16,7 +19,7 @@ class MainWindowForm(QtGui.QMainWindow):
         self.mainCamera = Camera(scenes, self)
         self.setCentralWidget(self.mainCamera)
         
-        self.dockWidgets = []
+#         self.dockWidgets = []
                 
         self.statusBar().showMessage(self.tr("Gorgon: Protein Visualization Suite"))
         self.setWindowTitle(self.tr("Gorgon Explorer - v" + version))
@@ -26,16 +29,13 @@ class MainWindowForm(QtGui.QMainWindow):
     def load(self):
         self.scene.load()
 
-    def addDockWidget (self, area, dockwidget):
-        QtGui.QMainWindow.addDockWidget(self, area, dockwidget)
-        dockwidget.area = area
-        dockwidget.dockLocationChanged.connect(self.dockLocationChanged(dockwidget))
-        
-    def removeDockWidget (self, dockwidget):
-        QtGui.QMainWindow.removeDockWidget(self, dockwidget)
-        if(dockwidget in self.dockWidgets):
-            self.dockWidgets.remove(dockwidget)
-            dockwidget.dockLocationChanged.disconnect()
+#         dockwidget.dockLocationChanged.connect(self.dockLocationChanged(dockwidget))
+#
+#     def removeDockWidget (self, dockwidget):
+#         QtGui.QMainWindow.removeDockWidget(self, dockwidget)
+#         if(dockwidget in self.dockWidgets):
+#             self.dockWidgets.remove(dockwidget)
+#             dockwidget.dockLocationChanged.disconnect()
     
     def exitApplication(self):
         QtGui.qApp.closeAllWindows()

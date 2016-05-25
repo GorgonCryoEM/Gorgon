@@ -14,7 +14,9 @@ try:
 except AttributeError:
     _fromUtf8 = lambda s: s
 
+
 class Ui_DialogVolumeSurfaceEditor(object):
+
     def setupUi(self, DialogVolumeSurfaceEditor):
         DialogVolumeSurfaceEditor.setObjectName(_fromUtf8("DialogVolumeSurfaceEditor"))
         DialogVolumeSurfaceEditor.resize(625, 305)
@@ -34,16 +36,9 @@ class Ui_DialogVolumeSurfaceEditor(object):
         self.radioButtonSolid.setObjectName(_fromUtf8("radioButtonSolid"))
         self.horizontalLayout_3.addWidget(self.radioButtonSolid)
         self.verticalLayout.addLayout(self.horizontalLayout_3)
-        self.histogram = HistogramSliderWidget(DialogVolumeSurfaceEditor)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(1)
         sizePolicy.setVerticalStretch(1)
-        sizePolicy.setHeightForWidth(self.histogram.sizePolicy().hasHeightForWidth())
-        self.histogram.setSizePolicy(sizePolicy)
-        self.histogram.setMinimumSize(QtCore.QSize(20, 40))
-        self.histogram.setMaximumSize(QtCore.QSize(16777215, 16777215))
-        self.histogram.setObjectName(_fromUtf8("histogram"))
-        self.verticalLayout.addWidget(self.histogram)
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
         self.labelIsoLevel = QtGui.QLabel(DialogVolumeSurfaceEditor)
@@ -112,8 +107,6 @@ class Ui_DialogVolumeSurfaceEditor(object):
         self.radioButtonSolid.setToolTip(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "Display volume as a solid volumetric rendering", None, QtGui.QApplication.UnicodeUTF8))
         self.radioButtonSolid.setWhatsThis(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "Display volume as a solid volumetric rendering", None, QtGui.QApplication.UnicodeUTF8))
         self.radioButtonSolid.setText(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "Solid view", None, QtGui.QApplication.UnicodeUTF8))
-        self.histogram.setStatusTip(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "Volume density histogram", None, QtGui.QApplication.UnicodeUTF8))
-        self.histogram.setWhatsThis(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "A histogram showing the distribution of density values in the volume.", None, QtGui.QApplication.UnicodeUTF8))
         self.labelIsoLevel.setToolTip(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "The currently selected density of the volume", None, QtGui.QApplication.UnicodeUTF8))
         self.labelIsoLevel.setWhatsThis(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "The currently selected density of the volume", None, QtGui.QApplication.UnicodeUTF8))
         self.labelIsoLevel.setText(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "Density:", None, QtGui.QApplication.UnicodeUTF8))
@@ -137,4 +130,3 @@ class Ui_DialogVolumeSurfaceEditor(object):
         self.checkBoxUseRadius.setWhatsThis(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "The volume will be displayed for this radius around the selected point", None, QtGui.QApplication.UnicodeUTF8))
         self.checkBoxUseRadius.setText(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "Display Radius:", None, QtGui.QApplication.UnicodeUTF8))
 
-from histogram_slider_widget import HistogramSliderWidget
