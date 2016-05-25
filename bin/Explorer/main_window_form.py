@@ -2,6 +2,7 @@ from PyQt4 import QtCore, QtGui
 from camera import Camera
 from volume_viewer import VolumeViewer
 from skeleton_viewer import SkeletonViewer
+from sphere import Sphere
 
 import sys, os
 
@@ -14,8 +15,12 @@ class MainWindowForm(QtGui.QMainWindow):
         self.volumeViewer = VolumeViewer(self)
         self.skeletonViewer = SkeletonViewer(self)
         self.volumeViewer1 = VolumeViewer(self)
+        self.sphere = Sphere(self)
+        
+        scenes = [self.volumeViewer, self.skeletonViewer, self.volumeViewer1, self.sphere]
+#         scenes = [self.volumeViewer1, self.sphere]
 
-        self.mainCamera = Camera([self.volumeViewer, self.skeletonViewer, self.volumeViewer1], self)
+        self.mainCamera = Camera(scenes, self)
         self.setCentralWidget(self.mainCamera)
         
         self.dockWidgets = []

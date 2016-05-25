@@ -119,6 +119,9 @@ BOOST_PYTHON_MODULE(@current_pylib@)
 //        .def("setObjectSpecificColoring", &RendererBase::setObjectSpecificColoring)
 //        .def("updateBoundingBox", &RendererBase::UpdateBoundingBox)
         .def("clearOtherHighlights", &RendererBase::clearOtherHighlights)
+        .def("drawSphere", &RendererBase::drawSphere)
+        .def("drawCylinder", &RendererBase::drawCylinder)
+        .def("drawLine", &RendererBase::drawLine)
     ;
   
   class_<Display, bases<Volume> >("Display", init<>())
