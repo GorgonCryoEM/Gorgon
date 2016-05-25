@@ -26,6 +26,8 @@ namespace Visualization {
             void draw(int subSceneIndex, bool selectEnabled);
 
         private:
+            Vec3F cuttingPlaneCenter;
+            Vec3F cuttingPlaneDirection;
             Volume cuttingVolume;
             NonManifoldMesh * cuttingMesh;
     };

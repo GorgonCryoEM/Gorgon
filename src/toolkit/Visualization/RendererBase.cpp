@@ -92,18 +92,6 @@ void RendererBase::unload() {
     selected = false;
 }
 
-bool RendererBase::setCuttingPlane(float position,
-                               float vecX, float vecY, float vecZ)
-{
-    Vec3F center = (minPts + maxPts) / 2.0;
-    float distance = (minPts - center).length();
-    cuttingPlaneDirection = Vec3F(vecX, vecY, vecZ);
-    cuttingPlaneDirection.normalize();
-    cuttingPlaneCenter = center + cuttingPlaneDirection * position * distance;
-    //printf("%lf %lf %lf - %lf %lf\n", cuttingPlaneCenter.values[0], cuttingPlaneCenter.values[1], cuttingPlaneCenter.values[2], position, distance); flushall();
-    return false;
-}
-
 void RendererBase::drawSphere(Vec3F center, float radius) {
     glPushMatrix();
     glTranslatef(center.X(), center.Y(), center.Z());

@@ -38,7 +38,6 @@ namespace Visualization {
             virtual Vec3F set3DCoordinates(int subsceneIndex, int ix0,
                                            int ix1 = -1, int ix2 = -1,
                                            int ix3 = -1, int ix4 = -1);
-            virtual bool setCuttingPlane(float position, float vecX, float vecY, float vecZ);
             void drawSphere(Vec3F center, float radius);
             void static drawCylinder(Vec3F pt1, Vec3F pt2,
                                      float radius, int slices = 10, int stacks = 10);
@@ -55,8 +54,6 @@ namespace Visualization {
             Vec3F minPts;
             Vec3F maxPts;
             bool selected;
-            Vec3F cuttingPlaneCenter;
-            Vec3F cuttingPlaneDirection;
             bool isObjectSpecificColoring;
     };
 }
