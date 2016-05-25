@@ -30,9 +30,7 @@ class ModelVisualizationForm(BaseDockWidget):
         self.connect(self.ui.radioButtonWireframe,   QtCore.SIGNAL("toggled (bool)"),     self.setDisplayStyle)
         self.connect(self.ui.radioButtonFlat,        QtCore.SIGNAL("toggled (bool)"),     self.setDisplayStyle)
         self.connect(self.ui.radioButtonSmooth,      QtCore.SIGNAL("toggled (bool)"),     self.setDisplayStyle)
-        self.connect(self.ui.checkBoxBoundingBox,    QtCore.SIGNAL("toggled (bool)"),     self.viewer.setBoundingBox)
         self.connect(self.ui.checkBoxModelVisible,   QtCore.SIGNAL("toggled (bool)"),     self.viewer.setModelVisibility)
-        self.connect(self.ui.pushButtonBoundingBoxColor, QtCore.SIGNAL("colorChanged ()"), self.setBoundingBoxColor)
         self.connect(self.ui.pushButtonModelColor,   QtCore.SIGNAL("colorChanged ()"),    self.setModelColor)
         self.connect(self.ui.pushButtonCenter,       QtCore.SIGNAL("pressed ()"),         self.viewer.emitViewerSetCenterLocal)
         self.connect(self.ui.pushButtonClose,        QtCore.SIGNAL("pressed ()"),         self.viewer.unload)
@@ -47,8 +45,6 @@ class ModelVisualizationForm(BaseDockWidget):
                                                  
     def updateFromViewer(self):
         self.ui.pushButtonModelColor.setColor(self.viewer.getModelColor())
-        self.ui.pushButtonBoundingBoxColor.setColor(self.viewer.getBoundingBoxColor())
-        self.ui.checkBoxBoundingBox.setChecked(self.viewer.showBox)
         self.ui.checkBoxModelVisible.setChecked(self.viewer.modelVisible)
          
         if(self.viewer.displayStyle == self.viewer.DisplayStyleWireframe):
@@ -77,9 +73,6 @@ class ModelVisualizationForm(BaseDockWidget):
         else:
             self.ui.labelModelName.setText("")
             
-    def setBoundingBoxColor(self):
-        self.viewer.setBoundingBoxColor(self.ui.pushButtonBoundingBoxColor.color())
-        
     def setModelColor(self):
         self.viewer.setModelColor(self.ui.pushButtonModelColor.color())
     

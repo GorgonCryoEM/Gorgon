@@ -13,7 +13,7 @@ from OpenGL.GLUT import *
 class VolumeViewer(BaseViewer):
 
     def __init__(self, main, parent=None):
-        BaseViewer.__init__(self, main, parent)
+        super(VolumeViewer, self).__init__(main, parent)
         self.title = "Volume"
         self.shortTitle = "VOL"
 
@@ -21,9 +21,3 @@ class VolumeViewer(BaseViewer):
         self.loaded = False
         self.surfaceEditor = VolumeSurfaceEditorForm(self.app, self)
         self.initVisualizationOptions(ModelVisualizationForm(self.app, self))
-                      
-    def setCenter(self, center):
-        coords = self.worldToObjectCoordinates(center)
-        [x, y, z] = [coords.x(), coords.y(), coords.z()]
-        self.renderer.setDisplayRadiusOrigin(x, y, z)
-        return True

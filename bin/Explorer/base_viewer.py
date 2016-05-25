@@ -13,7 +13,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
     DisplayStyleWireframe, DisplayStyleFlat, DisplayStyleSmooth = range(3)
     
     def __init__(self, main, parent=None):
-        QtOpenGL.QGLWidget.__init__(self, parent)
+        super(BaseViewer, self).__init__(parent)
         self.app = main
         self.title = "Untitled"
         self.shortTitle = "UNT"
@@ -27,15 +27,12 @@ class BaseViewer(QtOpenGL.QGLWidget):
 #         self.displayStyle = self.DisplayStyleSmooth
         self.displayStyle = self.DisplayStyleWireframe
         self.modelVisible = True
-        self.model2Visible = True
-        self.model3Visible = True
         self.rotation = self.identityMatrix()
         self.connect(self, QtCore.SIGNAL("modelChanged()"), self.modelChanged)
         self.connect(self, QtCore.SIGNAL("modelLoaded()"), self.modelChanged)
         self.connect(self, QtCore.SIGNAL("modelUnloaded()"), self.modelChanged)
 
-        self.glLists = []
-        self.showBox = False
+        self.glList =  GLuint()
         self.twoWayLighting = False
         
         self.multipleSelection = True
@@ -45,12 +42,8 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.visualizationOptions = visualizationForm
     
     def setModelColor(self, color):
-        oldColor = self.getModelColor()
-        self.setModelColor0(color)
-        self.repaintCamera()
-
-    def setModelColor0(self, color):
         self.modelColor = color
+        self.repaintCamera()
 
     def identityMatrix(self):
         return [[1.0, 0.0, 0.0, 0.0],
@@ -60,18 +53,12 @@ class BaseViewer(QtOpenGL.QGLWidget):
 				]
     
     def setScale(self, x, y, z):
-        self.setScaleNoEmit(x, y, z)
-        self.app.mainCamera.updateGL()
-
-    def setScaleNoEmit(self, x, y, z):
         self.renderer.setSpacing(x, y, z)
+        self.repaintCamera()
         
-    def setLocationV(self, v):
-        self.setLocation(v[0], v[1], v[2])
-
     def setLocation(self, x, y, z):
         self.renderer.setOrigin(x, y, z)
-        self.app.mainCamera.updateGL()
+        self.repaintCamera()
                         
     def setRotation(self, axis, angle):
         glMatrixMode(GL_MODELVIEW)
@@ -106,17 +93,8 @@ class BaseViewer(QtOpenGL.QGLWidget):
         scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
         return Vec3([worldCoords[i] / scale[i] for i in range(3)])
         
-    def setBoundingBox(self, visible):
-        self.showBox = visible
-        if(hasattr(self.app, "mainCamera")):
-            self.app.mainCamera.updateGL()
-
-    def getBoundingBoxColor(self):
-        return QtGui.QColor(255, 255, 255, 255)
-
     def repaintCamera(self):
-        if(hasattr(self.app, "mainCamera")):
-            self.app.mainCamera.updateGL()
+        self.app.mainCamera.updateGL()
         
     def setDisplayStyle(self, style):
         self.displayStyle = style
@@ -126,23 +104,9 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.modelVisible = visible
         self.repaintCamera()
 
-    def setModel2Visibility(self, visible):
-        self.model2Visible = visible
-        self.repaintCamera()
-        
-    def setModel3Visibility(self, visible):
-        self.model3Visible = visible
-        self.repaintCamera()
-        
     def getModelColor(self):
         return self.modelColor
 
-    def getModel2Color(self):
-        return QtGui.QColor(180, 180, 180, 150)
-    
-    def getModel3Color(self):
-        return QtGui.QColor(180, 180, 180, 150)
-    
     def setMaterials(self, color):
         glColor4f(color.redF(), color.greenF(), color.blueF(), color.alphaF())
         diffuseMaterial = [color.redF(), color.greenF(), color.blueF(), color.alphaF()]
@@ -254,21 +218,13 @@ class BaseViewer(QtOpenGL.QGLWidget):
         glEnable(GL_DEPTH_TEST);
         glDepthMask(GL_TRUE);
         
-        if(self.loaded and self.showBox):
-            self.setMaterials(self.getMinMaxColor())
-            self.renderer.drawBoundingBox()
-        
         self.emitDrawingModel()
         
-        visibility = self.getDrawVisibility()
-        colors     = self.getDrawColors()
-                
-        for i in range(len(self.glLists)):
-            if(self.loaded and visibility[i]):
-                self.setMaterials(colors[i])
-                self.initializeGLDisplayType()
-                glCallList(self.glLists[i])
-                self.unInitializeGLDisplayType();
+        if(self.loaded and self.modelVisible):
+            self.setMaterials(self.getModelColor())
+            self.initializeGLDisplayType()
+            glCallList(self.glList)
+            self.unInitializeGLDisplayType();
 
         glPopAttrib()
         glPopMatrix()
@@ -277,7 +233,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
         try:
             self.renderer.loadFile(str(fileName))
             print self.renderer.getSize()
-            self.setScaleNoEmit(self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ())
+            self.setScale(self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ())
             self.loaded = True
             self.dirty = False
             self.emitModelLoadedPreDraw()
@@ -307,40 +263,27 @@ class BaseViewer(QtOpenGL.QGLWidget):
     def extraDrawingRoutines(self):
         pass
     
-    def getDrawColors(self):
-        return [self.getModelColor(),  self.getModel2Color(), self.getModel3Color()]
-    
-    def getDrawVisibility(self):
-        return [self.modelVisible, self.model2Visible, self.model3Visible]
-        
     def modelChanged(self):
-        for list in self.glLists:
-            glDeleteLists(list,1)
-        self.glLists = []
+        glDeleteLists(self.glList,1)
             
-        visibility = self.getDrawVisibility()
-        colors = self.getDrawColors()
-        
         glPushAttrib(GL_LIGHTING_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT)
                          
         self.extraDrawingRoutines()
         
         if(self.loaded):
-            for i in range(3):
-                list = glGenLists(1)
-                glNewList(list, GL_COMPILE)
-                self.glLists.append(list)
+            self.glList = glGenLists(1)
+            glNewList(self.glList, GL_COMPILE)
 
-                if(colors[i].alpha() < 255):
-                    glDepthFunc(GL_LESS)
-                    glColorMask(False, False, False, False)
-                    self.renderer.draw(i, False)
-                    glDepthFunc(GL_LEQUAL)
-                    glColorMask(True, True, True, True)
-                    self.renderer.draw(i, self.selectEnabled or self.mouseMoveEnabled)
-                else:
-                    self.renderer.draw(i, self.selectEnabled or self.mouseMoveEnabled)
-                glEndList()
+            if(self.getModelColor().alpha() < 255):
+                glDepthFunc(GL_LESS)
+                glColorMask(False, False, False, False)
+                self.renderer.draw(0, False)
+                glDepthFunc(GL_LEQUAL)
+                glColorMask(True, True, True, True)
+                self.renderer.draw(0, self.selectEnabled or self.mouseMoveEnabled)
+            else:
+                self.renderer.draw(0, self.selectEnabled or self.mouseMoveEnabled)
+            glEndList()
                                     
         glPopAttrib()
 
