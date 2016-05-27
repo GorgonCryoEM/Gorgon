@@ -7,6 +7,7 @@ from Explorer.skeleton_viewer import SkeletonViewer
 from .volume_sse_builder_form import VolumeSSEBuilderForm
 from .calpha_viewer import CAlphaViewer
 from .sse_viewer import SSEViewer
+from Explorer import Grid3D
 
 
 class MainWindowForm3(QtGui.QMainWindow):
@@ -23,6 +24,9 @@ class MainWindowForm3(QtGui.QMainWindow):
         self.calphaViewer = CAlphaViewer(self)
         
         self.scene = [self.volumeViewer, self.skeletonViewer, self.calphaViewer]
+        
+        for i in xrange(-100, 101, 50):
+            self.scene.append(Grid3D(self, ( i, -100,  i), ( i, 100,  i)))
         
         self.mainCamera = Camera(self.scene, self)
         self.setCentralWidget(self.mainCamera)
