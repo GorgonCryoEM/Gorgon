@@ -23,7 +23,7 @@ class Grid3D(BaseViewer):
         self.renderer = RendererBase()
         
         self.loaded           = True
-        self.setColor(QtGui.QColor(20+self._col*100, 200, 50, 150))
+        self.setColor(QtGui.QColor(self._col*20, 20, 50, 150))
         Grid3D._col += 1
 #         self._col.setBlue(self._col.blue() + 20)
         print "self._col= ", self._col
