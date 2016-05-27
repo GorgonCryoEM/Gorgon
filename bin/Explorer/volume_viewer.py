@@ -25,7 +25,7 @@ class VolumeViewer(BaseViewer):
         minDensity = self.renderer.getMinDensity()
         defaultDensity = (minDensity + maxDensity) / 2
 
-        maxRadius = int(max(self.renderer.getMaxPos(0)/2, self.renderer.getMaxPos(1)/2, self.renderer.getMaxPos(2)/2));
+        maxRadius = int(max(self.renderer.getMaxPos(0), self.renderer.getMaxPos(1), self.renderer.getMaxPos(2)));
         self.renderer.setSampleInterval(1)
         self.renderer.setSurfaceValue(defaultDensity)
         self.renderer.setDisplayRadius(maxRadius)

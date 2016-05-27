@@ -72,4 +72,9 @@ namespace Core {
         return normal;
     }
 
+    void MeshBase::printVertices() const {
+        for(MUV::const_iterator it=vertices.begin(); it!=vertices.end(); ++it)
+            cout<<it->second<<endl;
+    }
+
 } /* namespace Core */

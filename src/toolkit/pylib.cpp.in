@@ -199,6 +199,7 @@ BOOST_PYTHON_MODULE(@current_pylib@)
 //        .def("setObjectSpecificColoring", &VolumeRenderer::setObjectSpecificColoring)
 //        .def("updateBoundingBox", &VolumeRenderer::updateBoundingBox)
 //        .def("clearOtherHighlights", &VolumeRenderer::clearOtherHighlights)
+        .def("printVertices", &VolumeRenderer::printVertices)
     ;
 
   class_<SkeletonMesh, bases<Volume> >("SkeletonMesh", init<>())

@@ -19,9 +19,9 @@ namespace Core {
 
     ostream& operator<<(ostream& out, const Vertex& obj) {
         return out//<<"\033[34m"
-                <<Vec3F(obj)
-                <<IdList(obj)
-                <<endl;
+                <<Vec3F(obj);
+//                <<IdList(obj)
+//                <<endl;
 //                      <<"\033[0m";
     }
 

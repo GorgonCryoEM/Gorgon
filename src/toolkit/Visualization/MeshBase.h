@@ -37,6 +37,8 @@ namespace Core {
             virtual void clear();
             virtual Vec3F getVertexNormal(TKey id);
             virtual Vec3F getFaceNormal(TKey faceHash);
+
+            void printVertices() const;
         protected:
             MUV vertices;
             TF faces;
