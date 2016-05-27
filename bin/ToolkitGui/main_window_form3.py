@@ -45,7 +45,6 @@ class MainWindowForm3(QtGui.QMainWindow):
         self.volumeViewer.load(self.args.volume)
         self.skeletonViewer.load(self.args.skeleton)
         self.form.modelLoaded()
-        self.volumeViewer.renderer.out()
         
     def exitApplication(self):
         QtGui.qApp.closeAllWindows()
