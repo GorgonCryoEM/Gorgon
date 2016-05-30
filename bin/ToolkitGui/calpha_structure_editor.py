@@ -5,7 +5,7 @@ from PyQt4 import QtGui, QtCore
 # from seq_model.findHelixCalphas import helixEndpointsToCAlphaPositions
 # from seq_model.Helix import Helix
 # import math
-# from vector_lib import *
+from Explorer.libs import *
 # from calpha_structure_editor_command_place_helix import CAlphaStructureEditorCommandPlaceHelix
 # from calpha_structure_editor_command_atom_placement import CAlphaStructureEditorCommandAtomPlacement
 # from calpha_structure_editor_command_change_position import CAlphaStructureEditorCommandChangePosition
@@ -112,7 +112,7 @@ if the user clicks accept.
             #return
         atomPos = atom.getPosition()
         atomPosMeshCoords =  skeletonViewer.worldToObjectCoordinates(self.CAlphaViewer.objectToWorldCoordinates([atomPos.x(), atomPos.y(), atomPos.z()]))
-        atomPosMeshCoords = Vector3DFloat(atomPosMeshCoords[0], atomPosMeshCoords[1], atomPosMeshCoords[2])
+        atomPosMeshCoords = Vec3(atomPosMeshCoords[0], atomPosMeshCoords[1], atomPosMeshCoords[2])
          
         if skeletonViewer.loaded:
             assert skeletonViewer.renderer.getSpacingX() == skeletonViewer.renderer.getSpacingY()
@@ -129,7 +129,7 @@ if the user clicks accept.
             for i in range(numIntersections):
                 pos = meshRenderer.getIntersectionPoint(i)
                 pos = self.CAlphaViewer.worldToObjectCoordinates(skeletonViewer.objectToWorldCoordinates([pos.x(), pos.y(), pos.z()]))
-                pos = Vector3DFloat(pos[0], pos[1], pos[2])
+                pos = Vec3(pos[0], pos[1], pos[2])
                 possiblePositionsList.append(pos)
             for i in range(len(possiblePositionsList)):
                 pos = possiblePositionsList[i]
@@ -293,21 +293,21 @@ given by self.helixNtermSpinBox and self.helixCtermSpinBox.
             
         moveStart = 1.5*(startIndex - predHelix.startIndex)
         moveEnd = 1.5*(stopIndex - predHelix.stopIndex)
-        midpoint = observedHelix.getMidpoint()
-        unitVector = observedHelix.getUnitVector()
-        structPredCoord1 = vectorAdd( midpoint, vectorScalarMultiply(-1*predHelix.getLengthInAngstroms()/2, unitVector) )
-        structPredCoord2 = vectorAdd( midpoint, vectorScalarMultiply(predHelix.getLengthInAngstroms()/2, unitVector) )
+        midpoint   = Vec3(observedHelix.getMidpoint()   )
+        unitVector = Vec3(observedHelix.getUnitVector() )
+        structPredCoord1 = midpoint + unitVector * (-predHelix.getLengthInAngstroms()/2)
+        structPredCoord2 = midpoint + unitVector * ( predHelix.getLengthInAngstroms()/2)
                 
         if direction == 0:
-            startMoveVector = vectorScalarMultiply( moveStart, unitVector)
-            endMoveVector = vectorScalarMultiply( moveEnd, unitVector)
-            coord1 = vectorAdd(structPredCoord1, startMoveVector)
-            coord2 = vectorAdd(structPredCoord2, endMoveVector)
+            startMoveVector = unitVector * moveStart
+            endMoveVector   = unitVector * moveEnd
+            coord1 = structPredCoord1 + startMoveVector
+            coord2 = structPredCoord2 + endMoveVector
         elif direction == 1:
-            startMoveVector = vectorScalarMultiply( -1*moveStart, unitVector)
-            endMoveVector = vectorScalarMultiply( -1*moveEnd, unitVector)
-            coord1 = vectorAdd(structPredCoord1, endMoveVector)
-            coord2 = vectorAdd(structPredCoord2, startMoveVector)
+            startMoveVector = unitVector * (-1*moveStart)
+            endMoveVector   = unitVector * (-1*moveEnd  )
+            coord1 = structPredCoord1 + endMoveVector
+            coord2 = structPredCoord2 + startMoveVector
                 
         command = CAlphaStructureEditorCommandPlaceHelix(self.currentChainModel, predHelix, startIndex, stopIndex, coord1, coord2, self, self.app.sseViewer.currentMatch.predicted, description = "Create C-alpha helix")
         self.undoStack.push(command)
@@ -444,7 +444,7 @@ This translates the selection on the x-axis.
             newX = self.posMoveDict['x'].value()
             moveX =  newX - oldX
             self.x = newX
-            translateVector = Vector3DFloat(moveX, 0, 0)
+            translateVector = Vec3(moveX, 0, 0)
             command = CAlphaStructureEditorCommandChangePosition(self.CAlphaViewer, self, True, translateVector, False, None, None, oldX, newX, 'x')
             self.undoStack.push(command)
 
@@ -457,7 +457,7 @@ This translates the selection on the y-axis.
             newY = self.posMoveDict['y'].value()
             moveY =  newY - oldY
             self.y = newY
-            translateVector = Vector3DFloat(0, moveY, 0)
+            translateVector = Vec3(0, moveY, 0)
             command = CAlphaStructureEditorCommandChangePosition(self.CAlphaViewer, self, True, translateVector, False, None, None, oldY, newY, 'y')
             self.undoStack.push(command)
           
@@ -470,7 +470,7 @@ This translates the selection on the z-axis.
             newZ = self.posMoveDict['z'].value()
             moveZ = newZ - oldZ
             self.z = newZ
-            translateVector = Vector3DFloat(0, 0, moveZ)
+            translateVector = Vec3(0, 0, moveZ)
             command = CAlphaStructureEditorCommandChangePosition(self.CAlphaViewer, self, True, translateVector, False, None, None, oldZ, newZ, 'z')
             self.undoStack.push(command)
        
@@ -484,7 +484,7 @@ screen.
             axis = self.CAlphaViewer.worldToObjectCoordinates(self.app.mainCamera.look)
             oldAngle = self.roll
             
-            axis = Vector3DFloat(axis[0], axis[1], axis[2])
+            axis = Vec3(axis[0], axis[1], axis[2])
             
             cm = self.CAlphaViewer.renderer.selectionCenterOfMass()
             newAngle = math.pi*angle/180
@@ -502,7 +502,7 @@ screen.
             axis = self.CAlphaViewer.worldToObjectCoordinates(self.app.mainCamera.right)
             oldAngle = self.pitch
             
-            axis = Vector3DFloat(axis[0], axis[1], axis[2])
+            axis = Vec3(axis[0], axis[1], axis[2])
             
             cm = self.CAlphaViewer.renderer.selectionCenterOfMass()
             newAngle = math.pi*angle/180
@@ -521,7 +521,7 @@ screen.
             axis = (-1*axis[0], -1*axis[1], -1*axis[2])
             oldAngle = self.yaw
             
-            axis = Vector3DFloat(axis[0], axis[1], axis[2])
+            axis = Vec3(axis[0], axis[1], axis[2])
             cm = self.CAlphaViewer.renderer.selectionCenterOfMass()
             newAngle = math.pi*angle/180
             command = CAlphaStructureEditorCommandChangePosition(self.CAlphaViewer, self, False, None, True, cm, axis, oldAngle, angle, 'yaw')
