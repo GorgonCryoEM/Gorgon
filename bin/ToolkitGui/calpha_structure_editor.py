@@ -683,7 +683,7 @@ be the current residue for the atomic editor.
                 continue
             else:
                 viewer.renderer.deleteAtom(atom.getHashKey())
-        viewer.modelChanged()
+#         viewer.modelChanged()
         self.possbileAtomsList = []
         self.atomJustAdded = None
         self.previouslySelectedPossibleAtom = None

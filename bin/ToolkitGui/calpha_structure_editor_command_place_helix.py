@@ -70,9 +70,9 @@ class CAlphaStructureEditorCommandPlaceHelix(QtGui.QUndoCommand):
         
         if not self.CAlphaViewer.loaded:
             self.CAlphaViewer.loaded = True
-            self.CAlphaViewer.modelChanged()
-        else:
-            self.CAlphaViewer.emitModelChanged()
+#             self.CAlphaViewer.modelChanged()
+#         else:
+#             self.CAlphaViewer.modelChanged()
         
     def undo(self):
         for resNum in range(self.startIndex, 1+self.stopIndex):

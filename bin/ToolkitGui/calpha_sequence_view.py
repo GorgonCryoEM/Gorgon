@@ -358,7 +358,7 @@ CAlphaSequenceView.
     selection = self.currentChainModel.getSelection()
     self.structurePrediction.chain.setSelection(selection)
     dock = self.parentWidget().parentWidget().parentWidget().parentWidget()
-    dock.viewer.modelChanged()
+#     dock.viewer.modelChanged()
     
   def setFont(self, newFont):
     self.fontName=newFont

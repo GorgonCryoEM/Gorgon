@@ -346,7 +346,7 @@ class BaseViewer(BaseDockWidget):
             self.performElementSelection(hitStack)
             if len(hitStack) == 0:
                 hitStack.append(-1)
-            self.modelChanged()
+#             self.modelChanged()
             self.emitElementClicked(hitStack, e)
             self.emitElementSelected(hitStack, e)
 
