@@ -116,20 +116,20 @@ if the user clicks accept.
         if skeletonViewer.loaded:
             assert skeletonViewer.renderer.getSpacingX() == skeletonViewer.renderer.getSpacingY()
             assert skeletonViewer.renderer.getSpacingX() == skeletonViewer.renderer.getSpacingZ()
-            numIntersections = meshRenderer.intersectMeshAndSphere( atomPosMeshCoords, radius/skeletonViewer.renderer.getSpacingX() )
+#             numIntersections = meshRenderer.intersectMeshAndSphere( atomPosMeshCoords, radius/skeletonViewer.renderer.getSpacingX() )
             #TODO: find a more elegant way than dividing radius by the apix_X to fix the scaling problem
             #print "\nNumber of intersections:", numIntersections
-            if numIntersections == 0:
-                self.atomicNumPossibilities.setText('of 0')
-                self.atomicPossibilityNumSpinBox.setRange(0, 0)
-                self.atomEnableTabElements(False)
-                return
+#             if numIntersections == 0:
+#                 self.atomicNumPossibilities.setText('of 0')
+#                 self.atomicPossibilityNumSpinBox.setRange(0, 0)
+#                 self.atomEnableTabElements(False)
+#                 return
             possiblePositionsList = []
-            for i in range(numIntersections):
-                pos = meshRenderer.getIntersectionPoint(i)
-                pos = self.CAlphaViewer.worldToObjectCoordinates(skeletonViewer.objectToWorldCoordinates([pos.x(), pos.y(), pos.z()]))
-                pos = Vec3(pos[0], pos[1], pos[2])
-                possiblePositionsList.append(pos)
+#             for i in range(numIntersections):
+#                 pos = meshRenderer.getIntersectionPoint(i)
+#                 pos = self.CAlphaViewer.worldToObjectCoordinates(skeletonViewer.objectToWorldCoordinates([pos.x(), pos.y(), pos.z()]))
+#                 pos = Vec3(pos[0], pos[1], pos[2])
+#                 possiblePositionsList.append(pos)
             for i in range(len(possiblePositionsList)):
                 pos = possiblePositionsList[i]
                 rawAtom=PDBAtom('TEMP', self.currentChainModel.getChainID(), i+1, 'CA')
