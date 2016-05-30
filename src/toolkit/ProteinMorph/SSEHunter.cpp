@@ -99,7 +99,7 @@ namespace Protein_Morph {
 //          float maxDistance = 4*sqrt(skeleton->scale[0]+skeleton->scale[1]+skeleton->scale[2]);//resolution;  // TODO: In EMAN1 the maximum distance is sqrt(3*4*4) voxels, we're using Angstroms here
         const unsigned int SCORE_RANGE = 4;
         const unsigned int MAX_DISTANCE_SQUARED = 3*SCORE_RANGE*SCORE_RANGE;
-        Vec3F skeletonOrigin = Vec3F(skeleton.getOriginObj());
+        Vec3F skeletonOrigin(skeleton.getOriginObj());
         Vec3F skeletonAtom;
         Vec3F pAtomPosition;
         float score = 0;
