@@ -42,8 +42,8 @@ namespace Protein_Morph {
 
             Vec3F origin = vol.getOriginObj();
             Vec3F position = origin + Vec3F(m[0] * spacing[0],
-                                                          m[1] * spacing[1],
-                                                          m[2] * spacing[2]
+                                            m[1] * spacing[1],
+                                            m[2] * spacing[2]
                                                           );
             atom.SetPosition(position);
             atom.SetOccupancy(1.0f);
