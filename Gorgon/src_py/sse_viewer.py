@@ -50,6 +50,8 @@ class SSEViewer(BaseViewer):
         self.visualizationOptions.ui.checkBoxModel3Visible.setVisible(False)
         self.visualizationOptions.ui.pushButtonModel3Color.setVisible(False)
         
+        self.connect(self, QtCore.SIGNAL('elementSelected (int, int, int, int, int, int, QMouseEvent)'), self.updateCurrentMatch)
+        
         self.connect(self.app.viewers["volume"], QtCore.SIGNAL('modelLoaded()'), self.updateActionsAndMenus)
         self.connect(self.app.viewers["volume"], QtCore.SIGNAL('modelUnloaded()'), self.updateActionsAndMenus)
         self.connect(self, QtCore.SIGNAL('modelLoaded()'), self.updateActionsAndMenus)
@@ -65,6 +67,8 @@ class SSEViewer(BaseViewer):
         self.updateActionsAndMenus()
 
     def createChildWindows(self):
+        self.sseBuilder = VolumeSSEBuilderForm(self.app, self, self)
+        self.sequencePredictor = SSESequencePredictorForm(self.app, self, self)
         self.helixCorrespondanceFinder = SSEHelixCorrespondenceFinderForm(self.app, self, self)
         
     def loadHelixDataFromFile(self, fileName):
@@ -106,16 +110,58 @@ class SSEViewer(BaseViewer):
         if not self.sheetFileName.isEmpty():
             self.loadSheetDataFromFile(self.sheetFileName)
             
-    def unloadData(self):
-        pass
+    def saveHelixData(self):
+        self.fileName = QtGui.QFileDialog.getSaveFileName(self, self.tr("Save Helix Annotations"), "", self.tr(self.renderer.getSupportedHelixSaveFileFormats()))
+        if not self.fileName.isEmpty():  
+            self.setCursor(QtCore.Qt.WaitCursor)
+            self.renderer.saveHelixFile(str(self.fileName))
+            self.dirty = False
+            self.setCursor(QtCore.Qt.ArrowCursor)
 
+    def saveSheetData(self):
+        self.fileName = QtGui.QFileDialog.getSaveFileName(self, self.tr("Save Sheet Annotations"), "", self.tr(self.renderer.getSupportedSheetSaveFileFormats()))
+        if not self.fileName.isEmpty():  
+            self.setCursor(QtCore.Qt.WaitCursor)
+            self.renderer.saveSheetFile(str(self.fileName))
+            self.dirty = False
+            self.setCursor(QtCore.Qt.ArrowCursor)
+
+    def getSessionInfo(self, sessionManager):
+        info = BaseViewer.getSessionInfo(self, sessionManager)  
+        info.extend(sessionManager.getRemarkLines(self.shortTitle, "HELIX_LOADED", self.helixLoaded))
+        info.extend(sessionManager.getRemarkLines(self.shortTitle, "HELIX_FILE", self.helixFileName))        
+        info.extend(sessionManager.getRemarkLines(self.shortTitle, "SHEET_LOADED", self.sheetLoaded))
+        info.extend(sessionManager.getRemarkLines(self.shortTitle, "SHEET_FILE", self.sheetFileName))
+        return info
+                       
+    def loadSessionInfo(self, sessionManager, sessionProperties):
+        BaseViewer.loadSessionInfo(self, sessionManager, sessionProperties)        
+        self.helixLoaded = sessionManager.getProperty(sessionProperties, self.shortTitle, "HELIX_LOADED")
+        if self.helixLoaded:
+            self.helixFileName = sessionManager.getProperty(sessionProperties, self.shortTitle, "HELIX_FILE")
+            self.loadHelixDataFromFile(self.helixFileName)
+        self.sheetLoaded = sessionManager.getProperty(sessionProperties, self.shortTitle, "SHEET_LOADED")
+        if self.sheetLoaded:
+            self.sheetFileName = sessionManager.getProperty(sessionProperties, self.shortTitle, "SHEET_FILE")
+            self.loadSheetDataFromFile(self.sheetFileName)
+
+                                                    
+    def unloadData(self):
+        self.loaded = False
+        self.helixLoaded = False
+        self.sheetLoaded = False
+        self.helixFileName = ""
+        self.sheetFileName = ""
+        BaseViewer.unloadData(self)
+          
+          
     def makeSheetSurfaces(self, offsetx, offsety, offsetz, scalex, scaley, scalez):
         # rebuild the set of sheets to render
         numHelicesSheets = self.correspondenceEngine.getSkeletonSSECount()
         self.renderer.unloadGraphSSEs()
-#         for i in range(numHelicesSheets):
-#             if self.correspondenceEngine.getSkeletonSSE(i).isSheet():
-#                 self.renderer.loadGraphSSE(i, self.correspondenceEngine.getSkeletonSSE(i), offsetx, offsety, offsetz, scalex, scaley, scalez)
+        for i in range(numHelicesSheets):
+            if self.correspondenceEngine.getSkeletonSSE(i).isSheet():
+                self.renderer.loadGraphSSE(i, self.correspondenceEngine.getSkeletonSSE(i), offsetx, offsety, offsetz, scalex, scaley, scalez)
 
     def createActions(self):
         openHelixAct = QtGui.QAction(self.tr("&Helix Annotations"), self)
@@ -133,10 +179,12 @@ class SSEViewer(BaseViewer):
         saveHelixAct = QtGui.QAction(self.tr("&Helix Annotations..."), self)
         saveHelixAct.setStatusTip(self.tr("Save helix annotations"))
         self.app.actions.addAction("save_SSE_Helix", saveHelixAct)
+        self.connect(saveHelixAct, QtCore.SIGNAL("triggered()"), self.saveHelixData)
 
         saveSheetAct = QtGui.QAction(self.tr("&Sheet Annotations..."), self)
         saveSheetAct.setStatusTip(self.tr("Save sheet annotations"))
         self.app.actions.addAction("save_SSE_Sheet", saveSheetAct)
+        self.connect(saveSheetAct, QtCore.SIGNAL("triggered()"), self.saveSheetData)
                        
         closeAct = QtGui.QAction(self.tr("SSE Annotations"), self)
         closeAct.setStatusTip(self.tr("Close the loaded secondary structure element file"))
@@ -150,6 +198,10 @@ class SSEViewer(BaseViewer):
         self.app.actions.addAction("fit_SSE_Helix", fitAct)
 
     def createMenus(self):
+        self.app.menus.addAction("file-open-helix", self.app.actions.getAction("load_SSE_Helix"), "file-open")    
+        self.app.menus.addAction("file-open-sheet", self.app.actions.getAction("load_SSE_Sheet"), "file-open")
+        self.app.menus.addAction("file-save-helix", self.app.actions.getAction("save_SSE_Helix"), "file-save");        
+        self.app.menus.addAction("file-save-sheet", self.app.actions.getAction("save_SSE_Sheet"), "file-save");        
         self.app.menus.addAction("file-close-sse", self.app.actions.getAction("unload_SSE"), "file-close");
         self.app.menus.addMenu("actions-sse", self.tr("Secondary Structure &Element"), "actions");
         self.app.menus.addAction("actions-sse-fit-helix", self.app.actions.getAction("fit_SSE_Helix"), "actions-sse");
@@ -160,8 +212,49 @@ class SSEViewer(BaseViewer):
         self.app.actions.getAction("save_SSE_Sheet").setEnabled(self.sheetLoaded)
         self.app.actions.getAction("fit_SSE_Helix").setEnabled(self.loaded and self.app.viewers["volume"].loaded)
                         
+    def updateCurrentMatch(self, sseType, sseIndex):
+        # When an element is selected in this viewer, if that item is a helix,
+        # this sets self.currentMatch to the observed, predicted match for that
+        # helix. It then emits an 'SSE selected' signal. 
+        print "Helix #: ", sseIndex
+        
+        self.currentMatch = None
+        
+        if self.multipleSelection == True:
+            self.selectedObjects.append(sseIndex)
+        else:
+            self.selectedObjects = []
+            self.selectedObjects.append(sseIndex)
+            
+        if sseType == 0:
+            try:
+                self.correspondenceLibrary
+            except AttributeError:
+                return
+            corrLib = self.correspondenceLibrary
+            currCorrIndex = corrLib.getCurrentCorrespondenceIndex()
+            matchList = corrLib.correspondenceList[currCorrIndex].matchList
+            for match in matchList:
+                if match.observed is not None and match.observed.label == sseIndex: 
+                    self.currentMatch = match
+                    print self.currentMatch
+                    self.emit(QtCore.SIGNAL("SSE selected"))
+                    break
+
     def fitSelectedSSEs(self):
-        pass
+        self.app.mainCamera.setCursor(QtCore.Qt.BusyCursor)        
+        self.renderer.fitSelectedSSEs(self.app.viewers["volume"].renderer.getVolume())
+        self.emitModelChanged()
+        self.app.mainCamera.setCursor(QtCore.Qt.ArrowCursor)
+        
         
     def updateCorrespondences(self, corrs):
         self.correspondences  = corrs
+        
+    # Overridden
+    def emitElementClicked(self, hitStack, event):        
+        if (self.app.viewers["calpha"].displayStyle == self.app.viewers["calpha"].DisplayStyleRibbon):
+            if(self.app.mainCamera.mouseRightPressed and hitStack[0] == 0):
+                self.emit(QtCore.SIGNAL("SSERightClicked(PyQt_PyObject, PyQt_PyObject, QMouseEvent)"), hitStack[0], hitStack[1], event)
+        else:
+            BaseViewer.emitElementClicked(self, hitStack, event)
