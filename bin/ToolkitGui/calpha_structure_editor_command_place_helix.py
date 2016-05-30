@@ -70,7 +70,7 @@ class CAlphaStructureEditorCommandPlaceHelix(QtGui.QUndoCommand):
         
         if not self.CAlphaViewer.loaded:
             self.CAlphaViewer.loaded = True
-            self.CAlphaViewer.emitModelLoaded()
+            self.CAlphaViewer.modelChanged()
         else:
             self.CAlphaViewer.emitModelChanged()
         
@@ -113,6 +113,6 @@ class CAlphaStructureEditorCommandPlaceHelix(QtGui.QUndoCommand):
         
         if not self.CAlphaViewer.loaded:
             self.CAlphaViewer.loaded = True
-            self.CAlphaViewer.emitModelLoaded()
+            self.CAlphaViewer.modelChanged()
         else:
             self.CAlphaViewer.emitModelChanged()
