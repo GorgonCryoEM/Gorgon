@@ -103,7 +103,7 @@ class BaseViewer(BaseDockWidget):
             loc = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]
 #             loc = -loc
 #             loc = [0, 0, 0]
-            print self.title, " (loc): ", loc
+#             print self.title, " (loc): ", loc
         except:
             print "....Exception: ", self.title, ": getOrigin()"
         else:
