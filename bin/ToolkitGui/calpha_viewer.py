@@ -77,6 +77,10 @@ class CAlphaViewer(BaseViewer):
             self.setAtomColorsAndVisibility(self.displayStyle)
             self.modelChanged()
 
+    def drawGL(self):
+        for i in range(3):
+            self.renderer.draw(i,True)
+    
     #Overridden
     def getDrawColors(self):
         if(self.displayStyle == self.DisplayStyleBackbone):
