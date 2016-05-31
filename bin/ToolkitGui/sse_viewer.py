@@ -168,11 +168,10 @@ class SSEViewer(BaseViewer):
         
         self.currentMatch = None
         
-        if self.multipleSelection == True:
-            self.selectedObjects.append(sseIndex)
-        else:
+        if self.multipleSelection == False:
             self.selectedObjects = []
-            self.selectedObjects.append(sseIndex)
+
+        self.selectedObjects.append(sseIndex)
             
         if sseType == 0:
             try:
