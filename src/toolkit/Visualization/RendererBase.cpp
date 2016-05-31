@@ -14,7 +14,7 @@ namespace Visualization {
     {}
 
     float RendererBase::getMinPos(int i) const {
-        return 0.0;
+        return -100.0;
     }
 
     float RendererBase::getMaxPos(int i) const {
@@ -47,15 +47,15 @@ namespace Visualization {
     }
 
     float RendererBase::getOriginX() const {
-        return 40;
+        return 0;
     }
 
     float RendererBase::getOriginY() const {
-        return 40;
+        return 0;
     }
 
     float RendererBase::getOriginZ() const {
-        return 40;
+        return 0;
     }
 
 }

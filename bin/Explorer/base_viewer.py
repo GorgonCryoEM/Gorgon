@@ -107,7 +107,7 @@ class BaseViewer(BaseDockWidget):
         except:
             pass
         else:
-            glTranslated(loc[0]/2, loc[1]/2, loc[2]/2)
+            glTranslated(loc[0], loc[1], loc[2])
         glMultMatrixf(self.rotation)
         try:
             scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
