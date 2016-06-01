@@ -75,7 +75,11 @@ class BaseViewer(BaseDockWidget):
         self.setupGlList()
 
     def initializeGLDisplayType(self):
-        glPushAttrib(GL_LIGHTING_BIT | GL_ENABLE_BIT)
+        try:
+            glPushAttrib(GL_LIGHTING_BIT | GL_ENABLE_BIT)
+        except:
+            print "...Exception: %s: initializeGLDisplayType()" % self.title
+            
         if(self.isClosedMesh):
             glEnable(GL_CULL_FACE)
         else:
