@@ -55,6 +55,17 @@ namespace Visualization {
     void CAlphaRenderer::drawBackboneModel(int subSceneIndex, bool selectEnabled) {
         GLfloat emissionColor[4] = {1.0, 1.0, 1.0, 1.0};
 
+        selectEnabled = true;
+
+//        #ifdef GORGON_DEBUG
+              cout<<"\033[32mDEBUG: File:   CAlphaRenderer.cpp"<<endl;
+              cout<<"DEBUG: Method: CAlphaRenderer::drawBackboneModel(int, bool)\033[0m"<<endl;
+              cout<<"...subSceneIndex, selectEnabled...: "<<subSceneIndex<<", "<<selectEnabled<<endl;
+              cout<<"......atoms.size(): "<<atoms.size()<<endl;
+              cout<<"......bonds.size(): "<<bonds.size()<<endl;
+//        #endif
+
+
         if(subSceneIndex == 0) { // Drawing Atoms
             if(selectEnabled) {
                 atomHashKeys.clear();
@@ -76,7 +87,8 @@ namespace Visualization {
                         atomHashKeys.push_back(it->first); // adding the atom hash key as an element
                         glLoadName(static_cast<GLuint>( atomHashKeys.size() - 1)); // the index of the element just added
                     }
-                    if(it->second.GetVisible()) {
+                    if(1) {
+                        cout<<".........drawSphere: "<<it->second.GetPosition()<<"\t"<<it->second.GetAtomRadius()<<endl;
                         drawSphere(it->second.GetPosition(), it->second.GetAtomRadius() * 0.3);
                     }
 
@@ -112,7 +124,8 @@ namespace Visualization {
                     OpenGLUtils::SetColor(0, 0, 1.0, 1.0);
                 }
 
-                if(atoms[bonds[i].GetAtom0Ix()].GetVisible() && atoms[bonds[i].GetAtom1Ix()].GetVisible()) {
+                if(1) {
+                    cout<<".........drawCylinder: "<<atoms[bonds[i].GetAtom0Ix()].GetPosition()<<"\t"<<atoms[bonds[i].GetAtom1Ix()].GetPosition()<<endl;
                     drawCylinder(atoms[bonds[i].GetAtom0Ix()].GetPosition(), atoms[bonds[i].GetAtom1Ix()].GetPosition(), 0.1, 10, 2);
                 }
                 glPopAttrib();
@@ -123,7 +136,8 @@ namespace Visualization {
             }
         } else if(subSceneIndex == 2) { // Drawing spheres to cover up the cylinder edges
             for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {
-                if(i->second.GetName() == "CA") {
+                if(1) {
+                    cout<<".........drawSphere: "<<i->second.GetPosition()<<endl;
                     drawSphere(i->second.GetPosition(), 0.1);
                 }
             }
