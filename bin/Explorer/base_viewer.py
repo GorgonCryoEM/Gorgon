@@ -127,6 +127,10 @@ class BaseViewer(BaseDockWidget):
         if(self.loaded and self.modelVisible):
             self.setMaterials()
             self.initializeGLDisplayType()
+            
+            print "self.glList: %s: %d" %(self.title, self.glList)
+            print glIsList(self.glList)
+            
             glCallList(self.glList)
             self.unInitializeGLDisplayType();
 
