@@ -78,10 +78,7 @@ class Camera(QtOpenGL.QGLWidget):
         self.setLights()
         for i in range(len(self.scene)):
             glPushName(i)
-            try:
-                self.scene[i].paintGL()
-            except:
-                print "....Exception: ", self.scene[i].title, ": scene[%d].paintGL()" % i
+            self.scene[i].paintGL()
             glPopName()
         glPopMatrix()
 
@@ -374,10 +371,7 @@ class Camera(QtOpenGL.QGLWidget):
                     self.scene[sceneId].processMouseClick(minNames, e, False)
             else:                                           # Single selection mode
                 for i in range(len(self.scene)):
-                    try:
-                        self.scene[i].modelChanged()
-                    except:
-                        print "......exception: ", self.scene[i].title, "scene[%d].modelChanged()" % i
+                    self.scene[i].modelChanged()
                 
                 for i in range(len(self.scene)):
                     if (i == sceneId):
