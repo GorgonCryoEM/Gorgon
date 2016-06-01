@@ -56,8 +56,8 @@ class CAlphaStructureEditor(QtGui.QWidget):
             self.connect(self.posMoveDict['pitch'], QtCore.SIGNAL('valueChanged(int)'), self.posRotateCM_pitch)
             self.connect(self.posMoveDict['yaw'], QtCore.SIGNAL('valueChanged(int)'), self.posRotateCM_yaw)
             self.connect(self.removeButton, QtCore.SIGNAL('clicked()'), self.removeSelectedAtoms)
-            self.connect(self.app.volumeViewer, QtCore.SIGNAL("modelLoaded()"), self.updateLoopEditorEnables)
-            self.connect(self.app.volumeViewer, QtCore.SIGNAL("modelUnloaded()"), self.updateLoopEditorEnables)
+#             self.connect(self.app.volumeViewer, QtCore.SIGNAL("modelLoaded()"), self.updateLoopEditorEnables)
+#             self.connect(self.app.volumeViewer, QtCore.SIGNAL("modelUnloaded()"), self.updateLoopEditorEnables)
       
     def atomChoosePossibleAtom(self, choiceNum):
         """
@@ -717,24 +717,25 @@ be the current residue for the atomic editor.
             self.helixCtermSpinBox.setValue(0)
     
     def updateLoopEditorEnables(self):
-        volumeViewer = self.app.volumeViewer
-        
-        self.loopVolumeLoadButton.setVisible(not volumeViewer.loaded)
-        if(volumeViewer.loaded):
-            if(self.loopBuildingStarted):
-                self.loopVolumeLoadedLabel.setVisible(True)
-                self.loopVolumeLoadedLabel.setText(self.tr('Place starting point: \tCtrl/Apple + Click \nPlace loop atoms: \tAlt + Mouse Move \nSketch intended loop: \tShift + Mouse Move \nCancel current loop: \tEsc'))
-            else:
-                self.loopVolumeLoadedLabel.setVisible(False)
-        else:
-            self.loopVolumeLoadedLabel.setVisible(True)
-            self.loopVolumeLoadedLabel.setText(self.tr('Volume not loaded.  Please load a volume to place loops.'))
-
-        self.loopStartEndBuildingButton.setEnabled(volumeViewer.loaded)
-        self.loopStartLabel.setEnabled(volumeViewer.loaded)
-        self.loopStartSpinBox.setEnabled(volumeViewer.loaded)
-        self.loopStopLabel.setEnabled(volumeViewer.loaded)
-        self.loopStopSpinBox.setEnabled(volumeViewer.loaded)
+        pass
+#         volumeViewer = self.app.volumeViewer
+#
+#         self.loopVolumeLoadButton.setVisible(not volumeViewer.loaded)
+#         if(volumeViewer.loaded):
+#             if(self.loopBuildingStarted):
+#                 self.loopVolumeLoadedLabel.setVisible(True)
+#                 self.loopVolumeLoadedLabel.setText(self.tr('Place starting point: \tCtrl/Apple + Click \nPlace loop atoms: \tAlt + Mouse Move \nSketch intended loop: \tShift + Mouse Move \nCancel current loop: \tEsc'))
+#             else:
+#                 self.loopVolumeLoadedLabel.setVisible(False)
+#         else:
+#             self.loopVolumeLoadedLabel.setVisible(True)
+#             self.loopVolumeLoadedLabel.setText(self.tr('Volume not loaded.  Please load a volume to place loops.'))
+#
+#         self.loopStartEndBuildingButton.setEnabled(volumeViewer.loaded)
+#         self.loopStartLabel.setEnabled(volumeViewer.loaded)
+#         self.loopStartSpinBox.setEnabled(volumeViewer.loaded)
+#         self.loopStopLabel.setEnabled(volumeViewer.loaded)
+#         self.loopStopSpinBox.setEnabled(volumeViewer.loaded)
             
     def startEndLoopBuilding(self):
         self.loopBuildingStarted = not self.loopBuildingStarted
