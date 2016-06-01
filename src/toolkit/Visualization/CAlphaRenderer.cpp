@@ -76,7 +76,7 @@ namespace Visualization {
                         atomHashKeys.push_back(it->first); // adding the atom hash key as an element
                         glLoadName(static_cast<GLuint>( atomHashKeys.size() - 1)); // the index of the element just added
                     }
-                    if(it->second.GetVisible()) {
+                    if(1) {
                         drawSphere(it->second.GetPosition(), it->second.GetAtomRadius() * 0.3);
                     }
 
@@ -112,7 +112,7 @@ namespace Visualization {
                     OpenGLUtils::SetColor(0, 0, 1.0, 1.0);
                 }
 
-                if(atoms[bonds[i].GetAtom0Ix()].GetVisible() && atoms[bonds[i].GetAtom1Ix()].GetVisible()) {
+                if(1) {
                     drawCylinder(atoms[bonds[i].GetAtom0Ix()].GetPosition(), atoms[bonds[i].GetAtom1Ix()].GetPosition(), 0.1, 10, 2);
                 }
                 glPopAttrib();
@@ -123,7 +123,7 @@ namespace Visualization {
             }
         } else if(subSceneIndex == 2) { // Drawing spheres to cover up the cylinder edges
             for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {
-                if(i->second.GetName() == "CA") {
+                if(1) {
                     drawSphere(i->second.GetPosition(), 0.1);
                 }
             }
