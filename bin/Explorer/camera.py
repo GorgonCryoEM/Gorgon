@@ -247,7 +247,7 @@ class Camera(QtOpenGL.QGLWidget):
 
     def pickObject(self, x, y):
         viewport = list(glGetIntegerv(GL_VIEWPORT))
-        glSelectBuffer(10000)
+        glSelectBuffer(1000000)
         glRenderMode(GL_SELECT)
 
         glInitNames()
