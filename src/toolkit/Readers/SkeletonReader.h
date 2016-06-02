@@ -153,12 +153,12 @@ namespace GraphMatch {
                         bool inHelix = false;
                         for(int i = 0; i < (int)helixes.size(); i++) {
                             // if i is a helix and if point is inside helix i
-                            if(helixes[i]->shapeType == GRAPHEDGE_HELIX && helixes[i]->IsInsideShape(point)) {
+                            if(helixes[i]->shapeType == GRAPHEDGE_HELIX && helixes[i]->isInsideShape(point)) {
                                 // store helix number for this point in the volume
                                 paintedVol(x, y, z) = (float)i+1;
                                 // add this point as as internal cell of the helix
                                 inHelix = true;
-                                helixes[i]->AddInternalCell(Point3Pair(x, y, z, 0));
+                                helixes[i]->addInternalCell(Point3Pair(x, y, z, 0));
                             }
                         }
                     }
@@ -207,7 +207,7 @@ namespace GraphMatch {
                             for(int j = 0; j < (int)sheets.size(); j++) {
                                 // find plates on skeleton that are associated with sheets
                                 if(sheets[j]->shapeType == GRAPHEDGE_SHEET) {
-                                    sheetDistance[i][j] += sheets[j]->MinimumDistanceToPoint(point);
+                                    sheetDistance[i][j] += sheets[j]->minimumDistanceToPoint(point);
                                 }
                             }
                         }
@@ -274,7 +274,7 @@ namespace GraphMatch {
                             // associate this voxel with this sheet
                             paintedVol(x, y, z) = sseSheetNum+1;
                             // add this point as as internal cell of the helix
-                            helixes[sseSheetNum]->AddInternalCell(Point3Pair(x, y, z, 0));
+                            helixes[sseSheetNum]->addInternalCell(Point3Pair(x, y, z, 0));
                         }
                     }
                 }
@@ -323,7 +323,7 @@ namespace GraphMatch {
                 int node2 = (i*2)+2;
 
                 // find the two corner cells in this helix
-                helixes[i]->FindCornerCellsInHelix();
+                helixes[i]->findCornerCellsInHelix();
                 //cout << "helix " << i << " has " << helixes[i]->cornerCells.size() << " corners." << endl;
                 for (unsigned int j = 0; j < helixes[i]->cornerCells.size(); j++) {
                     //cout << "corner " << j << " is associated with node " << helixes[i]->cornerCells[j].node << endl;
@@ -705,18 +705,18 @@ namespace GraphMatch {
                 if(token == TOKEN_VRML_TRANSLATION) {
                     fin>>x>>y>>z;
                     //shape->Translate(Vector3(x, y, z));
-                    shape->SetCenter(Vec3D(x, y, z));
+                    shape->setCenter(Vec3D(x, y, z));
                 } else if(token == TOKEN_VRML_ROTATION) {
                     fin>>x>>y>>z>>a;
-                    shape->Rotate(Vector3<double>(x, y, z), a);
+                    shape->rotate(Vector3<double>(x, y, z), a);
                 } else if(token == TOKEN_VRML_HEIGHT) {
                     fin>>a;
                     //shape->Scale(1.0, a, 1.0);
-                    shape->SetHeight(a);
+                    shape->setHeight(a);
                 } else if(token == TOKEN_VRML_RADIUS) {
                     fin>>a;
                     //shape->Scale(a*2, 1.0, a*2);
-                    shape->SetRadius(a);
+                    shape->setRadius(a);
 
                     // add shape to list of helices
                     helixes.push_back(shape);
@@ -955,9 +955,9 @@ namespace GraphMatch {
         for(unsigned int i = 0; i < graph->skeletonHelixes.size(); i++) {
             // store all helix endpoints in nodes vector
             // 2 pts per helix: even are helix start, odd are helix end
-            if (graph->skeletonHelixes[i]->IsHelix()) {
+            if (graph->skeletonHelixes[i]->isHelix()) {
                 for(unsigned int j = 1; j <= 2; j++) {
-                    pt = graph->skeletonHelixes[i]->GetCornerCell(j);
+                    pt = graph->skeletonHelixes[i]->getCornerCell(j);
                     node = vector<Vec3I>();
                     endPoints.push_back(Vec3I(pt.x, pt.y, pt.z));
                     node.push_back(Vec3I(pt.x, pt.y, pt.z));
@@ -966,10 +966,10 @@ namespace GraphMatch {
             }
 
             // store all sheet corners in nodes vector
-            if (graph->skeletonHelixes[i]->IsSheet()) {
+            if (graph->skeletonHelixes[i]->isSheet()) {
                 node = vector<Vec3I>();
                 for(unsigned int j = 1; j <= graph->skeletonHelixes[i]->cornerCells.size(); j++) {
-                    pt = graph->skeletonHelixes[i]->GetCornerCell(j);
+                    pt = graph->skeletonHelixes[i]->getCornerCell(j);
                     node.push_back(Vec3I(pt.x, pt.y, pt.z));
                 }
                 nodes.push_back(node);
@@ -984,7 +984,7 @@ namespace GraphMatch {
 
         // add all paths through helices, from (odd) start index to (even) end index
         for(unsigned int i = 0; i < nodes.size(); i+=2) {
-            if (graph->skeletonHelixes[i/2]->IsHelix()) {
+            if (graph->skeletonHelixes[i/2]->isHelix()) {
                 FindPath(i, i+1, nodes, maskVol, graph, true); // eraseMask=true means don't render?
             }
         }
@@ -1124,8 +1124,8 @@ namespace GraphMatch {
                 Vec3I currentPos = graph->paths[startIx][endIx][i];
                 Vec3D pt = Vec3D(currentPos.X(), currentPos.Y(), currentPos.Z());
                 // if this voxel is inside either the start helix or the end helix for this path
-                if(graph->skeletonHelixes[(int)startIx/2]->IsInsideShape(pt) ||
-                        graph->skeletonHelixes[(int)endIx/2]->IsInsideShape(pt)) {
+                if(graph->skeletonHelixes[(int)startIx/2]->isInsideShape(pt) ||
+                        graph->skeletonHelixes[(int)endIx/2]->isInsideShape(pt)) {
                     // erase the voxel from maskVol
                     (*maskVol)(currentPos.X(), currentPos.Y(), currentPos.Z()) = 0.0;
                 }

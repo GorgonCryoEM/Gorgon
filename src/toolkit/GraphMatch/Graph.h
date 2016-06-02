@@ -340,7 +340,7 @@ namespace GraphMatch {
                 for (int s = 1; s <= iCorners; s++) {
                     if (i < 2 * numH) {		// i is a helix node
                         // TODO: looks like the following line just returns a single corner for the helix
-                        iLoc = iSse->GetCornerCell(i%2 + 1);
+                        iLoc = iSse->getCornerCell(i%2 + 1);
                     } else {				 // i is a sheet node
                         iLoc = iSse->cornerCells[s-1];
                     }
@@ -349,7 +349,7 @@ namespace GraphMatch {
                     for (int t = 1; t <= jCorners; t++) {
                         if (j < 2 * numH) {		// j is a helix node
                             // TODO: looks like the following line just returns a single corner for the helix
-                            jLoc = jSse->GetCornerCell(j%2 + 1);
+                            jLoc = jSse->getCornerCell(j%2 + 1);
                         } else {				// j is a sheet node
                             jLoc = jSse->cornerCells[t-1];
                         }

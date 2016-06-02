@@ -519,10 +519,10 @@ BOOST_PYTHON_MODULE(@current_pylib@)
     ;
 
     class_<Shape>("Shape", init<>())
-        .def("isHelix", &Shape::IsHelix)
-        .def("isSheet", &Shape::IsSheet)
-        .def("getCornerCell2", &Shape::GetCornerCell2)
-        .def("getCornerCell3", &Shape::GetCornerCell3)
+        .def("isHelix", &Shape::isHelix)
+        .def("isSheet", &Shape::isSheet)
+        .def("getCornerCell2", &Shape::getCornerCell2)
+        .def("getCornerCell3", &Shape::getCornerCell3)
     ;
 
     bool (IBackEnd::*setConstant1)(string, string)   = &IBackEnd::setConstant;

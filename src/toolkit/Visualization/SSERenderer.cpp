@@ -37,7 +37,7 @@ namespace Visualization {
 
     void SSERenderer::addHelix(Vec3F p1, Vec3F p2) {
 
-        Shape * newHelix = Shape::CreateHelix(p1, p2, 2.5);
+        Shape * newHelix = Shape::createHelix(p1, p2, 2.5);
 
         helices.push_back(newHelix);
     }
@@ -87,19 +87,19 @@ namespace Visualization {
             for(int i = 0; i < (int)helices.size(); i++) {
                 glPushAttrib(GL_LIGHTING_BIT);
 //                if(helices[i]->isObjectSpecificColoring) {
-                    helices[i]->GetColor(colorR, colorG, colorB, colorA);
+                    helices[i]->getColor(colorR, colorG, colorB, colorA);
                     OpenGLUtils::SetColor(colorR, colorG, colorB, colorA);
 
 //                }
 
-                if(helices[i]->GetSelected()) {
+                if(helices[i]->getSelected()) {
 
                     glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
                     glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
 
                 }
                 glPushMatrix();
-                glMultMatrixd(helices[i]->GetWorldToObjectMatrix().mat);
+                glMultMatrixd(helices[i]->getWorldToObjectMatrix().mat);
                 glRotated(90, 1, 0, 0);
                 glTranslated(0.0, 0.0, -0.5);
                 if(selectEnabled) {
@@ -118,22 +118,22 @@ namespace Visualization {
                     Vec3F corner1 = getHelixCorner(i, 0);
                     Vec3F corner2 = getHelixCorner(i, 1);
                     cout << "Drawing selected cylinder. Size of helix flips is " << helixFlips.size() << endl;
-//                    if(helixFlips.size()  > 0){
-//                        if(!helixFlips[i]){
+                    if(helixFlips.size()  > 0){
+                        if(!helixFlips[i]){
 
                             OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
                             drawSphere(corner2, 1.0);
                             OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
                             drawSphere(corner1, 1.0);
                             fflush(stdout);
-//                        }else{
+                        }else{
                             OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
                             drawSphere(corner1, 1.0);
                             OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
                             drawSphere(corner2, 1.0);
                             fflush(stdout);
-//                        }
-//                    }
+                        }
+                    }
 //                }
 
 
@@ -326,20 +326,20 @@ namespace Visualization {
     }
 
     void SSERenderer::setHelixColor(int index, float r, float g, float b, float a) {
-        helices[index]->SetColor(r, g, b, a);
+        helices[index]->setColor(r, g, b, a);
     }
 
     void SSERenderer::setSheetColor(int index, float r, float g, float b, float a) {
-        sheets[index]->SetColor(r, g, b, a);
+        sheets[index]->setColor(r, g, b, a);
     }
 
     // set the color of an SSE. assumes that SSEs are indexed with helices first and sheets second.
     void SSERenderer::setSSEColor(int index, float r, float g, float b, float a) {
         int numHelices = helices.size();
         if (index < numHelices) {
-            helices[index]->SetColor(r, g, b, a);
+            helices[index]->setColor(r, g, b, a);
         } else {
-            sheets[index - numHelices]->SetColor(r, g, b, a);
+            sheets[index - numHelices]->setColor(r, g, b, a);
         }
     }
 
@@ -351,12 +351,12 @@ namespace Visualization {
         for(unsigned int i = 0; i < helices.size(); i++) {
 //            if(helices[i]->GetSelected()) {
                 rotated = true;
-                Vec3D move = centerOfMassP3 - helices[i]->GetCenter();
+                Vec3D move = centerOfMassP3 - helices[i]->getCenter();
                 Matrix4 rotMatrix = Matrix4::rotation(rotationV3, angle);
                 Vec3D newMove = rotMatrix * move;
-                helices[i]->SetCenter(centerOfMassP3 - newMove);
+                helices[i]->setCenter(centerOfMassP3 - newMove);
 
-                helices[i]->Rotate(rotationV3, angle);
+                helices[i]->rotate(rotationV3, angle);
 //            }
         }
 
@@ -390,7 +390,7 @@ namespace Visualization {
     }
 
     void SSERenderer::saveHelixFileVRML(FILE* fout) {
-        Shape::WriteToFile(this->helices, fout);
+        Shape::writeToFile(this->helices, fout);
     }
 
     void SSERenderer::saveHelixFileSSE(FILE* fout) {
@@ -399,8 +399,8 @@ namespace Visualization {
         int intLength;
 
         for(unsigned int i = 0; i < helices.size(); i++) {
-            end = helices[i]->GetCornerCell3(1);
-            start = helices[i]->GetCornerCell3(2);
+            end = helices[i]->getCornerCell3(1);
+            start = helices[i]->getCornerCell3(2);
             helixLength = (start-end).length();
             intLength = (int)ceil(helixLength / HELIX_LENGTH_TO_RESIDUE_RATIO);
 
@@ -454,7 +454,7 @@ namespace Visualization {
     }
 
     Vec3F SSERenderer::getHelixCorner(int helixIx, int cornerIx) {
-        return helices[helixIx]->GetCornerCell3(cornerIx);
+        return helices[helixIx]->getCornerCell3(cornerIx);
     }
 
     void SSERenderer::setSSEOrientationFlips(vector<bool> in){

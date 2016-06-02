@@ -99,7 +99,7 @@ namespace Visualization {
 
     // set the color of an SSE.
     inline void SSEEngine::setSSEColor(int index, float r, float g, float b, float a) {
-        skeleton.skeletonHelixes[index]->SetColor(r, g, b, a);
+        skeleton.skeletonHelixes[index]->setColor(r, g, b, a);
     }
 
     inline int SSEEngine::run() {
