@@ -81,7 +81,6 @@ namespace Visualization {
 //            cout<<"selectedPDBHelices.size(): "<<selectedPDBHelices.size()<<endl;
 //            cout<<"SSEIndices.size(): "<<SSEIndices.size()<<endl;
 
-            Point<double> pt;
 //            cout<<"helices.size(): "<<helices.size()<<endl;
 
             for(int i = 0; i < (int)helices.size(); i++) {
@@ -162,7 +161,6 @@ namespace Visualization {
 
         }
         else if(subSceneIndex == 1) {
-            int k;
             if(selectEnabled) {
                 glPushName(0);
             }
@@ -181,7 +179,6 @@ namespace Visualization {
             }
         }
         else if(subSceneIndex == 2) {
-            int k;
             if(selectEnabled) {
                 glPushName(0);
             }
