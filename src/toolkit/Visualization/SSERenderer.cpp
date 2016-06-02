@@ -92,11 +92,11 @@ namespace Visualization {
 //                }
 
                 if(helices[i]->getSelected()) {
-
                     glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
                     glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
 
                 }
+
                 glPushMatrix();
                 glMultMatrixd(helices[i]->getWorldToObjectMatrix().mat);
                 glRotated(90, 1, 0, 0);
@@ -158,7 +158,6 @@ namespace Visualization {
             if(selectEnabled) {
                 glPopName();
             }
-
         }
         else if(subSceneIndex == 1) {
             if(selectEnabled) {
