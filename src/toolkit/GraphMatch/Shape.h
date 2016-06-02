@@ -47,7 +47,7 @@ namespace GraphMatch {
         void setHeight(double height);
         void setRadius(double radius);
         void getRotationAxisAndAngle(Vec3F &axis, double &angle);
-        static Shape * createHelix(Vec3F p1, Vec3F p2, float radius);
+        static Shape createHelix(Vec3F p1, Vec3F p2, float radius);
         static void writeToFile(vector<Shape*> & helices, FILE * fileName);
         void getColor(float & r, float & g, float & b, float & a);
         void setSelected(bool selected);
@@ -515,21 +515,21 @@ namespace GraphMatch {
         return;
     }
 
-    inline Shape * Shape::createHelix(Vec3F p1, Vec3F p2, float radius) {
-        Shape * newHelix = new Shape();
-        newHelix->shapeType = GRAPHEDGE_HELIX;
+    inline Shape Shape::createHelix(Vec3F p1, Vec3F p2, float radius) {
+        Shape newHelix;
+        newHelix.shapeType = GRAPHEDGE_HELIX;
         Vec3F center = (p1+p2) * 0.5;
         Vec3F dir = p1-p2;
         Vec3F yaxis = Vec3F(0, 1, 0);
 
-        newHelix->setCenter(Vec3D(center.X(), center.Y(), center.Z()));
-        newHelix->setRadius(radius);
-        newHelix->setHeight(dir.length());
+        newHelix.setCenter(Vec3D(center.X(), center.Y(), center.Z()));
+        newHelix.setRadius(radius);
+        newHelix.setHeight(dir.length());
         Vec3F axis = dir^yaxis;
 
         dir.normalize();
         double angle = acos(dir * yaxis);
-        newHelix->rotate(Vector3<double>(axis.X(), axis.Y(), axis.Z()), -angle);
+        newHelix.rotate(Vector3<double>(axis.X(), axis.Y(), axis.Z()), -angle);
         return newHelix;
     }
 

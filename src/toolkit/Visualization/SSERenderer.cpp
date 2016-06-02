@@ -18,26 +18,19 @@ namespace Visualization {
         graphSheetCount = 0;
     }
 
-    SSERenderer::~SSERenderer() {
-        for(unsigned int i = 0; i < helices.size(); i++) {
-            delete helices[i];
-        }
-        for(unsigned int i = 0; i < sheets.size(); i++) {
-            delete sheets[i];
-        }
-    }
+    SSERenderer::~SSERenderer() {}
 
     vector<int> SSERenderer::getSelectedHelixIndices(){
         return selectedHelices;
     }
 
-    vector<Shape*> * SSERenderer::getHelices(){
-        return &helices;
+    vector<Shape> SSERenderer::getHelices(){
+        return helices;
     }
 
     void SSERenderer::addHelix(Vec3F p1, Vec3F p2) {
 
-        Shape * newHelix = Shape::createHelix(p1, p2, 2.5);
+        Shape newHelix = Shape::createHelix(p1, p2, 2.5);
 
         helices.push_back(newHelix);
     }
@@ -86,19 +79,19 @@ namespace Visualization {
             for(int i = 0; i < (int)helices.size(); i++) {
                 glPushAttrib(GL_LIGHTING_BIT);
 //                if(helices[i]->isObjectSpecificColoring) {
-                    helices[i]->getColor(colorR, colorG, colorB, colorA);
+                    helices[i].getColor(colorR, colorG, colorB, colorA);
                     OpenGLUtils::SetColor(colorR, colorG, colorB, colorA);
 
 //                }
 
-                if(helices[i]->getSelected()) {
+                if(helices[i].getSelected()) {
                     glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
                     glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
 
                 }
 
                 glPushMatrix();
-                glMultMatrixd(helices[i]->getWorldToObjectMatrix().mat);
+                glMultMatrixd(helices[i].getWorldToObjectMatrix().mat);
                 glRotated(90, 1, 0, 0);
                 glTranslated(0.0, 0.0, -0.5);
                 if(selectEnabled) {
@@ -238,9 +231,6 @@ namespace Visualization {
     }
 
     void SSERenderer::loadHelixFile(string fileName) {
-        for(unsigned int i = 0; i < helices.size(); i++) {
-            delete helices[i];
-        }
 //        #ifdef GORGON_DEBUG
               cout<<"\033[32mDEBUG: File:   SSERenderer.cpp"<<endl;
               cout<<"DEBUG: Method: SSERenderer::loadHelixFile(string)\033[0m"<<endl;
@@ -272,7 +262,7 @@ namespace Visualization {
         sheetListToMesh(sheets);
     }
 
-    void SSERenderer::sheetListToMesh(vector<Shape*> & sheets) {
+    void SSERenderer::sheetListToMesh(vector<Shape> & sheets) {
         sheetMesh = SkeletonMesh();
 
         Vec3D pt;
