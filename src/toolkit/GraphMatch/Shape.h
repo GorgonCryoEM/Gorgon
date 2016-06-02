@@ -255,9 +255,7 @@ namespace GraphMatch {
             pt = getWorldCoordinates(Vec3D(0, 0.5, 0));
         }
         return Vec3F((float)pt[0], (float)pt[1], (float)pt[2]);
-
     }
-
 
     inline void Shape::addInternalCell(Point3Pair point) {
         internalCells.push_back(point);
@@ -316,7 +314,6 @@ namespace GraphMatch {
         Vec3F actualCorner2 = getCornerCell3(2);
 
         Vec3F c1, c2;
-
 
         c1 = Vec3F(
             internalToRealOrigin.X() + (float)cornerCells[corner1].x * internalToRealScale.X(),
@@ -397,7 +394,6 @@ namespace GraphMatch {
     }
 
     inline void Shape::translate(Vector3<double> translationVector){
-
         centerPoint = centerPoint + translationVector;
         updateWorldToObjectMatrix();
     }

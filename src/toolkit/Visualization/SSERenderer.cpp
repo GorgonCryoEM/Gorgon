@@ -120,7 +120,6 @@ namespace Visualization {
                     cout << "Drawing selected cylinder. Size of helix flips is " << helixFlips.size() << endl;
                     if(helixFlips.size()  > 0){
                         if(!helixFlips[i]){
-
                             OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
                             drawSphere(corner2, 1.0);
                             OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
@@ -135,7 +134,6 @@ namespace Visualization {
                         }
                     }
 //                }
-
 
                 for(unsigned int j = 0; j < SSEIndices.size(); ++j){
                     if(SSEIndices[j] == i){
@@ -164,7 +162,6 @@ namespace Visualization {
 
         }
         else if(subSceneIndex == 1) {
-
             int k;
             if(selectEnabled) {
                 glPushName(0);
@@ -209,7 +206,6 @@ namespace Visualization {
 
         glPopName();
     }
-
 
     void SSERenderer::loadHelixFileSSE(string fileName) {
 
@@ -461,7 +457,6 @@ namespace Visualization {
         helixFlips = in;
     }
 
-
     void SSERenderer::setHelixCorrs(  vector < int > flatCorrespondences){
         if(flatCorrespondences.size() %2 != 0)
             return;
@@ -471,6 +466,7 @@ namespace Visualization {
             corrs.push_back(make_pair(flatCorrespondences[i], flatCorrespondences[i+1]));
         }
     }
+
     void SSERenderer::setSelectedPDBHelices(vector<int> indices){
         selectedPDBHelices.clear();
         selectedPDBHelices = indices;
