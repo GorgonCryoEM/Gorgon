@@ -381,7 +381,7 @@ namespace GraphMatch {
 
         // populate graph->skeletonHelixes with list of helices and sheets
         for(int i = 0; i < (int)helixes.size(); i++) {
-            graph->skeletonHelixes.push_back(helixes[i]);
+            graph->skeletonHelixes.push_back(&helixes[i]);
         }
 
         // find the costs of all other paths along the volume, from any helix end to any other helix end
@@ -648,7 +648,7 @@ namespace GraphMatch {
                 // add shape from previous iteration to list of SSEs
                 if(token == TOKEN_VRML_SHAPE) {
                     if(shape != NULL) {
-                        helixes.push_back(shape);
+                        helixes.push_back(*shape);
                     }
                     shape = new Shape();
                     shape->shapeType = GRAPHEDGE_SHEET;
@@ -675,7 +675,7 @@ namespace GraphMatch {
             }
             // add last shape to list of SSEs
             if(lastSheet) {
-                helixes.push_back(shape);
+                helixes.push_back(*shape);
             }
 
             fin.close();
@@ -718,7 +718,7 @@ namespace GraphMatch {
                     shape->setRadius(a);
 
                     // add shape to list of helices
-                    helixes.push_back(shape);
+                    helixes.push_back(*shape);
 
                     // reinitialize shape variable
                     shape = new Shape();
