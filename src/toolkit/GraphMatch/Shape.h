@@ -47,8 +47,8 @@ namespace GraphMatch {
         void setHeight(double height);
         void setRadius(double radius);
         void getRotationAxisAndAngle(Vec3F &axis, double &angle);
-        static Shape * createHelix(Vec3F p1, Vec3F p2, float radius);
-        static void writeToFile(vector<Shape*> & helices, FILE * fileName);
+        static Shape createHelix(Vec3F p1, Vec3F p2, float radius);
+        static void writeToFile(vector<Shape> & helices, FILE * fileName);
         void getColor(float & r, float & g, float & b, float & a);
         void setSelected(bool selected);
 
@@ -515,25 +515,25 @@ namespace GraphMatch {
         return;
     }
 
-    inline Shape * Shape::createHelix(Vec3F p1, Vec3F p2, float radius) {
-        Shape * newHelix = new Shape();
-        newHelix->shapeType = GRAPHEDGE_HELIX;
+    inline Shape Shape::createHelix(Vec3F p1, Vec3F p2, float radius) {
+        Shape newHelix;
+        newHelix.shapeType = GRAPHEDGE_HELIX;
         Vec3F center = (p1+p2) * 0.5;
         Vec3F dir = p1-p2;
         Vec3F yaxis = Vec3F(0, 1, 0);
 
-        newHelix->setCenter(Vec3D(center.X(), center.Y(), center.Z()));
-        newHelix->setRadius(radius);
-        newHelix->setHeight(dir.length());
+        newHelix.setCenter(Vec3D(center.X(), center.Y(), center.Z()));
+        newHelix.setRadius(radius);
+        newHelix.setHeight(dir.length());
         Vec3F axis = dir^yaxis;
 
         dir.normalize();
         double angle = acos(dir * yaxis);
-        newHelix->rotate(Vector3<double>(axis.X(), axis.Y(), axis.Z()), -angle);
+        newHelix.rotate(Vector3<double>(axis.X(), axis.Y(), axis.Z()), -angle);
         return newHelix;
     }
 
-    inline void Shape::writeToFile(vector<Shape*> & helices, FILE * fout) {
+    inline void Shape::writeToFile(vector<Shape> & helices, FILE * fout) {
         Vec3D center;
         Vec3F start, end, axis;
         double angle;
@@ -541,11 +541,11 @@ namespace GraphMatch {
         fprintf(fout, "#VRML V2.0 utf8\n");
 
         for(unsigned int i = 0; i < helices.size(); i++) {
-            center = helices[i]->getCenter();
-            start = helices[i]->getCornerCell3(1);
-            end = helices[i]->getCornerCell3(2);
+            center = helices[i].getCenter();
+            start = helices[i].getCornerCell3(1);
+            end = helices[i].getCornerCell3(2);
             helixLength = (start-end).length();
-            helices[i]->getRotationAxisAndAngle(axis, angle);
+            helices[i].getRotationAxisAndAngle(axis, angle);
 
             fprintf(fout, "Group {\n children [\n Transform {\n  translation %f %f %f\n", center[0], center[1], center[2]);
             fprintf(fout, "  rotation %f %f %f %f\n", axis.X(), axis.Y(), axis.Z(), angle);

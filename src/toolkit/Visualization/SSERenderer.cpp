@@ -18,26 +18,19 @@ namespace Visualization {
         graphSheetCount = 0;
     }
 
-    SSERenderer::~SSERenderer() {
-        for(unsigned int i = 0; i < helices.size(); i++) {
-            delete helices[i];
-        }
-        for(unsigned int i = 0; i < sheets.size(); i++) {
-            delete sheets[i];
-        }
-    }
+    SSERenderer::~SSERenderer() {}
 
     vector<int> SSERenderer::getSelectedHelixIndices(){
         return selectedHelices;
     }
 
-    vector<Shape*> * SSERenderer::getHelices(){
-        return &helices;
+    vector<Shape> SSERenderer::getHelices(){
+        return helices;
     }
 
     void SSERenderer::addHelix(Vec3F p1, Vec3F p2) {
 
-        Shape * newHelix = Shape::createHelix(p1, p2, 2.5);
+        Shape newHelix = Shape::createHelix(p1, p2, 2.5);
 
         helices.push_back(newHelix);
     }
@@ -85,20 +78,20 @@ namespace Visualization {
 
             for(int i = 0; i < (int)helices.size(); i++) {
                 glPushAttrib(GL_LIGHTING_BIT);
-//                if(helices[i]->isObjectSpecificColoring) {
-                    helices[i]->getColor(colorR, colorG, colorB, colorA);
+//                if(helices[i].isObjectSpecificColoring) {
+                    helices[i].getColor(colorR, colorG, colorB, colorA);
                     OpenGLUtils::SetColor(colorR, colorG, colorB, colorA);
 
 //                }
 
-                if(helices[i]->getSelected()) {
+                if(helices[i].getSelected()) {
                     glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
                     glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
 
                 }
 
                 glPushMatrix();
-                glMultMatrixd(helices[i]->getWorldToObjectMatrix().mat);
+                glMultMatrixd(helices[i].getWorldToObjectMatrix().mat);
                 glRotated(90, 1, 0, 0);
                 glTranslated(0.0, 0.0, -0.5);
                 if(selectEnabled) {
@@ -111,8 +104,8 @@ namespace Visualization {
                 glPopMatrix();
                 glPopAttrib();
 
-//                cout<<"helices["<<i<<"]->GetSelected(): "<<helices[i]->GetSelected()<<endl;
-//                if(helices[i]->GetSelected()) {
+//                cout<<"helices["<<i<<"]->GetSelected(): "<<helices[i].GetSelected()<<endl;
+//                if(helices[i].GetSelected()) {
 
                     Vec3F corner1 = getHelixCorner(i, 0);
                     Vec3F corner2 = getHelixCorner(i, 1);
@@ -238,9 +231,6 @@ namespace Visualization {
     }
 
     void SSERenderer::loadHelixFile(string fileName) {
-        for(unsigned int i = 0; i < helices.size(); i++) {
-            delete helices[i];
-        }
 //        #ifdef GORGON_DEBUG
               cout<<"\033[32mDEBUG: File:   SSERenderer.cpp"<<endl;
               cout<<"DEBUG: Method: SSERenderer::loadHelixFile(string)\033[0m"<<endl;
@@ -272,7 +262,7 @@ namespace Visualization {
         sheetListToMesh(sheets);
     }
 
-    void SSERenderer::sheetListToMesh(vector<Shape*> & sheets) {
+    void SSERenderer::sheetListToMesh(vector<Shape> & sheets) {
         sheetMesh = SkeletonMesh();
 
         Vec3D pt;
@@ -285,13 +275,13 @@ namespace Visualization {
 
         for(unsigned int i = 0; i < sheets.size(); i++) {
             indices.clear();
-            for(unsigned int j = 0; j < sheets[i]->polygonPoints.size(); j++) {
-                pt = sheets[i]->polygonPoints[j];
+            for(unsigned int j = 0; j < sheets[i].polygonPoints.size(); j++) {
+                pt = sheets[i].polygonPoints[j];
                 indices.push_back(sheetMesh.addVertex(Vec3F(pt[0], pt[1], pt[2])));
             }
 
-            for(unsigned int j = 0; j < sheets[i]->polygons.size(); j++) {
-                Polygon pp = sheets[i]->polygons[j];
+            for(unsigned int j = 0; j < sheets[i].polygons.size(); j++) {
+                Polygon pp = sheets[i].polygons[j];
                 Vec3U ppp;
                 ppp[0] = indices[pp.pointIndex1];
                 ppp[1] = indices[pp.pointIndex2];
@@ -303,13 +293,7 @@ namespace Visualization {
     }
 
     void SSERenderer::unload() {
-        for(unsigned int i = 0; i < helices.size(); i++) {
-            delete helices[i];
-        }
         helices.clear();
-        for(unsigned int i = 0; i < sheets.size(); i++) {
-            delete sheets[i];
-        }
         sheets.clear();
     }
 
@@ -317,21 +301,21 @@ namespace Visualization {
         graphSheetCount = 0;
     }
 
-    void SSERenderer::setHelixColor(int index, float r, float g, float b, float a) {
-        helices[index]->setColor(r, g, b, a);
+    void SSERenderer::setHelixColor(int i, float r, float g, float b, float a) {
+        helices[i].setColor(r, g, b, a);
     }
 
-    void SSERenderer::setSheetColor(int index, float r, float g, float b, float a) {
-        sheets[index]->setColor(r, g, b, a);
+    void SSERenderer::setSheetColor(int i, float r, float g, float b, float a) {
+        sheets[i].setColor(r, g, b, a);
     }
 
     // set the color of an SSE. assumes that SSEs are indexed with helices first and sheets second.
-    void SSERenderer::setSSEColor(int index, float r, float g, float b, float a) {
+    void SSERenderer::setSSEColor(int i, float r, float g, float b, float a) {
         int numHelices = helices.size();
-        if (index < numHelices) {
-            helices[index]->setColor(r, g, b, a);
+        if (i < numHelices) {
+            helices[i].setColor(r, g, b, a);
         } else {
-            sheets[index - numHelices]->setColor(r, g, b, a);
+            sheets[i - numHelices].setColor(r, g, b, a);
         }
     }
 
@@ -341,14 +325,14 @@ namespace Visualization {
         Vec3D rotationV3(rotationAxis.X(), rotationAxis.Y(), rotationAxis.Z());
 
         for(unsigned int i = 0; i < helices.size(); i++) {
-//            if(helices[i]->GetSelected()) {
+//            if(helices[i].GetSelected()) {
                 rotated = true;
-                Vec3D move = centerOfMassP3 - helices[i]->getCenter();
+                Vec3D move = centerOfMassP3 - helices[i].getCenter();
                 Matrix4 rotMatrix = Matrix4::rotation(rotationV3, angle);
                 Vec3D newMove = rotMatrix * move;
-                helices[i]->setCenter(centerOfMassP3 - newMove);
+                helices[i].setCenter(centerOfMassP3 - newMove);
 
-                helices[i]->rotate(rotationV3, angle);
+                helices[i].rotate(rotationV3, angle);
 //            }
         }
 
@@ -382,7 +366,7 @@ namespace Visualization {
     }
 
     void SSERenderer::saveHelixFileVRML(FILE* fout) {
-        Shape::writeToFile(this->helices, fout);
+        Shape::writeToFile(helices, fout);
     }
 
     void SSERenderer::saveHelixFileSSE(FILE* fout) {
@@ -391,8 +375,8 @@ namespace Visualization {
         int intLength;
 
         for(unsigned int i = 0; i < helices.size(); i++) {
-            end = helices[i]->getCornerCell3(1);
-            start = helices[i]->getCornerCell3(2);
+            end = helices[i].getCornerCell3(1);
+            start = helices[i].getCornerCell3(2);
             helixLength = (start-end).length();
             intLength = (int)ceil(helixLength / HELIX_LENGTH_TO_RESIDUE_RATIO);
 
@@ -446,7 +430,7 @@ namespace Visualization {
     }
 
     Vec3F SSERenderer::getHelixCorner(int helixIx, int cornerIx) {
-        return helices[helixIx]->getCornerCell3(cornerIx);
+        return helices[helixIx].getCornerCell3(cornerIx);
     }
 
     void SSERenderer::setSSEOrientationFlips(vector<bool> in){
