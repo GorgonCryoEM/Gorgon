@@ -227,7 +227,7 @@ namespace Visualization {
     }
 
     void SSERenderer::loadHelixFileVRML(string fileName) {
-        SkeletonReader::ReadHelixFile(fileName, "", &helices);
+        SkeletonReader::ReadHelixFile(fileName, "", helices);
     }
 
     void SSERenderer::loadHelixFile(string fileName) {
@@ -366,7 +366,7 @@ namespace Visualization {
     }
 
     void SSERenderer::saveHelixFileVRML(FILE* fout) {
-        Shape::writeToFile(this->helices, fout);
+        Shape::writeToFile(helices, fout);
     }
 
     void SSERenderer::saveHelixFileSSE(FILE* fout) {

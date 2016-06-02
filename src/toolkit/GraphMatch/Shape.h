@@ -48,7 +48,7 @@ namespace GraphMatch {
         void setRadius(double radius);
         void getRotationAxisAndAngle(Vec3F &axis, double &angle);
         static Shape createHelix(Vec3F p1, Vec3F p2, float radius);
-        static void writeToFile(vector<Shape*> & helices, FILE * fileName);
+        static void writeToFile(vector<Shape> & helices, FILE * fileName);
         void getColor(float & r, float & g, float & b, float & a);
         void setSelected(bool selected);
 
@@ -533,7 +533,7 @@ namespace GraphMatch {
         return newHelix;
     }
 
-    inline void Shape::writeToFile(vector<Shape*> & helices, FILE * fout) {
+    inline void Shape::writeToFile(vector<Shape> & helices, FILE * fout) {
         Vec3D center;
         Vec3F start, end, axis;
         double angle;
@@ -541,11 +541,11 @@ namespace GraphMatch {
         fprintf(fout, "#VRML V2.0 utf8\n");
 
         for(unsigned int i = 0; i < helices.size(); i++) {
-            center = helices[i]->getCenter();
-            start = helices[i]->getCornerCell3(1);
-            end = helices[i]->getCornerCell3(2);
+            center = helices[i].getCenter();
+            start = helices[i].getCornerCell3(1);
+            end = helices[i].getCornerCell3(2);
             helixLength = (start-end).length();
-            helices[i]->getRotationAxisAndAngle(axis, angle);
+            helices[i].getRotationAxisAndAngle(axis, angle);
 
             fprintf(fout, "Group {\n children [\n Transform {\n  translation %f %f %f\n", center[0], center[1], center[2]);
             fprintf(fout, "  rotation %f %f %f %f\n", axis.X(), axis.Y(), axis.Z(), angle);
