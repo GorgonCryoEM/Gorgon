@@ -7,6 +7,7 @@ from Explorer.skeleton_viewer import SkeletonViewer
 from .sse_helix_correspondence_finder_form import SSEHelixCorrespondenceFinderForm
 from .calpha_viewer import CAlphaViewer
 from .sse_viewer import SSEViewer
+from Explorer import Grid3D
 
 
 class MainWindowForm4(QtGui.QMainWindow):
@@ -34,6 +35,12 @@ class MainWindowForm4(QtGui.QMainWindow):
         self.scene.append(self.skeletonViewer)
         self.scene.append(self.sseViewer)
         self.scene.append(self.calphaViewer)
+
+        for i in xrange(-100, 101, 50):
+            self.scene.append(Grid3D(self, ( i, -100,  i), ( i, 100,  i)))
+        
+        for i in xrange(-100, 101, 50):
+            self.scene.append(Grid3D(self, (-100, i, -100), (100, i, 100)))
         
         self.mainCamera = Camera(self.scene, self)
         self.setCentralWidget(self.mainCamera)
