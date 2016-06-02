@@ -665,9 +665,9 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
             cppSse = self.app.viewers['sse'].correspondenceEngine.getSkeletonSSE(sseIx)
             # create list of observed helices for this correspondence result
             if cppSse.isHelix():
-                q1 = self.app.viewers['calpha'].worldToObjectCoordinates(sseViewer.objectToWorldCoordinates(vector3DFloatToTuple(cppSse.getCornerCell3(1))))
-                q2 = self.app.viewers['calpha'].worldToObjectCoordinates(sseViewer.objectToWorldCoordinates(vector3DFloatToTuple(cppSse.getCornerCell3(2))))
-
+                q1 = vector3DFloatToTuple(cppSse.getCornerCell3(1))
+                q2 = vector3DFloatToTuple(cppSse.getCornerCell3(2))
+            
                 pyHelix = ObservedHelix(sseIx, q1, q2)
                 observedHelices[helixCount] = pyHelix
                 helixCount = helixCount + 1
