@@ -317,21 +317,21 @@ namespace Visualization {
         graphSheetCount = 0;
     }
 
-    void SSERenderer::setHelixColor(int index, float r, float g, float b, float a) {
-        helices[index]->setColor(r, g, b, a);
+    void SSERenderer::setHelixColor(int i, float r, float g, float b, float a) {
+        helices[i]->setColor(r, g, b, a);
     }
 
-    void SSERenderer::setSheetColor(int index, float r, float g, float b, float a) {
-        sheets[index]->setColor(r, g, b, a);
+    void SSERenderer::setSheetColor(int i, float r, float g, float b, float a) {
+        sheets[i]->setColor(r, g, b, a);
     }
 
     // set the color of an SSE. assumes that SSEs are indexed with helices first and sheets second.
-    void SSERenderer::setSSEColor(int index, float r, float g, float b, float a) {
+    void SSERenderer::setSSEColor(int i, float r, float g, float b, float a) {
         int numHelices = helices.size();
-        if (index < numHelices) {
-            helices[index]->setColor(r, g, b, a);
+        if (i < numHelices) {
+            helices[i]->setColor(r, g, b, a);
         } else {
-            sheets[index - numHelices]->setColor(r, g, b, a);
+            sheets[i - numHelices]->setColor(r, g, b, a);
         }
     }
 
