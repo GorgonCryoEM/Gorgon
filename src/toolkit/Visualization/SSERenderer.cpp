@@ -27,36 +27,36 @@ namespace Visualization {
         }
     }
 
-    vector<int> SSERenderer::GetSelectedHelixIndices(){
+    vector<int> SSERenderer::getSelectedHelixIndices(){
         return selectedHelices;
     }
 
-    vector<Shape*> * SSERenderer::GetHelices(){
+    vector<Shape*> * SSERenderer::getHelices(){
         return &helices;
     }
 
-    void SSERenderer::AddHelix(Vec3F p1, Vec3F p2) {
+    void SSERenderer::addHelix(Vec3F p1, Vec3F p2) {
 
         Shape * newHelix = Shape::CreateHelix(p1, p2, 2.5);
 
         helices.push_back(newHelix);
     }
 
-    void SSERenderer::FinalizeHelix() {
+    void SSERenderer::finalizeHelix() {
         Vec3F p1, p2;
         LinearSolver::FindBestFitLine(p1, p2, tempSSEPoints);
-        AddHelix(p1, p2);
+        addHelix(p1, p2);
     }
 
-    void SSERenderer::StartNewSSE() {
+    void SSERenderer::startNewSSE() {
         tempSSEPoints.clear();
     }
 
-    void SSERenderer::AddSSEPoint(Vec3F p) {
+    void SSERenderer::addSSEPoint(Vec3F p) {
         tempSSEPoints.push_back(p);
     }
 
-    void SSERenderer::Draw(int subSceneIndex, bool selectEnabled) {
+    void SSERenderer::draw(int subSceneIndex, bool selectEnabled) {
         GLfloat emissionColor[4] = {1.0, 1.0, 1.0, 1.0};
         GLfloat frontColor[4] = {1.0, 0.0, 0.0, 1.0};
         GLfloat backColor[4] = {0.0, 0.0, 1.0, 1.0};
@@ -115,8 +115,8 @@ namespace Visualization {
 //                cout<<"helices["<<i<<"]->GetSelected(): "<<helices[i]->GetSelected()<<endl;
 //                if(helices[i]->GetSelected()) {
 
-                    Vec3F corner1 = GetHelixCorner(i, 0);
-                    Vec3F corner2 = GetHelixCorner(i, 1);
+                    Vec3F corner1 = getHelixCorner(i, 0);
+                    Vec3F corner2 = getHelixCorner(i, 1);
                     cout << "Drawing selected cylinder. Size of helix flips is " << helixFlips.size() << endl;
 //                    if(helixFlips.size()  > 0){
 //                        if(!helixFlips[i]){
@@ -139,8 +139,8 @@ namespace Visualization {
 
                 for(unsigned int j = 0; j < SSEIndices.size(); ++j){
                     if(SSEIndices[j] == i){
-                        Vec3F corner1 = GetHelixCorner(i, 0);
-                        Vec3F corner2 = GetHelixCorner(i, 1);
+                        Vec3F corner1 = getHelixCorner(i, 0);
+                        Vec3F corner2 = getHelixCorner(i, 1);
                         if(!helixFlips[i]){
                             OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
                             drawSphere(corner2, 1.0);
@@ -211,7 +211,7 @@ namespace Visualization {
     }
 
 
-    void SSERenderer::LoadHelixFileSSE(string fileName) {
+    void SSERenderer::loadHelixFileSSE(string fileName) {
 
         FILE* fin = fopen((char*)fileName.c_str(), "rt");
 
@@ -232,26 +232,26 @@ namespace Visualization {
                 fscanf(fin, "%f", &x2);
                 fscanf(fin, "%f", &y2);
                 fscanf(fin, "%f", &z2);
-                AddHelix(Vec3F(x1, y1, z1), Vec3F(x2, y2, z2));
+                addHelix(Vec3F(x1, y1, z1), Vec3F(x2, y2, z2));
             }
         }
 
         fclose(fin);
-        cout<<"       SSERenderer::LoadHelixFileSSE"<<endl;
+        cout<<"       SSERenderer::loadHelixFileSSE"<<endl;
         cout<<"helices.size(): "<<helices.size()<<endl;
     }
 
-    void SSERenderer::LoadHelixFileVRML(string fileName) {
+    void SSERenderer::loadHelixFileVRML(string fileName) {
         SkeletonReader::ReadHelixFile(fileName, "", helices);
     }
 
-    void SSERenderer::LoadHelixFile(string fileName) {
+    void SSERenderer::loadHelixFile(string fileName) {
         for(unsigned int i = 0; i < helices.size(); i++) {
             delete helices[i];
         }
 //        #ifdef GORGON_DEBUG
               cout<<"\033[32mDEBUG: File:   SSERenderer.cpp"<<endl;
-              cout<<"DEBUG: Method: SSERenderer::LoadHelixFile(string)\033[0m"<<endl;
+              cout<<"DEBUG: Method: SSERenderer::loadHelixFile(string)\033[0m"<<endl;
               cout<<"YAY"<<endl;
 //        #endif
 
@@ -261,15 +261,15 @@ namespace Visualization {
         string extension = fileName.substr(pos, fileName.length()-pos);
         extension = StringUtils::StringToUpper(extension);
         if(strcmp(extension.c_str(), "WRL") == 0) {
-            LoadHelixFileVRML(fileName);
+            loadHelixFileVRML(fileName);
         } else if(strcmp(extension.c_str(), "VRML") == 0) {
-            LoadHelixFileVRML(fileName);
+            loadHelixFileVRML(fileName);
         } else if(strcmp(extension.c_str(), "SSE") == 0) {
-            LoadHelixFileSSE(fileName);
+            loadHelixFileSSE(fileName);
         }
     }
 
-    void SSERenderer::LoadSheetFile(string fileName) {
+    void SSERenderer::loadSheetFile(string fileName) {
         if(helices.size() == 0) {
 //            RendererBase::load(fileName);
         }
@@ -277,10 +277,10 @@ namespace Visualization {
         sheets.clear();
         SkeletonReader::ReadSheetFile((char *)fileName.c_str(), sheets);
 
-        SheetListToMesh(sheets);
+        sheetListToMesh(sheets);
     }
 
-    void SSERenderer::SheetListToMesh(vector<Shape*> & sheets) {
+    void SSERenderer::sheetListToMesh(vector<Shape*> & sheets) {
         sheetMesh = SkeletonMesh();
 
         Vec3D pt;
@@ -310,7 +310,7 @@ namespace Visualization {
         indices.clear();
     }
 
-    void SSERenderer::Unload() {
+    void SSERenderer::unload() {
         for(unsigned int i = 0; i < helices.size(); i++) {
             delete helices[i];
         }
@@ -321,20 +321,20 @@ namespace Visualization {
         sheets.clear();
     }
 
-    void SSERenderer::UnloadGraphSSEs() {
+    void SSERenderer::unloadGraphSSEs() {
         graphSheetCount = 0;
     }
 
-    void SSERenderer::SetHelixColor(int index, float r, float g, float b, float a) {
+    void SSERenderer::setHelixColor(int index, float r, float g, float b, float a) {
         helices[index]->SetColor(r, g, b, a);
     }
 
-    void SSERenderer::SetSheetColor(int index, float r, float g, float b, float a) {
+    void SSERenderer::setSheetColor(int index, float r, float g, float b, float a) {
         sheets[index]->SetColor(r, g, b, a);
     }
 
     // set the color of an SSE. assumes that SSEs are indexed with helices first and sheets second.
-    void SSERenderer::SetSSEColor(int index, float r, float g, float b, float a) {
+    void SSERenderer::setSSEColor(int index, float r, float g, float b, float a) {
         int numHelices = helices.size();
         if (index < numHelices) {
             helices[index]->SetColor(r, g, b, a);
@@ -343,7 +343,7 @@ namespace Visualization {
         }
     }
 
-    bool SSERenderer::SelectionRotate(Vec3F centerOfMass, Vec3F rotationAxis, float angle) {
+    bool SSERenderer::selectionRotate(Vec3F centerOfMass, Vec3F rotationAxis, float angle) {
         bool rotated = false;
         Vec3D centerOfMassP3(centerOfMass.X(), centerOfMass.Y(), centerOfMass.Z());
         Vec3D rotationV3(rotationAxis.X(), rotationAxis.Y(), rotationAxis.Z());
@@ -385,15 +385,15 @@ namespace Visualization {
         return rotated;
     }
 
-    void SSERenderer::ClearOtherHighlights(){
+    void SSERenderer::clearOtherHighlights(){
         selectedPDBHelices.clear();
     }
 
-    void SSERenderer::SaveHelixFileVRML(FILE* fout) {
+    void SSERenderer::saveHelixFileVRML(FILE* fout) {
         Shape::WriteToFile(this->helices, fout);
     }
 
-    void SSERenderer::SaveHelixFileSSE(FILE* fout) {
+    void SSERenderer::saveHelixFileSSE(FILE* fout) {
         Vec3F start, end;
         float helixLength;
         int intLength;
@@ -408,7 +408,7 @@ namespace Visualization {
         }
     }
 
-    void SSERenderer::SaveHelixFile(string fileName) {
+    void SSERenderer::saveHelixFile(string fileName) {
         FILE* fout = fopen((char*)fileName.c_str(), "wt");
         int pos = fileName.rfind(".") + 1;
         string extension = fileName.substr(pos, fileName.length()-pos);
@@ -416,53 +416,53 @@ namespace Visualization {
         extension = StringUtils::StringToUpper(extension);
 
         if(strcmp(extension.c_str(), "WRL") == 0) {
-            SaveHelixFileVRML(fout);
+            saveHelixFileVRML(fout);
         } else if(strcmp(extension.c_str(), "VRML") == 0) {
-            SaveHelixFileVRML(fout);
+            saveHelixFileVRML(fout);
         } else if(strcmp(extension.c_str(), "SSE") == 0) {
-            SaveHelixFileSSE(fout);
+            saveHelixFileSSE(fout);
         }
         fclose(fout);
     }
 
-    string SSERenderer::GetSupportedHelixLoadFileFormats() {
+    string SSERenderer::getSupportedHelixLoadFileFormats() {
         return "All Supported Formats(*.vrml *.wrl *.sse);; VRML models (*.vrml *.wrl);; SSEHunter annotations (*.sse)";
     }
 
-    string SSERenderer::GetSupportedSheetLoadFileFormats() {
+    string SSERenderer::getSupportedSheetLoadFileFormats() {
         return "VRML models (*.vrml *.wrl)";
     }
 
-    string SSERenderer::GetSupportedHelixSaveFileFormats() {
+    string SSERenderer::getSupportedHelixSaveFileFormats() {
         return "All Supported Formats(*.vrml *.wrl *.sse);; VRML models (*.vrml *.wrl);; SSEHunter annotations (*.sse)";
     }
 
-    string SSERenderer::GetSupportedSheetSaveFileFormats() {
+    string SSERenderer::getSupportedSheetSaveFileFormats() {
         return "All Supported Formats(*.vrml *.wrl);; VRML models (*.vrml *.wrl)";
     }
 
-    void SSERenderer::RemoveHelices() {
+    void SSERenderer::removeHelices() {
         helices.clear();
     }
 
-    void SSERenderer::RemoveSheets() {
+    void SSERenderer::removeSheets() {
         sheets.clear();
     }
 
-    int SSERenderer::GetHelixCount() {
+    int SSERenderer::getHelixCount() {
         return helices.size();
     }
 
-    Vec3F SSERenderer::GetHelixCorner(int helixIx, int cornerIx) {
+    Vec3F SSERenderer::getHelixCorner(int helixIx, int cornerIx) {
         return helices[helixIx]->GetCornerCell3(cornerIx);
     }
 
-    void SSERenderer::SetSSEOrientationFlips(vector<bool> in){
+    void SSERenderer::setSSEOrientationFlips(vector<bool> in){
         helixFlips = in;
     }
 
 
-    void SSERenderer::SetHelixCorrs(  vector < int > flatCorrespondences){
+    void SSERenderer::setHelixCorrs(  vector < int > flatCorrespondences){
         if(flatCorrespondences.size() %2 != 0)
             return;
         else
@@ -471,7 +471,7 @@ namespace Visualization {
             corrs.push_back(make_pair(flatCorrespondences[i], flatCorrespondences[i+1]));
         }
     }
-    void SSERenderer::SetSelectedPDBHelices(vector<int> indices){
+    void SSERenderer::setSelectedPDBHelices(vector<int> indices){
         selectedPDBHelices.clear();
         selectedPDBHelices = indices;
     }

@@ -43,42 +43,45 @@ namespace Visualization {
             SSERenderer();
             virtual ~SSERenderer();
 
-            vector<Shape*> * GetHelices();
+            vector<Shape*> * getHelices();
 
-            void AddHelix(Vec3F p1, Vec3F p2);
-            void StartNewSSE();
-            void AddSSEPoint(Vec3F p);
-            void FinalizeHelix();
-            void Draw(int subSceneIndex, bool selectEnabled);
-            void LoadHelixFile(string fileName);
-            void LoadSheetFile(string fileName);
-            void Unload();
-            void UnloadGraphSSEs();
-            void SetHelixColor(int index, float r, float g, float b, float a);
-            void SetSheetColor(int index, float r, float g, float b, float a);
-            void SetSSEColor(int index, float r, float g, float b, float a);
-            void SetSSEOrientationFlips(vector<bool>);
-            bool SelectionRotate(Vec3F centerOfMass, Vec3F rotationAxis, float angle);
-            void SaveHelixFile(string fileName);
-            string GetSupportedHelixLoadFileFormats();
-            string GetSupportedHelixSaveFileFormats();
-            string GetSupportedSheetLoadFileFormats();
-            string GetSupportedSheetSaveFileFormats();
-            void RemoveHelices();
-            void RemoveSheets();
-            int GetHelixCount();
-            Vec3F GetHelixCorner(int helixIx, int cornerIx);
+            void addHelix(Vec3F p1, Vec3F p2);
+            void startNewSSE();
+            void addSSEPoint(Vec3F p);
+            void finalizeHelix();
+            void draw(int subSceneIndex, bool selectEnabled);
+            void loadHelixFile(string fileName);
+            void loadSheetFile(string fileName);
+            void unload();
+            void unloadGraphSSEs();
+            void setHelixColor(int index, float r, float g, float b, float a);
+            void setSheetColor(int index, float r, float g, float b, float a);
+            void setSSEColor(int index, float r, float g, float b, float a);
+            void setSSEOrientationFlips(vector<bool>);
+            bool selectionRotate(Vec3F centerOfMass, Vec3F rotationAxis, float angle);
+            void saveHelixFile(string fileName);
+            string getSupportedHelixLoadFileFormats();
+            string getSupportedHelixSaveFileFormats();
+            string getSupportedSheetLoadFileFormats();
+            string getSupportedSheetSaveFileFormats();
+            void removeHelices();
+            void removeSheets();
+            int getHelixCount();
+            Vec3F getHelixCorner(int helixIx, int cornerIx);
 
-            vector<int> GetSelectedHelixIndices();
-            void SetHelixCorrs(  vector < int > flatCorrespondences);
-            void SetSelectedPDBHelices(vector<int> indices);
-            void ClearOtherHighlights();
+            vector<int> getSelectedHelixIndices();
+            void setHelixCorrs(  vector < int > flatCorrespondences);
+            void setSelectedPDBHelices(vector<int> indices);
+            void clearOtherHighlights();
+
         private:
-            void SheetListToMesh(vector<Shape*> & sheets);
-            void LoadHelixFileSSE(string fileName);
-            void LoadHelixFileVRML(string fileName);
-            void SaveHelixFileSSE(FILE* fout);
-            void SaveHelixFileVRML(FILE* fout);
+            void sheetListToMesh(vector<Shape*> & sheets);
+            void loadHelixFileSSE(string fileName);
+            void loadHelixFileVRML(string fileName);
+            void saveHelixFileSSE(FILE* fout);
+            void saveHelixFileVRML(FILE* fout);
+
+        private:
             vector<Shape*> helices;
             vector<Shape*> sheets;
             SkeletonMesh sheetMesh;
