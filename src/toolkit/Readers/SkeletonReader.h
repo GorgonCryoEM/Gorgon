@@ -18,19 +18,19 @@ namespace GraphMatch {
 
     class SkeletonReader {
         public:
-            static int GetGraphIndex(vector<Shape> & helixes, int helixNum,
+            static int GetGraphIndex(vector<Shape*> & helixes, int helixNum,
                                      int cornerNum);
-            static int GetGraphIndex(vector<Shape> & helixes, int helixNum,
+            static int GetGraphIndex(vector<Shape*> & helixes, int helixNum,
                                      Point3Pair * point);
             static Graph * ReadFile(string volumeFile, string helixFile,
                                     string sseFile, string sheetFile);
             static Volume* getSheetsNoThreshold(Volume * vol, int minSize);
             static void ReadSheetFile(string sheetFile,
-                                      vector<Shape> & helixes);
+                                      vector<Shape*> & helixes);
             static void ReadHelixFile(string helixFile, string sseFile,
-                                      vector<Shape> & helixes);
+                                      vector<Shape*> & helixes);
             static void FindSizes(int startHelix, int startCell,
-                                  vector<Shape> & helixList, Volume * vol,
+                                  vector<Shape*> & helixList, Volume * vol,
                                   Volume * coloredVol, Graph * graph);
             static void FindPaths(Graph * graph);
             static void FindPath(int startIx, int endIx,
@@ -39,7 +39,7 @@ namespace GraphMatch {
                                  bool eraseMask);
             static void FindCornerCellsInSheet(Volume * vol,
                                                Volume * paintedVol,
-                                               vector<Shape> & helixes,
+                                               vector<Shape*> & helixes,
                                                int sheetId);
             static int isSkeletonSheet(const Volume &vol, int ox, int oy,
                                        int oz);
@@ -47,16 +47,16 @@ namespace GraphMatch {
     };
 
     // returns the graph node index for corner cornerNum of helix/sheet helixNum
-    inline int SkeletonReader::GetGraphIndex(vector<Shape> & helixes, int helixNum, int cornerNum) {
+    inline int SkeletonReader::GetGraphIndex(vector<Shape*> & helixes, int helixNum, int cornerNum) {
         int numH = 0;
         for (unsigned int i = 0; i < (int)helixes.size(); i++) {
-            if(helixes[i].shapeType == GRAPHEDGE_HELIX) {
+            if(helixes[i]->shapeType == GRAPHEDGE_HELIX) {
                 numH++;
             }
         }
         if (helixNum < numH) {
             // if this is a helix, index is 2*helixNum + cornerNum
-            return helixNum*2 + helixes[helixNum].cornerCells[cornerNum].node;
+            return helixNum*2 + helixes[helixNum]->cornerCells[cornerNum].node;
         } else {
             // if this is a sheet, index is # helices + helixNum
             return helixNum + numH + 1;
@@ -64,15 +64,15 @@ namespace GraphMatch {
     }
 
     // returns the graph node index for the corner of helix/sheet helixNum nearest to point point.
-    inline int SkeletonReader::GetGraphIndex(vector<Shape> & helixes, int helixNum, Point3Pair * point) {
+    inline int SkeletonReader::GetGraphIndex(vector<Shape*> & helixes, int helixNum, Point3Pair * point) {
         int node = 1;
         double minDistance = MAXINT;
         double dist;
         // find nearest corner to the input point. node = 1 or 2 for a helix.
-        for(int i = 0; i < (int)helixes[helixNum].cornerCells.size(); i++) {
-            dist = Point3Pair::EuclideanDistance(helixes[helixNum].cornerCells[i], *point);
+        for(int i = 0; i < (int)helixes[helixNum]->cornerCells.size(); i++) {
+            dist = Point3Pair::EuclideanDistance(helixes[helixNum]->cornerCells[i], *point);
             if(dist < minDistance) {
-                node = helixes[helixNum].cornerCells[i].node;
+                node = helixes[helixNum]->cornerCells[i].node;
                 minDistance = dist;
             }
         }
@@ -80,7 +80,7 @@ namespace GraphMatch {
         // count the helices
         int numH = 0;
         for (unsigned int i = 0; i < (int)helixes.size(); i++) {
-            if(helixes[i].shapeType == GRAPHEDGE_HELIX) {
+            if(helixes[i]->shapeType == GRAPHEDGE_HELIX) {
                 numH++;
             }
         }
@@ -113,7 +113,8 @@ namespace GraphMatch {
 #endif
 
         // Read the helix file
-        vector<Shape> helixes;
+        vector<Shape*> helixes;
+        helixes.clear();
         ReadHelixFile(helixFile, sseFile, helixes);
 
 
@@ -124,7 +125,7 @@ namespace GraphMatch {
         printf("\033[34mFinished reading helix file, now moving on to sheets...\n\033[0m");
 #endif // VERBOSE
 
-        vector<Shape> sheets;
+        vector<Shape*> sheets;
 
         //ReadSheetFile(sheetFile, helixes);
         ReadSheetFile(sheetFile, sheets);
@@ -152,12 +153,12 @@ namespace GraphMatch {
                         bool inHelix = false;
                         for(int i = 0; i < (int)helixes.size(); i++) {
                             // if i is a helix and if point is inside helix i
-                            if(helixes[i].shapeType == GRAPHEDGE_HELIX && helixes[i].isInsideShape(point)) {
+                            if(helixes[i]->shapeType == GRAPHEDGE_HELIX && helixes[i]->isInsideShape(point)) {
                                 // store helix number for this point in the volume
                                 paintedVol(x, y, z) = (float)i+1;
                                 // add this point as as internal cell of the helix
                                 inHelix = true;
-                                helixes[i].addInternalCell(Point3Pair(x, y, z, 0));
+                                helixes[i]->addInternalCell(Point3Pair(x, y, z, 0));
                             }
                         }
                     }
@@ -205,8 +206,8 @@ namespace GraphMatch {
                             // measure distance to every SSE sheet, add to running total
                             for(int j = 0; j < (int)sheets.size(); j++) {
                                 // find plates on skeleton that are associated with sheets
-                                if(sheets[j].shapeType == GRAPHEDGE_SHEET) {
-                                    sheetDistance[i][j] += sheets[j].minimumDistanceToPoint(point);
+                                if(sheets[j]->shapeType == GRAPHEDGE_SHEET) {
+                                    sheetDistance[i][j] += sheets[j]->minimumDistanceToPoint(point);
                                 }
                             }
                         }
@@ -235,7 +236,7 @@ namespace GraphMatch {
         for (int i = 1; i <= numSkeletonSheets; i++) {
             double minDist = MAXIMUM_DISTANCE_SHEET_SKELETON;
             for (int j = 0; j < (int)sheets.size(); j++) {
-                if (sheets[j].shapeType == GRAPHEDGE_SHEET && sheetDistance[i][j] < minDist) {
+                if (sheets[j]->shapeType == GRAPHEDGE_SHEET && sheetDistance[i][j] < minDist) {
                     minDist = sheetDistance[i][j];
                     sseSheetMapping[i] = j;
                 }
@@ -273,7 +274,7 @@ namespace GraphMatch {
                             // associate this voxel with this sheet
                             paintedVol(x, y, z) = sseSheetNum+1;
                             // add this point as as internal cell of the helix
-                            helixes[sseSheetNum].addInternalCell(Point3Pair(x, y, z, 0));
+                            helixes[sseSheetNum]->addInternalCell(Point3Pair(x, y, z, 0));
                         }
                     }
                 }
@@ -302,10 +303,10 @@ namespace GraphMatch {
         int numH = 0;
         int numS = 0;
         for (unsigned int i = 0; i < (int)helixes.size(); i++) {
-            if(helixes[i].shapeType == GRAPHEDGE_HELIX) {
+            if(helixes[i]->shapeType == GRAPHEDGE_HELIX) {
                 numH++;
             }
-            if(helixes[i].shapeType == GRAPHEDGE_SHEET) {
+            if(helixes[i]->shapeType == GRAPHEDGE_SHEET) {
                 numS++;
             }
         }
@@ -316,20 +317,20 @@ namespace GraphMatch {
         // are connected along the volume.
         //cout << "adding " << (int)helixes.size() << " helices and sheets to adjacency matrix" << endl;
         for(unsigned int i = 0; i < (int)helixes.size(); i++) {
-            if(helixes[i].shapeType == GRAPHEDGE_HELIX) {
+            if(helixes[i]->shapeType == GRAPHEDGE_HELIX) {
                 // assign node numbers for helix ends
                 int node1 = (i*2)+1;
                 int node2 = (i*2)+2;
 
                 // find the two corner cells in this helix
-                helixes[i].findCornerCellsInHelix();
+                helixes[i]->findCornerCellsInHelix();
                 //cout << "helix " << i << " has " << helixes[i]->cornerCells.size() << " corners." << endl;
-                for (unsigned int j = 0; j < helixes[i].cornerCells.size(); j++) {
+                for (unsigned int j = 0; j < helixes[i]->cornerCells.size(); j++) {
                     //cout << "corner " << j << " is associated with node " << helixes[i]->cornerCells[j].node << endl;
                 }
 
                 // length of this helix
-                float length = helixes[i].length;
+                float length = helixes[i]->length;
 
                 // populate adjacency matrix
                 // no cost to go from a helix end back to itself
@@ -340,11 +341,11 @@ namespace GraphMatch {
                 // cost of traversing a helix is the helix length
                 graph->setCost(node1, node2, length);
                 // mark this edge type as helix or sheet, determined by helixes graph
-                graph->setType(node1, node2, helixes[i].shapeType);
+                graph->setType(node1, node2, helixes[i]->shapeType);
                 // same for reverse direction
                 graph->setCost(node2, node1, length);
-                graph->setType(node2, node1, helixes[i].shapeType);
-            } else if (helixes[i].shapeType == GRAPHEDGE_SHEET) {
+                graph->setType(node2, node1, helixes[i]->shapeType);
+            } else if (helixes[i]->shapeType == GRAPHEDGE_SHEET) {
                 // assign node number this sheet
                 int sheetNode = numH + i + 1; // each helix takes two nodes
 
@@ -381,14 +382,14 @@ namespace GraphMatch {
 
         // populate graph->skeletonHelixes with list of helices and sheets
         for(int i = 0; i < (int)helixes.size(); i++) {
-            graph->skeletonHelixes.push_back(&helixes[i]);
+            graph->skeletonHelixes.push_back(helixes[i]);
         }
 
         // find the costs of all other paths along the volume, from any helix end to any other helix end
         // store the results as edges in the graph
         for(int i = 0; i < (int)helixes.size(); i++) {
             // for every entry and exit point of that helix/sheet
-            for(int j = 0; j < (int)helixes[i].cornerCells.size(); j++) {
+            for(int j = 0; j < (int)helixes[i]->cornerCells.size(); j++) {
                 // find all the paths from the entry/exit point to every other helix.
                 // results are stored in vol and paintedVol and as graph edges.
                 FindSizes(i, j, helixes, vol, &paintedVol, graph);
@@ -575,7 +576,7 @@ namespace GraphMatch {
 
     // finds all the corner cells in a sheet
     // corner cells are cells that are inside the sheet but have more than one neighbor on the skeleton that lies outside the sheet
-    inline void SkeletonReader::FindCornerCellsInSheet(Volume * vol, Volume * paintedVol, vector<Shape> & helixes, int sheetId) {
+    inline void SkeletonReader::FindCornerCellsInSheet(Volume * vol, Volume * paintedVol, vector<Shape*> & helixes, int sheetId) {
 
         // helper function for iterating over 6 neighbor voxels
         int d[6][3];
@@ -589,13 +590,13 @@ namespace GraphMatch {
         int outsideCounter; // count of neighbors that lie outside the sheet
 
         // for each voxel that is inside the sheet
-        for(int i = 0; i < (int)helixes[sheetId].internalCells.size(); i++) {
+        for(int i = 0; i < (int)helixes[sheetId]->internalCells.size(); i++) {
             outsideCounter = 0;
 
             // iterate over 6 neighbor voxels, counting how many lie outside the sheet
             for(int j = 0; j < 6; j++) {
-                if(((*vol)(helixes[sheetId].internalCells[i].x + d[j][0], helixes[sheetId].internalCells[i].y + d[j][1], helixes[sheetId].internalCells[i].z + d[j][2]) > 0) &&
-                    ((*paintedVol)(helixes[sheetId].internalCells[i].x + d[j][0], helixes[sheetId].internalCells[i].y + d[j][1], helixes[sheetId].internalCells[i].z + d[j][2]) == 0)) {
+                if(((*vol)(helixes[sheetId]->internalCells[i].x + d[j][0], helixes[sheetId]->internalCells[i].y + d[j][1], helixes[sheetId]->internalCells[i].z + d[j][2]) > 0) &&
+                    ((*paintedVol)(helixes[sheetId]->internalCells[i].x + d[j][0], helixes[sheetId]->internalCells[i].y + d[j][1], helixes[sheetId]->internalCells[i].z + d[j][2]) == 0)) {
                     outsideCounter++;
                 }
             }
@@ -604,35 +605,35 @@ namespace GraphMatch {
             if(outsideCounter > 0) {
                 bool found = false;
                 // iterate over all corner cells of this sheet, checking to see if this voxel has been labeled as a corner cell yet
-                for(int k = 0; k < (int)helixes[sheetId].cornerCells.size(); k++) {
-                    found = found || ((helixes[sheetId].cornerCells[k].x == helixes[sheetId].internalCells[i].x) &&
-                        (helixes[sheetId].cornerCells[k].y == helixes[sheetId].internalCells[i].y) &&
-                        (helixes[sheetId].cornerCells[k].z == helixes[sheetId].internalCells[i].z));
+                for(int k = 0; k < (int)helixes[sheetId]->cornerCells.size(); k++) {
+                    found = found || ((helixes[sheetId]->cornerCells[k].x == helixes[sheetId]->internalCells[i].x) &&
+                        (helixes[sheetId]->cornerCells[k].y == helixes[sheetId]->internalCells[i].y) &&
+                        (helixes[sheetId]->cornerCells[k].z == helixes[sheetId]->internalCells[i].z));
                 }
                 // if this voxel has not already been labeled as a corner cell, do so now
                 if(!found) {
-                    helixes[sheetId].cornerCells.push_back(helixes[sheetId].internalCells[i]);
+                    helixes[sheetId]->cornerCells.push_back(helixes[sheetId]->internalCells[i]);
                     //helixes[sheetId]->cornerCells[helixes[sheetId]->cornerCells.size()-1].node = 1;
-                    helixes[sheetId].cornerCells[helixes[sheetId].cornerCells.size()-1].node = helixes[sheetId].cornerCells.size();
+                    helixes[sheetId]->cornerCells[helixes[sheetId]->cornerCells.size()-1].node = helixes[sheetId]->cornerCells.size();
 #ifdef VERBOSE
-                    cout << "\033[34mSheet corner cell found at sheet " << sheetId << " node " << i << ", corner " << helixes[sheetId].cornerCells.size() << ", coordinates (" << helixes[sheetId].internalCells[i].x << "," << helixes[sheetId].internalCells[i].y << "," << helixes[sheetId].internalCells[i].z << "), outsideCounter = " << outsideCounter << endl;
+                    cout << "\033[34mSheet corner cell found at sheet " << sheetId << " node " << i << ", corner " << helixes[sheetId]->cornerCells.size() << ", coordinates (" << helixes[sheetId]->internalCells[i].x << "," << helixes[sheetId]->internalCells[i].y << "," << helixes[sheetId]->internalCells[i].z << "), outsideCounter = " << outsideCounter << endl;
                     cout<<"\033[0m";
 #endif // VERBOSE
                 }
             }
         }
 #ifdef VERBOSE
-        cout << "\033[34mDone finding corner cells for sheet " << sheetId << ". " << helixes[sheetId].cornerCells.size() << " corner cells.  " << helixes[sheetId].internalCells.size() << " internal cells." << endl;
+        cout << "\033[34mDone finding corner cells for sheet " << sheetId << ". " << helixes[sheetId]->cornerCells.size() << " corner cells.  " << helixes[sheetId]->internalCells.size() << " internal cells." << endl;
         cout<<"\033[0m";
 #endif // VERBOSE
         //assert(helixes[sheetId]->cornerCells.size() >= 2);
-        helixes[sheetId].length = (float)helixes[sheetId].internalCells.size();
+        helixes[sheetId]->length = (float)helixes[sheetId]->internalCells.size();
     }
 
     // Parses sheetFile, a .wrl file containing a list of polygons that form a sheet.
     // Creates a Shape object consisting of a collection of polygons (triangles) for each sheet.
     // Adds these sheet objects to helixes.
-    inline void SkeletonReader::ReadSheetFile(string sheetFile, vector<Shape> & helixes){
+    inline void SkeletonReader::ReadSheetFile(string sheetFile, vector<Shape*> & helixes){
         ifstream fin(sheetFile.c_str());
         if (!fin) {
             cout<<"Error reading sheet input file "<<sheetFile<<".  Skipping sheets.\n" ;
@@ -648,7 +649,7 @@ namespace GraphMatch {
                 // add shape from previous iteration to list of SSEs
                 if(token == TOKEN_VRML_SHAPE) {
                     if(shape != NULL) {
-                        helixes.push_back(*shape);
+                        helixes.push_back(shape);
                     }
                     shape = new Shape();
                     shape->shapeType = GRAPHEDGE_SHEET;
@@ -675,17 +676,17 @@ namespace GraphMatch {
             }
             // add last shape to list of SSEs
             if(lastSheet) {
-                helixes.push_back(*shape);
+                helixes.push_back(shape);
             }
 
             fin.close();
         }
     }
 
-    inline void SkeletonReader::ReadHelixFile(string helixFile, string sseFile, vector<Shape> & helixes){
+    inline void SkeletonReader::ReadHelixFile(string helixFile, string sseFile, vector<Shape*> & helixes){
 //        #ifdef GORGON_DEBUG
               cout<<"\033[32mDEBUG: File:   SkeletonReader.h"<<endl;
-              cout<<"DEBUG: Method: SkeletonReader::ReadHelixFile(string, string, vector<Shape>&)\033[0m"<<endl;
+              cout<<"DEBUG: Method: SkeletonReader::ReadHelixFile(string, string, vector<Shape*>&)\033[0m"<<endl;
               cout<<"Im in!"<<endl;
 //        #endif
 
@@ -718,7 +719,7 @@ namespace GraphMatch {
                     shape->setRadius(a);
 
                     // add shape to list of helices
-                    helixes.push_back(*shape);
+                    helixes.push_back(shape);
 
                     // reinitialize shape variable
                     shape = new Shape();
@@ -744,7 +745,7 @@ namespace GraphMatch {
                 while (fin>>token) {
                     if(token == TOKEN_SSE_ALPHA && count < helixes.size() ) { // size check prevents crash when lengths file has more entries than helices loaded above
                         fin>>t1>>t2>>t3>>length;
-                        helixes[count].length = (float)length * HELIX_C_ALPHA_TO_ANGSTROMS;
+                        helixes[count]->length = (float)length * HELIX_C_ALPHA_TO_ANGSTROMS;
                         count++;
                     }
                 }
@@ -756,7 +757,7 @@ namespace GraphMatch {
     // finds the loops from the helix/sheet corner given by helixList[startHelix]->cornerCells[startCell] to
     // all other helices/sheets by flooding outward along the skeleton volume
     // stores the resulting loops in the graph object using graph->SetCost and graph->SetType
-    inline void SkeletonReader::FindSizes(int startHelix, int startCell, vector<Shape> & helixList, Volume * vol, Volume * coloredVol, Graph * graph) {
+    inline void SkeletonReader::FindSizes(int startHelix, int startCell, vector<Shape*> & helixList, Volume * vol, Volume * coloredVol, Graph * graph) {
         vector<Point3Pair *> oldStack;
         vector<Point3Pair *> newStack;
         int currentHelix;
@@ -770,7 +771,7 @@ namespace GraphMatch {
         int newIx;
 
         // calculate starting point, in unscaled voxel coords
-        Point3Pair * startPoint = new Point3Pair(helixList[startHelix].cornerCells[startCell].x, helixList[startHelix].cornerCells[startCell].y, helixList[startHelix].cornerCells[startCell].z, 0);
+        Point3Pair * startPoint = new Point3Pair(helixList[startHelix]->cornerCells[startCell].x, helixList[startHelix]->cornerCells[startCell].y, helixList[startHelix]->cornerCells[startCell].z, 0);
 
         // add to list of voxels to be explored
         oldStack.push_back(startPoint);

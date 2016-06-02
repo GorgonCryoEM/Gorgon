@@ -43,7 +43,7 @@ namespace Visualization {
             SSERenderer();
             virtual ~SSERenderer();
 
-            vector<Shape> getHelices();
+            vector<Shape*> * getHelices();
 
             void addHelix(Vec3F p1, Vec3F p2);
             void startNewSSE();
@@ -54,8 +54,8 @@ namespace Visualization {
             void loadSheetFile(string fileName);
             void unload();
             void unloadGraphSSEs();
-            void setHelixColor(int i, float r, float g, float b, float a);
-            void setSheetColor(int i, float r, float g, float b, float a);
+            void setHelixColor(int index, float r, float g, float b, float a);
+            void setSheetColor(int index, float r, float g, float b, float a);
             void setSSEColor(int index, float r, float g, float b, float a);
             void setSSEOrientationFlips(vector<bool>);
             bool selectionRotate(Vec3F centerOfMass, Vec3F rotationAxis, float angle);
@@ -75,15 +75,15 @@ namespace Visualization {
             void clearOtherHighlights();
 
         private:
-            void sheetListToMesh(vector<Shape> & sheets);
+            void sheetListToMesh(vector<Shape*> & sheets);
             void loadHelixFileSSE(string fileName);
             void loadHelixFileVRML(string fileName);
             void saveHelixFileSSE(FILE* fout);
             void saveHelixFileVRML(FILE* fout);
 
         private:
-            vector<Shape> helices;
-            vector<Shape> sheets;
+            vector<Shape*> helices;
+            vector<Shape*> sheets;
             SkeletonMesh sheetMesh;
             SkeletonMesh graphSheetMesh;
             int sheetCount;
