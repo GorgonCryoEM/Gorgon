@@ -14,10 +14,8 @@
 namespace Visualization {
 
     SSERenderer::SSERenderer() {
-        helices.clear();
         sheetCount = 0;
         graphSheetCount = 0;
-        selectedHelices.clear();
     }
 
     SSERenderer::~SSERenderer() {
