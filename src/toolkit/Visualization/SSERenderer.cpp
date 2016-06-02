@@ -87,20 +87,16 @@ namespace Visualization {
                 }
 
                 glPushMatrix();
-//                glMultMatrixd(helices[i]->getWorldToObjectMatrix().mat);
+                glMultMatrixd(helices[i]->getWorldToObjectMatrix().mat);
                 glRotated(90, 1, 0, 0);
-//                glTranslated(0.0, 0.0, -0.5);
+                glTranslated(0.0, 0.0, -0.5);
                 if(selectEnabled) {
                     glLoadName(i);
                 }
 
-                double th=2.0;
-                Vec3D p1 = helices[i]->getCenter() - Vec3D(th, th, th);
-                Vec3D p2 = helices[i]->getCenter() + Vec3D(th, th, th);
-                drawCylinder(Vec3F(p1[0],p1[1],p1[2]), Vec3F(p2[0],p2[1],p2[2]), 5.);
-//                GLUquadric * quadricCylinder = gluNewQuadric();
-//                gluCylinder(quadricCylinder, p[0], 0.5, 1.0, 10, 10);
-//                gluDeleteQuadric(quadricCylinder);
+                GLUquadric * quadricCylinder = gluNewQuadric();
+                gluCylinder(quadricCylinder, 0.5, 0.5, 1.0, 10, 10);
+                gluDeleteQuadric(quadricCylinder);
                 glPopMatrix();
                 glPopAttrib();
             }
