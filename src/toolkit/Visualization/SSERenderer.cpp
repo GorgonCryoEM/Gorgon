@@ -312,7 +312,7 @@ namespace Visualization {
     // set the color of an SSE. assumes that SSEs are indexed with helices first and sheets second.
     void SSERenderer::setSSEColor(int i, float r, float g, float b, float a) {
         int numHelices = helices.size();
-        if (index < numHelices) {
+        if (i < numHelices) {
             helices[i].setColor(r, g, b, a);
         } else {
             sheets[i - numHelices].setColor(r, g, b, a);
