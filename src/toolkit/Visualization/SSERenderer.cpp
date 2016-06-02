@@ -68,18 +68,7 @@ namespace Visualization {
                 glPushName(0);
             }
 
-            vector<int> SSEIndices;
-
-            for(unsigned int i = 0; i < corrs.size(); ++i){
-                int SSEIndex = corrs[i].first;
-                for(unsigned int k = 0; k < selectedPDBHelices.size(); ++k){
-                    if(selectedPDBHelices[k] == SSEIndex){
-                        SSEIndices.push_back(corrs[i].second);
-                    }
-                }
-            }
 //            cout<<"selectedPDBHelices.size(): "<<selectedPDBHelices.size()<<endl;
-//            cout<<"SSEIndices.size(): "<<SSEIndices.size()<<endl;
 
 //            cout<<"helices.size(): "<<helices.size()<<endl;
 
@@ -110,90 +99,7 @@ namespace Visualization {
                 gluDeleteQuadric(quadricCylinder);
                 glPopMatrix();
                 glPopAttrib();
-
-//                cout<<"helices["<<i<<"]->GetSelected(): "<<helices[i]->GetSelected()<<endl;
-//                if(helices[i]->GetSelected()) {
-
-                    Vec3F corner1 = getHelixCorner(i, 0);
-                    Vec3F corner2 = getHelixCorner(i, 1);
-                    cout << "Drawing selected cylinder. Size of helix flips is " << helixFlips.size() << endl;
-                    if(helixFlips.size()  > 0){
-                        if(!helixFlips[i]){
-                            OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
-                            drawSphere(corner2, 1.0);
-                            OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
-                            drawSphere(corner1, 1.0);
-                            fflush(stdout);
-                        }else{
-                            OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
-                            drawSphere(corner1, 1.0);
-                            OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
-                            drawSphere(corner2, 1.0);
-                            fflush(stdout);
-                        }
-                    }
-//                }
-
-                for(unsigned int j = 0; j < SSEIndices.size(); ++j){
-                    if(SSEIndices[j] == i){
-                        Vec3F corner1 = getHelixCorner(i, 0);
-                        Vec3F corner2 = getHelixCorner(i, 1);
-                        if(!helixFlips[i]){
-                            OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
-                            drawSphere(corner2, 1.0);
-                            OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
-                            drawSphere(corner1, 1.0);
-                            fflush(stdout);
-                        }else{
-                            OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
-                            drawSphere(corner1, 1.0);
-                            OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
-                            drawSphere(corner2, 1.0);
-                            fflush(stdout);
-                        }
-                    }
-                }
             }
-
-            if(selectEnabled) {
-                glPopName();
-            }
-        }
-        else if(subSceneIndex == 1) {
-            if(selectEnabled) {
-                glPushName(0);
-            }
-            // for color code
-            int prevSheet = -1;
-            int thisSheet;
-            float colorR, colorG, colorB, colorA;
-            GLfloat diffuseMaterial[4];
-            GLfloat ambientMaterial[4];
-            GLfloat specularMaterial[4];
-            // end color code
-//                }
-//                }
-            if(selectEnabled) {
-                glPopName();
-            }
-        }
-        else if(subSceneIndex == 2) {
-            if(selectEnabled) {
-                glPushName(0);
-            }
-            // for color code
-            int prevSheet = -1;
-            int thisSheet;
-            float colorR, colorG, colorB, colorA;
-            // end color code
-//                }
-//                }
-
-            glPushAttrib(GL_LIGHTING_BIT);
-            glDisable(GL_LIGHTING);
-            OpenGLUtils::SetColor(0.0, 0.0, 0.0, 1.0);
-            glPopAttrib();
-            // end graph-type sheet rendering code
 
             if(selectEnabled) {
                 glPopName();
