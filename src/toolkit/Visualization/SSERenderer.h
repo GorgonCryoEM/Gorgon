@@ -45,8 +45,10 @@ namespace Visualization {
 
             vector<Shape*> * getHelices();
 
+            void addHelix(Vec3F p1, Vec3F p2);
             void startNewSSE();
             void addSSEPoint(Vec3F p);
+            void finalizeHelix();
             void draw(int subSceneIndex, bool selectEnabled);
             void loadHelixFile(string fileName);
             void loadSheetFile(string fileName);
@@ -74,6 +76,7 @@ namespace Visualization {
 
         private:
             void sheetListToMesh(vector<Shape*> & sheets);
+            void loadHelixFileSSE(string fileName);
             void loadHelixFileVRML(string fileName);
             void saveHelixFileSSE(FILE* fout);
             void saveHelixFileVRML(FILE* fout);

@@ -35,6 +35,19 @@ namespace Visualization {
         return &helices;
     }
 
+    void SSERenderer::addHelix(Vec3F p1, Vec3F p2) {
+
+        Shape * newHelix = Shape::createHelix(p1, p2, 2.5);
+
+        helices.push_back(newHelix);
+    }
+
+    void SSERenderer::finalizeHelix() {
+        Vec3F p1, p2;
+        LinearSolver::FindBestFitLine(p1, p2, tempSSEPoints);
+        addHelix(p1, p2);
+    }
+
     void SSERenderer::startNewSSE() {
         tempSSEPoints.clear();
     }
@@ -96,6 +109,36 @@ namespace Visualization {
         glPopName();
     }
 
+    void SSERenderer::loadHelixFileSSE(string fileName) {
+
+        FILE* fin = fopen((char*)fileName.c_str(), "rt");
+
+        char line[1000];
+        string lineStr;
+        float x1, x2, y1, y2, z1, z2;
+        while(!feof(fin)) {
+            fscanf(fin, "%s", line);
+            lineStr = string(line);
+            if(lineStr.compare("ALPHA") == 0) {
+                fscanf(fin, "%s", line);
+                fscanf(fin, "%s", line);
+                fscanf(fin, "%s", line);
+                fscanf(fin, "%s", line);
+                fscanf(fin, "%f", &x1);
+                fscanf(fin, "%f", &y1);
+                fscanf(fin, "%f", &z1);
+                fscanf(fin, "%f", &x2);
+                fscanf(fin, "%f", &y2);
+                fscanf(fin, "%f", &z2);
+                addHelix(Vec3F(x1, y1, z1), Vec3F(x2, y2, z2));
+            }
+        }
+
+        fclose(fin);
+        cout<<"       SSERenderer::loadHelixFileSSE"<<endl;
+        cout<<"helices.size(): "<<helices.size()<<endl;
+    }
+
     void SSERenderer::loadHelixFileVRML(string fileName) {
         SkeletonReader::ReadHelixFile(fileName, "", helices);
     }
@@ -119,6 +162,8 @@ namespace Visualization {
             loadHelixFileVRML(fileName);
         } else if(strcmp(extension.c_str(), "VRML") == 0) {
             loadHelixFileVRML(fileName);
+        } else if(strcmp(extension.c_str(), "SSE") == 0) {
+            loadHelixFileSSE(fileName);
         }
     }
 
