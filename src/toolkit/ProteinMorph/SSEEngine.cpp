@@ -10,11 +10,11 @@
 namespace Visualization {
     void SSEEngine::draw(int sceneIndex) {
         cout << "SSEEngine::draw called" << endl;
-        //        #ifdef GORGON_DEBUG
+                #ifdef GORGON_DEBUG
         cout<<"\033[32mDEBUG: File:   SSEEngine.h"<<endl;
         cout<<"DEBUG: Method: SSEEngine::draw(int)\033[0m"<<endl;
         cout<<"curInd: "<<curInd<<endl;
-        //        #endif
+                #endif
 
         float p1 = -49.0;
         float p2 = -49.0;
@@ -30,11 +30,11 @@ namespace Visualization {
 //            if(result.getCost()<=0.0)
 //                return;
 
-            //            #ifdef GORGON_DEBUG
+                        #ifdef GORGON_DEBUG
             cout<<"\033[32mDEBUG: File:   SSEEngine.h"<<endl;
             cout<<"DEBUG: Method: SSEEngine::draw(int)\033[0m"<<endl;
             cout<<result<<endl;
-            //            #endif
+                        #endif
 
 
             glPushAttrib(GL_LIGHTING_BIT | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT);
@@ -95,11 +95,11 @@ namespace Visualization {
                 seqIndex = (i + strandsPassed + 1)/2 + 1;
 
                 path = skeleton.paths[n1][n2];
-                //                #ifdef GORGON_DEBUG
+                                #ifdef GORGON_DEBUG
                 cout<<"\033[32mDEBUG: File:   SSEEngine.h"<<endl;
                 cout<<"DEBUG: Method: SSEEngine::draw(int)\033[0m"<<endl;
                 cout << "path sizes. fwd:" << skeleton.paths[n1][n2].size() << ", rev:" << skeleton.paths[n2][n1].size() << endl;
-                //                #endif
+                                #endif
 
                 if(path.size() == 0) {
                     path = skeleton.paths[n2][n1];
@@ -112,11 +112,11 @@ namespace Visualization {
 
                 // get colors of beginning and ending SSEs
                 int numHelices = skeleton.getHelixCount();
-                //                #ifdef GORGON_DEBUG
+                                #ifdef GORGON_DEBUG
                 cout<<"\033[32mDEBUG: File:   SSEEngine.h"<<endl;
                 cout<<"DEBUG: Method: SSEEngine::draw(int)\033[0m"<<endl;
                 cout<<numHelices<<endl;
-                //                #endif
+                                #endif
 
 
                 // start SSE color
@@ -153,12 +153,12 @@ namespace Visualization {
                                         glColor3f(startColorR, startColorG, startColorB);
 //                    glColor3f(.2,.4,.7);
                     double sphereRadius = 1;
-                    //                    #ifdef GORGON_DEBUG
+                                        #ifdef GORGON_DEBUG
                     cout<<"\033[32mDEBUG: File:   SSEEngine.h"<<endl;
                     cout<<"DEBUG: Method: SSEEngine::draw(int)\033[0m"<<endl;
                     cout<<".....Before drawSphere"<<endl;
 //                    cout<<path[0]<<endl;
-                    //                    #endif
+                                        #endif
 
                     drawSphere(path[0], sphereRadius);
                     /*
@@ -198,12 +198,12 @@ namespace Visualization {
                     pathx=path[j].X()+offset;
                     pathy=path[j].Y()+offset;
                     pathz=path[j].Z()+offset;
-                    //                    #ifdef GORGON_DEBUG
+                                        #ifdef GORGON_DEBUG
                     cout<<"\033[32mDEBUG: File:   SSEEngine.h"<<endl;
                     cout<<"DEBUG: Method: SSEEngine::draw(int)\033[0m"<<endl;
                     cout<<"....Before glVertex"<<endl;
 //                    cout<<path[j]<<endl;
-                    //                    #endif
+                                        #endif
 
 //                    glColor3f(.7,.7,.7);
                     //                    glVertex3f(pathx, pathy, pathz);
