@@ -203,10 +203,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
             print "after creating basic correspondence (1), secelDict has length " + str(len(self.app.viewers['sse'].correspondenceLibrary.structurePrediction.secelDict))
             #self.createBasicCorrespondence()
             print "after creating basic correspondence (2), secelDict has length " + str(len(self.app.viewers['sse'].correspondenceLibrary.structurePrediction.secelDict))
-            NN = self.app.viewers['sse'].renderer.getHelixCount()
-            print NN
-            for i in range(NN):
-                self.app.viewers['sse'].renderer.setHelixColor(i, 0.2, 0.2, 0.8, 1.0)
+
             self.app.viewers['sse'].correspondenceLibrary.correspondenceList = self.populateEmptyResults(self.app.viewers['sse'].correspondenceLibrary)
             print "correspondenceList has length " + str(len(self.app.viewers['sse'].correspondenceLibrary.correspondenceList))
             self.populateComboBox(self.app.viewers['sse'].correspondenceLibrary)
