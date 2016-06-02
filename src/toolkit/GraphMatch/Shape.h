@@ -119,7 +119,7 @@ namespace GraphMatch {
     }
 
     inline bool Shape::isInsideShape(Vec3D point) {
-        Vec3D newPoint = Vec3D(point[0], point[1], point[2]);
+        Vec3D newPoint(point[0], point[1], point[2]);
         if(shapeType == GRAPHEDGE_HELIX) {
             return isInsideCylinder(newPoint);
         } else {
