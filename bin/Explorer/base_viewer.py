@@ -103,15 +103,15 @@ class BaseViewer(BaseDockWidget):
 
     def paintGL(self):
         glPushMatrix()
-        try:
-            loc = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]
-#             loc = -loc
-#             loc = [0, 0, 0]
-            print self.title, " (loc): ", loc
-        except:
-            pass
-        else:
-            glTranslated(loc[0], loc[1], loc[2])
+#         try:
+#             loc = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]
+# #             loc = -loc
+# #             loc = [0, 0, 0]
+#             print self.title, " (loc): ", loc
+#         except:
+#             pass
+#         else:
+#             glTranslated(loc[0], loc[1], loc[2])
         glMultMatrixf(self.rotation)
         try:
             scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
@@ -161,6 +161,8 @@ class BaseViewer(BaseDockWidget):
                 self.renderer.draw(s, True)
             else:
                 self.renderer.draw(s, True)
+        
+        self.extraDrawingRoutines()
 
     def setMaterials(self):
         color = self.color
