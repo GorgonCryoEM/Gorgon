@@ -92,17 +92,17 @@ namespace GraphMatch {
     };
 
     inline Shape::Shape() {
-        worldToObject = Matrix4::identity();
-        objectToWorld = Matrix4::identity();
-        rotationMatrix = Matrix4::identity();
+        worldToObject         = Matrix4::identity();
+        objectToWorld         = Matrix4::identity();
+        rotationMatrix        = Matrix4::identity();
         inverseRotationMatrix = Matrix4::identity();
-        internalCells.clear();
+
         colorR = 0.0f;
         colorG = 1.0f;
         colorB = 0.0f;
         colorA = 1.0f;
-        selected = false;
 
+        selected                 = false;
         isObjectSpecificColoring = false;
     }
 
