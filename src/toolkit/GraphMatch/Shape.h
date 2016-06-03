@@ -534,17 +534,15 @@ namespace GraphMatch {
     }
 
     inline void Shape::writeToFile(vector<Shape*> & helices, FILE * fout) {
-        Vec3D center;
-        Vec3F start, end, axis;
-        double angle;
-        float helixLength;
         fprintf(fout, "#VRML V2.0 utf8\n");
 
         for(unsigned int i = 0; i < helices.size(); i++) {
-            center = helices[i]->getCenter();
-            start = helices[i]->getCornerCell3(1);
-            end = helices[i]->getCornerCell3(2);
-            helixLength = (start-end).length();
+            Vec3D center      = helices[i]->getCenter();
+            Vec3F start       = helices[i]->getCornerCell3(1);
+            Vec3F end         = helices[i]->getCornerCell3(2);
+            float helixLength = (start-end).length();
+
+            Vec3F axis; double angle;
             helices[i]->getRotationAxisAndAngle(axis, angle);
 
             fprintf(fout, "Group {\n children [\n Transform {\n  translation %f %f %f\n", center[0], center[1], center[2]);
