@@ -434,7 +434,12 @@ namespace GraphMatch {
 
     inline void Shape::updateWorldToObjectMatrix() {
         worldToObject = Matrix4::translation(centerPoint) * rotationMatrix * Matrix4::scaling(radius*2, height, radius*2);
-        objectToWorld = Matrix4::scaling(1.0/(radius*2.0), 1.0/height, 1.0/(radius*2.0)) * inverseRotationMatrix * Matrix4::translation(Vec3D(-centerPoint[0], -centerPoint[1], -centerPoint[2]));
+        objectToWorld = Matrix4::scaling(1.0 / (radius * 2.0),
+                                         1.0 / height,
+                                         1.0 / (radius * 2.0)
+                                         )
+                        * inverseRotationMatrix
+                        * Matrix4::translation(-centerPoint);
     }
 
     inline void Shape::setSelected(bool selected) {
