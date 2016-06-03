@@ -752,15 +752,15 @@ namespace GraphMatch {
     public:
         int x, y, z, node;
         float distance;
-        Point3Pair(int x, int y, int z, float distance) {
-            this->x = x;
-            this->y = y;
-            this->z = z;
-            this->distance = distance;
-            this->node = 0;
+        Point3Pair(int xx, int yy, int zz, float dd) {
+            x = xx;
+            y = yy;
+            z = zz;
+            distance = dd;
+            node = 0;
         }
         bool operator==(Point3Pair &other) {
-            return ((this->x == other.x) && (this->y == other.y) && (this->z == other.z));
+            return (x == other.x) && (y == other.y) && (z == other.z);
         }
 
         static double EuclideanDistance(Point3Pair p1, Point3Pair p2) {
