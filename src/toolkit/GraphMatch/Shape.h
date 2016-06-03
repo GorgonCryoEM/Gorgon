@@ -79,8 +79,8 @@ namespace GraphMatch {
     private:
         Matrix4 worldToObject;
         Matrix4 objectToWorld;
-        Vec3D	centerPoint;
-        double  radius;
+        Vec3D	center;
+        double  R;
         double  height;
         Matrix4 rotationMatrix;
         Matrix4 inverseRotationMatrix;
@@ -190,7 +190,7 @@ namespace GraphMatch {
     }
 
     inline double Shape::getRadius(){
-        return radius;
+        return R;
     }
 
     inline int Shape::getLocationInVector(vector<Point3Pair> v, Point3Pair point) {
@@ -215,7 +215,7 @@ namespace GraphMatch {
         return worldToObject;
     }
     inline Vec3D Shape::getCenter() {
-        return centerPoint;
+        return center;
     }
 
     inline Vec3D Shape::getWorldCoordinates(Vec3D point) {
@@ -377,7 +377,7 @@ namespace GraphMatch {
     }
 
     inline void Shape::translate(Vec3D translationVector){
-        centerPoint = centerPoint + translationVector;
+        center = center + translationVector;
         updateWorldToObjectMatrix();
     }
 
@@ -389,7 +389,7 @@ namespace GraphMatch {
     }
 
     inline void Shape::setCenter(Vec3D center) {
-        this->centerPoint = center;
+        this->center = center;
         updateWorldToObjectMatrix();
     }
 
@@ -404,7 +404,7 @@ namespace GraphMatch {
     }
 
     inline void Shape::setRadius(double radius) {
-        this->radius = radius;
+        this->R = radius;
         updateWorldToObjectMatrix();
     }
 
@@ -416,13 +416,13 @@ namespace GraphMatch {
     }
 
     inline void Shape::updateWorldToObjectMatrix() {
-        worldToObject = Matrix4::translation(centerPoint) * rotationMatrix * Matrix4::scaling(radius*2, height, radius*2);
-        objectToWorld = Matrix4::scaling(1.0 / (radius * 2.0),
+        worldToObject = Matrix4::translation(center) * rotationMatrix * Matrix4::scaling(R*2, height, R*2);
+        objectToWorld = Matrix4::scaling(1.0 / (R * 2.0),
                                          1.0 / height,
-                                         1.0 / (radius * 2.0)
+                                         1.0 / (R * 2.0)
                                          )
                         * inverseRotationMatrix
-                        * Matrix4::translation(-centerPoint);
+                        * Matrix4::translation(-center);
     }
 
     inline void Shape::setSelected(bool selected) {
