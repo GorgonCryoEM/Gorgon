@@ -136,38 +136,33 @@ namespace GraphMatch {
     }
 
     inline bool Shape::isInsidePolygon(Vec3D p) {
-        Polygon poly;
-        Vec3D a,b,c,q;
-        double l1, l2;
-        Vec3D n;
-        double d;
         bool isInside = false;
-        double A,B,C,D,E,F,G,H,I;
+
         for(unsigned int i = 0; i < polygons.size(); i++) {
-            poly = (Polygon)polygons[i];
+            Polygon poly = polygons[i];
             // read triangle vertices
-            a = (Vec3D)polygonPoints[poly.pointIndex1];
-            b = (Vec3D)polygonPoints[poly.pointIndex2];
-            c = (Vec3D)polygonPoints[poly.pointIndex3];
+            Vec3D a = polygonPoints[poly.pointIndex1];
+            Vec3D b = polygonPoints[poly.pointIndex2];
+            Vec3D c = polygonPoints[poly.pointIndex3];
             // find surface normal
-            n = ((b-a)^(c-a)) / ((b-a)^(c-a)).length();
+            Vec3D n = ((b-a)^(c-a)) / ((b-a)^(c-a)).length();
             // measure distance from point p to triangle
-            d = n * (p - a);
+            double d = n * (p - a);
             // find projection of p onto triangle
-            q = p + n*d;
+            Vec3D q = p + n*d;
 
-            A = a[0]-c[0];
-            B = b[0]-c[0];
-            C = c[0]-q[0];
-            D = a[1]-c[1];
-            E = b[1]-c[1];
-            F = c[1]-q[1];
-            G = a[2]-c[2];
-            H = b[2]-c[2];
-            I = c[2]-q[2];
+            double A = a[0]-c[0];
+            double B = b[0]-c[0];
+            double C = c[0]-q[0];
+            double D = a[1]-c[1];
+            double E = b[1]-c[1];
+            double F = c[1]-q[1];
+            double G = a[2]-c[2];
+            double H = b[2]-c[2];
+            double I = c[2]-q[2];
 
-            l1 = (B*(F + I) - C*(E + H)) / (A*(E + H) - B*(D + G));
-            l2 = (A*(F + I) - C*(D + G)) / (B*(D + G) - A*(E + H));
+            double l1 = (B*(F + I) - C*(E + H)) / (A*(E + H) - B*(D + G));
+            double l2 = (A*(F + I) - C*(D + G)) / (B*(D + G) - A*(E + H));
 
             isInside = isInside || ((abs(d) < 1) && (l1 >= 0) && (l1 <= 1) && (l2 >= 0) && (l2 <= 1));
         }
