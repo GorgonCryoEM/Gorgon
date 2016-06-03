@@ -507,7 +507,7 @@ namespace GraphMatch {
         newHelix->shapeType = GRAPHEDGE_HELIX;
         Vec3F center = (p1+p2) * 0.5;
         Vec3F dir = p1-p2;
-        Vec3F yaxis = Vec3F(0, 1, 0);
+        Vec3F yaxis(0, 1, 0);
 
         newHelix->setCenter(Vec3D(center.X(), center.Y(), center.Z()));
         newHelix->setRadius(radius);
