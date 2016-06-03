@@ -281,14 +281,12 @@ namespace GraphMatch {
             insideCounter = 0;
             // count the number of neighbor cells inside the helix
             for(int j = 0; j < 6; j++) {
-                if(getLocationInVector(internalCells, Point3Pair(internalCells[i].x + d[j][0], internalCells[i].y + d[j][1], internalCells[i].z + d[j][2], 0)) >= 0) {
+                if(getLocationInVector(internalCells, Point3Pair(internalCells[i].x + d[j][0], internalCells[i].y + d[j][1], internalCells[i].z + d[j][2], 0)) >= 0)
                     insideCounter++;
-                }
             }
             // if only one neighbor inside the helix, this is a corner cell. add it to the list.
-            if(insideCounter == 1) {
+            if(insideCounter == 1)
                 cornerCells.push_back(internalCells[i]);
-            }
         }
 
         // abort if more than two corner cells were found
