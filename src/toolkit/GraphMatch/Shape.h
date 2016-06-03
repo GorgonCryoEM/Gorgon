@@ -273,12 +273,11 @@ namespace GraphMatch {
         d[4][0] = -1;		d[4][1] = 0;		d[4][2] = 0;
         d[5][0] = 1;		d[5][1] = 0;		d[5][2] = 0;
 
-        // counter of number of neighbor cells are inside the helix
-        int insideCounter;
 
         // for each cell inside the helix
         for(unsigned int i = 0; i < internalCells.size(); i++) {
-            insideCounter = 0;
+            // counter of number of neighbor cells are inside the helix
+            int insideCounter = 0;
             // count the number of neighbor cells inside the helix
             for(int j = 0; j < 6; j++) {
                 if(getLocationInVector(internalCells, Point3Pair(internalCells[i].x + d[j][0], internalCells[i].y + d[j][1], internalCells[i].z + d[j][2], 0)) >= 0)
