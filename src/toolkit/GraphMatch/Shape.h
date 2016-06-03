@@ -176,14 +176,11 @@ namespace GraphMatch {
 
     // returns the minimum distance between a point p and a Shape
     inline double Shape::minimumDistanceToPoint(Vec3D P) {
-        Vec3D pt;
-        double d;
         double dmin = MAXDOUBLE;
 
         // find min distance from point p to any triangle in the polygon
         for(unsigned int i = 0; i < polygonPoints.size(); i++) {
-            pt = (Vec3D)polygonPoints[i];
-            d = (pt - P).length();
+            double d = (polygonPoints[i] - P).length();
             dmin = min(d, dmin);
         }
         return dmin;
