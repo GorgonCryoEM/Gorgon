@@ -322,9 +322,7 @@ namespace GraphMatch {
                  );
 
         if((actualCorner1-c1).length() > (actualCorner1-c2).length()) {
-            int temp = corner1;
-            corner1 = corner2;
-            corner2 = temp;
+            swap(corner1, corner2);
         }
 
         cornerCells[corner1].node = 1;
