@@ -295,13 +295,12 @@ namespace GraphMatch {
         assert(cornerCells.size() >= 2);
 
         double maxDistance = -1;
-        double dist1, dist2;
         int corner1 = 0;
         int corner2 = cornerCells.size() - 1;
 
         for(int i = 0; i < (int)cornerCells.size() - 1; i++){
             for(unsigned int j = i+1; j < cornerCells.size(); j++) {
-                dist1 = Point3Pair::EuclideanDistance(cornerCells[i], cornerCells[j]);
+                double dist1 = Point3Pair::EuclideanDistance(cornerCells[i], cornerCells[j]);
                 if(maxDistance < dist1) {
                     corner1 = i;
                     corner2 = j;
@@ -334,8 +333,8 @@ namespace GraphMatch {
         cornerCells[corner2].node = 2;
 
         for(unsigned int i = 0; i < cornerCells.size(); i++) {
-            dist1 = Point3Pair::EuclideanDistance(cornerCells[corner1], cornerCells[i]);
-            dist2 = Point3Pair::EuclideanDistance(cornerCells[corner2], cornerCells[i]);
+            double dist1 = Point3Pair::EuclideanDistance(cornerCells[corner1], cornerCells[i]);
+            double dist2 = Point3Pair::EuclideanDistance(cornerCells[corner2], cornerCells[i]);
             if((dist1 > BORDER_MARGIN_THRESHOLD) && (dist2 > BORDER_MARGIN_THRESHOLD)) {
                 cornerCells[i].node = 0;
             } else if(dist1 < dist2) {
