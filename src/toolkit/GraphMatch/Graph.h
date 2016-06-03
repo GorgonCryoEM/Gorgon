@@ -295,11 +295,11 @@ namespace GraphMatch {
         double zSpacing = vol->getSpacingZ();
         Shape * iSse;
         Shape * jSse;
-        Point3Pair iLoc(0,0,0,0);
-        Point3Pair iBestLoc(0,0,0,0);
+        Point3Pair iLoc;
+        Point3Pair iBestLoc;
         int iCorners;
-        Point3Pair jLoc(0,0,0,0);
-        Point3Pair jBestLoc(0,0,0,0);
+        Point3Pair jLoc;
+        Point3Pair jBestLoc;
         int jCorners;
 
         // count number of helices

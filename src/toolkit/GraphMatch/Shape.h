@@ -229,7 +229,7 @@ namespace GraphMatch {
             }
         }
         printf("Error <Shape, GetCornerCell>: Corner cell %d not found\n", node);
-        return Point3Pair(0,0,0,0);
+        return Point3Pair();
     }
 
     inline Vec3F Shape::getCornerCell2(int node) {

@@ -944,7 +944,7 @@ namespace GraphMatch {
     inline void SkeletonReader::FindPaths(Graph * graph) {
         vector<Vec3I> endPoints;
         vector< vector<Vec3I> > nodes;
-        Point3Pair pt = Point3Pair(0,0,0,0);
+        Point3Pair pt;
         vector<Vec3I> node;
 
 #ifdef VERBOSE
