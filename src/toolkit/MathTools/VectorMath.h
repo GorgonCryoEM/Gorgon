@@ -752,7 +752,7 @@ namespace GraphMatch {
     public:
         int x, y, z, node;
         float distance;
-        Point3Pair(int xx, int yy, int zz, float dd) {
+        Point3Pair(int xx=0, int yy=0, int zz=0, float dd=0.0) {
             x = xx;
             y = yy;
             z = zz;
