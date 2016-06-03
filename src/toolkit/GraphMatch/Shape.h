@@ -39,8 +39,8 @@ namespace GraphMatch {
         Vec3D getCenter();
         void addInternalCell(Point3Pair point);
         void findCornerCellsInHelix();
-        void rotate(Vector3<double> axis, double angle);
-        void translate(Vector3<double> translationVector);
+        void rotate(Vec3D axis, double angle);
+        void translate(Vec3D translationVector);
         void setCenter(Vec3D center);
         void setCenter(Vec3F center);
         void setColor(float r, float g, float b, float a);
@@ -139,7 +139,7 @@ namespace GraphMatch {
         Polygon poly;
         Vec3D a,b,c,q;
         double l1, l2;
-        Vector3<double> n;
+        Vec3D n;
         double d;
         bool isInside = false;
         double A,B,C,D,E,F,G,H,I;
@@ -387,13 +387,13 @@ namespace GraphMatch {
         return result;
     }
 
-    inline void Shape::rotate(Vector3<double> axis, double angle){
+    inline void Shape::rotate(Vec3D axis, double angle){
         rotationMatrix = Matrix4::rotation(axis, angle) * rotationMatrix;
         inverseRotationMatrix = inverseRotationMatrix * Matrix4::rotation(axis, -angle);
         updateWorldToObjectMatrix();
     }
 
-    inline void Shape::translate(Vector3<double> translationVector){
+    inline void Shape::translate(Vec3D translationVector){
         centerPoint = centerPoint + translationVector;
         updateWorldToObjectMatrix();
     }
@@ -534,7 +534,7 @@ namespace GraphMatch {
 
         dir.normalize();
         double angle = acos(dir * yaxis);
-        newHelix->rotate(Vector3<double>(axis.X(), axis.Y(), axis.Z()), -angle);
+        newHelix->rotate(Vec3D(axis.X(), axis.Y(), axis.Z()), -angle);
         return newHelix;
     }
 
