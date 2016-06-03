@@ -234,7 +234,7 @@ namespace GraphMatch {
 
     inline Vec3F Shape::getCornerCell2(int node) {
         Point3Pair cell = getCornerCell(node);
-        return Vec3F((float)cell.x, (float)cell.y, (float)cell.z);
+        return Vec3F(cell.x, cell.y, cell.z);
     }
 
     inline Vec3F Shape::getCornerCell3(int node) {
@@ -245,7 +245,7 @@ namespace GraphMatch {
         } else {
             pt = getWorldCoordinates(Vec3D(0, 0.5, 0));
         }
-        return Vec3F((float)pt[0], (float)pt[1], (float)pt[2]);
+        return Vec3F(pt[0], pt[1], pt[2]);
     }
 
     inline void Shape::addInternalCell(Point3Pair point) {
@@ -485,7 +485,7 @@ namespace GraphMatch {
                     y = yz/z;
                 }
             }
-            axis = Vec3F((float)x, (float)y, (float)z);
+            axis = Vec3F(x, y, z);
             return;
         }
         // as we have reached here there are no singularities so we can handle normally
@@ -499,7 +499,7 @@ namespace GraphMatch {
         x = (m(2,1) - m(1,2))/s;
         y = (m(0,2) - m(2,0))/s;
         z = (m(1,0) - m(0,1))/s;
-        axis = Vec3F((float)x, (float)y, (float)z);
+        axis = Vec3F(x, y, z);
         return;
     }
 
