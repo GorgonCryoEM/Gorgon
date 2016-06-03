@@ -312,16 +312,14 @@ namespace GraphMatch {
         Vec3F actualCorner1 = getCornerCell3(1);
         Vec3F actualCorner2 = getCornerCell3(2);
 
-        Vec3F c1, c2;
-
-        c1 = Vec3F(
-            internalToRealOrigin.X() + (float)cornerCells[corner1].x * internalToRealScale.X(),
-            internalToRealOrigin.Y() + (float)cornerCells[corner1].y * internalToRealScale.Y(),
-            internalToRealOrigin.Z() + (float)cornerCells[corner1].z * internalToRealScale.Z());
-        c2 = Vec3F(
-            internalToRealOrigin.X() + (float)cornerCells[corner2].x * internalToRealScale.X(),
-            internalToRealOrigin.Y() + (float)cornerCells[corner2].y * internalToRealScale.Y(),
-            internalToRealOrigin.Z() + (float)cornerCells[corner2].z * internalToRealScale.Z());
+        Vec3F c1(internalToRealOrigin.X() + (float)cornerCells[corner1].x * internalToRealScale.X(),
+                 internalToRealOrigin.Y() + (float)cornerCells[corner1].y * internalToRealScale.Y(),
+                 internalToRealOrigin.Z() + (float)cornerCells[corner1].z * internalToRealScale.Z()
+                 );
+        Vec3F c2(internalToRealOrigin.X() + (float)cornerCells[corner2].x * internalToRealScale.X(),
+                 internalToRealOrigin.Y() + (float)cornerCells[corner2].y * internalToRealScale.Y(),
+                 internalToRealOrigin.Z() + (float)cornerCells[corner2].z * internalToRealScale.Z()
+                 );
 
         if((actualCorner1-c1).length() > (actualCorner1-c2).length()) {
             int temp = corner1;
