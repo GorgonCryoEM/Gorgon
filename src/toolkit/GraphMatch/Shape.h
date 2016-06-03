@@ -111,11 +111,11 @@ namespace GraphMatch {
     }
 
     inline bool Shape::isHelix() {
-        return (shapeType == GRAPHEDGE_HELIX);
+        return shapeType == GRAPHEDGE_HELIX;
     }
 
     inline bool Shape::isSheet() {
-        return (shapeType != GRAPHEDGE_HELIX);
+        return shapeType != GRAPHEDGE_HELIX;
     }
 
     inline bool Shape::isInsideShape(Vec3D point) {
@@ -182,7 +182,7 @@ namespace GraphMatch {
 
     inline bool Shape::isInsideCylinder(Vec3D point) {
         point = objectToWorld * point;
-        return ((point[0]*point[0] + point[2]*point[2] <= 0.25) && (abs(point[1]) <= 0.5));
+        return (point[0]*point[0] + point[2]*point[2] <= 0.25) && (abs(point[1]) <= 0.5);
     }
 
     inline double Shape::getHeight() {
