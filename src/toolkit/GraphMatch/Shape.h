@@ -22,7 +22,7 @@ namespace GraphMatch {
     class Shape {
     public:
         Shape();
-        bool getSelected();
+        bool isSelected();
         bool isHelix();
         bool isSheet();
         bool isInsideShape(Vec3D p);
@@ -106,7 +106,7 @@ namespace GraphMatch {
         isObjectSpecificColoring = false;
     }
 
-    inline bool Shape::getSelected() {
+    inline bool Shape::isSelected() {
         return selected;
     }
 

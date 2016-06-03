@@ -80,7 +80,7 @@ namespace Visualization {
 
 //                }
 
-                if(helices[i]->getSelected()) {
+                if(helices[i]->isSelected()) {
                     glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
                     glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
 
