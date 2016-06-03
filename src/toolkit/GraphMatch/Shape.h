@@ -388,8 +388,8 @@ namespace GraphMatch {
         colorA = a;
     }
 
-    inline void Shape::setCenter(Vec3D center) {
-        this->center = center;
+    inline void Shape::setCenter(Vec3D ctr) {
+        center = ctr;
         updateWorldToObjectMatrix();
     }
 
@@ -397,14 +397,14 @@ namespace GraphMatch {
         setCenter(Vec3D(center.X(), center.Y(), center.Z()));
     }
 
-    inline void Shape::setHeight(double height) {
-        this->height = height;
-        this->length = height;
+    inline void Shape::setHeight(double h) {
+        height = h;
+        length = h;
         updateWorldToObjectMatrix();
     }
 
     inline void Shape::setRadius(double radius) {
-        this->R = radius;
+        R = radius;
         updateWorldToObjectMatrix();
     }
 
@@ -425,8 +425,8 @@ namespace GraphMatch {
                         * Matrix4::translation(-center);
     }
 
-    inline void Shape::setSelected(bool selected) {
-        this->selected = selected;
+    inline void Shape::setSelected(bool select) {
+        selected = select;
     }
 
     inline void Shape::getRotationAxisAndAngle(Vec3F &axis, double &angle) {
@@ -500,7 +500,6 @@ namespace GraphMatch {
         y = (m(0,2) - m(2,0))/s;
         z = (m(1,0) - m(0,1))/s;
         axis = Vec3F(x, y, z);
-        return;
     }
 
     inline Shape * Shape::createHelix(Vec3F p1, Vec3F p2, float radius) {
