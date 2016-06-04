@@ -86,7 +86,6 @@ namespace GraphMatch {
 
         // Read the volume file and load volume data structure
         Volume * vol = (MRCReaderPicker::pick(volumeFile.c_str()))->getVolume();
-        //vol->toMathematicaFile("myVolume.nb");
 #ifdef VERBOSE
         printf("\033[34mConstructing 'paintedVol'...\n\033[0m");
 #endif
