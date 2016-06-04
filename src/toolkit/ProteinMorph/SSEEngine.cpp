@@ -40,22 +40,24 @@ namespace Visualization {
 
                         // start SSE color
                         int startSSENumber;
-                        float startColorR, startColorG, startColorB, startColorA;
                         if(skeleton.adjacencyMatrix[n2][n2][0] == GRAPHNODE_SHEET){
                             startSSENumber = n2 - numHelices;
                         } else {
                             startSSENumber = n2/2;
                         }
+
+                        float startColorR, startColorG, startColorB, startColorA;
                         skeleton.skeletonHelixes[startSSENumber]->getColor(startColorR, startColorG, startColorB, startColorA);
 
                         // end SSE color
                         int endSSENumber;
-                        float endColorR, endColorG, endColorB, endColorA;
                         if(skeleton.adjacencyMatrix[n1][n1][0] == GRAPHNODE_SHEET){
                             endSSENumber = n1 - numHelices;
                         } else {
                             endSSENumber = n1/2;
                         }
+
+                        float endColorR, endColorG, endColorB, endColorA;
                         skeleton.skeletonHelixes[endSSENumber]->getColor(endColorR, endColorG, endColorB, endColorA);
 
                         glBegin(GL_LINE_STRIP);
