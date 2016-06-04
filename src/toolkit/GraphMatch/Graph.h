@@ -52,12 +52,11 @@ namespace GraphMatch {
     };
 
     inline Graph::~Graph() {
-        int i;
-        for(i = 0; i < (int)pdbStructures.size(); i++) {
+        for(int i = 0; i < (int)pdbStructures.size(); i++) {
             delete pdbStructures[i];
         }
 
-        for(i = 0; i < (int)skeletonHelixes.size(); i++) {
+        for(int i = 0; i < (int)skeletonHelixes.size(); i++) {
             delete skeletonHelixes[i];
         }
 
