@@ -878,7 +878,7 @@ namespace GraphMatch {
         double totalStrandLength = 0;
 
         for(int i = 0; i < (int)baseGraph.skeletonHelixes.size(); i++) {
-            if(baseGraph.skeletonHelixes[i]->shapeType == GRAPHEDGE_SHEET) {
+            if(baseGraph.skeletonHelixes[i]->type == GRAPHEDGE_SHEET) {
                 totalSheetSize += (double)baseGraph.skeletonHelixes[i]->length;
 #ifdef VERBOSE
                 cout << "after sheet " << i << ", total sheet size is now " << totalSheetSize << endl;

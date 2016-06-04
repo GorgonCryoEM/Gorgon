@@ -342,7 +342,7 @@ namespace Visualization {
         if (true) {
             glPushAttrib(GL_LIGHTING_BIT | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT);
             for(int i = 0; i < (int)skeleton.skeletonHelixes.size(); i++) {
-                if (skeleton.skeletonHelixes[i]->shapeType == GRAPHEDGE_HELIX) {
+                if (skeleton.skeletonHelixes[i]->type == GRAPHEDGE_HELIX) {
                     for(int j = 0; j < (int)skeleton.skeletonHelixes[i]->cornerCells.size(); j++) {
                         // Color first helix corner white, second corner gray
                         GLfloat col = 1.0 - 0.6 * (skeleton.skeletonHelixes[i]->cornerCells[j].node - 1);
