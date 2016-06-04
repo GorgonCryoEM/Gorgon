@@ -126,11 +126,11 @@ namespace GraphMatch {
 #ifdef VERBOSE
         cout << "Loading pattern graph" << endl;
 #endif
-        this->patternGraph = patternGraph;
+        patternGraph = pGraph;
 #ifdef VERBOSE
         cout << "Loading base graph" << endl;
 #endif
-        this->baseGraph = baseGraph;
+        baseGraph = bGraph;
         nExpand = 0;
 
 #ifdef VERBOSE
