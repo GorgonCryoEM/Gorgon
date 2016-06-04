@@ -39,7 +39,6 @@ namespace Visualization {
         int getSkeletonSSECount();
         int getSequenceSSECount();
         void setVisibleCorrespondence(int correspondenceIndex);
-        void draw(int sceneIndex);
         void drawAllPaths(int sceneIndex, bool showPaths, bool showHelixCorners, bool showSheetCorners, bool showSheetColors);
 
         virtual void loadSequence();
