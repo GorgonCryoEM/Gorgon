@@ -282,10 +282,9 @@ namespace GraphMatch {
         }
         usedNodes.clear();
 
-        Node * tempNode;
         while(!q.empty()) {
             Elem res = q.top();
-            tempNode = res.second;
+            Node * tempNode = res.second;
             delete tempNode;
             q.pop();
         }
