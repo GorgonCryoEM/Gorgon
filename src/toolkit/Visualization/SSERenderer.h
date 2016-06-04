@@ -56,7 +56,7 @@ namespace Visualization {
             void unloadGraphSSEs();
             void setHelixColor(int index, float r, float g, float b, float a);
             void setSheetColor(int index, float r, float g, float b, float a);
-            void setSSEColor(int index, float r, float g, float b, float a);
+            void setSSEColor  (int index, float r, float g, float b, float a);
             void setSSEOrientationFlips(vector<bool>);
             bool selectionRotate(Vec3F centerOfMass, Vec3F rotationAxis, float angle);
             void saveHelixFile(string fileName);
@@ -70,7 +70,7 @@ namespace Visualization {
             Vec3F getHelixCorner(int helixIx, int cornerIx);
 
             vector<int> getSelectedHelixIndices();
-            void setHelixCorrs(  vector < int > flatCorrespondences);
+            void setHelixCorrs(vector<int> flatCorrespondences);
             void setSelectedPDBHelices(vector<int> indices);
             void clearOtherHighlights();
 
