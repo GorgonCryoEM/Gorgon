@@ -181,18 +181,17 @@ namespace Visualization {
     void SSERenderer::sheetListToMesh(vector<Shape*> & sheets) {
         sheetMesh = SkeletonMesh();
 
-        Vec3D pt;
-        vector<int> indices;
-
         sheetCount = sheets.size();
         for(int i = 0; i <= sheetCount; i++) {
             selectedSheets[i] = false;
         }
 
+
         for(unsigned int i = 0; i < sheets.size(); i++) {
-            indices.clear();
+            vector<int> indices;
+
             for(unsigned int j = 0; j < sheets[i]->polygonPoints.size(); j++) {
-                pt = sheets[i]->polygonPoints[j];
+                Vec3D pt = sheets[i]->polygonPoints[j];
                 indices.push_back(sheetMesh.addVertex(Vec3F(pt[0], pt[1], pt[2])));
             }
 
@@ -205,7 +204,6 @@ namespace Visualization {
                 sheetMesh.addFace(ppp);
             }
         }
-        indices.clear();
     }
 
     void SSERenderer::unload() {
