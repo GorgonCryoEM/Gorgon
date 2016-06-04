@@ -21,7 +21,7 @@ namespace GraphMatch {
 
     public:
         // Constructors
-        Graph(int nodeCount=0);
+        Graph(int nCount=0);
         Graph(char* fname);
         ~Graph();
 
@@ -69,17 +69,17 @@ namespace GraphMatch {
         }
     }
 
-    inline Graph::Graph(int nodeCount){
+    inline Graph::Graph(int nCount){
         skeletonVolume = NULL;
         skeletonSheetVolume = NULL;
-        this->nodeCount = nodeCount;
+        nodeCount = nCount;
         for(int i = 0; i < nodeCount; i++) {
             for(int j = 0; j < nodeCount; j++) {
                 adjacencyMatrix[i][j][0] = 3;
                 adjacencyMatrix[i][j][1] = MAXINT;
             }
         }
-        this->pdbStructures.clear();
+        pdbStructures.clear();
     }
 
     inline Graph::Graph(char* fname) {
@@ -100,7 +100,7 @@ namespace GraphMatch {
             fscanf(fin, "\n");
         }
         fclose( fin ) ;
-        this->pdbStructures.clear();
+        pdbStructures.clear();
     }
 
     inline bool Graph::edgeExists(int n, int m) {
