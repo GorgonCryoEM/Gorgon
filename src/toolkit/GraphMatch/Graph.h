@@ -56,13 +56,10 @@ namespace GraphMatch {
         for(i = 0; i < (int)pdbStructures.size(); i++) {
             delete pdbStructures[i];
         }
-        pdbStructures.clear();
 
         for(i = 0; i < (int)skeletonHelixes.size(); i++) {
             delete skeletonHelixes[i];
         }
-
-        skeletonHelixes.clear();
 
         if(skeletonVolume != NULL) {
             delete skeletonVolume;
@@ -276,7 +273,7 @@ namespace GraphMatch {
 
     inline vector<Matcher2Helix> Graph::getHelixLengths() {
         vector<Matcher2Helix> helixes;
-        helixes.clear();
+
         for(int i = 0 ; i < (int)pdbStructures.size(); i++) {
             helixes.push_back(Matcher2Helix(pdbStructures[i]->GetLengthAngstroms(), i*2, i*2+1));
         }
