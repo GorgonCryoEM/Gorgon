@@ -68,7 +68,6 @@ namespace Visualization {
             }
 
 //            cout<<"selectedPDBHelices.size(): "<<selectedPDBHelices.size()<<endl;
-
 //            cout<<"helices.size(): "<<helices.size()<<endl;
 
             for(int i = 0; i < (int)helices.size(); i++) {
@@ -77,13 +76,11 @@ namespace Visualization {
                     float colorR, colorG, colorB, colorA;
                     helices[i]->getColor(colorR, colorG, colorB, colorA);
                     OpenGLUtils::SetColor(colorR, colorG, colorB, colorA);
-
 //                }
 
                 if(helices[i]->isSelected()) {
                     glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
                     glMaterialfv( GL_BACK, GL_EMISSION, emissionColor);
-
                 }
 
                 glPushMatrix();
