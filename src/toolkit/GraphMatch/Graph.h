@@ -118,6 +118,7 @@ namespace GraphMatch {
             return adjacencyMatrix[i-1][j-1][1];
         }
     }
+
     inline int Graph::getNodeCount() {
         return nodeCount;
     }
@@ -160,7 +161,6 @@ namespace GraphMatch {
     inline void Graph::setNodeCount(int nCount) {
         nodeCount = nCount;
     }
-
 
     inline void Graph::print() {
         char temp;
@@ -365,15 +365,14 @@ namespace GraphMatch {
                 euclideanMatrix[i][j] = minDist;
 
                 // if the distance is less than EUCLIDEAN_DISTANCE_THRESHOLD, store this in the graph as a Euclidian loop edge
-                if((adjacencyMatrix[i][j][1] == MAXINT) && (euclideanMatrix[i][j] <= EUCLIDEAN_DISTANCE_THRESHOLD))
-                {
+                if((adjacencyMatrix[i][j][1] == MAXINT) && (euclideanMatrix[i][j] <= EUCLIDEAN_DISTANCE_THRESHOLD)) {
                     adjacencyMatrix[i][j][1] = euclideanMatrix[i][j];
                     adjacencyMatrix[i][j][0] = GRAPHEDGE_LOOP_EUCLIDEAN;
                     adjacencyMatrix[j][i][1] = euclideanMatrix[i][j];
                     adjacencyMatrix[j][i][0] = GRAPHEDGE_LOOP_EUCLIDEAN;
 
-                    Vec3I iVec = Vec3I(iBestLoc.x, iBestLoc.y, iBestLoc.z);
-                    Vec3I jVec = Vec3I(jBestLoc.x, jBestLoc.y, jBestLoc.z);
+                    Vec3I iVec(iBestLoc.x, iBestLoc.y, iBestLoc.z);
+                    Vec3I jVec(jBestLoc.x, jBestLoc.y, jBestLoc.z);
                     paths[i][j].clear();
                     paths[j][i].clear();
                     paths[j][i].push_back(jVec);
@@ -418,21 +417,21 @@ namespace GraphMatch {
                         if (skeletonHelixes[i] != skeletonHelixes[j]) {
                             // internal cells
                             int internalCellCount = (int)skeletonHelixes[j]->internalCells.size();
-                            for (int k = 0; k < internalCellCount; k++){
+                            for (int k = 0; k < internalCellCount; k++) {
                                 skeletonHelixes[i]->internalCells.push_back(skeletonHelixes[j]->internalCells[k]);
                             }
 
-                            for (unsigned int k = 0; k < skeletonHelixes[j]->cornerCells.size(); k++){
+                            for (unsigned int k = 0; k < skeletonHelixes[j]->cornerCells.size(); k++) {
                                 skeletonHelixes[i]->cornerCells.push_back(skeletonHelixes[j]->cornerCells[k]);
                             }
 
                             // polygonPoints
-                            for (unsigned int k = 0; k < skeletonHelixes[j]->polygonPoints.size(); k++){
+                            for (unsigned int k = 0; k < skeletonHelixes[j]->polygonPoints.size(); k++) {
                                 skeletonHelixes[i]->polygonPoints.push_back(skeletonHelixes[j]->polygonPoints[k]);
                             }
 
                             // polygons
-                            for (unsigned int k = 0; k < skeletonHelixes[j]->polygons.size(); k++){
+                            for (unsigned int k = 0; k < skeletonHelixes[j]->polygons.size(); k++) {
                                 skeletonHelixes[i]->polygons.push_back(skeletonHelixes[j]->polygons[k]);
                             }
 
@@ -486,12 +485,11 @@ namespace GraphMatch {
                                 paths[k][nodei] = paths[k][nodej];
                                 paths[nodei][k] = paths[nodej][k];
                             }
-
                         }
 
                         // merge rows in Euclidean matrix
                         //cout << "Euclidean matrix: merging rows " << nodei << " and " << nodej << endl;
-                        for (int k = 0; k <= lastRowColumn; k++){
+                        for (int k = 0; k <= lastRowColumn; k++) {
                             int ilength = euclideanMatrix[k][nodei];
                             int jlength = euclideanMatrix[k][nodej];
                             // i same type and j shorter than i, overwrite i
@@ -539,7 +537,6 @@ namespace GraphMatch {
                             nodeWeights[k] = nodeWeights[k+1];
                         }
                         nodeWeights[lastRowColumn] = 0;
-
 
                         numSheets--; // local to this loop
                         nodeCount--; // for the class
