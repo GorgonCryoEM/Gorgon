@@ -62,7 +62,6 @@ namespace Visualization {
     }
 
     inline void SSEEngine::loadSequence() {
-
         string type = SEQUENCE_FILE_TYPE; //easier than doing comparison with a char array
         #ifdef VERBOSE
             printf("Pattern sequence \n");
@@ -119,10 +118,8 @@ namespace Visualization {
     }
 
     inline int SSEEngine::load(string fileName) {
-
         ifstream fin(fileName.c_str());
-        if (!fin)
-        {
+        if (!fin) {
             cout<<"Error opening input file "<<fileName<<".\n";
             exit(0) ;
         }
@@ -155,8 +152,7 @@ namespace Visualization {
 
     inline void SSEEngine::save(string fileName) {
         ofstream fout(fileName.c_str());
-        if (!fout)
-        {
+        if (!fout) {
             cout<<"Error opening output file "<<fileName<<".\n";
             exit(0) ;
         }
@@ -188,7 +184,6 @@ namespace Visualization {
             return NULL;
         }
     }
-
 
     inline int SSEEngine::getSkeletonSSECount() {
         return skeleton.skeletonHelixes.size();
