@@ -104,7 +104,7 @@ namespace GraphMatch {
     }
 
     inline bool Graph::edgeExists(int n, int m) {
-        return (fabs(adjacencyMatrix[n][m][1] - MAXINT) > 0.01);
+        return fabs(adjacencyMatrix[n][m][1] - MAXINT) > 0.01;
     }
 
     inline int Graph::getType(int i, int j) {
@@ -129,7 +129,7 @@ namespace GraphMatch {
                 count++;
             }
         }
-        return (count/2);
+        return count/2;
     }
 
     inline int Graph::getSheetCount() {
