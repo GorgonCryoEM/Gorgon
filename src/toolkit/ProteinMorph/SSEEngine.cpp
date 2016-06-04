@@ -12,6 +12,10 @@ namespace Visualization {
      void SSEEngine::drawAllPaths(int sceneIndex, bool showPaths, bool showHelixCorners, bool showSheetCorners, bool showSheetColors) {
         std::cout << "SSECorrespondenceEngine::DrawAllPaths called" << std::endl;
 
+        float R = 5.0;
+        glColor3f(.5,.2,.7);
+        drawSphere(Vec3F(), R);
+
         // draw paths
         if (true) {
             glPushAttrib(GL_LIGHTING_BIT | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT);
