@@ -29,9 +29,7 @@ namespace Visualization {
                         vector<Vec3I> path = skeleton.paths[n1][n2];
                         if(path.size() == 0) {
                             path = skeleton.paths[n2][n1];
-                            int n1old = n1;
-                            n1 = n2;
-                            n2 = n1old;
+                            swap(n1, n2);
                         }
                         //cout << "adding path from " << n1 << " to " << n2 << ", which has length " << path.size() << endl;
 
