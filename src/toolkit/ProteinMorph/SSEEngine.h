@@ -62,19 +62,18 @@ namespace Visualization {
     }
 
     inline void SSEEngine::loadSequence() {
-        clock_t start, finish;
 
         string type = SEQUENCE_FILE_TYPE; //easier than doing comparison with a char array
         #ifdef VERBOSE
             printf("Pattern sequence \n");
         #endif
-        start = clock();
+        clock_t start = clock();
         if (type == "PDB")
             sequence = *PDBReader::ReadFile(SEQUENCE_FILE_NAME.c_str());
         else if (type == "SEQ")
             sequence = *SEQReader::ReadFile(SEQUENCE_FILE_NAME.c_str());
 
-        finish = clock();
+        clock_t finish = clock();
         #ifdef VERBOSE
             printf("\tReading Pattern file Took %f seconds.\n", (double) (finish - start) / (double) CLOCKS_PER_SEC ) ;
 //            sequence.print();
@@ -82,14 +81,12 @@ namespace Visualization {
     }
 
     inline void SSEEngine::loadSkeleton() {
-        clock_t start, finish;
-
         #ifdef VERBOSE
             printf("Base Graph \n");
         #endif
-        start = clock();
+        clock_t start = clock();
         skeleton = *SkeletonReader::ReadFile(MRC_FILE_NAME, VRML_HELIX_FILE_NAME, SSE_FILE_NAME, VRML_SHEET_FILE_NAME);
-        finish = clock();
+        clock_t finish = clock();
         #ifdef VERBOSE
             printf("\033[32m\tReading Base file Took %f seconds.\n\033[0m", (double) (finish - start) / (double) CLOCKS_PER_SEC ) ;
 //            skeleton.print();
@@ -102,8 +99,6 @@ namespace Visualization {
     }
 
     inline int SSEEngine::run() {
-        clock_t start;
-
         PERFORMANCE_COMPARISON_MODE = false;
 
         // Match Graphs
@@ -116,7 +111,7 @@ namespace Visualization {
             set_MISSING_SHEET_COUNT(MISSING_SHEET_COUNT);
         }
         init(sequence, skeleton);
-        start = clock();
+        clock_t start = clock();
         int matchCount = WongMatch::run(start);
         saveResults();
 
@@ -134,18 +129,20 @@ namespace Visualization {
 
         solutions.clear();
 
-        int correspondenceCount = 0, nodeCount, skeletonNode;
-        vector<int> nodes;
-        double cost;
+        int correspondenceCount;
         fin>>correspondenceCount;
 
         for(int i = 0; i < correspondenceCount; i++) {
-            nodes.clear();
+            vector<int> nodes;
+
+            int nodeCount;
             fin>>nodeCount;
             for(int j = 0; j < nodeCount; j++) {
+                int skeletonNode;
                 fin>>skeletonNode;
                 nodes.push_back(skeletonNode);
             }
+            double cost;
             fin>>cost;
             // TODO: Fix! 0 not acceptable!
             solutions.push_back(SSEResult(nodes, cost, 0));
