@@ -33,7 +33,7 @@ namespace GraphMatch {
         void setType(int i, int j, int type); // The type of the edge (index starting from 1)
         void setCost(int i, int j, double cost); // The cost based on the graph labels (index starting from 1)
         void setCost(int i, double cost); // The cost of a node
-        void setNodeCount(int nodeCount); // Sets the number of nodes
+        void setNodeCount(int nCount); // Sets the number of nodes
         void print();
         void generateEuclidianMatrix(Volume * vol);
         vector<Matcher2Helix> getHelixLengths();
@@ -157,8 +157,8 @@ namespace GraphMatch {
         nodeWeights[i-1] = cost;
     }
 
-    inline void Graph::setNodeCount(int nodeCount) {
-        this->nodeCount = nodeCount;
+    inline void Graph::setNodeCount(int nCount) {
+        nodeCount = nCount;
     }
 
 
