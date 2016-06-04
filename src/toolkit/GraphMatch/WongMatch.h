@@ -89,19 +89,17 @@ namespace GraphMatch {
                 : patternGraph(pGraph), baseGraph(bGraph)
     {
 //        init(patternGraph, baseGraph);
-        this->nMissHelix = missingHelixCount;
-        this->nMissSheet = missingSheetCount;
+        nMissHelix = missingHelixCount;
+        nMissSheet = missingSheetCount;
     }
 
     WongMatch::~WongMatch() {
-        for(unsigned int i = 0; i < usedNodes.size(); i++) {
+        for(unsigned int i = 0; i < usedNodes.size(); i++)
             delete usedNodes[i];
-        }
 
-        Node * tempNode;
         while(!q.empty()) {
             Elem res = q.top();
-            tempNode = res.second;
+            Node * tempNode = res.second;
             delete tempNode;
             q.pop();
         }
@@ -250,10 +248,7 @@ namespace GraphMatch {
                 flushall();
 #endif
                 int numHelices = baseGraph.getHelixCount();
-                solutions.push_back(SSEResult(currentNode,
-                                                            numHelices
-                                                            )
-                                    );
+                solutions.push_back(SSEResult(currentNode, numHelices));
 
 #ifdef MAKE_FINAL_MRC
                 char fileName[80];
