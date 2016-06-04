@@ -1100,12 +1100,12 @@ namespace GraphMatch {
             // for each voxel along the path found above
             for(int i = 1; i < (int)graph->paths[startIx][endIx].size()-1; i++) {
                 Vec3I currentPos = graph->paths[startIx][endIx][i];
-                Vec3D pt = Vec3D(currentPos.X(), currentPos.Y(), currentPos.Z());
+                Vec3D pt(currentPos.X(), currentPos.Y(), currentPos.Z());
                 // if this voxel is inside either the start helix or the end helix for this path
                 if(graph->skeletonHelixes[(int)startIx/2]->isInsideShape(pt) ||
                         graph->skeletonHelixes[(int)endIx/2]->isInsideShape(pt)) {
                     // erase the voxel from maskVol
-                    (*maskVol)(currentPos.X(), currentPos.Y(), currentPos.Z()) = 0.0;
+                    (*maskVol)(currentPos) = 0.0;
                 }
             }
         }
