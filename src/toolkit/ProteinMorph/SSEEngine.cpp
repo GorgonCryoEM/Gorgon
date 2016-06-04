@@ -75,23 +75,6 @@ namespace Visualization {
             glPopAttrib();
         }
 
-        // draw start and end of paths (subset of corner nodes)
-        /*
-        for(int i = 0; i < skeleton.GetNodeCount(); i++) {
-            for(int j = i; j < skeleton.GetNodeCount(); j++) {
-                n1 = i;
-                n2 = j;
-                if((n1 >= 0)  && (n2 >= 0)) {
-                    path = skeleton.paths[n1][n2];
-                    if(path.size() > 0) {
-                        Renderer::DrawSphere(Vector3DFloat(path[0].X(), path[0].Y(), path[0].Z()), 1.0);
-                        Renderer::DrawSphere(Vector3DFloat(path[path.size()-1].X(), path[path.size()-1].Y(), path[path.size()-1].Z()), 1.0);
-                    }
-                }
-            }
-        }
-        */
-
         // draw corner nodes (helices)
         if (true) {
             glPushAttrib(GL_LIGHTING_BIT | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT);
