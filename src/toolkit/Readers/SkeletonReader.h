@@ -114,10 +114,7 @@ namespace GraphMatch {
 
         // Read the helix file
         vector<Shape*> helixes;
-        helixes.clear();
         ReadHelixFile(helixFile, sseFile, helixes);
-
-
 
 #ifdef INCLUDE_SHEETS
 
@@ -137,8 +134,6 @@ namespace GraphMatch {
 #endif // INCLUDE_SHEETS
 
         Vec3D point, pointScaled;
-
-
 
         // Finding all points inside of the helixes.
         for(int x = 0; x < vol->getSizeX(); x++) {
