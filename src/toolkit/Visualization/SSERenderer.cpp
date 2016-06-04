@@ -62,7 +62,6 @@ namespace Visualization {
         GLfloat backColor[4]     = {0.0, 0.0, 1.0, 1.0};
 
         glPushName(subSceneIndex);
-        float colorR, colorG, colorB, colorA;
         if(subSceneIndex == 0) {
             if(selectEnabled) {
                 glPushName(0);
@@ -75,6 +74,7 @@ namespace Visualization {
             for(int i = 0; i < (int)helices.size(); i++) {
                 glPushAttrib(GL_LIGHTING_BIT);
 //                if(helices[i]->isObjectSpecificColoring) {
+                    float colorR, colorG, colorB, colorA;
                     helices[i]->getColor(colorR, colorG, colorB, colorA);
                     OpenGLUtils::SetColor(colorR, colorG, colorB, colorA);
 
