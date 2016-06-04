@@ -39,6 +39,7 @@ namespace GraphMatch {
         vector<Matcher2Helix> getHelixLengths();
         bool edgeExists(int n, int m);
         void mergeSheets(double maxDist); // Merge all sheets separated by maxDist or less
+
     public:
         double adjacencyMatrix[MAX_NODES][MAX_NODES][2]; // 0th dimension edge type... 1st dimension distance
         double nodeWeights[MAX_NODES];
@@ -48,7 +49,6 @@ namespace GraphMatch {
         Volume * skeletonVolume;
         Volume * skeletonSheetVolume;
         vector<Shape*> skeletonHelixes; // helices first, then sheets.
-    private:
     };
 
     inline Graph::~Graph() {
