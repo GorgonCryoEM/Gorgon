@@ -136,7 +136,7 @@ namespace Visualization {
     }
 
     void SSERenderer::loadHelixFileVRML(string fileName) {
-        SkeletonReader::readHelixFile(fileName, "", helices);
+        readHelixFile(fileName, "", helices);
     }
 
     void SSERenderer::loadHelixFile(string fileName) {
@@ -169,7 +169,7 @@ namespace Visualization {
         }
         //vector<Shape *> sheets;
         sheets.clear();
-        SkeletonReader::readSheetFile((char *)fileName.c_str(), sheets);
+        readSheetFile((char *)fileName.c_str(), sheets);
 
         sheetListToMesh(sheets);
     }

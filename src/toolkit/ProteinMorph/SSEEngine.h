@@ -84,7 +84,7 @@ namespace Visualization {
             printf("Base Graph \n");
         #endif
         clock_t start = clock();
-        skeleton = *SkeletonReader::readFile(MRC_FILE_NAME, VRML_HELIX_FILE_NAME, SSE_FILE_NAME, VRML_SHEET_FILE_NAME);
+        skeleton = *readFile(MRC_FILE_NAME, VRML_HELIX_FILE_NAME, SSE_FILE_NAME, VRML_SHEET_FILE_NAME);
         clock_t finish = clock();
         #ifdef VERBOSE
             printf("\033[32m\tReading Base file Took %f seconds.\n\033[0m", (double) (finish - start) / (double) CLOCKS_PER_SEC ) ;
