@@ -19,12 +19,11 @@ namespace Visualization {
     }
 
     SSERenderer::~SSERenderer() {
-        for(unsigned int i = 0; i < helices.size(); i++) {
+        for(unsigned int i = 0; i < helices.size(); i++)
             delete helices[i];
-        }
-        for(unsigned int i = 0; i < sheets.size(); i++) {
+
+        for(unsigned int i = 0; i < sheets.size(); i++)
             delete sheets[i];
-        }
     }
 
     vector<int> SSERenderer::getSelectedHelixIndices(){
