@@ -16,13 +16,13 @@ using namespace SkeletonMaker;
 
 namespace GraphMatch {
 
-    int getGraphIndex(vector<Shape*> & helixes, int helixNum, int cornerNum);
-    int getGraphIndex(vector<Shape*> & helixes, int helixNum, Point3Pair * point);
+    int getGraphIndex(const vector<Shape*> & helixes, int helixNum, int cornerNum);
+    int getGraphIndex(const vector<Shape*> & helixes, int helixNum, const Point3Pair & point);
     Graph * readFile(string volumeFile, string helixFile, string sseFile, string sheetFile);
     Volume* getSheetsNoThreshold(Volume * vol, int minSize);
     void readSheetFile(string sheetFile, vector<Shape*> & helixes);
     void readHelixFile(string helixFile, string sseFile, vector<Shape*> & helixes);
-    void findSizes(int startHelix, int startCell, vector<Shape*> & helixList,
+    void findSizes(int startHelix, int startCell, const vector<Shape*> & helixList,
                    Volume * vol, Volume * coloredVol, Graph * graph);
     void findPaths(Graph * graph);
     void findPath(int startIx, int endIx, vector<vector<Vec3I> > nodes,
@@ -32,7 +32,7 @@ namespace GraphMatch {
     int isSkeletonSheet(const Volume &vol, int ox, int oy, int oz);
 
     // returns the graph node index for corner cornerNum of helix/sheet helixNum
-    inline int getGraphIndex(vector<Shape*> & helixes, int helixNum, int cornerNum) {
+    inline int getGraphIndex(const vector<Shape*> & helixes, int helixNum, int cornerNum) {
         int numH = 0;
         for (unsigned int i = 0; i < (int)helixes.size(); i++) {
             if(helixes[i]->type == GRAPHEDGE_HELIX) {
@@ -49,13 +49,13 @@ namespace GraphMatch {
     }
 
     // returns the graph node index for the corner of helix/sheet helixNum nearest to point point.
-    inline int getGraphIndex(vector<Shape*> & helixes, int helixNum, Point3Pair * point) {
+    inline int getGraphIndex(const vector<Shape*> & helixes, int helixNum, const Point3Pair & point) {
         int node = 1;
         double minDistance = MAXINT;
         double dist;
         // find nearest corner to the input point. node = 1 or 2 for a helix.
         for(int i = 0; i < (int)helixes[helixNum]->cornerCells.size(); i++) {
-            dist = Point3Pair::EuclideanDistance(helixes[helixNum]->cornerCells[i], *point);
+            dist = Point3Pair::EuclideanDistance(helixes[helixNum]->cornerCells[i], point);
             if(dist < minDistance) {
                 node = helixes[helixNum]->cornerCells[i].node;
                 minDistance = dist;
@@ -737,7 +737,7 @@ namespace GraphMatch {
     // finds the loops from the helix/sheet corner given by helixList[startHelix]->cornerCells[startCell] to
     // all other helices/sheets by flooding outward along the skeleton volume
     // stores the resulting loops in the graph object using graph->SetCost and graph->SetType
-    inline void findSizes(int startHelix, int startCell, vector<Shape*> & helixList, Volume * vol, Volume * coloredVol, Graph * graph) {
+    inline void findSizes(int startHelix, int startCell, const vector<Shape*> & helixList, Volume * vol, Volume * coloredVol, Graph * graph) {
         vector<Point3Pair *> oldStack;
         vector<Point3Pair *> newStack;
         int currentHelix;
@@ -756,7 +756,7 @@ namespace GraphMatch {
         // add to list of voxels to be explored
         oldStack.push_back(startPoint);
 
-        Point3Pair * currentPoint; //CurrentPoint
+        Point3Pair currentPoint; //CurrentPoint
         Vec3D cPt, nPt;
         int x, y, z, xx, yy, zz;
 
@@ -807,12 +807,12 @@ namespace GraphMatch {
             // newStack is list of points found so far in this iteration
             newStack.clear();
             for(int i = 0; i < (int)oldStack.size(); i++) {
-                currentPoint = oldStack[i];
-                cPt = Vec3D(currentPoint->x * vol->getSpacingX(), currentPoint->y * vol->getSpacingY(), currentPoint->z * vol->getSpacingZ());
+                currentPoint = *oldStack[i];
+                cPt = Vec3D(currentPoint.x * vol->getSpacingX(), currentPoint.y * vol->getSpacingY(), currentPoint.z * vol->getSpacingZ());
                 expand = true;
-                xx = currentPoint->x;
-                yy = currentPoint->y;
-                zz = currentPoint->z;
+                xx = currentPoint.x;
+                yy = currentPoint.y;
+                zz = currentPoint.z;
                 currentHelix = round((*coloredVol)(xx,yy,zz)) - 1;
                 // mark this point as visited
                 (*visited)(xx, yy, zz) = 1;
@@ -828,13 +828,13 @@ namespace GraphMatch {
                     n1 = getGraphIndex(helixList, startHelix, startCell);
                     n2 = getGraphIndex(helixList, currentHelix, currentPoint);
                     bool found = false;
-                    if( (n1 >= 0) && (n2 >= 0) && (currentPoint->distance < graph->getCost(n1, n2)) ) { // includes check for previously found shorter path
+                    if( (n1 >= 0) && (n2 >= 0) && (currentPoint.distance < graph->getCost(n1, n2)) ) { // includes check for previously found shorter path
                         // store the distance to the currentPoint as the cost of going from the start helix/sheet to the currentPoint helix/sheet
-                        graph->setCost(n1, n2, currentPoint->distance);
+                        graph->setCost(n1, n2, currentPoint.distance);
                         // this is a loop type
                         graph->setType(n1, n2, GRAPHEDGE_LOOP);
                         // save the same info for the reverse direction
-                        graph->setCost(n2, n1, currentPoint->distance);
+                        graph->setCost(n2, n1, currentPoint.distance);
                         graph->setType(n2, n1, GRAPHEDGE_LOOP);
                         found = true;
                     }
@@ -882,9 +882,9 @@ namespace GraphMatch {
                     // for each of 26 neighbors
                     for(int j = 0; j < 26; j++) {
                         // get coords of this neighbor point
-                        x = currentPoint->x+d[j][0];
-                        y = currentPoint->y+d[j][1];
-                        z = currentPoint->z+d[j][2];
+                        x = currentPoint.x+d[j][0];
+                        y = currentPoint.y+d[j][1];
+                        z = currentPoint.z+d[j][2];
                         // scale coords to volume space
                         nPt = Vec3D(x * vol->getSpacingX(), y * vol->getSpacingY(), z * vol->getSpacingZ());
 
@@ -899,7 +899,7 @@ namespace GraphMatch {
                                 (round((*coloredVol)(x, y, z)) - 1 != startHelix)) {
                                 // add this point to newStack with distance = | cPt - nPt |
                                 // the distance is the length of the vector from the cPt voxel to this neighbor nPt
-                                newStack.push_back(new Point3Pair(x, y, z, currentPoint->distance + (float)(cPt - nPt).length()));
+                                newStack.push_back(new Point3Pair(x, y, z, currentPoint.distance + (float)(cPt - nPt).length()));
                                 // mark this point as visited
                                 (*visited)(x, y, z) = 1.0;
                                 // Look up array index in backVol
@@ -909,7 +909,6 @@ namespace GraphMatch {
                         }
                     }
                 }
-                delete currentPoint;
             }
             oldStack.clear();
             oldStack = newStack;
