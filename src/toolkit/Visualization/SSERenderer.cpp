@@ -58,8 +58,8 @@ namespace Visualization {
 
     void SSERenderer::draw(int subSceneIndex, bool selectEnabled) {
         GLfloat emissionColor[4] = {1.0, 1.0, 1.0, 1.0};
-        GLfloat frontColor[4] = {1.0, 0.0, 0.0, 1.0};
-        GLfloat backColor[4] = {0.0, 0.0, 1.0, 1.0};
+        GLfloat frontColor[4]    = {1.0, 0.0, 0.0, 1.0};
+        GLfloat backColor[4]     = {0.0, 0.0, 1.0, 1.0};
 
         glPushName(subSceneIndex);
         float colorR, colorG, colorB, colorA;
