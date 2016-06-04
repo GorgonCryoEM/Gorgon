@@ -104,8 +104,7 @@ namespace Visualization {
 
      void SSEEngine::drawAllPaths(int sceneIndex, bool showPaths, bool showHelixCorners, bool showSheetCorners, bool showSheetColors) {
         std::cout << "SSECorrespondenceEngine::DrawAllPaths called" << std::endl;
-        int n1, n2;
-        vector<Vec3I> path;
+
         if (true) {
             glPushAttrib(GL_LIGHTING_BIT | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT);
             //glDisable(GL_LIGHTING);
@@ -117,10 +116,10 @@ namespace Visualization {
             for(int i = 0; i < nodeCount; i++) {
                 for(int j = i+1; j < nodeCount; j++) {
                     //cout << "adding path from " << i << " to " << j << endl;
-                    n1 = i;
-                    n2 = j;
+                    int n1 = i;
+                    int n2 = j;
                     if((n1 >= 0)  && (n2 >= 0)) {
-                        path = skeleton.paths[n1][n2];
+                        vector<Vec3I> path = skeleton.paths[n1][n2];
                         if(path.size() == 0) {
                             path = skeleton.paths[n2][n1];
                             int n1old = n1;
