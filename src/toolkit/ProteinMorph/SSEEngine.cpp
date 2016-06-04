@@ -10,18 +10,6 @@
 namespace Visualization {
     void SSEEngine::draw(int sceneIndex) {
         cout << "SSEEngine::draw called" << endl;
-                #ifdef GORGON_DEBUG
-        cout<<"\033[32mDEBUG: File:   SSEEngine.h"<<endl;
-        cout<<"DEBUG: Method: SSEEngine::draw(int)\033[0m"<<endl;
-        cout<<"curInd: "<<curInd<<endl;
-                #endif
-
-        float p1 = -49.0;
-        float p2 = -49.0;
-        float p3 = -49.0;
-        float R = 20.0;
-        glColor3f(.2,.2,.8);
-//        drawSphere(Vec3F(p1, p2, p3), R);
 
         int n1, n2, sse1, sse2;
         vector<Vec3I> path;
@@ -29,20 +17,6 @@ namespace Visualization {
             SSEResult result = solutions[curInd];
 //            if(result.getCost()<=0.0)
 //                return;
-
-                        #ifdef GORGON_DEBUG
-            cout<<"\033[32mDEBUG: File:   SSEEngine.h"<<endl;
-            cout<<"DEBUG: Method: SSEEngine::draw(int)\033[0m"<<endl;
-            cout<<result<<endl;
-                        #endif
-
-
-            glPushAttrib(GL_LIGHTING_BIT | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT);
-            glDisable(GL_LIGHTING);
-            glLineWidth(5);
-            glEnable(GL_LINE_SMOOTH);
-            glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-            glBegin(GL_LINE_STRIP); // test!!!
 
             n1 = -1;
             n2 = -1;
@@ -52,11 +26,6 @@ namespace Visualization {
             int seqNumber = 0;
             int seqIndex = 0;
             int strandsPassed = 0;
-
-
-            double pathx, pathy, pathz;
-            double prevx, prevy, prevz;
-            bool pastFirstStructure = false;
 
             // the following code iterates over the matcher->solutions, finding a valid edge at each iteration.
             // start at node 0 of this result, continue until i is at last node
@@ -95,11 +64,6 @@ namespace Visualization {
                 seqIndex = (i + strandsPassed + 1)/2 + 1;
 
                 path = skeleton.paths[n1][n2];
-                                #ifdef GORGON_DEBUG
-                cout<<"\033[32mDEBUG: File:   SSEEngine.h"<<endl;
-                cout<<"DEBUG: Method: SSEEngine::draw(int)\033[0m"<<endl;
-                cout << "path sizes. fwd:" << skeleton.paths[n1][n2].size() << ", rev:" << skeleton.paths[n2][n1].size() << endl;
-                                #endif
 
                 if(path.size() == 0) {
                     path = skeleton.paths[n2][n1];
@@ -112,145 +76,29 @@ namespace Visualization {
 
                 // get colors of beginning and ending SSEs
                 int numHelices = skeleton.getHelixCount();
-                                #ifdef GORGON_DEBUG
-                cout<<"\033[32mDEBUG: File:   SSEEngine.h"<<endl;
-                cout<<"DEBUG: Method: SSEEngine::draw(int)\033[0m"<<endl;
-                cout<<numHelices<<endl;
-                                #endif
-
 
                 // start SSE color
                 int startSSENumber;
-                float startColorR, startColorG, startColorB, startColorA;
                 if(skeleton.adjacencyMatrix[n1][n1][0] == GRAPHNODE_SHEET){
                     startSSENumber = n1 - numHelices;
                 } else {
                     startSSENumber = n1/2;
                 }
-                skeleton.skeletonHelixes[startSSENumber]->getColor(startColorR, startColorG, startColorB, startColorA);
 
                 // end SSE color
                 int endSSENumber;
-                float endColorR, endColorG, endColorB, endColorA;
                 if(skeleton.adjacencyMatrix[n2][n2][0] == GRAPHNODE_SHEET){
                     endSSENumber = n2 - numHelices;
                 } else {
                     endSSENumber = n2/2;
                 }
-                skeleton.skeletonHelixes[endSSENumber]->getColor(endColorR, endColorG, endColorB, endColorA);
 
                 if(startSSENumber == endSSENumber && startSSENumber < numHelices){
                     seqNumber += 0; // internal helix loop
                 } else {
                     seqNumber += 1;
                 }
-
-
-                if (path.size() != 0) {
-                    glEnd(); // test!!!
-                    // draw labeled sphere at beginning of path
-                    //GLfloat col = 1.0;
-                                        glColor3f(startColorR, startColorG, startColorB);
-//                    glColor3f(.2,.4,.7);
-                    double sphereRadius = 1;
-                                        #ifdef GORGON_DEBUG
-                    cout<<"\033[32mDEBUG: File:   SSEEngine.h"<<endl;
-                    cout<<"DEBUG: Method: SSEEngine::draw(int)\033[0m"<<endl;
-                    cout<<".....Before drawSphere"<<endl;
-//                    cout<<path[0]<<endl;
-                                        #endif
-
-                    drawSphere(path[0], sphereRadius);
-                    /*
-                    // Label the points with their graph node numbers
-                    glColor3f(1.0, 1.0, 1.0);
-
-                    glRasterPos3d(path[0].X(), path[0].Y(), path[0].Z());
-                    //int labelInt = seqNumber;
-                    int labelInt = seqIndex;
-                    //int labelInt = sse1;
-                    std::ostringstream tmpStream;
-                    tmpStream << labelInt;
-                    string labelStr = tmpStream.str();
-                    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, ' ');
-                    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, ' ');
-                    for (int i = 0; i < labelStr.length(); i++) {
-                        //glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, labelStr[i]);
-                        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, labelStr[i]);
-                    }
-                     */
-                    // labeled sphere code
-                    glBegin(GL_LINE_STRIP);
-                }
-
-                int pathSize = path.size(); // for color
-                float stepColorR = (endColorR - startColorR) / (pathSize-1);
-                float stepColorG = (endColorG - startColorG) / (pathSize-1);
-                float stepColorB = (endColorB - startColorB) / (pathSize-1);
-                for(int j = 0; j < pathSize; j++) {
-                    //cout << "adding path from " << n1 << " to " << n2 << ", point " << path[j].X() << "," << path[j].Y() << "," << path[j].Z() << endl;
-                    glColor3f(startColorR + stepColorR * j, startColorG + stepColorG * j, startColorB + stepColorB * j);
-                    /* UNCOMMENT THIS BLOCK TO DRAW STRAIGHT LINE PATHS ACROSS SSES
-                    if (j==0 && pastFirstStructure) {
-                        glVertex3d(prevx, prevy, prevz);
-                    } */
-                    double offset = 0.8*(-0.5 + (double)i / (double)numNodes );
-                    pathx=path[j].X()+offset;
-                    pathy=path[j].Y()+offset;
-                    pathz=path[j].Z()+offset;
-                                        #ifdef GORGON_DEBUG
-                    cout<<"\033[32mDEBUG: File:   SSEEngine.h"<<endl;
-                    cout<<"DEBUG: Method: SSEEngine::draw(int)\033[0m"<<endl;
-                    cout<<"....Before glVertex"<<endl;
-//                    cout<<path[j]<<endl;
-                                        #endif
-
-//                    glColor3f(.7,.7,.7);
-                    //                    glVertex3f(pathx, pathy, pathz);
-                    //glVertex3d(path[j].X()+offset, path[j].Y()+offset, path[j].Z()+offset);
-                }
-
-                // to draw paths across sheets
-                pastFirstStructure=true;
-                prevx=pathx;
-                prevy=pathy;
-                prevz=pathz;
-
-                if (path.size() != 0) {
-                    glEnd();
-                    // draw labeled sphere at end of path
-                    //GLfloat col = 1.0;
-                    //glColor3f(col, col, col);
-                    double sphereRadius = 1.;
-                    drawSphere(Vec3F(path[pathSize-1].X(), path[pathSize-1].Y(), path[pathSize-1].Z()), sphereRadius);
-
-                    // Label the points with their graph node numbers
-                    glColor3f(1.0, 1.0, 1.0);
-
-                    glRasterPos3d(path[pathSize-1].X(), path[pathSize-1].Y(), path[pathSize-1].Z());
-                    //int labelInt = seqNumber + 1;
-                    int labelInt = seqIndex;
-                    //int labelInt = sse2;
-                    std::ostringstream tmpStream;
-                    tmpStream << labelInt;
-                    string labelStr = tmpStream.str();
-                    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, ' ');
-                    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, ' ');
-                    for (unsigned int i = 0; i < labelStr.length(); i++) {
-                        //glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, labelStr[i]);
-                        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, labelStr[i]);
-                    }
-                    // labeled sphere code
-                    glBegin(GL_LINE_STRIP);
-                }
-
-
-
-
-
             }
-            glEnd();
-            glPopAttrib();
         }
     }
 
