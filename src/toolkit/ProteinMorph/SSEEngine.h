@@ -197,10 +197,6 @@ namespace Visualization {
         this->curInd = correspondenceIndex;
     }
 
-
-
-    // Draw all possible paths through the skeleton
-
 } /* namespace Visualization */
 
 #endif /* SRC_TOOLKIT_PROTEINMORPH_SSEENGINE_H_ */
