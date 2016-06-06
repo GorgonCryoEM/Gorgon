@@ -16,8 +16,9 @@ namespace Visualization {
         glColor3f(.5,.2,.7);
         drawSphere(Vec3F(), R);
 
-        // draw paths
-        if (true) {
+         const vector<Shape *> &helixes = skeleton.skeletonHelixes;
+         // draw paths
+         if (true) {
             glPushAttrib(GL_LIGHTING_BIT | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT);
             //glDisable(GL_LIGHTING);
             glLineWidth(5);
@@ -50,7 +51,7 @@ namespace Visualization {
                         }
 
                         float startColorR, startColorG, startColorB, startColorA;
-                        skeleton.skeletonHelixes[startSSENumber]->getColor(startColorR, startColorG, startColorB, startColorA);
+                        helixes[startSSENumber]->getColor(startColorR, startColorG, startColorB, startColorA);
 
                         // end SSE color
                         int endSSENumber;
@@ -61,7 +62,7 @@ namespace Visualization {
                         }
 
                         float endColorR, endColorG, endColorB, endColorA;
-                        skeleton.skeletonHelixes[endSSENumber]->getColor(endColorR, endColorG, endColorB, endColorA);
+                        helixes[endSSENumber]->getColor(endColorR, endColorG, endColorB, endColorA);
 
                         glBegin(GL_LINE_STRIP);
                         int pathSize = path.size(); // for color
@@ -69,7 +70,7 @@ namespace Visualization {
                         float stepColorG = (endColorG - startColorG) / (pathSize-1);
                         float stepColorB = (endColorB - startColorB) / (pathSize-1);
 
-                        Shape * vv = skeleton.skeletonHelixes[0];
+                        Shape * vv = helixes[0];
                         Vec3D org = vv->getOrigin();
 
                         for(int k = 0; k < pathSize; k++) {
@@ -91,13 +92,13 @@ namespace Visualization {
         // draw corner nodes (helices)
         if (true) {
             glPushAttrib(GL_LIGHTING_BIT | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT);
-            for(int i = 0; i < (int)skeleton.skeletonHelixes.size(); i++) {
-                Shape * vv = skeleton.skeletonHelixes[i];
+            for(int i = 0; i < (int) helixes.size(); i++) {
+                Shape * vv = helixes[i];
                 const Vec3D &center = vv->getCenter();
                 const Vec3D &org = vv->getOrigin();
 
-                if (skeleton.skeletonHelixes[i]->type == GRAPHEDGE_HELIX) {
-                    for(int j = 0; j < (int)skeleton.skeletonHelixes[i]->cornerCells.size(); j++) {
+                if (helixes[i]->type == GRAPHEDGE_HELIX) {
+                    for(int j = 0; j < (int) helixes[i]->cornerCells.size(); j++) {
                         const Point3Pair &cornerCells = vv->cornerCells[j];
 
                         cout << Vec3F(cornerCells.x, cornerCells.y, cornerCells.z) << "\t";
@@ -138,17 +139,17 @@ namespace Visualization {
         if (true) {
             glPushAttrib(GL_LIGHTING_BIT | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT);
             int lastHelix = 0;
-            for(int i = 0; i < (int)skeleton.skeletonHelixes.size(); i++) {
+            for(int i = 0; i < (int) helixes.size(); i++) {
                 if (true) {
                     lastHelix=i;
                 }
                 if (true) {
-                    for(int j = 0; j < (int)skeleton.skeletonHelixes[i]->cornerCells.size(); j++) {
+                    for(int j = 0; j < (int) helixes[i]->cornerCells.size(); j++) {
                         glColor3f(1.0, 1.0, 1.0);
 
-                        Shape * vv = skeleton.skeletonHelixes[j];
+                        Shape * vv = helixes[j];
                         Vec3D org = vv->getOrigin();
-                        Vec3D loc(skeleton.skeletonHelixes[i]->cornerCells[j].x, skeleton.skeletonHelixes[i]->cornerCells[j].y, skeleton.skeletonHelixes[i]->cornerCells[j].z);
+                        Vec3D loc(helixes[i]->cornerCells[j].x, helixes[i]->cornerCells[j].y, helixes[i]->cornerCells[j].z);
                         loc += org;
                         drawSphere(Vec3F(loc[0], loc[1], loc[2]), 2);
 
