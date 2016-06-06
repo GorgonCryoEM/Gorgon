@@ -144,12 +144,12 @@ namespace GraphMatch {
                 }
             }
         }
-        #ifdef GORGON_DEBUG
+//        #ifdef GORGON_DEBUG
               cout<<"\033[32mDEBUG: File:   SkeletonReader.h"<<endl;
               cout<<"DEBUG: Method: ReadFile(char*, char*, char*, char*)\033[0m"<<endl;
               cout<<"vol: "<<endl;
               cout<<*vol<<endl;
-        #endif
+//        #endif
 
 
         Volume* sheetClusters = getSheetsNoThreshold(vol, MINIMUM_SHEET_SIZE);

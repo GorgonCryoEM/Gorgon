@@ -66,8 +66,10 @@ namespace Visualization {
                 glPushName(0);
             }
 
-//            cout<<"selectedPDBHelices.size(): "<<selectedPDBHelices.size()<<endl;
-//            cout<<"helices.size(): "<<helices.size()<<endl;
+            cout<<"selectedPDBHelices.size(): "<<selectedPDBHelices.size()<<endl;
+            cout<<"helices.size(): "<<helices.size()<<endl;
+            for(unsigned int kk=0; kk<helices.size(); ++kk)
+                cout<<helices[kk]->getCenter()<<endl;
 
             for(int i = 0; i < (int)helices.size(); i++) {
                 glPushAttrib(GL_LIGHTING_BIT);

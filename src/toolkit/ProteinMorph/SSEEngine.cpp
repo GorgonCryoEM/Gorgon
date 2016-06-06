@@ -90,8 +90,11 @@ namespace Visualization {
                         GLfloat col = 1.0 - 0.6 * (skeleton.skeletonHelixes[i]->cornerCells[j].node - 1);
                         glColor3f(col, col, col);
                         double sphereRadius = 2.;
-                        cout<<Vec3F(skeleton.skeletonHelixes[i]->cornerCells[j].x, skeleton.skeletonHelixes[i]->cornerCells[j].y, skeleton.skeletonHelixes[i]->cornerCells[j].z)<<endl;
                         drawSphere(Vec3F(skeleton.skeletonHelixes[i]->cornerCells[j].x, skeleton.skeletonHelixes[i]->cornerCells[j].y, skeleton.skeletonHelixes[i]->cornerCells[j].z), sphereRadius);
+                        cout<<Vec3F(skeleton.skeletonHelixes[i]->cornerCells[j].x, skeleton.skeletonHelixes[i]->cornerCells[j].y, skeleton.skeletonHelixes[i]->cornerCells[j].z)<<"\t";
+
+                        Shape * vv = skeleton.skeletonHelixes[j];
+                        cout<<vv->getCenter()<<"\ti: "<<i<<"\tj: "<<j<<endl;
 
 
                         // Label the points with their graph node numbers
