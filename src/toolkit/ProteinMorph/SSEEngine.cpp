@@ -94,18 +94,19 @@ namespace Visualization {
             for(int i = 0; i < (int)skeleton.skeletonHelixes.size(); i++) {
                 Shape * vv = skeleton.skeletonHelixes[i];
                 const Vec3D &center = vv->getCenter();
-                
+                const Vec3D &org = vv->getOrigin();
+
                 if (skeleton.skeletonHelixes[i]->type == GRAPHEDGE_HELIX) {
                     for(int j = 0; j < (int)skeleton.skeletonHelixes[i]->cornerCells.size(); j++) {
-                        // Color first helix corner white, second corner gray
                         const Point3Pair &cornerCells = vv->cornerCells[j];
-                        GLfloat col = 1.0 - 0.6 * (cornerCells.node - 1);
-                        glColor3f(col, col, col);
 
                         cout << Vec3F(cornerCells.x, cornerCells.y, cornerCells.z) << "\t";
                         cout << center << "\ti: " << i << "\tj: " << j << endl;
 
-                        Vec3D org = vv->getOrigin();
+                        // Color first helix corner white, second corner gray
+                        GLfloat col = 1.0 - 0.6 * (cornerCells.node - 1);
+                        glColor3f(col, col, col);
+
                         Vec3D loc(cornerCells.x, cornerCells.y, cornerCells.z);
                         loc += org;
 
