@@ -10,11 +10,11 @@
 namespace Visualization {
 
      void SSEEngine::drawAllPaths(int sceneIndex, bool showPaths, bool showHelixCorners, bool showSheetCorners, bool showSheetColors) {
-        std::cout << "SSECorrespondenceEngine::DrawAllPaths called" << std::endl;
+         std::cout << "SSECorrespondenceEngine::DrawAllPaths called" << std::endl;
 
-        float R = 5.0;
-        glColor3f(.5,.2,.7);
-        drawSphere(Vec3F(), R);
+         float R = 5.0;
+         glColor3f(.5,.2,.7);
+         drawSphere(Vec3F(), R);
 
          const vector<Shape *> &helixes = skeleton.skeletonHelixes;
          // draw paths
