@@ -95,16 +95,17 @@ namespace Visualization {
                 if (skeleton.skeletonHelixes[i]->type == GRAPHEDGE_HELIX) {
                     for(int j = 0; j < (int)skeleton.skeletonHelixes[i]->cornerCells.size(); j++) {
                         // Color first helix corner white, second corner gray
-                        GLfloat col = 1.0 - 0.6 * (skeleton.skeletonHelixes[i]->cornerCells[j].node - 1);
+                        const Point3Pair &cornerCells = skeleton.skeletonHelixes[i]->cornerCells[j];
+                        GLfloat col = 1.0 - 0.6 * (cornerCells.node - 1);
                         glColor3f(col, col, col);
                         double sphereRadius = 2.;
-                        cout<<Vec3F(skeleton.skeletonHelixes[i]->cornerCells[j].x, skeleton.skeletonHelixes[i]->cornerCells[j].y, skeleton.skeletonHelixes[i]->cornerCells[j].z)<<"\t";
+                        cout << Vec3F(cornerCells.x, cornerCells.y, cornerCells.z) << "\t";
 
                         Shape * vv = skeleton.skeletonHelixes[j];
                         cout<<vv->getCenter()<<"\ti: "<<i<<"\tj: "<<j<<endl;
 
                         Vec3D org = vv->getOrigin();
-                        Vec3D loc(skeleton.skeletonHelixes[i]->cornerCells[j].x, skeleton.skeletonHelixes[i]->cornerCells[j].y, skeleton.skeletonHelixes[i]->cornerCells[j].z);
+                        Vec3D loc(cornerCells.x, cornerCells.y, cornerCells.z);
                         loc += org;
                         drawSphere(Vec3F(loc[0], loc[1], loc[2]), sphereRadius);
 
@@ -113,7 +114,7 @@ namespace Visualization {
                         glColor3f(1.0, 1.0, 1.0);
 
                         glRasterPos3d(loc[0], loc[1], loc[2]);
-                        int cornerNum = skeleton.skeletonHelixes[i]->cornerCells[j].node; // 0 or 1
+                        int cornerNum = cornerCells.node; // 0 or 1
                         int labelInt = 2 * i + cornerNum;
                         std::ostringstream tmpStream;
                         tmpStream << labelInt;
