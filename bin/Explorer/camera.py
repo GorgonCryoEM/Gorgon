@@ -470,7 +470,7 @@ class Camera(QtOpenGL.QGLWidget):
             dir = e.delta()/abs(e.delta())
             self.processMouseWheel(dir, e)
             if(not (e.modifiers() & QtCore.Qt.ALT) and not (e.modifiers() & QtCore.Qt.CTRL)):     # Zoom in / out
-                self.eyeZoom = self.eyeZoom + dir * 10.0/360.0
+                self.eyeZoom = self.eyeZoom + dir * 2.0/360.0
                 self.setNearFarZoom()
             self.updateGL()
 
