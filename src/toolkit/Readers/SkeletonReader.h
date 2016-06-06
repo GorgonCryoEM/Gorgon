@@ -18,7 +18,7 @@ namespace GraphMatch {
 
     int getGraphIndex(const vector<Shape*> & helixes, int helixNum, int cornerNum);
     int getGraphIndex(const vector<Shape*> & helixes, int helixNum, const Point3Pair & point);
-    Graph * readFile(string volumeFile, string helixFile, string sseFile, string sheetFile);
+    Graph * readFile(string skeletonFile, string helixFile, string sseFile, string sheetFile);
     Volume* getSheetsNoThreshold(Volume * vol, int minSize);
     void readSheetFile(string sheetFile, vector<Shape*> & helixes);
     void readHelixFile(string helixFile, string sseFile, vector<Shape*> & helixes);
@@ -82,10 +82,10 @@ namespace GraphMatch {
         }
     }
 
-    inline Graph * readFile(string volumeFile, string helixFile, string sseFile, string sheetFile) {
+    inline Graph * readFile(string skeletonFile, string helixFile, string sseFile, string sheetFile) {
 
         // Read the volume file and load volume data structure
-        Volume * vol = (MRCReaderPicker::pick(volumeFile.c_str()))->getVolume();
+        Volume * vol = (MRCReaderPicker::pick(skeletonFile.c_str()))->getVolume();
 #ifdef VERBOSE
         printf("\033[34mConstructing 'paintedVol'...\n\033[0m");
 #endif
