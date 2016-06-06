@@ -138,6 +138,7 @@ namespace GraphMatch {
                                 // add this point as as internal cell of the helix
                                 inHelix = true;
                                 helixes[i]->addInternalCell(Point3Pair(x, y, z, 0));
+                                helixes[i]->setOrigin(vol->getOriginObj());
                             }
                         }
                     }

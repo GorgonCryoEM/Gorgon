@@ -1,6 +1,7 @@
 #ifndef TOOLKIT_GRAPHMATCH_SHAPE_H
 #define TOOLKIT_GRAPHMATCH_SHAPE_H
 
+#include <MathTools/Dim3D.h>
 #include "MathTools/VectorMath.h"
 //#include <vector>
 //#include <MathTools/MathLib.h>
@@ -80,6 +81,17 @@ namespace GraphMatch {
         Matrix4 worldToObject;
         Matrix4 objectToWorld;
         Vec3D	center;
+    public:
+        Vec3D getOrigin() const {
+            return origin;
+        }
+
+        void setOrigin(Toolkit::Dim3D<float> p) {
+            origin = Vec3D(p[0],p[1],p[2]);
+        }
+
+    private:
+        Vec3D   origin;
         double  R;
         double  height;
         Matrix4 rotationMatrix;
