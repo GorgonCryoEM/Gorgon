@@ -85,12 +85,12 @@ namespace GraphMatch {
     inline Graph * readFile(string skeletonFile, string helixFile, string sseFile, string sheetFile) {
 
         // Read the volume file and load volume data structure
-        Volume vol = *(MRCReaderPicker::pick(skeletonFile.c_str()))->getVolume();
+        Volume * vol = (MRCReaderPicker::pick(skeletonFile.c_str()))->getVolume();
 #ifdef VERBOSE
         printf("\033[34mConstructing 'paintedVol'...\n\033[0m");
 #endif
 
-        Volume paintedVol(vol.getSizeX(), vol.getSizeY(), vol.getSizeZ());
+        Volume paintedVol(vol->getSizeX(), vol->getSizeY(), vol->getSizeZ());
 
 #ifdef VERBOSE
         printf("\033[34mFinished reading volume file, now moving on to helixes...\n\033[0m");
@@ -120,14 +120,14 @@ namespace GraphMatch {
         Vec3D point, pointScaled;
 
         // Finding all points inside of the helixes.
-        for(int x = 0; x < vol.getSizeX(); x++) {
-            point[0] = vol.getOriginX() + x * vol.getSpacingX();
-            for(int y = 0; y < vol.getSizeY(); y++) {
-                point[1] = vol.getOriginY() + y * vol.getSpacingY();
-                for(int z = 0; z < vol.getSizeZ(); z++) {
-                    point[2] = vol.getOriginZ() + z * vol.getSpacingZ();
+        for(int x = 0; x < vol->getSizeX(); x++) {
+            point[0] = vol->getOriginX() + x * vol->getSpacingX();
+            for(int y = 0; y < vol->getSizeY(); y++) {
+                point[1] = vol->getOriginY() + y * vol->getSpacingY();
+                for(int z = 0; z < vol->getSizeZ(); z++) {
+                    point[2] = vol->getOriginZ() + z * vol->getSpacingZ();
                     // if this voxel nonzero
-                    if(vol(x, y, z) > 0) {
+                    if((*vol)(x, y, z) > 0) {
                         // check all helices to see if it's inside one
                         bool inHelix = false;
                         for(int i = 0; i < (int)helixes.size(); i++) {
@@ -138,7 +138,7 @@ namespace GraphMatch {
                                 // add this point as as internal cell of the helix
                                 inHelix = true;
                                 helixes[i]->addInternalCell(Point3Pair(x, y, z, 0));
-                                helixes[i]->setOrigin(vol.getOriginObj());
+                                helixes[i]->setOrigin(vol->getOriginObj());
                             }
                         }
                     }
@@ -149,15 +149,15 @@ namespace GraphMatch {
               cout<<"\033[32mDEBUG: File:   SkeletonReader.h"<<endl;
               cout<<"DEBUG: Method: ReadFile(char*, char*, char*, char*)\033[0m"<<endl;
               cout<<"vol: "<<endl;
-              cout<<vol<<endl;
+              cout<<*vol<<endl;
 //        #endif
 
 
-        Volume* sheetClusters = getSheetsNoThreshold(&vol, MINIMUM_SHEET_SIZE);
+        Volume* sheetClusters = getSheetsNoThreshold(vol, MINIMUM_SHEET_SIZE);
 
         // make the offset and scale of sheetClusters volume match the vol volume
-        sheetClusters->setOrigin(vol.getOriginX(), vol.getOriginY(), vol.getOriginZ() );
-        sheetClusters->setSpacing(vol.getSpacingX(), vol.getSpacingY(), vol.getSpacingZ() );
+        sheetClusters->setOrigin(vol->getOriginX(), vol->getOriginY(), vol->getOriginZ() );
+        sheetClusters->setSpacing(vol->getSpacingX(), vol->getSpacingY(), vol->getSpacingZ() );
 
         int numSkeletonSheets = (int) sheetClusters->getMax();
 
@@ -330,7 +330,7 @@ namespace GraphMatch {
                 int sheetNode = numH + i + 1; // each helix takes two nodes
 
                 // find all the corner cells in this sheet
-                findCornerCellsInSheet(&vol, &paintedVol, helixes, i);
+                findCornerCellsInSheet(vol, &paintedVol, helixes, i);
 
                 // cost is length of self-loops
                 graph->setCost(sheetNode, sheetNode, SHEET_SELF_LOOP_LENGTH); // nonzero so it shows up as edge in StandardGraph::EdgeExists
@@ -372,7 +372,7 @@ namespace GraphMatch {
             for(int j = 0; j < (int)helixes[i]->cornerCells.size(); j++) {
                 // find all the paths from the entry/exit point to every other helix.
                 // results are stored in vol and paintedVol and as graph edges.
-                findSizes(i, j, helixes, &vol, &paintedVol, graph);
+                findSizes(i, j, helixes, vol, &paintedVol, graph);
             }
         }
 
@@ -385,7 +385,7 @@ namespace GraphMatch {
 #endif // VERBOSE
 
         // save results to graph->skeletonVolume
-        graph->skeletonVolume = &vol;
+        graph->skeletonVolume = vol;
 
         // save skeleton sheet volume to graph->skeletonSheetVolume
         graph->skeletonSheetVolume = sheetClusters;
@@ -402,7 +402,7 @@ namespace GraphMatch {
 
         // measure Euclidian distance between all pairs of nodes and add edges between those nodes that are
         // closer than EUCLIDIAN_DISTANCE_THRESHOLD
-        graph->generateEuclidianMatrix(&vol);
+        graph->generateEuclidianMatrix(vol);
 
 #ifdef VERBOSE
         printf("\033[34mEuclidian matrix generated.\n\033[0m");
