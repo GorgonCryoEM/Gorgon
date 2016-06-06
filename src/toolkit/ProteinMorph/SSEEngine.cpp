@@ -68,10 +68,18 @@ namespace Visualization {
                         float stepColorR = (endColorR - startColorR) / (pathSize-1);
                         float stepColorG = (endColorG - startColorG) / (pathSize-1);
                         float stepColorB = (endColorB - startColorB) / (pathSize-1);
+
+                        Shape * vv = skeleton.skeletonHelixes[0];
+                        Vec3D org = vv->getOrigin();
+
                         for(int k = 0; k < pathSize; k++) {
                             //cout << "adding path from " << n1 << " to " << n2 << ", point " << path[j].X() << "," << path[j].Y() << "," << path[j].Z() << endl;
                             glColor3f(startColorR + stepColorR * k, startColorG + stepColorG * k, startColorB + stepColorB * k);
-                            glVertex3d(path[k].X(), path[k].Y(), path[k].Z());
+
+                            Vec3D loc(path[k].X(), path[k].Y(), path[k].Z());
+                            loc += org;
+
+                            glVertex3d(loc[0], loc[1], loc[2]);
                         }
                         glEnd();
                     }
@@ -90,17 +98,21 @@ namespace Visualization {
                         GLfloat col = 1.0 - 0.6 * (skeleton.skeletonHelixes[i]->cornerCells[j].node - 1);
                         glColor3f(col, col, col);
                         double sphereRadius = 2.;
-                        drawSphere(Vec3F(skeleton.skeletonHelixes[i]->cornerCells[j].x, skeleton.skeletonHelixes[i]->cornerCells[j].y, skeleton.skeletonHelixes[i]->cornerCells[j].z), sphereRadius);
                         cout<<Vec3F(skeleton.skeletonHelixes[i]->cornerCells[j].x, skeleton.skeletonHelixes[i]->cornerCells[j].y, skeleton.skeletonHelixes[i]->cornerCells[j].z)<<"\t";
 
                         Shape * vv = skeleton.skeletonHelixes[j];
                         cout<<vv->getCenter()<<"\ti: "<<i<<"\tj: "<<j<<endl;
 
+                        Vec3D org = vv->getOrigin();
+                        Vec3D loc(skeleton.skeletonHelixes[i]->cornerCells[j].x, skeleton.skeletonHelixes[i]->cornerCells[j].y, skeleton.skeletonHelixes[i]->cornerCells[j].z);
+                        loc += org;
+                        drawSphere(Vec3F(loc[0], loc[1], loc[2]), sphereRadius);
+
 
                         // Label the points with their graph node numbers
                         glColor3f(1.0, 1.0, 1.0);
 
-                        glRasterPos3d(skeleton.skeletonHelixes[i]->cornerCells[j].x, skeleton.skeletonHelixes[i]->cornerCells[j].y, skeleton.skeletonHelixes[i]->cornerCells[j].z);
+                        glRasterPos3d(loc[0], loc[1], loc[2]);
                         int cornerNum = skeleton.skeletonHelixes[i]->cornerCells[j].node; // 0 or 1
                         int labelInt = 2 * i + cornerNum;
                         std::ostringstream tmpStream;
@@ -129,10 +141,15 @@ namespace Visualization {
                 if (true) {
                     for(int j = 0; j < (int)skeleton.skeletonHelixes[i]->cornerCells.size(); j++) {
                         glColor3f(1.0, 1.0, 1.0);
-                        drawSphere(Vec3F(skeleton.skeletonHelixes[i]->cornerCells[j].x, skeleton.skeletonHelixes[i]->cornerCells[j].y, skeleton.skeletonHelixes[i]->cornerCells[j].z), 2);
+
+                        Shape * vv = skeleton.skeletonHelixes[j];
+                        Vec3D org = vv->getOrigin();
+                        Vec3D loc(skeleton.skeletonHelixes[i]->cornerCells[j].x, skeleton.skeletonHelixes[i]->cornerCells[j].y, skeleton.skeletonHelixes[i]->cornerCells[j].z);
+                        loc += org;
+                        drawSphere(Vec3F(loc[0], loc[1], loc[2]), 2);
 
                         // Label the points with their graph node numbers
-                        glRasterPos3d(skeleton.skeletonHelixes[i]->cornerCells[j].x, skeleton.skeletonHelixes[i]->cornerCells[j].y, skeleton.skeletonHelixes[i]->cornerCells[j].z);
+                        glRasterPos3d(loc[0], loc[1], loc[2]);
                         int labelInt = i + lastHelix + 2;
                         std::ostringstream tmpStream;
                         tmpStream << labelInt;
