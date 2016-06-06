@@ -99,16 +99,16 @@ namespace Visualization {
                         const Point3Pair &cornerCells = vv->cornerCells[j];
                         GLfloat col = 1.0 - 0.6 * (cornerCells.node - 1);
                         glColor3f(col, col, col);
-                        double sphereRadius = 2.;
-                        cout << Vec3F(cornerCells.x, cornerCells.y, cornerCells.z) << "\t";
 
+                        cout << Vec3F(cornerCells.x, cornerCells.y, cornerCells.z) << "\t";
                         cout<<vv->getCenter()<<"\ti: "<<i<<"\tj: "<<j<<endl;
 
                         Vec3D org = vv->getOrigin();
                         Vec3D loc(cornerCells.x, cornerCells.y, cornerCells.z);
                         loc += org;
-                        drawSphere(Vec3F(loc[0], loc[1], loc[2]), sphereRadius);
 
+                        double sphereRadius = 2.;
+                        drawSphere(Vec3F(loc[0], loc[1], loc[2]), sphereRadius);
 
                         // Label the points with their graph node numbers
                         glColor3f(1.0, 1.0, 1.0);
