@@ -2,6 +2,7 @@
 #define TOOLKIT_GRAPHMATCH_NODE_H
 
 #include <vector>
+#include <algorithm>
 //#include "Core/GlobalConstants.h"
 
 using namespace std;
