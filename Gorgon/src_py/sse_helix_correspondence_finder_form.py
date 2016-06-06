@@ -730,10 +730,10 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
         includeStrands = self.viewer.correspondenceEngine.getConstantInt("INCLUDE_STRANDS")
         structPred = StructurePrediction.load(self.sequenceFileName, self.app, includeStrands)
         print "after calling StructurePrediction.load"
-#         cAlphaViewer = self.app.viewers['calpha']
+        cAlphaViewer = self.app.viewers['calpha']
         sseViewer = self.app.viewers['sse']
         skeletonViewer = self.app.viewers['skeleton']
-#         cAlphaViewer.structPred = structPred
+        cAlphaViewer.structPred = structPred
 
         def vector3DFloatToTuple(v3df):
             return (v3df.x(), v3df.y(), v3df.z())
