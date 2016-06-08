@@ -12,7 +12,7 @@ namespace Visualization {
      void SSEEngine::drawAllPaths(int sceneIndex, bool showPaths, bool showHelixCorners, bool showSheetCorners, bool showSheetColors) {
          std::cout << "SSECorrespondenceEngine::DrawAllPaths called" << std::endl;
 
-         float R = 5.0;
+         float R = 0.4;
          glColor3f(.5,.2,.7);
          drawSphere(Vec3F(), R);
 
