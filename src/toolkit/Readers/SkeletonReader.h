@@ -139,6 +139,8 @@ namespace GraphMatch {
                                 inHelix = true;
                                 helixes[i]->addInternalCell(Point3Pair(x, y, z, 0));
                                 helixes[i]->setOrigin(skel->getOriginObj());
+                                helixes[i]->setSize(skel->getSizeObj());
+                                helixes[i]->setSpacing(skel->getSpacingObj());
                             }
                         }
                     }
