@@ -141,7 +141,7 @@ namespace Visualization {
         }
 
         // draw corner nodes (sheets)
-        if (true) {
+        if (0) {
             glPushAttrib(GL_LIGHTING_BIT | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT);
             int lastHelix = 0;
             for(int i = 0; i < (int) helixes.size(); i++) {
