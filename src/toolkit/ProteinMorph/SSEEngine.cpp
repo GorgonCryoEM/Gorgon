@@ -72,13 +72,16 @@ namespace Visualization {
 
                         Shape * vv = helixes[0];
                         Vec3D org = vv->getOrigin();
+                        Vec3I size = vv->getSize();
+                        Vec3D spacing = vv->getSpacing();
 
                         for(int k = 0; k < pathSize; k++) {
                             //cout << "adding path from " << n1 << " to " << n2 << ", point " << path[j].X() << "," << path[j].Y() << "," << path[j].Z() << endl;
                             glColor3f(startColorR + stepColorR * k, startColorG + stepColorG * k, startColorB + stepColorB * k);
 
                             Vec3D loc(path[k].X(), path[k].Y(), path[k].Z());
-                            loc += org;
+                            Vec3D apix(loc[0]*spacing[0], loc[1]*spacing[1], loc[2]*spacing[2]);
+                            loc = org + apix;
 
                             glVertex3d(loc[0], loc[1], loc[2]);
                         }
@@ -96,6 +99,7 @@ namespace Visualization {
                 Shape * vv = helixes[i];
                 const Vec3D &center = vv->getCenter();
                 const Vec3D &org = vv->getOrigin();
+                const Vec3D &spacing = vv->getSpacing();
 
                 if (helixes[i]->type == GRAPHEDGE_HELIX) {
                     for(int j = 0; j < (int) helixes[i]->cornerCells.size(); j++) {
@@ -109,7 +113,8 @@ namespace Visualization {
                         glColor3f(col, col, col);
 
                         Vec3D loc(cornerCells.x, cornerCells.y, cornerCells.z);
-                        loc += org;
+                        Vec3D apix((loc[0]-1)*spacing[0], (loc[1]-1)*spacing[1], (loc[2]-1)*spacing[2]);
+                        loc = org + apix;
 
                         double sphereRadius = 2.;
                         drawSphere(Vec3F(loc[0], loc[1], loc[2]), sphereRadius);
