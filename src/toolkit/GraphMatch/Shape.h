@@ -90,8 +90,26 @@ namespace GraphMatch {
             origin = Vec3D(p[0],p[1],p[2]);
         }
 
+        Vec3D getSpacing() const {
+            return spacing;
+        }
+
+        void setSpacing(Toolkit::Dim3D<float> p) {
+            spacing = Vec3D(p[0],p[1],p[2]);
+        }
+
+        Vec3I getSize() const {
+            return size;
+        }
+
+        void setSize(Toolkit::Dim3D<int> p) {
+            size = Vec3I(p[0],p[1],p[2]);
+        }
+
     private:
         Vec3D   origin;
+        Vec3D   spacing;
+        Vec3I   size;
         double  R;
         double  height;
         Matrix4 rotationMatrix;
