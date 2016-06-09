@@ -75,6 +75,10 @@ class SSEViewer(BaseViewer):
 #         self.sequencePredictor = SSESequencePredictorForm(self.app, self, self)
         self.helixCorrespondanceFinder = SSEHelixCorrespondenceFinderForm(self.app, self)
         
+#     def drawGL(self):
+# #         BaseViewer.drawGL(self)
+#         self.extraDrawingRoutines()
+
     def extraDrawingRoutines(self):
         try:
             print termcolor.colored('correspondenceEngine.draw', 'yellow')
