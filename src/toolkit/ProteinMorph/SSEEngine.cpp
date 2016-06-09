@@ -20,7 +20,7 @@ namespace Visualization {
          // draw paths
          if (true) {
             glPushAttrib(GL_LIGHTING_BIT | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT);
-            //glDisable(GL_LIGHTING);
+            glDisable(GL_LIGHTING);
             glLineWidth(5);
             glEnable(GL_LINE_SMOOTH);
             glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
