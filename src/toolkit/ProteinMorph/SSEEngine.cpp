@@ -118,7 +118,7 @@ namespace Visualization {
                         loc = org + apix;
 
                         double sphereRadius = 1.;
-                        drawSphere(Vec3F(loc[0], loc[1], loc[2]), sphereRadius);
+                        drawSphere(loc, sphereRadius);
 
                         // Label the points with their graph node numbers
                         glColor3f(0.0, 0.0, 1.0);
@@ -157,7 +157,7 @@ namespace Visualization {
                         Vec3D org = vv->getOrigin();
                         Vec3D loc(helixes[i]->cornerCells[j].x, helixes[i]->cornerCells[j].y, helixes[i]->cornerCells[j].z);
                         loc += org;
-                        drawSphere(Vec3F(loc[0], loc[1], loc[2]), 2);
+                        drawSphere(loc, 2);
 
                         // Label the points with their graph node numbers
                         glRasterPos3d(loc[0], loc[1], loc[2]);
