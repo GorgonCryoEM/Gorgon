@@ -113,7 +113,8 @@ namespace Visualization {
                         glColor3f(col, col, col);
 
                         Vec3D loc(cornerCells.x, cornerCells.y, cornerCells.z);
-                        Vec3D apix((loc[0]-1)*spacing[0], (loc[1]-1)*spacing[1], (loc[2]-1)*spacing[2]);
+                        Vec3D apix(loc[0]*spacing[0], loc[1]*spacing[1], loc[2]*spacing[2]);
+//                        Vec3D apix((loc[0]-1)*spacing[0], (loc[1]-1)*spacing[1], (loc[2]-1)*spacing[2]);
                         loc = org + apix;
 
                         double sphereRadius = 1.;
