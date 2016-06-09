@@ -80,7 +80,8 @@ namespace Visualization {
                             glColor3f(startColorR + stepColorR * k, startColorG + stepColorG * k, startColorB + stepColorB * k);
 
                             Vec3D loc(path[k].X(), path[k].Y(), path[k].Z());
-                            Vec3D apix(loc[0]*spacing[0], loc[1]*spacing[1], loc[2]*spacing[2]);
+//                            Vec3D apix(loc[0]*spacing[0], loc[1]*spacing[1], loc[2]*spacing[2]);
+                            Vec3D apix((loc[0]-1)*spacing[0], (loc[1]-1)*spacing[1], (loc[2]-1)*spacing[2]);
                             loc = org + apix;
 
                             glVertex3d(loc[0], loc[1], loc[2]);
