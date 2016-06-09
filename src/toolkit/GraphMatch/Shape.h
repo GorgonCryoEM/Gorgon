@@ -549,7 +549,7 @@ namespace GraphMatch {
 
         dir.normalize();
         double angle = acos(dir * yaxis);
-        newHelix->rotate(Vec3D(axis.X(), axis.Y(), axis.Z()), -angle);
+        newHelix->rotate(axis, -angle);
         return newHelix;
     }
 
