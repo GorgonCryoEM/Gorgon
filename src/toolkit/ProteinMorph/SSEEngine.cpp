@@ -116,11 +116,11 @@ namespace Visualization {
                         Vec3D apix((loc[0]-1)*spacing[0], (loc[1]-1)*spacing[1], (loc[2]-1)*spacing[2]);
                         loc = org + apix;
 
-                        double sphereRadius = 2.;
+                        double sphereRadius = 1.;
                         drawSphere(Vec3F(loc[0], loc[1], loc[2]), sphereRadius);
 
                         // Label the points with their graph node numbers
-                        glColor3f(1.0, 1.0, 1.0);
+                        glColor3f(0.0, 0.0, 1.0);
 
                         glRasterPos3d(loc[0], loc[1], loc[2]);
                         int cornerNum = cornerCells.node; // 0 or 1
@@ -150,7 +150,7 @@ namespace Visualization {
                 }
                 if (true) {
                     for(int j = 0; j < (int) helixes[i]->cornerCells.size(); j++) {
-                        glColor3f(1.0, 1.0, 1.0);
+                        glColor3f(.2, .3, .6);
 
                         Shape * vv = helixes[j];
                         Vec3D org = vv->getOrigin();
