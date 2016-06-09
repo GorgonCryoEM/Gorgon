@@ -448,11 +448,11 @@ namespace GraphMatch {
     inline void Shape::updateWorldToObjectMatrix() {
         worldToObject = Matrix4::translation(center)
                         * rotationMatrix
-                        * Matrix4::scaling(R * 2, height, R * 2);
+                        * Matrix4::scaling(R, height, R);
 
-        objectToWorld = Matrix4::scaling(1.0 / (R * 2.0),
+        objectToWorld = Matrix4::scaling(1.0 / (R),
                                          1.0 / height,
-                                         1.0 / (R * 2.0)
+                                         1.0 / (R)
                                          )
                         * inverseRotationMatrix
                         * Matrix4::translation(-center);
