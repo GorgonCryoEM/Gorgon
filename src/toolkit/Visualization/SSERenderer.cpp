@@ -190,7 +190,7 @@ namespace Visualization {
 
             for(unsigned int j = 0; j < sheets[i]->polygonPoints.size(); j++) {
                 Vec3D pt = sheets[i]->polygonPoints[j];
-                indices.push_back(sheetMesh.addVertex(Vec3F(pt[0], pt[1], pt[2])));
+                indices.push_back(sheetMesh.addVertex(pt));
             }
 
             for(unsigned int j = 0; j < sheets[i]->polygons.size(); j++) {
@@ -239,18 +239,16 @@ namespace Visualization {
 
     bool SSERenderer::selectionRotate(Vec3F centerOfMass, Vec3F rotationAxis, float angle) {
         bool rotated = false;
-        Vec3D centerOfMassP3(centerOfMass.X(), centerOfMass.Y(), centerOfMass.Z());
-        Vec3D rotationV3(rotationAxis.X(), rotationAxis.Y(), rotationAxis.Z());
 
         for(unsigned int i = 0; i < helices.size(); i++) {
 //            if(helices[i]->GetSelected()) {
                 rotated = true;
-                Vec3D move = centerOfMassP3 - helices[i]->getCenter();
-                Matrix4 rotMatrix = Matrix4::rotation(rotationV3, angle);
+                Vec3D move = centerOfMass - helices[i]->getCenter();
+                Matrix4 rotMatrix = Matrix4::rotation(rotationAxis, angle);
                 Vec3D newMove = rotMatrix * move;
-                helices[i]->setCenter(centerOfMassP3 - newMove);
+                helices[i]->setCenter(centerOfMass - newMove);
 
-                helices[i]->rotate(rotationV3, angle);
+                helices[i]->rotate(rotationAxis, angle);
 //            }
         }
 
