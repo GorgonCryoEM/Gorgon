@@ -275,7 +275,7 @@ namespace GraphMatch {
         } else {
             pt = getWorldCoordinates(Vec3D(0, 0.5, 0));
         }
-        return Vec3F(pt[0], pt[1], pt[2]);
+        return pt;
     }
 
     inline void Shape::addInternalCell(Point3Pair point) {
@@ -424,7 +424,7 @@ namespace GraphMatch {
     }
 
     inline void Shape::setCenter(Vec3F center) {
-        setCenter(Vec3D(center.X(), center.Y(), center.Z()));
+        setCenter(center);
     }
 
     inline void Shape::setHeight(double h) {
@@ -542,7 +542,7 @@ namespace GraphMatch {
         Vec3F dir = p1-p2;
         Vec3F yaxis(0, 1, 0);
 
-        newHelix->setCenter(Vec3D(center.X(), center.Y(), center.Z()));
+        newHelix->setCenter(center);
         newHelix->setRadius(radius);
         newHelix->setHeight(dir.length());
         Vec3F axis = dir^yaxis;
