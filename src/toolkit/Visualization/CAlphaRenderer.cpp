@@ -186,9 +186,9 @@ namespace Visualization {
                     Vec3F postSecelAtomPos = atoms.find(lastAtom.GetNextCAHash())->second.GetPosition();
 
                     vector<Vec3F> points = createPointVector(firstAtom, lastAtom);
-                    vector<Vec3F> tangents = vector<Vec3F>(points);
-                    vector<Vec3F> axes = vector<Vec3F>(points);
-                    vector<Vec3F> interpPoints = vector<Vec3F>((points.size()-1)*NUM_SEGMENTS + 1);
+                    vector<Vec3F> tangents(points);
+                    vector<Vec3F> axes(points);
+                    vector<Vec3F> interpPoints((points.size()-1)*NUM_SEGMENTS + 1);
                     int flatSlices = 2;
                     int rptsize = interpPoints.size()*4;
                     switch (renderingType){
@@ -1008,7 +1008,7 @@ namespace Visualization {
 
     Vec3F CAlphaRenderer::selectionCenterOfMass() {
         int count = 0;
-        Vec3F centerOfMass = Vec3F(0,0,0);
+        Vec3F centerOfMass(0,0,0);
         for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {
             if(i->second.GetSelected()) {
                 count++;
@@ -1032,18 +1032,15 @@ namespace Visualization {
 
     bool CAlphaRenderer::selectionRotate(Vec3F centerOfMass, Vec3F rotationAxis, float angle) {
         bool rotated = false;
-        Vec3D centerOfMassP3(centerOfMass.X(), centerOfMass.Y(), centerOfMass.Z());
-        Vec3D rotationV3(rotationAxis.X(), rotationAxis.Y(), rotationAxis.Z());
 
         for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {
             if(i->second.GetSelected()) {
                 rotated = true;
                 Vec3F move = centerOfMass - i->second.GetPosition();
-                Vec3D moveV3(move.X(), move.Y(), move.Z());
-                Matrix4 rotMatrix = Matrix4::rotation(rotationV3, angle);
-                Vec3D newMove = rotMatrix * moveV3;
-                newMove = centerOfMassP3 - newMove;
-                i->second.SetPosition(Vec3F(newMove[0], newMove[1], newMove[2]));
+                Matrix4 rotMatrix = Matrix4::rotation(rotationAxis, angle);
+                Vec3D newMove = rotMatrix * move;
+                newMove = centerOfMass - newMove;
+                i->second.SetPosition(newMove);
             }
         }
         return rotated;
