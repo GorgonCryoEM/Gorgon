@@ -82,6 +82,8 @@ namespace GraphMatch {
 //            T * end();
 
             bool isBadNormal();
+            template <class U>
+            operator Vector3<U>();
 
             static Vector3<T> normalize(Vector3<T> v);
             static Vector3<T> project3Dto2D(Vector3<T> point, Vector3<T> planePt, Vector3<T> planeVec1, Vector3<T> planeVec2);
@@ -104,6 +106,12 @@ namespace GraphMatch {
     typedef Vector3<int>    Vec3I;
     typedef Vector3<float>  Vec3F;
     typedef Vector3<double> Vec3D;
+
+    template <class T>
+    template <class U>
+    inline Vector3<T>::operator Vector3<U>() {
+            return Vector3<T>(x,y,z);
+    }
 
     template <class T>
     inline Vector3<T>::Vector3()
