@@ -1,8 +1,8 @@
 /*
  * Vector3.h
  *
- *  Created on: Feb 16, 2016
- *      Author: shadow_walker
+ * Author: shadow_walker <shadowwalkersb@gmail.com>
+ *
  */
 
 #ifndef SRC_TOOLKIT_MATHTOOLS_VECTOR3_H_
