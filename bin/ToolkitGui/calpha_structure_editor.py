@@ -312,6 +312,7 @@ given by self.helixNtermSpinBox and self.helixCtermSpinBox.
         self.undoStack.push(command)
         self.loaded = True
         self.app.calphaViewer.modelChanged()
+        self.app.mainCamera.updateGL()
         self.bringToFront()
         
     def bringToFront(self):
