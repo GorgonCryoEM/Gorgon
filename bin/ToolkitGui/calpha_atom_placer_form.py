@@ -1,5 +1,5 @@
 from PyQt4 import QtCore, QtGui
-from libpytoolkit import PDBAtom, Vec3F
+from libpytoolkit import PDBAtom
 from Toolkit.sse.seq_model.Residue import Residue
 
 
