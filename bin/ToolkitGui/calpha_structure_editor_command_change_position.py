@@ -40,7 +40,7 @@ class CAlphaStructureEditorCommandChangePosition(QtGui.QUndoCommand):
     def undo(self):
         self.editor.undoInProgress = True
         if self.doTranslate:
-            self.renderer.selectionMove(Vector3DFloat(-self.translateVector.x(), -self.translateVector.y(), -self.translateVector.z()))
+            self.renderer.selectionMove(-self.translateVector)
         if self.doRotate:
             self.renderer.selectionRotate(self.rotateCenter, self.rotateAxis, self.rotateOldAngle - self.rotateNewAngleValue)
             if(self.rotateFieldNum == 'roll'):
