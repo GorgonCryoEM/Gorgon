@@ -142,6 +142,7 @@ class BaseViewer(BaseDockWidget):
         self.extraDrawingRoutines()
         if(self.loaded):
             self.setupGlList()
+        glPopAttrib()
 
     def setupGlList(self):
         self.glList = glGenLists(1)
