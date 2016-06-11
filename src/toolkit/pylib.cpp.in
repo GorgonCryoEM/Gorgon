@@ -494,6 +494,7 @@ BOOST_PYTHON_MODULE(@current_pylib@)
         .def(self ^ self)
         .def(self += self)
         .def(self -= self)
+        .def(-self)
         //Vector3DTemplate<T> operator-();
         //Vector3DTemplate<T>& operator=(const Vector3DTemplate<T>& d);
 
