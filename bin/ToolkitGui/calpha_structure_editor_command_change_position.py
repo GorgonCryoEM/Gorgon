@@ -51,5 +51,5 @@ class CAlphaStructureEditorCommandChangePosition(QtGui.QUndoCommand):
                 self.editor.yaw = self.rotateNewAngleValue
         
         self.editor.posMoveDict[self.rotateFieldNum].setValue(self.rotateOldAngle)
-        self.viewer.emitModelChanged()
+        self.viewer.modelChanged()
         self.editor.undoInProgress = False
