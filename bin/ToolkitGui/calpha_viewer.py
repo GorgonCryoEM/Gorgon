@@ -10,6 +10,8 @@ from Toolkit.sse.correspondence.StructurePrediction import StructurePrediction
 from .calpha_choose_chain_model import CAlphaChooseChainModel
 # from calpha_flexible_fitting_form import CAlphaFlexibleFittingForm
 
+from Explorer import Vec3
+
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
@@ -420,7 +422,7 @@ class CAlphaViewer(BaseViewer):
             x = pos.x()*self.renderer.getSpacingX() + self.renderer.getOriginX()
             y = pos.y()*self.renderer.getSpacingY() + self.renderer.getOriginY()
             z = pos.z()*self.renderer.getSpacingZ() + self.renderer.getOriginZ()
-            self.app.mainCamera.setCenter( x, y, z )
+            self.app.mainCamera.setCenter(Vec3(x, y, z))
             self.modelChanged()
     
     def createUI(self):
