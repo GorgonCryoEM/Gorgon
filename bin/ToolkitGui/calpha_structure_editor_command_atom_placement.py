@@ -48,7 +48,7 @@ time the action occurs.
         if bondAfter:
             self.viewer.renderer.addBond(bondAfter)
         
-        self.viewer.emitModelChanged()
+        self.viewer.modelChanged()
         self.structureEditor.atomJustAdded = atom
         
         if self.structureEditor.atomicBackwardRadioButton.isChecked():
@@ -80,7 +80,7 @@ time the action occurs.
         self.currentChainModel[self.resSeqNum].clearAtom('CA')
         self.viewer.renderer.deleteAtom(atom.getHashKey())
         
-        self.viewer.emitModelChanged()
+        self.viewer.modelChanged()
         
         if self.structureEditor.atomicBackwardRadioButton.isChecked():
             self.structureEditor.atomNextButtonPress()
