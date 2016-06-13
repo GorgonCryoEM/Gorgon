@@ -449,6 +449,8 @@ This translates the selection on the x-axis.
             translateVector = Vec3(moveX, 0, 0)
             command = CAlphaStructureEditorCommandChangePosition(self.CAlphaViewer, self, True, translateVector, False, None, None, oldX, newX, 'x')
             self.undoStack.push(command)
+        self.app.calphaViewer.modelChanged()
+        self.app.mainCamera.updateGL()
 
     def posMoveCM_y(self):
         """
@@ -462,6 +464,8 @@ This translates the selection on the y-axis.
             translateVector = Vec3(0, moveY, 0)
             command = CAlphaStructureEditorCommandChangePosition(self.CAlphaViewer, self, True, translateVector, False, None, None, oldY, newY, 'y')
             self.undoStack.push(command)
+        self.app.calphaViewer.modelChanged()
+        self.app.mainCamera.updateGL()
           
     def posMoveCM_z(self):
         """
@@ -475,6 +479,8 @@ This translates the selection on the z-axis.
             translateVector = Vec3(0, 0, moveZ)
             command = CAlphaStructureEditorCommandChangePosition(self.CAlphaViewer, self, True, translateVector, False, None, None, oldZ, newZ, 'z')
             self.undoStack.push(command)
+        self.app.calphaViewer.modelChanged()
+        self.app.mainCamera.updateGL()
        
     def posRotateCM_roll(self, angle):
         """
@@ -493,6 +499,8 @@ screen.
              
             command = CAlphaStructureEditorCommandChangePosition(self.CAlphaViewer, self, False, None, True, cm, axis, oldAngle, angle, 'roll')
             self.undoStack.push(command)
+        self.app.calphaViewer.modelChanged()
+        self.app.mainCamera.updateGL()
         
     def posRotateCM_pitch(self, angle):
         """
@@ -511,6 +519,8 @@ screen.
         
             command = CAlphaStructureEditorCommandChangePosition(self.CAlphaViewer, self, False, None, True, cm, axis, oldAngle, angle, 'pitch')
             self.undoStack.push(command)
+        self.app.calphaViewer.modelChanged()
+        self.app.mainCamera.updateGL()
 
     def posRotateCM_yaw(self, angle):
         """
@@ -528,6 +538,8 @@ screen.
             newAngle = math.pi*angle/180
             command = CAlphaStructureEditorCommandChangePosition(self.CAlphaViewer, self, False, None, True, cm, axis, oldAngle, angle, 'yaw')
             self.undoStack.push(command)
+        self.app.calphaViewer.modelChanged()
+        self.app.mainCamera.updateGL()
 
     def posUpdateValues(self):
         """
