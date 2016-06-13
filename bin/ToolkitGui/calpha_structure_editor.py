@@ -3,7 +3,7 @@ from libpytoolkit import PDBAtom, PDBBond
 # from calpha_interactive_loop_builder import CAlphaInteractiveLoopBuilder
 # from seq_model.findHelixCalphas import helixEndpointsToCAlphaPositions
 # from seq_model.Helix import Helix
-# import math
+import math
 from Explorer.libs import *
 from .calpha_structure_editor_command_place_helix import CAlphaStructureEditorCommandPlaceHelix
 from .calpha_structure_editor_command_atom_placement import CAlphaStructureEditorCommandAtomPlacement
