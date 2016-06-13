@@ -554,78 +554,104 @@ selection's geometric center.
         self.posMoveDict['x'].setValue(cm.x())
         self.posMoveDict['y'].setValue(cm.y())
         self.posMoveDict['z'].setValue(cm.z())
+        self.app.calphaViewer.modelChanged()
+        self.app.mainCamera.updateGL()
             
     def posXDecr(self):
         """
 This decreases the position editor's x-coordinate spin box by 1.
         """
         self.posMoveDict['x'].setValue(self.posMoveDict['x'].value()-1)
+        self.app.calphaViewer.modelChanged()
+        self.app.mainCamera.updateGL()
 
     def posXIncr(self):
         """
 This increases the position editor's x-cordinate spin box by 1.
         """
         self.posMoveDict['x'].setValue(self.posMoveDict['x'].value()+1)
+        self.app.calphaViewer.modelChanged()
+        self.app.mainCamera.updateGL()
 
     def posYDecr(self):
         """
 This decreases the position editor's y-coordinate spin box by 1.
         """
         self.posMoveDict['y'].setValue(self.posMoveDict['y'].value()-1)
+        self.app.calphaViewer.modelChanged()
+        self.app.mainCamera.updateGL()
 
     def posYIncr(self):
         """
 This increases the position editor's y-coordinate spin box by 1.
         """
         self.posMoveDict['y'].setValue(self.posMoveDict['y'].value()+1)
+        self.app.calphaViewer.modelChanged()
+        self.app.mainCamera.updateGL()
 
     def posZDecr(self):
         """
 This decreases the position editor's z-coordinate spin box by 1.
         """
         self.posMoveDict['z'].setValue(self.posMoveDict['z'].value()-1)
+        self.app.calphaViewer.modelChanged()
+        self.app.mainCamera.updateGL()
 
     def posZIncr(self):
         """
 This increases the position editor's z-coordinate spin box by 1.
         """
         self.posMoveDict['z'].setValue(self.posMoveDict['z'].value()+1)
+        self.app.calphaViewer.modelChanged()
+        self.app.mainCamera.updateGL()
 
     def posRollDecr(self):
         """
 This decreases the position editor's roll spin box by 3.
         """
         self.posMoveDict['roll'].setValue(self.posMoveDict['roll'].value()-3)
+        self.app.calphaViewer.modelChanged()
+        self.app.mainCamera.updateGL()
 
     def posRollIncr(self):
         """
 This increases the position editor's roll spin box by 3.
         """
         self.posMoveDict['roll'].setValue(self.posMoveDict['roll'].value()+3)
+        self.app.calphaViewer.modelChanged()
+        self.app.mainCamera.updateGL()
 
     def posPitchDecr(self):
         """
 This decreases the position editor's pitch spin box by 3.
         """
         self.posMoveDict['pitch'].setValue(self.posMoveDict['pitch'].value()-3)
+        self.app.calphaViewer.modelChanged()
+        self.app.mainCamera.updateGL()
 
     def posPitchIncr(self):
         """
 This increases the position editor's pitch spin box by 3.
         """
         self.posMoveDict['pitch'].setValue(self.posMoveDict['pitch'].value()+3)
+        self.app.calphaViewer.modelChanged()
+        self.app.mainCamera.updateGL()
 
     def posYawDecr(self):
         """
 This decreases the position editor's yaw spin box by 3.
         """
         self.posMoveDict['yaw'].setValue(self.posMoveDict['yaw'].value()-3)
+        self.app.calphaViewer.modelChanged()
+        self.app.mainCamera.updateGL()
 
     def posYawIncr(self):
         """
 This increases the position editor's yaw spin box by 3.
         """
         self.posMoveDict['yaw'].setValue(self.posMoveDict['yaw'].value()+3)
+        self.app.calphaViewer.modelChanged()
+        self.app.mainCamera.updateGL()
     
     def removeSelectedAtoms(self):
         #This deletes the selected atoms and the attached bonds. It also removes
@@ -658,6 +684,7 @@ This increases the position editor's yaw spin box by 3.
                 self.CAlphaViewer.renderer.deleteAtom(atom.getHashKey())
                 del atom
         self.CAlphaViewer.modelChanged()
+        self.app.mainCamera.updateGL()
 
     def renderMockSidechains(self,  chain):
         """
@@ -682,6 +709,8 @@ sidechains but does not update the screen.
                     atom.setColor( *color[key] )
                     break
         #print "The mock side-chains should be ready to draw to the screen"
+        self.app.calphaViewer.modelChanged()
+        self.app.mainCamera.updateGL()
 
     def setResidues(self, newSelection):
         """
@@ -712,6 +741,8 @@ be the current residue for the atomic editor.
                 self.atomicResNames[i].setText('')
                 self.atomicResNumbers[i].setText('')
         self.atomFindPositionPossibilities()
+        self.app.calphaViewer.modelChanged()
+        self.app.mainCamera.updateGL()
         
     def setLoopEditorValues(self, newSelection):
         if(newSelection):
