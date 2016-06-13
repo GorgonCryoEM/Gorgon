@@ -1,5 +1,5 @@
 from PyQt4 import QtGui, QtCore
-# from libpytoolkit import PDBAtom, PDBBond
+from libpytoolkit import PDBAtom, PDBBond
 # from calpha_interactive_loop_builder import CAlphaInteractiveLoopBuilder
 # from seq_model.findHelixCalphas import helixEndpointsToCAlphaPositions
 # from seq_model.Helix import Helix
