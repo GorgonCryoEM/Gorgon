@@ -35,9 +35,7 @@ namespace Visualization {
     }
 
     void SSERenderer::addHelix(Vec3F p1, Vec3F p2) {
-
         Shape * newHelix = Shape::createHelix(p1, p2, 2.5);
-
         helices.push_back(newHelix);
     }
 
