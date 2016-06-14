@@ -950,6 +950,35 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
 #             self.app.viewers['sse'].setMaterials()
             self.app.viewers['sse'].correspondenceEngine.drawAllPaths(0,True,True,True,False)
             glPopAttrib()
+
+    def constrainPredictedHelix(self, predicted, observed, constrain):
+        def constrainPredictedHelix_po():
+            correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
+            if(correspondenceIndex >= 0):
+                corr = self.viewer.correspondenceLibrary.correspondenceList[correspondenceIndex]
+                for j in range(len(corr.matchList)):
+                    match = corr.matchList[j]
+                    if(match and match.observed and (match.observed.label == observed)):
+                        match.observed = None
+                        match.constrained = False
+                    if(match and match.predicted and match.predicted.type == 'helix' and match.predicted.serialNo == predicted):
+                        newMatch = match
+                match = newMatch
+                match.constrained = constrain
+                match.observed = self.viewer.correspondenceLibrary.structureObservation.helixDict[observed]
+            self.selectCorrespondence(correspondenceIndex)
+        return constrainPredictedHelix_po
+    
+    def constrainPredictedStrand(self, predicted, observed, constrain):
+        def constrainPredictedStrand_po():
+            correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
+            if(correspondenceIndex >= 0):
+                corr = self.viewer.correspondenceLibrary.correspondenceList[correspondenceIndex]
+                match = corr.matchList[predicted]
+                match.observed = self.viewer.correspondenceLibrary.structureObservation.sheetDict[observed]
+                match.constrained = constrain # add or remove constraint
+            self.selectCorrespondence(correspondenceIndex)
+        return constrainPredictedStrand_po
     
     def sseClicked(self, hit0, hit1, hit2, hit3, hit4, hit5, event):
         if(self.isVisible() and self.dataLoaded and ((hit0 == 0) or (hit0 == 1) or (hit0 == 2)) and (hit1 >= 0)):
