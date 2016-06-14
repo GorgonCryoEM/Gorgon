@@ -133,7 +133,7 @@ namespace GraphMatch {
         colorA = 1.0f;
 
         selected                 = false;
-        isObjectSpecificColoring = false;
+        isObjectSpecificColoring = true;
     }
 
     inline bool Shape::isSelected() {
