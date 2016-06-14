@@ -69,13 +69,24 @@ namespace Visualization {
             for(unsigned int kk=0; kk<helices.size(); ++kk)
                 cout<<helices[kk]->getCenter()<<endl;
 
+            vector<int> SSEIndices;
+
+            for(unsigned int i = 0; i < corrs.size(); ++i){
+                int SSEIndex = corrs[i].first;
+                for(unsigned int k = 0; k < selectedPDBHelices.size(); ++k){
+                    if(selectedPDBHelices[k] == SSEIndex){
+                        SSEIndices.push_back(corrs[i].second);
+                    }
+                }
+            }
+
             for(int i = 0; i < (int)helices.size(); i++) {
                 glPushAttrib(GL_LIGHTING_BIT);
-//                if(helices[i]->isObjectSpecificColoring) {
+                if(helices[i]->isObjectSpecificColoring) {
                     float colorR, colorG, colorB, colorA;
                     helices[i]->getColor(colorR, colorG, colorB, colorA);
                     OpenGLUtils::SetColor(colorR, colorG, colorB, colorA);
-//                }
+                }
 
                 if(helices[i]->isSelected()) {
                     glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
@@ -95,6 +106,49 @@ namespace Visualization {
                 gluDeleteQuadric(quadricCylinder);
                 glPopMatrix();
                 glPopAttrib();
+
+                if(helices[i]->isSelected()) {
+
+                    Vec3F corner1 = getHelixCorner(i, 0);
+                    Vec3F corner2 = getHelixCorner(i, 1);
+                    cout << "Drawing selected cylinder. Size of helix flips is " << helixFlips.size() << endl;
+                    if(helixFlips.size()  > 0){
+                        if(!helixFlips[i]){
+                            OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
+                            drawSphere(corner2, 1.0);
+                            OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
+                            drawSphere(corner1, 1.0);
+                            fflush(stdout);
+                        }else{
+                            OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
+                            drawSphere(corner1, 1.0);
+                            OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
+                            drawSphere(corner2, 1.0);
+                            fflush(stdout);
+                        }
+                    }
+                }
+
+
+                for(unsigned int j = 0; j < SSEIndices.size(); ++j){
+                    if(SSEIndices[j] == i){
+                        Vec3F corner1 = getHelixCorner(i, 0);
+                        Vec3F corner2 = getHelixCorner(i, 1);
+                        if(!helixFlips[i]){
+                            OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
+                            drawSphere(corner2, 1.0);
+                            OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
+                            drawSphere(corner1, 1.0);
+                            fflush(stdout);
+                        }else{
+                            OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
+                            drawSphere(corner1, 1.0);
+                            OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
+                            drawSphere(corner2, 1.0);
+                            fflush(stdout);
+                        }
+                    }
+                }
             }
 
             if(selectEnabled) {
@@ -239,7 +293,7 @@ namespace Visualization {
         bool rotated = false;
 
         for(unsigned int i = 0; i < helices.size(); i++) {
-//            if(helices[i]->GetSelected()) {
+            if(helices[i]->isSelected()) {
                 rotated = true;
                 Vec3D move = centerOfMass - helices[i]->getCenter();
                 Matrix4 rotMatrix = Matrix4::rotation(rotationAxis, angle);
@@ -247,7 +301,7 @@ namespace Visualization {
                 helices[i]->setCenter(centerOfMass - newMove);
 
                 helices[i]->rotate(rotationAxis, angle);
-//            }
+            }
         }
 
         // I think the sheet center of mass is wrong!  Need to fix this
