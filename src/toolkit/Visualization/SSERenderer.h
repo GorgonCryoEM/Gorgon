@@ -66,7 +66,6 @@ namespace Visualization {
             int selectionObjectCount();
             Vec3F selectionCenterOfMass();
             bool selectionMove(Vec3F moveDirection);
-            bool selectionClear();
             string getSupportedSheetSaveFileFormats();
             void selectionToggle(int subsceneIndex, bool forceTrue, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
             void removeHelices();

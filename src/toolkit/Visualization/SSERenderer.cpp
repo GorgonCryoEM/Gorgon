@@ -278,24 +278,8 @@ namespace Visualization {
     int SSERenderer::selectionObjectCount() {
         int count = 0;
         for(unsigned int i = 0; i < helices.size(); i++) {
-            if(helices[i]->GetSelected()) {
+            if(helices[i]->isSelected()) {
                 count++;
-            }
-        }
-
-        if(sheetMesh != NULL) {
-            for(int i = 0; i <= sheetCount; i++) {
-                if(selectedSheets[i]) {
-                    count++;
-                }
-            }
-        }
-
-        if(graphSheetMesh != NULL) {
-            for(int i = 0; i <= graphSheetCount; i++) {
-                if(selectedGraphSheets[i]) {
-                    count++;
-                }
             }
         }
 
@@ -303,56 +287,27 @@ namespace Visualization {
     }
 
     Vec3F SSERenderer::selectionCenterOfMass(){
-        Vec3F helixCenterOfMass = Vec3F(0,0,0);
-        Point3 helixCenter;
+        Vec3F helixCenterOfMass(0,0,0);
+        Vec3F helixCenter;
         int helixCount = 0;
 
         for(unsigned int i = 0; i < helices.size(); i++) {
-            if(helices[i]->GetSelected()) {
+            if(helices[i]->isSelected()) {
                 helixCount++;
-                helixCenter = helices[i]->GetCenter();
-                helixCenterOfMass = helixCenterOfMass + Vec3F(helixCenter[0], helixCenter[1], helixCenter[2]);
+                helixCenter = helices[i]->getCenter();
+                helixCenterOfMass = helixCenterOfMass + helixCenter;
             }
         }
 
-        int totalCount = SelectionObjectCount();
+        int totalCount = selectionObjectCount();
         int sheetCount = totalCount - helixCount;
 
-        Vec3F sheetsCenterOfMass = Vec3F(0,0,0);
+        Vec3F sheetsCenterOfMass(0,0,0);
         Vec3F currentFaceCenterOfMass;
         Vec3F currentSheetCenterOfMass;
 
-        if((sheetCount > 0) && (sheetMesh != NULL)) {
-
-
-            int currentSheetFaceCount;
-
-            for(int j = 0; j <= this->sheetCount; j++) {
-                if(selectedSheets[j]) {
-                    currentSheetCenterOfMass = Vec3F(0,0,0);
-                    currentSheetFaceCount = 0;
-                    for(unsigned int i = 0; i < sheetMesh->faces.size(); i++) {
-                        if(sheetMesh->faces[i].tag.id == j) {
-                            currentSheetFaceCount++;
-                            currentFaceCenterOfMass = Vec3F(0,0,0);
-                            for(unsigned int k = 0; k < sheetMesh->faces[i].vertexIds.size(); k++) {
-                                currentFaceCenterOfMass = currentFaceCenterOfMass + sheetMesh->vertices[sheetMesh->faces[i].vertexIds[k]].position;
-                            }
-                            currentFaceCenterOfMass = currentFaceCenterOfMass * (1.0f / (float)sheetMesh->faces[i].vertexIds.size());
-                            currentSheetCenterOfMass = currentSheetCenterOfMass + currentFaceCenterOfMass;
-                        }
-                    }
-
-                    currentSheetCenterOfMass = currentSheetCenterOfMass * (1.0f / (float)currentSheetFaceCount);
-                }
-                sheetsCenterOfMass = sheetsCenterOfMass + currentSheetCenterOfMass;
-            }
-        }
-
         Vec3F centerOfMass;
-        if(totalCount == 0) {
-            centerOfMass = Renderer::SelectionCenterOfMass();
-        } else if ((helixCount > 0) && (sheetCount > 0)) {
+        if ((helixCount > 0) && (sheetCount > 0)) {
             centerOfMass = (helixCenterOfMass + sheetsCenterOfMass) * (1.0f/(float)totalCount);
         } else if (helixCount > 0) {
             centerOfMass = helixCenterOfMass * (1.0f/(float)helixCount);
@@ -365,63 +320,12 @@ namespace Visualization {
     bool SSERenderer::selectionMove(Vec3F moveDirection) {
         bool moved = false;
         for(unsigned int i = 0; i < helices.size(); i++) {
-            if(helices[i]->GetSelected()) {
-                helices[i]->SetCenter(helices[i]->GetCenter() + Vector3(moveDirection.X(), moveDirection.Y(), moveDirection.Z()));
+            if(helices[i]->isSelected()) {
+                helices[i]->setCenter(helices[i]->getCenter() + moveDirection);
                 moved = true;
             }
         }
-        if(sheetMesh != NULL) {
-            for(unsigned int i=0; i < sheetMesh->vertices.size(); i++) {
-                sheetMesh->vertices[i].tag = false;
-            }
-
-
-            for(unsigned int i = 0; i < sheetMesh->faces.size(); i++) {
-                if(sheetMesh->faces[i].tag.selected) {
-                    for(unsigned int j = 0; j < sheetMesh->faces[i].vertexIds.size(); j++) {
-                        NonManifoldMeshVertex<bool> * v = &(sheetMesh->vertices[sheetMesh->faces[i].vertexIds[j]]);
-                        if(!v->tag) {
-                            v->position = v->position + moveDirection;
-                            moved = true;
-                            v->tag = true;
-                        }
-                    }
-                }
-            }
-        }
-        UpdateBoundingBox();
         return moved;
-    }
-
-    bool SSERenderer::selectionClear() {
-        if(Renderer::SelectionClear()) {
-
-            for(unsigned int i = 0; i < helices.size(); i++) {
-                helices[i]->SetSelected(false);
-            }
-
-            if(sheetMesh != NULL) {
-                for(unsigned int i = 0; i < sheetMesh->faces.size(); i++) {
-                    sheetMesh->faces[i].tag.selected = false;
-                }
-                for(int i = 0; i <= sheetCount; i++) {
-                    selectedSheets[i] = false;
-                }
-            }
-
-            if(graphSheetMesh != NULL) {
-                for(unsigned int i = 0; i < graphSheetMesh->faces.size(); i++) {
-                    graphSheetMesh->faces[i].tag.selected = false;
-                }
-                for(int i = 0; i <= graphSheetCount; i++) {
-                    selectedGraphSheets[i] = false;
-                }
-            }
-            selectedHelices.clear();
-            selectedPDBHelices.clear();
-            return true;
-        }
-        return false;
     }
 
     void SSERenderer::clearOtherHighlights(){
@@ -433,31 +337,10 @@ namespace Visualization {
     }
 
     void SSERenderer::selectionToggle(int subsceneIndex, bool forceTrue, int ix0, int ix1, int ix2, int ix3, int ix4) {
-        Renderer::SelectionToggle(subsceneIndex, forceTrue, ix0, ix1, ix2, ix3, ix4);
         if((subsceneIndex == 0) && (ix0 >= 0) && (ix0 <= (int)helices.size())) {
-            if(forceTrue || !helices[ix0]->GetSelected())
+            if(forceTrue || !helices[ix0]->isSelected())
                 selectedHelices.push_back(ix0);
-            helices[ix0]->SetSelected(forceTrue || !helices[ix0]->GetSelected());
-        }
-
-        if(subsceneIndex == 1) {
-            for(unsigned int i = 0; i < sheetMesh->faces.size(); i++) {
-                if(sheetMesh->faces[i].tag.id == ix0) {
-                    sheetMesh->faces[i].tag.selected = forceTrue || !sheetMesh->faces[i].tag.selected;
-                }
-            }
-
-            selectedSheets[ix0] = forceTrue || !selectedSheets[ix0];
-            sheets[ix0-1]->SetSelected(selectedSheets[ix0]);
-        }
-        if(subsceneIndex == 2) {
-            for(unsigned int i = 0; i < graphSheetMesh->faces.size(); i++) {
-                if(graphSheetMesh->faces[i].tag.id == ix0) {
-                    graphSheetMesh->faces[i].tag.selected = forceTrue || !graphSheetMesh->faces[i].tag.selected;
-                }
-            }
-
-            selectedGraphSheets[ix0] = forceTrue || !selectedGraphSheets[ix0];
+            helices[ix0]->setSelected(forceTrue || !helices[ix0]->isSelected());
         }
     }
 
