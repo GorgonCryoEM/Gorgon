@@ -1,7 +1,7 @@
 from PyQt4 import QtCore, QtGui
 from ui_dialog_sse_helix_correspondence_finder import Ui_DialogSSEHelixCorrespondenceFinder
 from libpytoolkit import SSEEngine, SSEResult, IBackEnd#, Vec3F
-# from libpytoolkit import SSEEngine, SSEResult, Vec3F
+from libpytoolkit import setHelixConstraint
 from Toolkit.sse.correspondence.CorrespondenceLibrary import CorrespondenceLibrary
 from Toolkit.sse.correspondence.Correspondence import Correspondence
 from Toolkit.sse.correspondence.Match import Match
@@ -373,9 +373,9 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
                 if match.predicted.type == 'helix':
                     if match.constrained:
                         if(match.observed):
-                            self.app.viewers['sse'].correspondenceEngine.setHelixConstraint(predictedGraphNode, 2*match.observed.label + 1)
+                            setHelixConstraint(predictedGraphNode, 2*match.observed.label + 1)
                         else:
-                            self.app.viewers['sse'].correspondenceEngine.setHelixConstraint(predictedGraphNode, -1)
+                            setHelixConstraint(predictedGraphNode, -1)
                 if match.predicted.type == 'strand':
                     if(not self.ui.checkBoxIncludeSheets.isChecked()):
                         self.userConstraints[i]=False # clear all strand constraints
