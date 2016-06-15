@@ -28,6 +28,7 @@ class BaseViewer(BaseDockWidget):
                                 self.title,
                                 QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea,
                                 QtCore.Qt.RightDockWidgetArea)
+        self.app = main
         self.sceneIndex = -1;
         self.loaded = False
         self.selectEnabled = True
@@ -143,6 +144,7 @@ class BaseViewer(BaseDockWidget):
         if(self.loaded):
             self.setupGlList()
         glPopAttrib()
+        self.app.mainCamera.updateGL()
 
     def setupGlList(self):
         self.glList = glGenLists(1)
