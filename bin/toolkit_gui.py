@@ -16,7 +16,7 @@ from ToolkitGui import MainWindowForm4
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Gorgon Toolkit')
+    parser = argparse.ArgumentParser(description='Gorgon Toolkit Gui')
     
     parser.add_argument('volume', action="store")
     parser.add_argument('skeleton', action="store")
