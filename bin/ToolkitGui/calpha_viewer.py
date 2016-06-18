@@ -107,6 +107,8 @@ class CAlphaViewer(BaseViewer):
           
     # Overridden
     def emitElementClicked(self, hitStack, event):
+        print "emitElementClicked overridden: ", self.title, hitStack
+        print "self.displayStyle: ", self.displayStyle
         if (self.displayStyle == self.DisplayStyleRibbon):
             sseData = self.formatRibbonHitstack(hitStack)
             self.emit(QtCore.SIGNAL("ribbonClicked (int, PyQt_PyObject, PyQt_PyObject, QMouseEvent)"), sseData[0], sseData[1], sseData[2], event)
@@ -600,6 +602,7 @@ This function loads a SEQ file and creates a StructurePrediction object.
         self.emitAtomSelectionUpdated(self.main_chain.getSelection())
 
     def processElementClick(self, *argv):
+        print argv
         """
 In response to a click on a C-alpha element, this updates the selected
 residues in the Chain object.
@@ -608,12 +611,16 @@ residues in the Chain object.
             return
         hits = argv[:-1]
         event = argv[-1]
+        print "...event: ", event
         if event.button() == QtCore.Qt.LeftButton:
+            print "...if"
             if event.modifiers() & QtCore.Qt.CTRL: #Multiple selection mode
+                print ".....if"
                 atom = CAlphaRenderer.getAtomFromHitStack(self.renderer, hits[0], False, *hits[1:])
                 if atom.getResSeq() in self.main_chain.getSelection():
                     self.main_chain.setSelection(removeOne=atom.getResSeq())
                 else:
+                    print "....else"
                     self.main_chain.setSelection(addOne=atom.getResSeq())
                 print self.main_chain.getSelection()
             else:
