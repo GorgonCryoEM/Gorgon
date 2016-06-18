@@ -360,7 +360,7 @@ class Camera(QtOpenGL.QGLWidget):
             minDepth, maxDepth, names = hit_record
             print "  ... ", minDepth, maxDepth, names
             names = list(names)
-            if(self.scene[names[0]].selectEnabled and globalMinDepth > minDepth):
+            if(globalMinDepth >= minDepth):
                 globalMinDepth = minDepth
                 minNames = names
         if(minNames != list()):
