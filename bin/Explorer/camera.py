@@ -374,6 +374,11 @@ class Camera(QtOpenGL.QGLWidget):
                     self.scene[sceneId].processMouseClick(minNames, e, False)
             else:                                           # Single selection mode
                 for i in range(len(self.scene)):
+                    try:
+                        self.scene[i].clearSelection()
+                        self.scene[i].renderer.clearOtherHighlights()
+                    except:
+                        pass
                     self.scene[i].modelChanged()
                 
                 for i in range(len(self.scene)):
