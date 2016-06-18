@@ -25,11 +25,11 @@ class MainWindowForm3(QtGui.QMainWindow):
         
         self.scene = [self.volumeViewer, self.skeletonViewer, self.calphaViewer]
         
-        for i in xrange(-100, 101, 50):
-            self.scene.append(Grid3D(self, (i, -100, i), (i, 100, i)))
-        
-        for i in xrange(-100, 101, 50):
-            self.scene.append(Grid3D(self, (-100, i, -100), (100, i, 100)))
+#         for i in xrange(-100, 101, 50):
+#             self.scene.append(Grid3D(self, (i, -100, i), (i, 100, i)))
+#
+#         for i in xrange(-100, 101, 50):
+#             self.scene.append(Grid3D(self, (-100, i, -100), (100, i, 100)))
         
         self.mainCamera = Camera(self.scene, self)
         self.setCentralWidget(self.mainCamera)
