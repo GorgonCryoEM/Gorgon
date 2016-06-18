@@ -108,7 +108,7 @@ class BaseViewer(BaseDockWidget):
             loc = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]
 #             loc = -loc
 #             loc = [0, 0, 0]
-            print self.title, " (loc): ", loc
+#             print self.title, " (loc): ", loc
         except:
             pass
         else:
@@ -129,8 +129,8 @@ class BaseViewer(BaseDockWidget):
             self.setMaterials()
             self.initializeGLDisplayType()
             
-            print "self.glList: %s: %d" %(self.title, self.glList)
-            print glIsList(self.glList)
+#             print "self.glList: %s: %d" %(self.title, self.glList)
+#             print glIsList(self.glList)
             
             glCallList(self.glList)
             self.unInitializeGLDisplayType();
@@ -384,6 +384,7 @@ class BaseViewer(BaseDockWidget):
         self.emit(QtCore.SIGNAL("mouseOverRay(PyQt_PyObject, float, PyQt_PyObject, QMouseEvent)"), ray, rayWidth, eye, e);
 
     def emitElementClicked(self, hitStack, e):
+        print "emitElementClicked: ", self.title, hitStack
         hits = [-1,-1,-1,-1,-1,-1]
         for i in range(6):
                 if(len(hitStack) > i):
