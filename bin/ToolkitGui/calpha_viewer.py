@@ -61,8 +61,8 @@ class CAlphaViewer(BaseViewer):
         self.ribbonMouseMapping[0] = {}
         self.ribbonMouseMapping[1] = {}
         self.ribbonMouseMapping[2] = {}
-        self.createActions()
         self.connect(self, QtCore.SIGNAL("elementClicked (int, int, int, int, int, int, QMouseEvent)"), self.processElementClick)
+        self.createActions()
       
    # Overridden
     def initializeGLDisplayType(self):
