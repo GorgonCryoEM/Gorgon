@@ -62,6 +62,7 @@ class CAlphaViewer(BaseViewer):
         self.ribbonMouseMapping[1] = {}
         self.ribbonMouseMapping[2] = {}
         self.createActions()
+        self.connect(self, QtCore.SIGNAL("elementClicked (int, int, int, int, int, int, QMouseEvent)"), self.processElementClick)
       
    # Overridden
     def initializeGLDisplayType(self):
@@ -105,6 +106,43 @@ class CAlphaViewer(BaseViewer):
         return visibility
           
     # Overridden
+    def emitElementClicked(self, hitStack, event):
+        if (self.displayStyle == self.DisplayStyleRibbon):
+            sseData = self.formatRibbonHitstack(hitStack)
+            self.emit(QtCore.SIGNAL("ribbonClicked (int, PyQt_PyObject, PyQt_PyObject, QMouseEvent)"), sseData[0], sseData[1], sseData[2], event)
+        else:
+            BaseViewer.emitElementClicked(self, hitStack, event)
+
+    # Overridden
+    def emitElementSelected(self, hitStack, event):
+        if (self.displayStyle == self.DisplayStyleRibbon):
+            sseData = self.formatRibbonHitstack(hitStack)
+            self.emit(QtCore.SIGNAL("ribbonSelected (int, PyQt_PyObject, PyQt_PyObject, QMouseEvent)"), sseData[0], sseData[1], sseData[2], event)
+        else:
+            BaseViewer.emitElementSelected(self, hitStack, event)
+        
+    # Overridden
+    def emitElementMouseOver(self, hitStack, event):
+        if (self.displayStyle == self.DisplayStyleRibbon):
+            sseData = self.formatRibbonHitstack(hitStack)
+            self.emit(QtCore.SIGNAL("ribbonMouseOver (int, PyQt_PyObject, PyQt_PyObject, QMouseEvent)"), sseData[0], sseData[1], sseData[2], event)
+        else:
+            BaseViewer.emitElementMouseOver(self, hitStack, event)
+
+    def formatRibbonHitstack(self, hitStack):
+        sseData = [-1, " "," "]
+        if(len(hitStack) <= 2):
+            subsceneIx = hitStack[0]
+            sseData[0] = subsceneIx
+            if(subsceneIx == 0):
+                sseData[1] = self.ribbonMouseMapping[0][hitStack[1]]
+            if (subsceneIx == 1):
+                sseData[1] = self.ribbonMouseMapping[1][hitStack[1]][0]
+                sseData[2] = self.ribbonMouseMapping[1][hitStack[1]][1]
+            elif (subsceneIx == 2):
+                sseData[1] = self.ribbonMouseMapping[2][hitStack[1]]
+        return sseData
+                   
     def setAtomColorsAndVisibility(self, displayStyle):
         if displayStyle == self.DisplayStyleBackbone:
             self.setAllAtomColor(self.getAtomColor())
@@ -561,6 +599,32 @@ This function loads a SEQ file and creates a StructurePrediction object.
         self.main_chain.setSelection([], None, None, None)
         self.emitAtomSelectionUpdated(self.main_chain.getSelection())
 
+    def processElementClick(self, *argv):
+        """
+In response to a click on a C-alpha element, this updates the selected
+residues in the Chain object.
+        """
+        if argv[0]: #argv[0] is 0 for a click on an atom
+            return
+        hits = argv[:-1]
+        event = argv[-1]
+        if event.button() == QtCore.Qt.LeftButton:
+            if event.modifiers() & QtCore.Qt.CTRL: #Multiple selection mode
+                atom = CAlphaRenderer.getAtomFromHitStack(self.renderer, hits[0], False, *hits[1:])
+                if atom.getResSeq() in self.main_chain.getSelection():
+                    self.main_chain.setSelection(removeOne=atom.getResSeq())
+                else:
+                    self.main_chain.setSelection(addOne=atom.getResSeq())
+                print self.main_chain.getSelection()
+            else:
+                atom = CAlphaRenderer.getAtomFromHitStack(self.renderer, hits[0], True, *hits[1:])
+                print 'Residue #:', atom.getResSeq()
+                self.main_chain.setSelection([atom.getResSeq()])
+            self.emitAtomSelectionUpdated(self.main_chain.getSelection())
+                
+        if event.button() == QtCore.Qt.RightButton and self.centerOnRMB:
+            self.centerOnSelectedAtoms(argv[0], argv[1], argv[2], argv[3], argv[4], argv[5], argv[6])
+            
     def exportData(self):
         """
 This saves the current chain model to a PDB file with no "ATOM" lines
