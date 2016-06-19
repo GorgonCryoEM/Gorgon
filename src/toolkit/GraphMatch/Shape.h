@@ -43,7 +43,6 @@ namespace GraphMatch {
         void rotate(Vec3D axis, double angle);
         void translate(Vec3D translationVector);
         void setCenter(Vec3D center);
-        void setCenter(Vec3F center);
         void setColor(float r, float g, float b, float a);
         void setHeight(double height);
         void setRadius(double radius);
@@ -421,10 +420,6 @@ namespace GraphMatch {
     inline void Shape::setCenter(Vec3D ctr) {
         center = ctr;
         updateWorldToObjectMatrix();
-    }
-
-    inline void Shape::setCenter(Vec3F center) {
-        setCenter(center);
     }
 
     inline void Shape::setHeight(double h) {
