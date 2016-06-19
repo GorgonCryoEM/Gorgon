@@ -1,6 +1,6 @@
 # Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
 # Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
-# Description:   This viewer displays c-alpha atoms 
+# Description:   This viewer displays c-alpha atoms
 
 
 from PyQt4 import QtGui, QtCore, QtOpenGL
@@ -19,6 +19,7 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
+
 class CAlphaViewer(BaseViewer):
     DisplayStyleBackbone = 3
     DisplayStyleRibbon = 4
@@ -27,7 +28,7 @@ class CAlphaViewer(BaseViewer):
     def __init__(self, main, parent=None):
         BaseViewer.__init__(self, main, parent)
         self.title = "C-Alpha"
-        self.shortTitle = "CAL"              
+        self.shortTitle = "CAL"
         self.app.themes.addDefaultRGB("C-Alpha:Atom", 170, 170, 0, 255)
         self.app.themes.addDefaultRGB("C-Alpha:Bond", 120, 120, 170, 255)
         self.app.themes.addDefaultRGB("C-Alpha:Helix", 0, 255, 0, 255)
@@ -37,28 +38,28 @@ class CAlphaViewer(BaseViewer):
         self.app.themes.addDefaultRGB("C-Alpha:Nitrogen", 0, 0, 255, 255)
         self.app.themes.addDefaultRGB("C-Alpha:Oxygen", 255, 0, 0, 255)
         self.app.themes.addDefaultRGB("C-Alpha:Sulphur", 255, 255, 0, 255)
-        self.app.themes.addDefaultRGB("C-Alpha:BoundingBox", 255, 255, 255, 255)         
+        self.app.themes.addDefaultRGB("C-Alpha:BoundingBox", 255, 255, 255, 255)
         self.isClosedMesh = False
         self.centerOnRMB = True
         self.selectEnabled = True
-        self.renderer = CAlphaRenderer()          
+        self.renderer = CAlphaRenderer()
         self.displayStyle = self.DisplayStyleBackbone
-        self.renderer.setDisplayStyle(self.displayStyle)  
+        self.renderer.setDisplayStyle(self.displayStyle)
         self.main_chain = Chain('', self.app)
         self.structPred = None
-        self.createUI()      
+        self.createUI()
         self.app.viewers["calpha"] = self;
         self.atomsVisible = True
         self.bondsVisible = True
         self.helicesVisible = True
         self.strandsVisible = True
-        self.loopsVisible = True      
+        self.loopsVisible = True
         #self.interpSegments = 10 # the number of segments interpolated per calpha atom when rendering ribbon diagrams
         #self.ribbonSlices = 10 # the number of slices used to render each segment of a ribbon diagram
         self.initVisualizationOptions(AtomVisualizationForm(self.app, self))
         self.loadedChains = []
-        self.ribbonMouseMapping = {} 
-        self.ribbonMouseMapping[0] = {}   
+        self.ribbonMouseMapping = {}
+        self.ribbonMouseMapping[0] = {}
         self.ribbonMouseMapping[1] = {}
         self.ribbonMouseMapping[2] = {}
         
@@ -68,9 +69,9 @@ class CAlphaViewer(BaseViewer):
    # Overridden
     def initializeGLDisplayType(self):
         glPushAttrib(GL_LIGHTING_BIT | GL_ENABLE_BIT)
-        if(self.isClosedMesh):            
+        if(self.isClosedMesh):
             glEnable(GL_CULL_FACE)
-        else:                        
+        else:
             glDisable(GL_CULL_FACE)
             
         if(self.twoWayLighting):
@@ -78,13 +79,11 @@ class CAlphaViewer(BaseViewer):
         else:
             glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
             
-                        
         #glDisable(GL_CULL_FACE)
         glEnable(GL_LIGHTING)
         
-        glEnable (GL_BLEND); 
+        glEnable (GL_BLEND);
         glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        
         
         glPolygonMode(GL_FRONT, GL_FILL)
         glPolygonMode(GL_BACK, GL_FILL)
@@ -119,11 +118,13 @@ class CAlphaViewer(BaseViewer):
         elif (self.displayStyle == self.DisplayStyleSideChain):
             visibility = [self.atomsVisible, self.bondsVisible, self.bondsVisible and (not self.atomsVisible)]
         else:
-            visibility = [False, False, False]        
+            visibility = [False, False, False]
         return visibility
           
     # Overridden
-    def emitElementClicked(self, hitStack, event):        
+    def emitElementClicked(self, hitStack, event):
+        print "emitElementClicked overridden: ", self.title, hitStack
+        print "self.displayStyle: ", self.displayStyle
         if (self.displayStyle == self.DisplayStyleRibbon):
             sseData = self.formatRibbonHitstack(hitStack)
             self.emit(QtCore.SIGNAL("ribbonClicked (int, PyQt_PyObject, PyQt_PyObject, QMouseEvent)"), sseData[0], sseData[1], sseData[2], event)
@@ -138,8 +139,8 @@ class CAlphaViewer(BaseViewer):
         else:
             BaseViewer.emitElementSelected(self, hitStack, event)
         
-    # Overridden        
-    def emitElementMouseOver(self, hitStack, event):  
+    # Overridden
+    def emitElementMouseOver(self, hitStack, event):
         if (self.displayStyle == self.DisplayStyleRibbon):
             sseData = self.formatRibbonHitstack(hitStack)
             self.emit(QtCore.SIGNAL("ribbonMouseOver (int, PyQt_PyObject, PyQt_PyObject, QMouseEvent)"), sseData[0], sseData[1], sseData[2], event)
@@ -160,7 +161,6 @@ class CAlphaViewer(BaseViewer):
                 sseData[1] = self.ribbonMouseMapping[2][hitStack[1]]
         return sseData
                    
-
     # the following four methods for testing purposes only
     def setHltR(self, col):
         self.renderer.setHltRValue(col)
@@ -178,18 +178,18 @@ class CAlphaViewer(BaseViewer):
         self.renderer.setHltAValue(col)
         self.emitModelChanged()
 
-    def setAtomColorsAndVisibility(self, displayStyle):        
+    def setAtomColorsAndVisibility(self, displayStyle):
         if displayStyle == self.DisplayStyleBackbone:
-            self.setAllAtomColor(self.getAtomColor())            
+            self.setAllAtomColor(self.getAtomColor())
         elif displayStyle == self.DisplayStyleRibbon:
             self.renderer.cleanSecondaryStructures()
             self.ribbonMouseMapping = {}
-            self.ribbonMouseMapping[0] = {}   
+            self.ribbonMouseMapping[0] = {}
             self.ribbonMouseMapping[1] = {}
             self.ribbonMouseMapping[2] = {}
             
             for chain in self.loadedChains:
-                for helixIx, helix in chain.helices.items():                    
+                for helixIx, helix in chain.helices.items():
                     ix = self.renderer.startHelix()
                     self.ribbonMouseMapping[0][ix] = helixIx
                     for i in range(helix.startIndex, helix.stopIndex + 1):
@@ -234,11 +234,10 @@ class CAlphaViewer(BaseViewer):
                                 print "i:", i
                                 print "chain[i]:", chain[i]
                             
-                            
-                for sheetIx, sheet in chain.sheets.items():                    
+                for sheetIx, sheet in chain.sheets.items():
                     for strandIx, strand in sheet.strandList.items():
-                        ix = self.renderer.startStrand()             
-                        self.ribbonMouseMapping[1][ix] = [sheetIx, strandIx]           
+                        ix = self.renderer.startStrand()
+                        self.ribbonMouseMapping[1][ix] = [sheetIx, strandIx]
                         for i in range(strand.startIndex, strand.stopIndex + 1):
                             if (i in chain.residueList) and ("CA" in chain[i].getAtomNames()):
                                 CAatom = chain[i].getAtom("CA")
@@ -263,7 +262,7 @@ class CAlphaViewer(BaseViewer):
                                                         jx = self.renderer.startLoop()
                                                         self.renderer.addLoopElement(jx, prevCAAtom.getHashKey())
                                                         self.renderer.addLoopElement(jx, CAatom.getHashKey())
-                                else: # if CAatom is in the first residue, set it as its own previous (hacky) 
+                                else: # if CAatom is in the first residue, set it as its own previous (hacky)
                                     CAatom.setPrevCAHash(CAatom.getHashKey())
                                 #set the atom's "next" CA atom
                                 resNumTemp = i + 1
@@ -290,7 +289,7 @@ class CAlphaViewer(BaseViewer):
                         if (i in chain.residueList) and ("CA" in chain[i].getAtomNames()):
                             CAatom = chain[i].getAtom("CA")
                             atomcounter += 1
-                            self.renderer.addLoopElement(ix, chain[i].getAtom("CA").getHashKey())                        
+                            self.renderer.addLoopElement(ix, chain[i].getAtom("CA").getHashKey())
                             # set the atom's "previous" CA atom
                             resNumTemp = i - 1
                             if resNumTemp > 0 and resNumTemp in chain.residueList:
@@ -300,7 +299,7 @@ class CAlphaViewer(BaseViewer):
                                     resNumTemp = resNumTemp - 1
                                 if prevCAAtom:
                                     CAatom.setPrevCAHash(prevCAAtom.getHashKey())
-                            else: # if CAatom is in the first residue, set it as its own previous (hacky) 
+                            else: # if CAatom is in the first residue, set it as its own previous (hacky)
                                 CAatom.setPrevCAHash(CAatom.getHashKey())
                             #set the atom's "next" CA atom
                             resNumTemp = i + 1
@@ -321,19 +320,18 @@ class CAlphaViewer(BaseViewer):
                                 print "chain[i]:", chain[i]
                     #print "in loop", ix, ", added", atomcounter, "atoms"
                 
-
         elif displayStyle == self.DisplayStyleSideChain:
             self.setSpecificAtomColor('C', self.getCarbonColor())
             self.setSpecificAtomColor('N', self.getNitrogenColor())
             self.setSpecificAtomColor('O', self.getOxygenColor())
             self.setSpecificAtomColor('S', self.getSulphurColor())
         else:
-            pass 
+            pass
                 
         for chain in self.loadedChains:
-            #Setting visibility of SSE atoms 
+            #Setting visibility of SSE atoms
             for i, secel in chain.secelList.items():
-                if i in chain.residueList: 
+                if i in chain.residueList:
                     for atomName in chain[i].getAtomNames():
                         atom = chain[i].getAtom(atomName)
                         if atom:
@@ -347,7 +345,7 @@ class CAlphaViewer(BaseViewer):
                     for atomName in chain[i].getAtomNames():
                         atom = chain[i].getAtom(atomName)
                         if atom:
-                            atom.setColor(color.redF(), color.greenF(), color.blueF(), color.alphaF())       
+                            atom.setColor(color.redF(), color.greenF(), color.blueF(), color.alphaF())
 
     def setSpecificAtomColor(self, molecule, color):
         for chain in self.loadedChains:
@@ -356,7 +354,7 @@ class CAlphaViewer(BaseViewer):
                     for atomName in chain[i].getAtomNames():
                         atom = chain[i].getAtom(atomName)
                         if atomName[0] == molecule[0]:
-                            atom.setColor(color.redF(), color.greenF(), color.blueF(), color.alphaF())        
+                            atom.setColor(color.redF(), color.greenF(), color.blueF(), color.alphaF())
                 
     def setAtomColor(self, color):
         self.app.themes.addColor(self.title + ":" + "Atom", color)
@@ -428,7 +426,7 @@ class CAlphaViewer(BaseViewer):
         return self.app.themes.getColor(self.title + ":" + "Oxygen" )
         
     def getSulphurColor(self):
-        return self.app.themes.getColor(self.title + ":" + "Sulphur" )        
+        return self.app.themes.getColor(self.title + ":" + "Sulphur" )
             
     def setAtomVisibility(self, visible):
         self.atomsVisible = visible
@@ -462,13 +460,13 @@ class CAlphaViewer(BaseViewer):
         self.emitModelChanged()
     
     def centerOnSelectedAtoms(self, *argv):
-        # This centers the CAMERA on the last selected atom.                
+        # This centers the CAMERA on the last selected atom.
         if not argv:
             chain = self.main_chain
             resIndices = chain.getSelection()
             posList = []
             for resIndex in resIndices:
-                try: 
+                try:
                     atom = chain[resIndex].getAtom('CA')
                 except KeyError:
                     continue
@@ -493,11 +491,11 @@ class CAlphaViewer(BaseViewer):
         if not pos:
             return
         #print viewer.renderer.getSpacingX(), viewer.renderer.getSpacingY(), viewer.renderer.getSpacingZ()
-        if atom and atom.getVisible() :
+        if atom and atom.getVisible():
             x = pos.x()*self.renderer.getSpacingX() + self.renderer.getOriginX()
             y = pos.y()*self.renderer.getSpacingY() + self.renderer.getOriginY()
             z = pos.z()*self.renderer.getSpacingZ() + self.renderer.getOriginZ()
-            self.app.mainCamera.setCenter( x, y, z )                
+            self.app.mainCamera.setCenter( x, y, z )
             self.emitModelChanged()
     
     def createUI(self):
@@ -543,6 +541,7 @@ class CAlphaViewer(BaseViewer):
         seqDockAct.setStatusTip(self.tr("Perform partly automated atom placement"))
         seqDockAct.setCheckable(True)
         seqDockAct.setChecked(False)
+
         def showDock():
             loaded = True
             if not self.structPred:
@@ -556,28 +555,27 @@ class CAlphaViewer(BaseViewer):
     
     def loadSSEHunterData(self, fileName):
         if(self.loaded):
-            self.unloadData()        
+            self.unloadData()
         self.fileName = fileName
         self.renderer.loadSSEHunterFile(str(fileName))
         volumeViewer = self.app.viewers["volume"]
-        skeletonViewer = self.app.viewers["skeleton"]        
+        skeletonViewer = self.app.viewers["skeleton"]
         
         self.dirty = False
         self.loaded = True
         self.emitModelLoadedPreDraw()
         self.emitModelLoaded()
-        self.emitViewerSetCenter()        
+        self.emitViewerSetCenter()
         
     def runSSEHunter(self, threshold, resolution, correlationCoefficient, skeletonCoefficient, geometryCoefficient):
         if(self.loaded):
-            self.unloadData()  
-        self.fileName = ""      
+            self.unloadData()
+        self.fileName = ""
         
         volumeViewer = self.app.viewers["volume"]
-        skeletonViewer = self.app.viewers["skeleton"]        
+        skeletonViewer = self.app.viewers["skeleton"]
         self.renderer.getSSEHunterAtoms(volumeViewer.renderer.getVolume(), skeletonViewer.renderer.getMesh(), resolution, threshold, correlationCoefficient, skeletonCoefficient, geometryCoefficient)
 
-        
         self.dirty = False
         self.loaded = True
         self.emitModelLoadedPreDraw()
@@ -589,8 +587,8 @@ class CAlphaViewer(BaseViewer):
         self.emitModelChanged()
         
     def loadData(self):
-        #Overwriting the function in BaseViewer        
-        def setupChain(mychain):            
+        #Overwriting the function in BaseViewer
+        def setupChain(mychain):
             self.main_chain = mychain
             self.loadedChains.append(mychain)
             mychain.setViewer(self)
@@ -605,7 +603,7 @@ class CAlphaViewer(BaseViewer):
                         atom = renderer.addAtom(atom)
                         mychain[i].addAtomObject(atom)
                                        
-        self.fileName = QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Data"), "", 
+        self.fileName = QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Data"), "",
                             self.tr('Atom Positions (*.pdb)\nFASTA (*.fas *.fa *.fasta)'))
         fileNameTemp = self.fileName
         self.whichChainID = None
@@ -631,7 +629,7 @@ class CAlphaViewer(BaseViewer):
                     if not self.loaded:
                         self.dirty = False
                         self.loaded = True
-                        self.setAtomColorsAndVisibility(self.displayStyle)                        
+                        self.setAtomColorsAndVisibility(self.displayStyle)
                         self.emitModelLoadedPreDraw()
                         self.emitModelLoaded()
                         self.emitViewerSetCenter()
@@ -648,13 +646,13 @@ class CAlphaViewer(BaseViewer):
         """
 This function loads a SEQ file and creates a StructurePrediction object.
         """
-        fileName = QtGui.QFileDialog.getOpenFileName( self, self.tr('Open Sequence'), '', 
+        fileName = QtGui.QFileDialog.getOpenFileName( self, self.tr('Open Sequence'), '',
                                             self.tr('Sequence possibly with SSE predictions (*.seq)') )
         fileName = str(fileName)
         if fileName:
             self.structPred = StructurePrediction.load(fileName, self.app)
             return True
-        else : 
+        else:
             return False
     
     def createMenus(self):
@@ -664,14 +662,15 @@ This function loads a SEQ file and creates a StructurePrediction object.
         self.app.menus.addAction("file-export-calpha", self.app.actions.getAction("export_CAlpha"), "file-export")
         self.app.menus.addAction("file-close-calpha", self.app.actions.getAction("unload_CAlpha"), "file-close")
         self.app.menus.addMenu("actions-calpha", self.tr("C-&Alpha Atoms"), "actions")
-        self.app.menus.addAction("showSeqDock", self.app.actions.getAction("seqDock"), "actions-calpha")           
+        self.app.menus.addAction("showSeqDock", self.app.actions.getAction("seqDock"), "actions-calpha")
 
     def clearSelection(self):
         BaseViewer.clearSelection(self)
         self.main_chain.setSelection([], None, None, None)
-        self.emitAtomSelectionUpdated(self.main_chain.getSelection())      
+        self.emitAtomSelectionUpdated(self.main_chain.getSelection())
 
     def processElementClick(self, *argv):
+        print argv
         """
 In response to a click on a C-alpha element, this updates the selected
 residues in the Chain object.
@@ -697,13 +696,12 @@ residues in the Chain object.
         if event.button() == QtCore.Qt.RightButton and self.centerOnRMB:
             self.centerOnSelectedAtoms(argv[0], argv[1], argv[2], argv[3], argv[4], argv[5], argv[6])
             
-    
     def exportData(self):
         """
 This saves the current chain model to a PDB file with no "ATOM" lines
 for atoms that have not been placed.
         """
-        self.fileName = QtGui.QFileDialog.getSaveFileName(self, self.tr("Save Data"), "", 
+        self.fileName = QtGui.QFileDialog.getSaveFileName(self, self.tr("Save Data"), "",
                                                           self.tr('Atom Positions (*.pdb)'))
         if not self.fileName.isEmpty():
             self.setCursor(QtCore.Qt.WaitCursor)
@@ -723,7 +721,7 @@ non-standard ATOM lines serve as placeholders so the entire sequence of
 the chain is known including residue numbers ('SEQRES' does not give a 
 starting residue number).
         """
-        self.fileName = QtGui.QFileDialog.getSaveFileName(self, self.tr("Save Data"), "", 
+        self.fileName = QtGui.QFileDialog.getSaveFileName(self, self.tr("Save Data"), "",
                                                           self.tr('Atom Positions (*.pdb)'))
         if not self.fileName.isEmpty():
             self.setCursor(QtCore.Qt.WaitCursor)
