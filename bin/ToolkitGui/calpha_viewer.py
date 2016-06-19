@@ -622,12 +622,12 @@ residues in the Chain object.
                 else:
                     print "....else"
                     self.main_chain.setSelection(addOne=atom.getResSeq())
-                print self.main_chain.getSelection()
             else:
                 atom = CAlphaRenderer.getAtomFromHitStack(self.renderer, hits[0], True, *hits[1:])
                 print 'Residue #:', atom.getResSeq()
                 self.main_chain.setSelection([atom.getResSeq()])
             self.emitAtomSelectionUpdated(self.main_chain.getSelection())
+            print self.main_chain.getSelection()
                 
         if event.button() == QtCore.Qt.RightButton and self.centerOnRMB:
             self.centerOnSelectedAtoms(argv[0], argv[1], argv[2], argv[3], argv[4], argv[5], argv[6])

@@ -168,6 +168,7 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
         self.tableWidgetSelection.clearContents()
         self.calphaViewer = self.app.calphaViewer
         atomCnt = self.calphaViewer.renderer.selectionAtomCount()
+        print "  ....atomCnt: ", atomCnt
         self.tableWidgetSelection.setRowCount(atomCnt)
         
         for i in range(atomCnt):
