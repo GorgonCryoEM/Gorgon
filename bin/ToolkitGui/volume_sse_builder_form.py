@@ -26,6 +26,7 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
 
         self.connect(self.volumeViewer, QtCore.SIGNAL("modelLoaded()"),   self.modelLoaded)
         self.connect(self.volumeViewer, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)
+        self.connect(self.calphaViewer, QtCore.SIGNAL("atomSelectionUpdated(PyQt_PyObject)"), self.atomSelectionChanged)
 
         self.createUI()
         
@@ -165,7 +166,7 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
         
     def atomSelectionChanged(self, selection):
         self.tableWidgetSelection.clearContents()
-        self.calphaViewer = self.app.viewers["calpha"]
+        self.calphaViewer = self.app.calphaViewer
         atomCnt = self.calphaViewer.renderer.selectionAtomCount()
         self.tableWidgetSelection.setRowCount(atomCnt)
         
