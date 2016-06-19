@@ -12,15 +12,15 @@ from auto_helix_builder_engine import AutoHelixBuilderEngine
 class VolumeSSEBuilderForm(BaseDockWidget, Ui_DialogVolumeSSEBuilder):
         
     def __init__(self, main, viewer, parent=None):
-        BaseDockWidget.__init__(self, 
-                                main, 
-                                "Identify &SSEs", 
-                                "Identify secondary structure elements", 
-                                "detectSSE_Volume", 
-                                "actions-sse-detectSSE", 
-                                "actions-sse", 
-                                QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea, 
-                                QtCore.Qt.RightDockWidgetArea, 
+        BaseDockWidget.__init__(self,
+                                main,
+                                "Identify &SSEs",
+                                "Identify secondary structure elements",
+                                "detectSSE_Volume",
+                                "actions-sse-detectSSE",
+                                "actions-sse",
+                                QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea,
+                                QtCore.Qt.RightDockWidgetArea,
                                 parent)
         self.app = main
         self.viewer = viewer
@@ -37,7 +37,7 @@ class VolumeSSEBuilderForm(BaseDockWidget, Ui_DialogVolumeSSEBuilder):
         self.connect(self.pushButtonBrowseAtomScore, QtCore.SIGNAL("clicked (bool)"), self.browseAtomScoreFile)
         self.connect(self.pushButtonSelectionToHelix, QtCore.SIGNAL("clicked (bool)"), self.selectionToHelix)
         self.connect(self.pushButtonSelectionToSheet, QtCore.SIGNAL("clicked (bool)"), self.selectionToSheet)
-        self.connect(self.pushButtonRemoveSSE, QtCore.SIGNAL("clicked (bool)"), self.removeSSE)        
+        self.connect(self.pushButtonRemoveSSE, QtCore.SIGNAL("clicked (bool)"), self.removeSSE)
         self.connect(self.pushButtonSSEHunter, QtCore.SIGNAL("clicked (bool)"), self.runSSEHunter)
         self.connect(self.pushButtonLoadVolume, QtCore.SIGNAL("clicked (bool)"), self.loadVolume)
         self.connect(self.pushButtonSavePseudoatoms, QtCore.SIGNAL("clicked (bool)"), self.savePseudoatoms)
@@ -54,16 +54,16 @@ class VolumeSSEBuilderForm(BaseDockWidget, Ui_DialogVolumeSSEBuilder):
         
     
     def disableSavePseudoatoms(self):
-        self.pushButtonSavePseudoatoms.setEnabled(False)        
+        self.pushButtonSavePseudoatoms.setEnabled(False)
     
     def savePseudoatoms(self, temp):
         fileName = QtGui.QFileDialog.getSaveFileName(self, self.tr("Save Pseudoatoms"), "", self.tr("Protein Data Bank (PDB) Format (*.pdb)"))
-        if not fileName.isEmpty():  
+        if not fileName.isEmpty():
             self.setCursor(QtCore.Qt.WaitCursor)
             if not(self.app.viewers["calpha"].renderer.saveSSEHunterFile(str(fileName))):
                 # TODO: Put a error message here telling the user that the save failed
                 pass
-            self.setCursor(QtCore.Qt.ArrowCursor)     
+            self.setCursor(QtCore.Qt.ArrowCursor)
     
     def loadVolume(self, temp):
         self.app.actions.getAction("load_Volume").trigger()
@@ -82,13 +82,13 @@ class VolumeSSEBuilderForm(BaseDockWidget, Ui_DialogVolumeSSEBuilder):
         self.viewer.emitModelChanged()
         
     def removeSSE(self, temp):
-        if(QtGui.QMessageBox.question(self, "Remove Selected SSEs?", "This will remove the selected SSEs. Are you sure?", "Yes", "Cancel") == 0) :
+        if(QtGui.QMessageBox.question(self, "Remove Selected SSEs?", "This will remove the selected SSEs. Are you sure?", "Yes", "Cancel") == 0):
             self.viewer.renderer.removeSelectedSSEs()
-            self.viewer.emitModelLoaded() 
+            self.viewer.emitModelLoaded()
             self.bringToFront()
                                                                                                                                         
 
-    def createActions(self):    
+    def createActions(self):
         self.detectSSEAct = self.displayAct
 
     def modelLoaded(self):
@@ -97,7 +97,7 @@ class VolumeSSEBuilderForm(BaseDockWidget, Ui_DialogVolumeSSEBuilder):
        
     def modelUnloaded(self):
         #self.detectSSEAct.setEnabled(False)
-        self.showWidget(False)    
+        self.showWidget(False)
 
     def dockVisibilityChanged(self, visible):
         BaseDockWidget.dockVisibilityChanged(self, visible)
@@ -115,7 +115,7 @@ class VolumeSSEBuilderForm(BaseDockWidget, Ui_DialogVolumeSSEBuilder):
             self.calphaViewer.loadSSEHunterData(pdbFile)
             self.sseViewer = self.app.viewers["sse"]
             self.lineEditAtomScore.setText(pdbFile)
-            self.connect(self.app.viewers["calpha"],  QtCore.SIGNAL("modelUnloaded()"), self.disableSavePseudoatoms)                    
+            self.connect(self.app.viewers["calpha"],  QtCore.SIGNAL("modelUnloaded()"), self.disableSavePseudoatoms)
             self.pushButtonSavePseudoatoms.setEnabled(True)
         self.bringToFront()
         
@@ -165,21 +165,22 @@ class VolumeSSEBuilderForm(BaseDockWidget, Ui_DialogVolumeSSEBuilder):
         self.calphaViewer.emitModelLoadedPreDraw()
         self.calphaViewer.emitModelLoaded()
         self.calphaViewer.emitViewerSetCenter()
-        self.connect(self.app.viewers["calpha"],  QtCore.SIGNAL("modelUnloaded()"), self.disableSavePseudoatoms)        
+        self.connect(self.app.viewers["calpha"],  QtCore.SIGNAL("modelUnloaded()"), self.disableSavePseudoatoms)
         self.pushButtonSavePseudoatoms.setEnabled(True)
         self.bringToFront()
         
 		
     def updateTotalScoreSSEHunterAtoms(self):
-        self.calphaViewer.updateTotalScoreSSEHunterAtoms( self.doubleSpinBoxCorrelation.value(), self.doubleSpinBoxSkeleton.value(), 
+        self.calphaViewer.updateTotalScoreSSEHunterAtoms( self.doubleSpinBoxCorrelation.value(), self.doubleSpinBoxSkeleton.value(),
             self.doubleSpinBoxGeometry.value() )
         
     def atomSelectionChanged(self, selection):
         self.tableWidgetSelection.clearContents()
         self.calphaViewer = self.app.viewers["calpha"]
         atomCnt = self.calphaViewer.renderer.selectionAtomCount()
+        print "  ....atomCnt: ", atomCnt
         self.tableWidgetSelection.setRowCount(atomCnt)
-        
+
         for i in range(atomCnt):
             atom = self.calphaViewer.renderer.getSelectedAtom(i)
             self.tableWidgetSelection.setItem(i, 0, QtGui.QTableWidgetItem(str(atom.getResSeq())))
@@ -207,15 +208,15 @@ class VolumeSSEBuilderForm(BaseDockWidget, Ui_DialogVolumeSSEBuilder):
         
         if(self.sseViewer.loaded):
             self.sseViewer.helixLoaded = True
-            self.sseViewer.dirty = True           
+            self.sseViewer.dirty = True
             self.sseViewer.emitModelChanged()
-        else :
+        else:
             self.sseViewer.loaded = True
             self.sseViewer.helixLoaded = True
             self.sseViewer.dirty = True
             self.sseViewer.emitModelLoadedPreDraw()
-            self.sseViewer.emitModelLoaded()     
-        self.bringToFront()      
+            self.sseViewer.emitModelLoaded()
+        self.bringToFront()
     
     def pushAtomsToEngine(self):
         atomCnt = self.calphaViewer.renderer.selectionAtomCount()
@@ -234,14 +235,14 @@ class VolumeSSEBuilderForm(BaseDockWidget, Ui_DialogVolumeSSEBuilder):
         
         if(self.sseViewer.loaded):
             self.sseViewer.sheetLoaded = True
-            self.sseViewer.dirty = True           
+            self.sseViewer.dirty = True
             self.sseViewer.emitModelChanged()
-        else :
+        else:
             self.sseViewer.loaded = True
             self.sseViewer.sheetLoaded = True
             self.sseViewer.dirty = True
             self.sseViewer.emitModelLoadedPreDraw()
-            self.sseViewer.emitModelLoaded()    
+            self.sseViewer.emitModelLoaded()
         self.bringToFront()
         
     def enableDisableSSEHunter(self):
