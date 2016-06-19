@@ -98,10 +98,10 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
     def dockVisibilityChanged(self, visible):
         BaseDockWidget.dockVisibilityChanged(self, visible)
         self.calphaViewer.centerOnRMB = not visible
-        if(visible):
-            self.connect(self.calphaViewer, QtCore.SIGNAL("atomSelectionUpdated(PyQt_PyObject)"), self.atomSelectionChanged)
-        else:
-            self.disconnect(self.calphaViewer, QtCore.SIGNAL("atomSelectionUpdated(PyQt_PyObject)"), self.atomSelectionChanged)
+#         if(visible):
+#             self.connect(self.calphaViewer, QtCore.SIGNAL("atomSelectionUpdated(PyQt_PyObject)"), self.atomSelectionChanged)
+#         else:
+#             self.disconnect(self.calphaViewer, QtCore.SIGNAL("atomSelectionUpdated(PyQt_PyObject)"), self.atomSelectionChanged)
 
     def browseAtomScoreFile(self, result):
         pdbFile = QtGui.QFileDialog.getOpenFileName(self, self.tr("Load SSEHunter Results"), "", self.tr("PDB Files (*.pdb)"))
