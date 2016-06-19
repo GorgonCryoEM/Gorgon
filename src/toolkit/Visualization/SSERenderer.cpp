@@ -54,31 +54,52 @@ namespace Visualization {
     }
 
     void SSERenderer::draw(int subSceneIndex, bool selectEnabled) {
-        cout<<subSceneIndex<<endl;
-                    cout<<selectEnabled<<endl;
-//                    exit(0);
+        GLfloat emissionColor[4] = {1.0, 1.0, 1.0, 1.0};
+        GLfloat frontColor[4]    = {1.0, 0.0, 0.0, 1.0};
+        GLfloat backColor[4]     = {0.0, 0.0, 1.0, 1.0};
+
+        glPushName(subSceneIndex);
+        if(subSceneIndex == 0) {
+            if(selectEnabled) {
+                glPushName(0);
+            }
+
             cout<<"selectedPDBHelices.size(): "<<selectedPDBHelices.size()<<endl;
             cout<<"helices.size(): "<<helices.size()<<endl;
-            for(unsigned int kk=0; kk<helices.size(); ++kk) {
+            for(unsigned int kk=0; kk<helices.size(); ++kk)
                 cout<<helices[kk]->getCenter()<<endl;
+
+            vector<int> SSEIndices;
+
+            for(unsigned int i = 0; i < corrs.size(); ++i){
+                int SSEIndex = corrs[i].first;
+                for(unsigned int k = 0; k < selectedPDBHelices.size(); ++k){
+                    if(selectedPDBHelices[k] == SSEIndex){
+                        SSEIndices.push_back(corrs[i].second);
+                    }
+                }
             }
 
             for(int i = 0; i < (int)helices.size(); i++) {
                 glPushAttrib(GL_LIGHTING_BIT);
+                if(helices[i]->isObjectSpecificColoring) {
                     float colorR, colorG, colorB, colorA;
                     helices[i]->getColor(colorR, colorG, colorB, colorA);
                     OpenGLUtils::SetColor(colorR, colorG, colorB, colorA);
-                    cout<<"  ..helices["<<i<<"]->getColor(): "
-                            <<"\t"<<colorR
-                            <<"\t"<<colorG
-                            <<"\t"<<colorB
-                            <<"\t"<<colorA
-                            <<endl;
+                }
+
+                if(helices[i]->isSelected()) {
+                    glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
+                    glMaterialfv( GL_BACK, GL_EMISSION, emissionColor);
+                }
 
                 glPushMatrix();
                 glMultMatrixd(helices[i]->getWorldToObjectMatrix().mat);
                 glRotated(90, 1, 0, 0);
                 glTranslated(0.0, 0.0, -0.5);
+                if(selectEnabled) {
+                    glLoadName(i);
+                }
 
                 GLUquadric * quadricCylinder = gluNewQuadric();
                 gluCylinder(quadricCylinder, 0.5, 0.5, 1.0, 10, 10);
@@ -86,7 +107,56 @@ namespace Visualization {
                 glPopMatrix();
                 glPopAttrib();
 
+                if(helices[i]->isSelected()) {
+
+                    Vec3F corner1 = getHelixCorner(i, 0);
+                    Vec3F corner2 = getHelixCorner(i, 1);
+                    cout << "Drawing selected cylinder. Size of helix flips is " << helixFlips.size() << endl;
+                    if(helixFlips.size()  > 0){
+                        if(!helixFlips[i]){
+                            OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
+                            drawSphere(corner2, 1.0);
+                            OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
+                            drawSphere(corner1, 1.0);
+                            fflush(stdout);
+                        }else{
+                            OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
+                            drawSphere(corner1, 1.0);
+                            OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
+                            drawSphere(corner2, 1.0);
+                            fflush(stdout);
+                        }
+                    }
+                }
+
+
+                for(unsigned int j = 0; j < SSEIndices.size(); ++j){
+                    if(SSEIndices[j] == i){
+                        Vec3F corner1 = getHelixCorner(i, 0);
+                        Vec3F corner2 = getHelixCorner(i, 1);
+                        if(!helixFlips[i]){
+                            OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
+                            drawSphere(corner2, 1.0);
+                            OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
+                            drawSphere(corner1, 1.0);
+                            fflush(stdout);
+                        }else{
+                            OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
+                            drawSphere(corner1, 1.0);
+                            OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
+                            drawSphere(corner2, 1.0);
+                            fflush(stdout);
+                        }
+                    }
+                }
             }
+
+            if(selectEnabled) {
+                glPopName();
+            }
+        }
+
+        glPopName();
     }
 
     void SSERenderer::loadHelixFileSSE(string fileName) {
