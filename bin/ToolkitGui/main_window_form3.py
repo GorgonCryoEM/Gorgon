@@ -19,9 +19,12 @@ class MainWindowForm3(QtGui.QMainWindow):
         self.menubar = self.menuBar()
         self.docksMenu = self.menubar.addMenu('&Docks')
         
+        self.viewers = {}
+        
         self.volumeViewer = VolumeViewer(self)
         self.skeletonViewer = SkeletonViewer(self)
         self.calphaViewer = CAlphaViewer(self)
+        self.sseViewer = SSEViewer(self)
         
         self.scene = [self.volumeViewer, self.skeletonViewer, self.calphaViewer]
         
