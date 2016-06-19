@@ -199,8 +199,8 @@ class SSEViewer(BaseViewer):
         
     # Overridden
     def emitElementClicked(self, hitStack, event):
-        if (self.app.viewers["calpha"].displayStyle == self.app.viewers["calpha"].DisplayStyleRibbon):
-            if(self.app.mainCamera.mouseRightPressed and hitStack[0] == 0):
-                self.emit(QtCore.SIGNAL("SSERightClicked(PyQt_PyObject, PyQt_PyObject, QMouseEvent)"), hitStack[0], hitStack[1], event)
-        else:
-            BaseViewer.emitElementClicked(self, hitStack, event)
+#         if (self.app.viewers["calpha"].displayStyle == self.app.viewers["calpha"].DisplayStyleRibbon):
+#             if(self.app.mainCamera.mouseRightPressed and hitStack[0] == 0):
+#                 self.emit(QtCore.SIGNAL("SSERightClicked(PyQt_PyObject, PyQt_PyObject, QMouseEvent)"), hitStack[0], hitStack[1], event)
+#         else:
+        BaseViewer.emitElementClicked(self, hitStack, event)
