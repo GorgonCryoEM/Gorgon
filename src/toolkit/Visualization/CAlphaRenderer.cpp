@@ -1092,6 +1092,7 @@ namespace Visualization {
               cout<<displayStyle<<endl;
 //        #endif
 
+              displayStyle=3;
         AtomMapType::iterator it;
         PDBAtom * a;
         if (subsceneIndex == 0) {
