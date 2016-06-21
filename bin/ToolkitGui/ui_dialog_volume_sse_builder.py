@@ -123,7 +123,7 @@ class Ui_DialogVolumeSSEBuilder(object):
         spacerItem = QtGui.QSpacerItem(134, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_5.addItem(spacerItem)
         self.pushButtonSaveHelices = QtGui.QPushButton(self.layoutWidget)
-        self.pushButtonSaveHelices.setEnabled(False)
+        self.pushButtonSaveHelices.setEnabled(True)
         self.pushButtonSaveHelices.setObjectName(_fromUtf8("pushButtonSaveHelices"))
         self.horizontalLayout_5.addWidget(self.pushButtonSaveHelices)
         self.pushButtonSavePseudoatoms = QtGui.QPushButton(self.layoutWidget)

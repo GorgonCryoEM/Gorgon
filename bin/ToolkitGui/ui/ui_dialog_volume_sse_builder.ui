@@ -235,7 +235,7 @@
           <item>
            <widget class="QPushButton" name="pushButtonSaveHelices">
             <property name="enabled">
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
             <property name="text">
              <string>Save Helices</string>
