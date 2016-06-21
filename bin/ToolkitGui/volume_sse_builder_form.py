@@ -54,6 +54,8 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
         self.connect(self.app.volumeViewer,           QtCore.SIGNAL("modelUnloaded()"),      self.enableDisableSSEHunter)
         self.connect(self.app.skeletonViewer,         QtCore.SIGNAL("modelUnloaded()"),      self.enableDisableSSEHunter)
         
+        self.pushButtonSaveHelices.clicked.connect(self.app.sseViewer.saveHelixData)
+        
     def disableSavePseudoatoms(self):
         self.pushButtonSavePseudoatoms.setEnabled(False)
     
