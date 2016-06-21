@@ -62,6 +62,7 @@ class CAlphaViewer(BaseViewer):
         self.ribbonMouseMapping[1] = {}
         self.ribbonMouseMapping[2] = {}
         self.connect(self, QtCore.SIGNAL("elementClicked (int, int, int, int, int, int, QMouseEvent)"), self.processElementClick)
+        self.ui.pushButtonSave.clicked.connect(self.saveData)
         self.createActions()
       
    # Overridden
