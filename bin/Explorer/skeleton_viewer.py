@@ -23,6 +23,16 @@ class SkeletonViewer(BaseViewer):
         self.twoWayLighting = True
         self.lineThickness = 3
         self.renderer.setLineThickness(self.lineThickness)
+        
+        self.ui.pushButtonSave.clicked.connect(self.saveData)
+        
+    def saveData(self):
+        self.fileName = QtGui.QFileDialog.getSaveFileName(self, self.tr("Save Data"), "")
+        if not self.fileName.isEmpty():
+            self.setCursor(QtCore.Qt.WaitCursor)
+            self.renderer.saveFile(str(self.fileName))
+            self.dirty = False
+            self.setCursor(QtCore.Qt.ArrowCursor)
 
     def loadVolume(self, volume):
 #         if(self.loaded):
