@@ -1,6 +1,5 @@
-#!/usr/bin/python
 import math
-
+from Explorer.libs import Vec3
 
 class ObservedHelix:
 
@@ -8,8 +7,8 @@ class ObservedHelix:
         """
 Note that the label is currently an integer, not a string.
         """
-        self.beginningCoord = beginningCoord
-        self.endCoord = endCoord
+        self.beginningCoord = Vec3(beginningCoord)
+        self.endCoord = Vec3(endCoord)
         self.label = label #Note: currently an integer, not a string
         self.sseType = 'helix'
 
@@ -23,7 +22,7 @@ This is not yet implemented.
         '''
 Returns the midpoint of the two ends of the helical axis.
         '''
-        return ( 0.5*(self.beginningCoord[0]+self.endCoord[0]), 0.5*(self.beginningCoord[1]+self.endCoord[1]), 0.5*(self.beginningCoord[2]+self.endCoord[2]) )
+        return (self.beginningCoord+self.endCoord)*0.5
 
     def getUnitVector(self):
         '''
@@ -31,7 +30,7 @@ Returns a vector along the helical axis pointing toward the endpoint
 farther from the origin.
         '''
         length = self.getLength()
-        return ( (self.beginningCoord[0]-self.endCoord[0])/length, (self.beginningCoord[1]-self.endCoord[1])/length, (self.beginningCoord[2]-self.endCoord[2])/length )
+        return (self.beginningCoord-self.endCoord)/length
 
     def getLength(self):
         """
