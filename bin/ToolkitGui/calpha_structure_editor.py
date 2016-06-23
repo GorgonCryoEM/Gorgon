@@ -277,7 +277,7 @@ This is used for not-yet-implemented and non-applicable widgets.
         #self.redoButton.setEnabled(isAtomicTab or isHelixTab or isPositionTab)
 
     def helixCreateCAhelix(self):
-        self.create_helix(self.helixNtermSpinBox.value(), self.helixCtermSpinBox.value(), self.app.sseViewer.currentMatch.observed, self.app.sseViewer.currentMatch.direction, self.app.sseViewer.currentMatch.predicted)
+        self.create_helix(self.app.calphaViewer.renderer, self.currentChainModel, self.helixNtermSpinBox.value(), self.helixCtermSpinBox.value(), self.app.sseViewer.currentMatch.observed, self.app.sseViewer.currentMatch.direction, self.app.sseViewer.currentMatch.predicted)
 
         if not self.app.calphaViewer.loaded:
             self.app.calphaViewer.loaded = True
@@ -290,7 +290,7 @@ This is used for not-yet-implemented and non-applicable widgets.
         self.app.mainCamera.updateGL()
         self.bringToFront()
 
-    def create_helix(self, startIndex, stopIndex, observedHelix, direction, predHelix):
+    def create_helix(self, calphaRenderer, currentChainModel, startIndex, stopIndex, observedHelix, direction, predHelix):
         print "Helix Create"
         """
 This creates a C-alpha helix between the C-alpha atoms from residues
@@ -317,7 +317,7 @@ given by self.helixNtermSpinBox and self.helixCtermSpinBox.
             coord1 = structPredCoord1 + endMoveVector
             coord2 = structPredCoord2 + startMoveVector
 
-        place_helix(self.app.calphaViewer.renderer, self.currentChainModel, predHelix, startIndex, stopIndex, coord1, coord2)
+        place_helix(calphaRenderer, currentChainModel, predHelix, startIndex, stopIndex, coord1, coord2)
 
     def bringToFront(self):
         self.dock.raise_()
