@@ -309,7 +309,8 @@ given by self.helixNtermSpinBox and self.helixCtermSpinBox.
             coord2 = structPredCoord2 + startMoveVector
                 
         command = CAlphaStructureEditorCommandPlaceHelix(self.currentChainModel, predHelix, startIndex, stopIndex, coord1, coord2, self, self.app.sseViewer.currentMatch.predicted, description = "Create C-alpha helix")
-        self.undoStack.push(command)
+        command.redo()
+        # self.undoStack.push(command)
         self.loaded = True
         self.app.calphaViewer.modelChanged()
         self.app.mainCamera.updateGL()
