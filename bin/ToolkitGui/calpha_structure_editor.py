@@ -277,16 +277,19 @@ This is used for not-yet-implemented and non-applicable widgets.
         #self.redoButton.setEnabled(isAtomicTab or isHelixTab or isPositionTab)
 
     def helixCreateCAhelix(self):
+        self.create_helix(self.helixNtermSpinBox.value(), self.helixCtermSpinBox.value(), self.app.sseViewer.currentMatch.observed, self.app.sseViewer.currentMatch.direction, self.app.sseViewer.currentMatch.predicted)
+        
+        self.loaded = True
+        self.app.calphaViewer.modelChanged()
+        self.app.mainCamera.updateGL()
+        self.bringToFront()
+
+    def create_helix(self, startIndex, stopIndex, observedHelix, direction, predHelix):
         print "Helix Create"
         """
 This creates a C-alpha helix between the C-alpha atoms from residues
 given by self.helixNtermSpinBox and self.helixCtermSpinBox.
         """
-        startIndex = self.helixNtermSpinBox.value()
-        stopIndex = self.helixCtermSpinBox.value()
-        observedHelix = self.app.sseViewer.currentMatch.observed
-        direction = self.app.sseViewer.currentMatch.direction #Forward=0, Reverse=1
-        predHelix = self.app.sseViewer.currentMatch.predicted
         if observedHelix.__class__.__name__ != 'ObservedHelix':
             raise TypeError, observedHelix.__class__.__name__
 
@@ -309,10 +312,6 @@ given by self.helixNtermSpinBox and self.helixCtermSpinBox.
             coord2 = structPredCoord2 + startMoveVector
 
         place_helix(self.currentChainModel, predHelix, startIndex, stopIndex, coord1, coord2, self, self.app.sseViewer.currentMatch.predicted, description = "Create C-alpha helix")
-        self.loaded = True
-        self.app.calphaViewer.modelChanged()
-        self.app.mainCamera.updateGL()
-        self.bringToFront()
 
     def bringToFront(self):
         self.dock.raise_()
