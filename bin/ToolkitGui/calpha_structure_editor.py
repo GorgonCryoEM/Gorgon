@@ -311,7 +311,7 @@ given by self.helixNtermSpinBox and self.helixCtermSpinBox.
             coord1 = structPredCoord1 + endMoveVector
             coord2 = structPredCoord2 + startMoveVector
 
-        place_helix(self, self.currentChainModel, predHelix, startIndex, stopIndex, coord1, coord2)
+        place_helix(self.app.calphaViewer.renderer, self.currentChainModel, predHelix, startIndex, stopIndex, coord1, coord2)
 
     def bringToFront(self):
         self.dock.raise_()

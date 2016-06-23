@@ -4,9 +4,9 @@ from Toolkit.sse.seq_model.Helix import Helix
 from Toolkit.sse.seq_model.findHelixCalphas import helixEndpointsToCAlphaPositions
 
 
-def place_helix(structureEditor, currentChainModel, predHelix, startIndex, stopIndex, coord1, coord2):
+def place_helix(calphaRenderer, currentChainModel, predHelix, startIndex, stopIndex, coord1, coord2):
     helix = Helix(currentChainModel, predHelix.serialNo, predHelix.label, startIndex, stopIndex)
-    CAlphaViewer = structureEditor.CAlphaViewer
+
     currentChainModel.addHelix(predHelix.serialNo, helix)
     helix.setAxisPoints(coord1, coord2)
 
@@ -16,7 +16,7 @@ def place_helix(structureEditor, currentChainModel, predHelix, startIndex, stopI
         pos = helixCoordList[i]
         residue = currentChainModel[startIndex + i]
         rawAtom = residue.addAtom('CA', pos[0], pos[1], pos[2], 'C')
-        atom = CAlphaViewer.renderer.addAtom(rawAtom)
+        atom = calphaRenderer.addAtom(rawAtom)
         residue.addAtomObject(atom)
         atom.setSelected(True)
         try:
@@ -24,7 +24,7 @@ def place_helix(structureEditor, currentChainModel, predHelix, startIndex, stopI
             bond = PDBBond()
             bond.setAtom0Ix(prevAtom.getHashKey())
             bond.setAtom1Ix(atom.getHashKey())
-            CAlphaViewer.renderer.addBond(bond)
+            calphaRenderer.addBond(bond)
         except (KeyError, IndexError, AttributeError):
             continue
 
@@ -33,7 +33,7 @@ def place_helix(structureEditor, currentChainModel, predHelix, startIndex, stopI
         bond = PDBBond()
         bond.setAtom0Ix(atom.getHashKey())
         bond.setAtom1Ix(nextAtom.getHashKey())
-        CAlphaViewer.renderer.addBond(bond)
+        calphaRenderer.addBond(bond)
     except (KeyError, IndexError, AttributeError):
         pass
 
