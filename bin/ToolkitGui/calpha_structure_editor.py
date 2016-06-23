@@ -278,7 +278,7 @@ This is used for not-yet-implemented and non-applicable widgets.
 
     def helixCreateCAhelix(self):
         self.create_helix(self.helixNtermSpinBox.value(), self.helixCtermSpinBox.value(), self.app.sseViewer.currentMatch.observed, self.app.sseViewer.currentMatch.direction, self.app.sseViewer.currentMatch.predicted)
-        
+
         self.loaded = True
         self.app.calphaViewer.modelChanged()
         self.app.mainCamera.updateGL()
@@ -311,7 +311,7 @@ given by self.helixNtermSpinBox and self.helixCtermSpinBox.
             coord1 = structPredCoord1 + endMoveVector
             coord2 = structPredCoord2 + startMoveVector
 
-        place_helix(self.currentChainModel, predHelix, startIndex, stopIndex, coord1, coord2, self, self.app.sseViewer.currentMatch.predicted, description = "Create C-alpha helix")
+        place_helix(self, self.currentChainModel, predHelix, startIndex, stopIndex, coord1, coord2)
 
     def bringToFront(self):
         self.dock.raise_()

@@ -20,7 +20,8 @@ class CAlphaStructureEditorCommandPlaceHelix(QtGui.QUndoCommand):
         self.CAlphaViewer = self.structureEditor.CAlphaViewer
 
     def redo(self):
-        place_helix(self.currentChainModel, self.predHelix, self.startIndex, self.stopIndex, self.coord1, self.coord2, self.structureEditor, self.structurePrediction)
+        place_helix(self.structureEditor, self.currentChainModel, self.predHelix, self.startIndex, self.stopIndex,
+                    self.coord1, self.coord2)
 
     def undo(self):
         for resNum in range(self.startIndex, 1+self.stopIndex):

@@ -4,7 +4,7 @@ from Toolkit.sse.seq_model.Helix import Helix
 from Toolkit.sse.seq_model.findHelixCalphas import helixEndpointsToCAlphaPositions
 
 
-def place_helix(currentChainModel, predHelix, startIndex, stopIndex, coord1, coord2, structureEditor, structurePrediction, description=None):
+def place_helix(structureEditor, currentChainModel, predHelix, startIndex, stopIndex, coord1, coord2):
     helix = Helix(currentChainModel, predHelix.serialNo, predHelix.label, startIndex, stopIndex)
     CAlphaViewer = structureEditor.CAlphaViewer
     currentChainModel.addHelix(predHelix.serialNo, helix)
