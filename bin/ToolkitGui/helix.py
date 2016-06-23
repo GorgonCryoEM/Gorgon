@@ -53,20 +53,19 @@ given by self.helixNtermSpinBox and self.helixCtermSpinBox.
 
     moveStart = 1.5*(startIndex - predHelix.startIndex)
     moveEnd = 1.5*(stopIndex - predHelix.stopIndex)
-    midpoint   = Vec3(observedHelix.getMidpoint()   )
-    unitVector = Vec3(observedHelix.getUnitVector() )
-    structPredCoord1 = midpoint + unitVector * (-predHelix.getLengthInAngstroms()/2)
-    structPredCoord2 = midpoint + unitVector * ( predHelix.getLengthInAngstroms()/2)
+    midpoint   = observedHelix.getMidpoint()
+    unitVector = observedHelix.getUnitVector()
+    coord1 = midpoint - unitVector * predHelix.getLengthInAngstroms()/2
+    coord2 = midpoint + unitVector * predHelix.getLengthInAngstroms()/2
 
     if direction == 0:
         startMoveVector = unitVector * moveStart
         endMoveVector   = unitVector * moveEnd
-        coord1 = structPredCoord1 + startMoveVector
-        coord2 = structPredCoord2 + endMoveVector
     elif direction == 1:
-        startMoveVector = unitVector * (-1*moveStart)
-        endMoveVector   = unitVector * (-1*moveEnd  )
-        coord1 = structPredCoord1 + endMoveVector
-        coord2 = structPredCoord2 + startMoveVector
+        startMoveVector = -unitVector * moveStart
+        endMoveVector   = -unitVector * moveEnd
+
+    coord1 = coord1 + endMoveVector
+    coord2 = coord2 + startMoveVector
 
     place_helix(calphaRenderer, currentChainModel, predHelix, startIndex, stopIndex, coord1, coord2)
