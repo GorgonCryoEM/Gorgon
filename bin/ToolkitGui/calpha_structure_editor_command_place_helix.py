@@ -29,18 +29,6 @@ class CAlphaStructureEditorCommandPlaceHelix(QtGui.QUndoCommand):
         
         helixCoordList = helixEndpointsToCAlphaPositions(self.coord1, self.coord2)
         
-        '''
-        #To see the ends of the helical axis as green and red atoms
-        startAtom = PDBAtom('AAAA', 'A', 100000, 'CA')
-        startAtom.setPosition(Vector3DFloat(*coord1))
-        startAtom.setColor(0, 1, 0, 1)
-        startAtom = self.CAlphaViewer.renderer.addAtom(startAtom)
-        stopAtom = startAtom = PDBAtom('AAAA', 'A', 100001, 'CA')
-        stopAtom.setPosition(Vector3DFloat(*coord2))
-        stopAtom.setColor(1, 0, 0, 1)        
-        stopAtom = self.CAlphaViewer.renderer.addAtom(stopAtom)
-        '''
-        
         for i in range(min(len(helixCoordList), self.stopIndex - self.startIndex + 1)):
             pos = helixCoordList[i]
             residue = self.currentChainModel[self.startIndex+i]
