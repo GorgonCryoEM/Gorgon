@@ -279,6 +279,12 @@ This is used for not-yet-implemented and non-applicable widgets.
     def helixCreateCAhelix(self):
         self.create_helix(self.helixNtermSpinBox.value(), self.helixCtermSpinBox.value(), self.app.sseViewer.currentMatch.observed, self.app.sseViewer.currentMatch.direction, self.app.sseViewer.currentMatch.predicted)
 
+        if not self.app.calphaViewer.loaded:
+            self.app.calphaViewer.loaded = True
+        # self.CAlphaViewer.modelChanged()
+        #         else:
+        #             self.CAlphaViewer.modelChanged()
+
         self.loaded = True
         self.app.calphaViewer.modelChanged()
         self.app.mainCamera.updateGL()

@@ -38,9 +38,3 @@ def place_helix(calphaRenderer, currentChainModel, predHelix, startIndex, stopIn
         pass
 
     currentChainModel.setSelection(newSelection=range(startIndex, 1 + stopIndex))
-
-    if not CAlphaViewer.loaded:
-        CAlphaViewer.loaded = True
-    #             self.CAlphaViewer.modelChanged()
-    #         else:
-    #             self.CAlphaViewer.modelChanged()
