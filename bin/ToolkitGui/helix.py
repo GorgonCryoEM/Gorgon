@@ -1,5 +1,7 @@
 from PyQt4 import QtGui, QtCore
 from libpytoolkit import PDBAtom, PDBBond
+
+from Explorer import Vec3
 from Toolkit.sse.seq_model.Helix import Helix
 from Toolkit.sse.seq_model.findHelixCalphas import helixEndpointsToCAlphaPositions
 
@@ -38,3 +40,33 @@ def place_helix(calphaRenderer, currentChainModel, predHelix, startIndex, stopIn
         pass
 
     currentChainModel.setSelection(newSelection=range(startIndex, 1 + stopIndex))
+
+
+def create_helix(calphaRenderer, currentChainModel, startIndex, stopIndex, observedHelix, direction, predHelix):
+    print "Helix Create"
+    """
+This creates a C-alpha helix between the C-alpha atoms from residues
+given by self.helixNtermSpinBox and self.helixCtermSpinBox.
+    """
+    if observedHelix.__class__.__name__ != 'ObservedHelix':
+        raise TypeError, observedHelix.__class__.__name__
+
+    moveStart = 1.5*(startIndex - predHelix.startIndex)
+    moveEnd = 1.5*(stopIndex - predHelix.stopIndex)
+    midpoint   = Vec3(observedHelix.getMidpoint()   )
+    unitVector = Vec3(observedHelix.getUnitVector() )
+    structPredCoord1 = midpoint + unitVector * (-predHelix.getLengthInAngstroms()/2)
+    structPredCoord2 = midpoint + unitVector * ( predHelix.getLengthInAngstroms()/2)
+
+    if direction == 0:
+        startMoveVector = unitVector * moveStart
+        endMoveVector   = unitVector * moveEnd
+        coord1 = structPredCoord1 + startMoveVector
+        coord2 = structPredCoord2 + endMoveVector
+    elif direction == 1:
+        startMoveVector = unitVector * (-1*moveStart)
+        endMoveVector   = unitVector * (-1*moveEnd  )
+        coord1 = structPredCoord1 + endMoveVector
+        coord2 = structPredCoord2 + startMoveVector
+
+    place_helix(calphaRenderer, currentChainModel, predHelix, startIndex, stopIndex, coord1, coord2)

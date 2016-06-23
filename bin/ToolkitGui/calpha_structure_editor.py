@@ -5,7 +5,7 @@ from libpytoolkit import PDBAtom, PDBBond
 # from seq_model.Helix import Helix
 import math
 from Explorer.libs import *
-from ToolkitGui.helix import place_helix
+from ToolkitGui.helix import create_helix
 from .calpha_structure_editor_command_atom_placement import CAlphaStructureEditorCommandAtomPlacement
 from .calpha_structure_editor_command_change_position import CAlphaStructureEditorCommandChangePosition
 
@@ -277,7 +277,7 @@ This is used for not-yet-implemented and non-applicable widgets.
         #self.redoButton.setEnabled(isAtomicTab or isHelixTab or isPositionTab)
 
     def helixCreateCAhelix(self):
-        self.create_helix(self.app.calphaViewer.renderer, self.currentChainModel, self.helixNtermSpinBox.value(), self.helixCtermSpinBox.value(), self.app.sseViewer.currentMatch.observed, self.app.sseViewer.currentMatch.direction, self.app.sseViewer.currentMatch.predicted)
+        create_helix(self.app.calphaViewer.renderer, self.currentChainModel, self.helixNtermSpinBox.value(), self.helixCtermSpinBox.value(), self.app.sseViewer.currentMatch.observed, self.app.sseViewer.currentMatch.direction, self.app.sseViewer.currentMatch.predicted)
 
         if not self.app.calphaViewer.loaded:
             self.app.calphaViewer.loaded = True
@@ -289,35 +289,6 @@ This is used for not-yet-implemented and non-applicable widgets.
         self.app.calphaViewer.modelChanged()
         self.app.mainCamera.updateGL()
         self.bringToFront()
-
-    def create_helix(self, calphaRenderer, currentChainModel, startIndex, stopIndex, observedHelix, direction, predHelix):
-        print "Helix Create"
-        """
-This creates a C-alpha helix between the C-alpha atoms from residues
-given by self.helixNtermSpinBox and self.helixCtermSpinBox.
-        """
-        if observedHelix.__class__.__name__ != 'ObservedHelix':
-            raise TypeError, observedHelix.__class__.__name__
-
-        moveStart = 1.5*(startIndex - predHelix.startIndex)
-        moveEnd = 1.5*(stopIndex - predHelix.stopIndex)
-        midpoint   = Vec3(observedHelix.getMidpoint()   )
-        unitVector = Vec3(observedHelix.getUnitVector() )
-        structPredCoord1 = midpoint + unitVector * (-predHelix.getLengthInAngstroms()/2)
-        structPredCoord2 = midpoint + unitVector * ( predHelix.getLengthInAngstroms()/2)
-
-        if direction == 0:
-            startMoveVector = unitVector * moveStart
-            endMoveVector   = unitVector * moveEnd
-            coord1 = structPredCoord1 + startMoveVector
-            coord2 = structPredCoord2 + endMoveVector
-        elif direction == 1:
-            startMoveVector = unitVector * (-1*moveStart)
-            endMoveVector   = unitVector * (-1*moveEnd  )
-            coord1 = structPredCoord1 + endMoveVector
-            coord2 = structPredCoord2 + startMoveVector
-
-        place_helix(calphaRenderer, currentChainModel, predHelix, startIndex, stopIndex, coord1, coord2)
 
     def bringToFront(self):
         self.dock.raise_()
