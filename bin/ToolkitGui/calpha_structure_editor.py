@@ -5,7 +5,7 @@ from libpytoolkit import PDBAtom, PDBBond
 # from seq_model.Helix import Helix
 import math
 from Explorer.libs import *
-from .calpha_structure_editor_command_place_helix import place_helix
+from ToolkitGui.helix import place_helix
 from .calpha_structure_editor_command_atom_placement import CAlphaStructureEditorCommandAtomPlacement
 from .calpha_structure_editor_command_change_position import CAlphaStructureEditorCommandChangePosition
 
