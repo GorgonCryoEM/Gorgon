@@ -7,6 +7,48 @@ from Toolkit.sse.seq_model.Helix import Helix
 # from vector_lib import *
 
 
+def place_helix(currentChainModel, predHelix, startIndex, stopIndex, coord1, coord2, structureEditor, structurePrediction, description=None):
+    helix = Helix(currentChainModel, predHelix.serialNo, predHelix.label, startIndex, stopIndex)
+    CAlphaViewer = structureEditor.CAlphaViewer
+    currentChainModel.addHelix(predHelix.serialNo, helix)
+    helix.setAxisPoints(coord1, coord2)
+
+    helixCoordList = helixEndpointsToCAlphaPositions(coord1, coord2)
+
+    for i in range(min(len(helixCoordList), stopIndex - startIndex + 1)):
+        pos = helixCoordList[i]
+        residue = currentChainModel[startIndex + i]
+        rawAtom = residue.addAtom('CA', pos[0], pos[1], pos[2], 'C')
+        atom = CAlphaViewer.renderer.addAtom(rawAtom)
+        residue.addAtomObject(atom)
+        atom.setSelected(True)
+        try:
+            prevAtom = currentChainModel[startIndex + i - 1].getAtom('CA')
+            bond = PDBBond()
+            bond.setAtom0Ix(prevAtom.getHashKey())
+            bond.setAtom1Ix(atom.getHashKey())
+            CAlphaViewer.renderer.addBond(bond)
+        except (KeyError, IndexError, AttributeError):
+            continue
+
+    try:
+        nextAtom = currentChainModel[startIndex + len(helixCoordList)]
+        bond = PDBBond()
+        bond.setAtom0Ix(atom.getHashKey())
+        bond.setAtom1Ix(nextAtom.getHashKey())
+        CAlphaViewer.renderer.addBond(bond)
+    except (KeyError, IndexError, AttributeError):
+        pass
+
+    currentChainModel.setSelection(newSelection=range(startIndex, 1 + stopIndex))
+
+    if not CAlphaViewer.loaded:
+        CAlphaViewer.loaded = True
+    #             self.CAlphaViewer.modelChanged()
+    #         else:
+    #             self.CAlphaViewer.modelChanged()
+
+
 class CAlphaStructureEditorCommandPlaceHelix(QtGui.QUndoCommand):
 
     def __init__(self, currentChainModel, predHelix, startIndex, stopIndex, coord1, coord2, structureEditor, structurePrediction, description=None):
@@ -20,57 +62,19 @@ class CAlphaStructureEditorCommandPlaceHelix(QtGui.QUndoCommand):
         self.structureEditor = structureEditor
         self.structurePrediction = structurePrediction
         self.CAlphaViewer = self.structureEditor.CAlphaViewer
-    
-    def redo(self):
-                        
-        self.helix = Helix(self.currentChainModel, self.predHelix.serialNo, self.predHelix.label, self.startIndex, self.stopIndex)
-        self.currentChainModel.addHelix(self.predHelix.serialNo, self.helix)
-        self.helix.setAxisPoints(self.coord1, self.coord2)
-        
-        helixCoordList = helixEndpointsToCAlphaPositions(self.coord1, self.coord2)
-        
-        for i in range(min(len(helixCoordList), self.stopIndex - self.startIndex + 1)):
-            pos = helixCoordList[i]
-            residue = self.currentChainModel[self.startIndex+i]
-            rawAtom = residue.addAtom('CA', pos[0], pos[1], pos[2], 'C')
-            atom = self.CAlphaViewer.renderer.addAtom(rawAtom)
-            residue.addAtomObject(atom)
-            atom.setSelected(True)
-            try:
-                prevAtom = self.currentChainModel[self.startIndex+i-1].getAtom('CA')
-                bond = PDBBond()
-                bond.setAtom0Ix(prevAtom.getHashKey())
-                bond.setAtom1Ix(atom.getHashKey())
-                self.CAlphaViewer.renderer.addBond(bond)
-            except (KeyError, IndexError, AttributeError):
-                continue
 
-        try:
-            nextAtom = self.currentChainModel[self.startIndex+len(helixCoordList)]
-            bond = PDBBond()
-            bond.setAtom0Ix(atom.getHashKey())
-            bond.setAtom1Ix(nextAtom.getHashKey())
-            self.CAlphaViewer.renderer.addBond(bond)
-        except (KeyError, IndexError, AttributeError):
-            pass
-          
-        self.currentChainModel.setSelection(newSelection = range(self.startIndex, 1+self.stopIndex))
-        
-        if not self.CAlphaViewer.loaded:
-            self.CAlphaViewer.loaded = True
-#             self.CAlphaViewer.modelChanged()
-#         else:
-#             self.CAlphaViewer.modelChanged()
-        
+    def redo(self):
+        place_helix(self.currentChainModel, self.predHelix, self.startIndex, self.stopIndex, self.coord1, self.coord2, self.structureEditor, self.structurePrediction)
+
     def undo(self):
         for resNum in range(self.startIndex, 1+self.stopIndex):
-            
+
             try:
                 atom = self.currentChainModel[resNum].getAtom('CA')
             except (KeyError, IndexError, AttributeError):
                 atom = None
             if atom:
-                
+
                 try:
                     atomBefore = self.currentChainModel[resNum-1].getAtom('CA')
                 except (KeyError, IndexError, AttributeError):
@@ -79,7 +83,7 @@ class CAlphaStructureEditorCommandPlaceHelix(QtGui.QUndoCommand):
                     bondBeforeIx = self.CAlphaViewer.renderer.getBondIndex(atomBefore.getHashKey(), atom.getHashKey())
                     if bondBeforeIx != -1:
                         self.CAlphaViewer.renderer.deleteBond(bondBeforeIx)
-                
+
                 try:
                     atomAfter = self.currentChainModel[resNum+1].getAtom('CA')
                 except (KeyError, IndexError, AttributeError):
@@ -88,7 +92,7 @@ class CAlphaStructureEditorCommandPlaceHelix(QtGui.QUndoCommand):
                     bondAfterIx = self.CAlphaViewer.renderer.getBondIndex(atomAfter.getHashKey(), atom.getHashKey())
                     if bondAfterIx != -1:
                         self.CAlphaViewer.renderer.deleteBond(bondAfterIx)
-        
+
         for resNum in range(self.startIndex, 1+self.stopIndex):
             try:
                 atom = self.currentChainModel[resNum].getAtom('CA')
@@ -96,9 +100,9 @@ class CAlphaStructureEditorCommandPlaceHelix(QtGui.QUndoCommand):
                 continue
             self.CAlphaViewer.renderer.deleteAtom(atom.getHashKey())
             self.currentChainModel[resNum].clearAtom('CA')
-        
+
         self.currentChainModel.removeSecel(self.helix)
-        
+
         if not self.CAlphaViewer.loaded:
             self.CAlphaViewer.loaded = True
             self.CAlphaViewer.modelChanged()
