@@ -44,7 +44,7 @@ class CAlphaViewer(BaseViewer):
         self.renderer = CAlphaRenderer()
         self.displayStyle = self.DisplayStyleBackbone
 #         self.renderer.setDisplayStyle(self.displayStyle)
-        self.main_chain = Chain('', self.app)
+#         self.main_chain = Chain('', self.app)
         self.structPred = self.app.structPred
 #         self.createUI()
 #         self.app.viewers["calpha"] = self;
@@ -485,7 +485,7 @@ class CAlphaViewer(BaseViewer):
             loaded = True
             if not self.structPred:
                 loaded = self.loadSeq()
-            if self.structPred and not self.main_chain:
+            if self.structPred:
                 self.main_chain = self.structPred.chain
             if loaded:
                 CAlphaSequenceDock.changeDockVisibility(self.app, self, self.structPred, self.main_chain)
