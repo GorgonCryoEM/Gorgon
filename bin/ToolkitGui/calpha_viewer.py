@@ -44,8 +44,8 @@ class CAlphaViewer(BaseViewer):
         self.renderer = CAlphaRenderer()
         self.displayStyle = self.DisplayStyleBackbone
 #         self.renderer.setDisplayStyle(self.displayStyle)
-#         self.main_chain = Chain('', self.app)
         self.structPred = self.app.structPred
+        self.main_chain = self.structPred.chain
 #         self.createUI()
 #         self.app.viewers["calpha"] = self;
         self.atomsVisible = True
