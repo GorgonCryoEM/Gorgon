@@ -47,31 +47,10 @@ class MainWindowForm5(QtGui.QMainWindow):
 #         exit()
         
     def load(self):
-        self.form = self.sseViewer.helixCorrespondanceFinder
-#         self.form.show()
-#
 #         self.volumeViewer.load(self.args.volume)
         self.skeletonViewer.load(self.args.skeleton)
         self.sseViewer.loadHelixDataFromFile(self.args.helix)
         # self.calphaViewer.loadSeq(self.args.sequence)
 
-        self.form.ui.lineEditSkeletonFile.setText(self.args.skeleton)
-        self.form.ui.lineEditSequenceFile.setText(self.args.sequence)
-        self.form.ui.lineEditHelixLocationFile.setText(self.args.helix)
-#         self.form.loadDefaults()
-#         self.form.setConstants()
-# #         self.form.lineEditSheetLocationFile.setText()
-#         self.form.drawOverlay()
-        self.form.checkOk()
-        self.form.ui.pushButtonOk.setEnabled(True)
-        self.form.ui.tabWidget.setCurrentIndex(4)
-        self.form.accept()
-
-        # self.form.create_all_helices()
-
-#         self.form.viewer.sheetFileName    = QtCore.QString('groel-segment.seq')
-#         self.volumeViewer.load(self.args.volume)
-#         self.form.modelLoaded()
-        
     def exitApplication(self):
         QtGui.qApp.closeAllWindows()
