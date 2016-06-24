@@ -666,8 +666,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
                 q1 = cppSse.getCornerCell3(1)
                 q2 = cppSse.getCornerCell3(2)
             
-                pyHelix = ObservedHelix(sseIx, q1, q2)
-                observedHelices[helixCount] = pyHelix
+                observedHelices[helixCount] = ObservedHelix(sseIx, q1, q2)
                 helixCount = helixCount + 1
         
         #TODO: Mike this raises an error!;
