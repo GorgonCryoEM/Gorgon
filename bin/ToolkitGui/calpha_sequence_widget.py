@@ -12,7 +12,7 @@ class CAlphaSequenceWidget(QtGui.QWidget):
         self.currentChainModel = currentChainModel
         self.scrollable = CAlphaScrollableSequenceView(structurePrediction, currentChainModel, self)
         self.scrollable.setMinimumSize(300, 180)
-        self.structureEditor = CAlphaStructureEditor(currentChainModel, dock, self)
+        self.structureEditor = CAlphaStructureEditor(dock, self)
         
         self.globalView=CAlphaGlobalSequenceView(structurePrediction, self)
         self.globalView.setLocalView(self.scrollable.seqView)

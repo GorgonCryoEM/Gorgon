@@ -12,13 +12,13 @@ from .calpha_structure_editor_command_change_position import CAlphaStructureEdit
 
 class CAlphaStructureEditor(QtGui.QWidget):
 
-    def __init__(self, currentChainModel, dock, parent=None):
+    def __init__(self, dock, parent=None):
         super(CAlphaStructureEditor, self).__init__(parent)
         self.dock = dock
         if self.parentWidget().parentWidget().app:
             self.app = self.parentWidget().parentWidget().app
 
-        self.currentChainModel = currentChainModel
+        self.currentChainModel = self.app.structPred
         self.builder = False
         self.atomJustAdded = None
         self.possibleAtomsList = []
