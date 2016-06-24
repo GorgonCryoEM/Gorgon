@@ -678,30 +678,19 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
         
     def create_all_helices(self):
         corrLib = self.app.sseViewer.correspondenceLibrary
-        # print corrLib.correspondenceList[0].matchList
-        # print corrLib.correspondenceList[1].matchList
         currCorrIndex = corrLib.getCurrentCorrespondenceIndex()
         matchList = corrLib.correspondenceList[currCorrIndex].matchList
         for match in matchList:
             if match.observed is not None:
-                print match
-                print match.predicted.startIndex
-                print match.predicted.stopIndex + 1
                 create_helix(self.app.calphaViewer.renderer,
                              self.app.structPred.chain,
                              match.predicted.startIndex,
                              match.predicted.stopIndex + 1,
                              match)
 
-        # self.emit(QtCore.SIGNAL("SSE selected"))
         self.app.calphaViewer.loaded = True
         self.app.calphaViewer.modelChanged()
         self.app.mainCamera.updateGL()
-
-        print "matchList:"
-        print matchList
-        print self.app.structPred.chain
-        print self.app.structPred.chain.getSelection()
         
     def accept(self):
         print "beginning search"
