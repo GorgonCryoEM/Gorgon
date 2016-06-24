@@ -50,7 +50,8 @@ class MainWindowForm5(QtGui.QMainWindow):
 #         self.volumeViewer.load(self.args.volume)
         self.skeletonViewer.load(self.args.skeleton)
         self.sseViewer.loadHelixDataFromFile(self.args.helix)
-        # self.calphaViewer.loadSeq(self.args.sequence)
+        # self.calphaViewer.loadData(self.args.calpha)
+        self.calphaViewer.loadData()
 
     def exitApplication(self):
         QtGui.qApp.closeAllWindows()
