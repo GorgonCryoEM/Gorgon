@@ -61,8 +61,8 @@ class CAlphaStructureEditor(QtGui.QWidget):
 
     def atomChoosePossibleAtom(self, choiceNum):
         """
-This function highlights one of the possible atoms which will be chosen
-if the user clicks accept.
+        This function highlights one of the possible atoms which will be chosen
+        if the user clicks accept.
         """
         if choiceNum == 0:
             return
@@ -185,8 +185,8 @@ if the user clicks accept.
 
     def atomForwardBackwardChange(self):
         """
-This reponds to whether the atomic editor should be moving forward
-through the chain or backward.
+        This reponds to whether the atomic editor should be moving forward
+        through the chain or backward.
         """
         if self.atomicForwardRadioButton.isChecked():
             self.atomicResNumbers[1].setStyleSheet("QLabel {color: green; font-size: 12pt}")
@@ -201,7 +201,7 @@ through the chain or backward.
 
     def atomNextButtonPress(self):
         """
-This moves to the next residue and updates the selected residue.
+        This moves to the next residue and updates the selected residue.
         """
         currentChainModel = self.parentWidget().currentChainModel
         if currentChainModel.getSelection():
@@ -234,7 +234,7 @@ This moves to the next residue and updates the selected residue.
 
     def atomPrevButtonPress(self):
         """
-This moves to the previous residue and updates the selected residue.
+        This moves to the previous residue and updates the selected residue.
         """
         #self.parentWidget() returns a CAlphaSequenceWidget object
         currentChainModel = self.parentWidget().currentChainModel
@@ -247,7 +247,7 @@ This moves to the previous residue and updates the selected residue.
 
     def clearMockSidechains(self,  chain):
         """
-This changes the atoms' properties back to default.
+        This changes the atoms' properties back to default.
         """
         for index in chain.residueRange():
             res = chain[index]
@@ -257,8 +257,8 @@ This changes the atoms' properties back to default.
 
     def enableDisable(self):
         """
-Depending on which tab is active, this enables and disables widtets.
-This is used for not-yet-implemented and non-applicable widgets.
+        Depending on which tab is active, this enables and disables widtets.
+        This is used for not-yet-implemented and non-applicable widgets.
         """
         currentTab = self.tabWidget.currentWidget()
         isHelixTab = currentTab is self.helixTab
@@ -295,7 +295,7 @@ This is used for not-yet-implemented and non-applicable widgets.
 
     def helixDecreaseButtonPress(self):
         """
-This decreases the start and stop residue numbers by one.
+        This decreases the start and stop residue numbers by one.
         """
         startIx = self.helixNtermSpinBox.value()
         stopIx = self.helixCtermSpinBox.value()
@@ -313,7 +313,7 @@ This decreases the start and stop residue numbers by one.
 
     def helixFindSelectedCAHelices(self):
         """
-This finds C-alpha helices that contain the selected residue numbers.
+        This finds C-alpha helices that contain the selected residue numbers.
         """
         selectedResidues = self.currentChainModel.getSelection()
         helices = []
@@ -326,9 +326,9 @@ This finds C-alpha helices that contain the selected residue numbers.
 
     def helixFlipButtonPress(self):
         """
-This flips the direction of a C-alpha helix. Bonds from the ends of the
-helix to atoms outside the helix are removed during the flip, and new
-bonds are created only if the length of the new bond would be <= 4.2 A.
+        This flips the direction of a C-alpha helix. Bonds from the ends of the
+        helix to atoms outside the helix are removed during the flip, and new
+        bonds are created only if the length of the new bond would be <= 4.2 A.
         """
         helices = self.helixFindSelectedCAHelices()
         chain = self.currentChainModel
@@ -396,7 +396,7 @@ bonds are created only if the length of the new bond would be <= 4.2 A.
 
     def helixIncreaseButtonPress(self):
         """
-This increases the start and stop residue numbers by one.
+        This increases the start and stop residue numbers by one.
         """
         startIx = self.helixNtermSpinBox.value()
         stopIx = self.helixCtermSpinBox.value()
@@ -414,7 +414,7 @@ This increases the start and stop residue numbers by one.
 
     def posMoveCM_x(self):
         """
-This translates the selection on the x-axis.
+        This translates the selection on the x-axis.
         """
         if(not self.undoInProgress):
             oldX = self.x
@@ -429,7 +429,7 @@ This translates the selection on the x-axis.
 
     def posMoveCM_y(self):
         """
-This translates the selection on the y-axis.
+        This translates the selection on the y-axis.
         """
         if(not self.undoInProgress):
             oldY = self.y
@@ -444,7 +444,7 @@ This translates the selection on the y-axis.
 
     def posMoveCM_z(self):
         """
-This translates the selection on the z-axis.
+        This translates the selection on the z-axis.
         """
         if(not self.undoInProgress):
             oldZ = self.z
@@ -459,9 +459,9 @@ This translates the selection on the z-axis.
 
     def posRotateCM_roll(self, angle):
         """
-This rotates the selection around its 'center of mass' (actually
-geometric center) in a clockwise direction around a normal line to the
-screen.
+        This rotates the selection around its 'center of mass' (actually
+        geometric center) in a clockwise direction around a normal line to the
+        screen.
         """
         if(not self.undoInProgress):
             axis = self.CAlphaViewer.worldToObjectCoordinates(self.app.mainCamera.look)
@@ -479,9 +479,9 @@ screen.
 
     def posRotateCM_pitch(self, angle):
         """
-This rotates the selection around its 'center of mass' (actually
-geometric center) around a line parallel to a horizontal line on the
-screen.
+        This rotates the selection around its 'center of mass' (actually
+        geometric center) around a line parallel to a horizontal line on the
+        screen.
         """
         if(not self.undoInProgress):
             axis = self.CAlphaViewer.worldToObjectCoordinates(self.app.mainCamera.right)
@@ -499,9 +499,9 @@ screen.
 
     def posRotateCM_yaw(self, angle):
         """
-This rotates the selection around its 'center of mass' (actually
-geometric center) around a line parallel to a vertical line on the
-screen.
+        This rotates the selection around its 'center of mass' (actually
+        geometric center) around a line parallel to a vertical line on the
+        screen.
         """
         if(not self.undoInProgress):
             axis = self.CAlphaViewer.worldToObjectCoordinates(self.app.mainCamera.up)
@@ -518,8 +518,8 @@ screen.
 
     def posUpdateValues(self):
         """
-This updates the spin boxes to show the C-alpha coordinates of the
-selection's geometric center.
+        This updates the spin boxes to show the C-alpha coordinates of the
+        selection's geometric center.
         """
         cAlphaRenderer = self.app.calphaViewer.renderer
         cm = cAlphaRenderer.selectionCenterOfMass()
@@ -532,13 +532,13 @@ selection's geometric center.
 
     def posXDecr(self):
         """
-This decreases the position editor's x-coordinate spin box by 1.
+        This decreases the position editor's x-coordinate spin box by 1.
         """
         self.posMoveDict['x'].setValue(self.posMoveDict['x'].value()-1)
 
     def posXIncr(self):
         """
-This increases the position editor's x-cordinate spin box by 1.
+        This increases the position editor's x-cordinate spin box by 1.
         """
         self.posMoveDict['x'].setValue(self.posMoveDict['x'].value()+1)
 
@@ -550,31 +550,31 @@ This decreases the position editor's y-coordinate spin box by 1.
 
     def posYIncr(self):
         """
-This increases the position editor's y-coordinate spin box by 1.
+        This increases the position editor's y-coordinate spin box by 1.
         """
         self.posMoveDict['y'].setValue(self.posMoveDict['y'].value()+1)
 
     def posZDecr(self):
         """
-This decreases the position editor's z-coordinate spin box by 1.
+        This decreases the position editor's z-coordinate spin box by 1.
         """
         self.posMoveDict['z'].setValue(self.posMoveDict['z'].value()-1)
 
     def posZIncr(self):
         """
-This increases the position editor's z-coordinate spin box by 1.
+        This increases the position editor's z-coordinate spin box by 1.
         """
         self.posMoveDict['z'].setValue(self.posMoveDict['z'].value()+1)
 
     def posRollDecr(self):
         """
-This decreases the position editor's roll spin box by 3.
+        This decreases the position editor's roll spin box by 3.
         """
         self.posMoveDict['roll'].setValue(self.posMoveDict['roll'].value()-3)
 
     def posRollIncr(self):
         """
-This increases the position editor's roll spin box by 3.
+        This increases the position editor's roll spin box by 3.
         """
         self.posMoveDict['roll'].setValue(self.posMoveDict['roll'].value()+3)
 
@@ -586,19 +586,19 @@ This decreases the position editor's pitch spin box by 3.
 
     def posPitchIncr(self):
         """
-This increases the position editor's pitch spin box by 3.
+        This increases the position editor's pitch spin box by 3.
         """
-        self.posMoveDict['pitch'].setValue(self.posMoveDict['pitch'].value()+3)
+        self.posMoveDict['pitch'].setValue(self.posMoveDict['pitch'].value() + 3)
 
     def posYawDecr(self):
         """
-This decreases the position editor's yaw spin box by 3.
+        This decreases the position editor's yaw spin box by 3.
         """
-        self.posMoveDict['yaw'].setValue(self.posMoveDict['yaw'].value()-3)
+        self.posMoveDict['yaw'].setValue(self.posMoveDict['yaw'].value() - 3)
 
     def posYawIncr(self):
         """
-This increases the position editor's yaw spin box by 3.
+        This increases the position editor's yaw spin box by 3.
         """
         self.posMoveDict['yaw'].setValue(self.posMoveDict['yaw'].value()+3)
 
@@ -636,8 +636,8 @@ This increases the position editor's yaw spin box by 3.
 
     def renderMockSidechains(self,  chain):
         """
-This sets the colors and sizes of the spheres that represent mock
-sidechains but does not update the screen.
+        This sets the colors and sizes of the spheres that represent mock
+        sidechains but does not update the screen.
         """
         color = {
             'greasy': (0.0, 1.0, 0.0, 1.0),
@@ -660,8 +660,8 @@ sidechains but does not update the screen.
 
     def setResidues(self, newSelection):
         """
-This takes a list of residues and chooses the last item of the list to
-be the current residue for the atomic editor.
+        This takes a list of residues and chooses the last item of the list to
+        be the current residue for the atomic editor.
         """
         #newSelection is a list of Residue indeces that are selected
         if not newSelection:
@@ -1061,9 +1061,9 @@ be the current residue for the atomic editor.
 
     def updateCurrentMatch(self):
         """
-This uses the SSE viewer's currentMatch attribute to find the start and
-stop indices for the current secel.  It uses this to set the Nterm and
-Cterm spin boxes in the helix editor.
+        This uses the SSE viewer's currentMatch attribute to find the start and
+        stop indices for the current secel.  It uses this to set the Nterm and
+        Cterm spin boxes in the helix editor.
         """
         sseViewer = self.app.sseViewer
         if not sseViewer.currentMatch:
@@ -1078,10 +1078,10 @@ Cterm spin boxes in the helix editor.
 
     def updateSelectedResidues(self):
         """
-This gets the selected residues from the current chain model, and sends
-that list of residue indices to self.setResidues to update the current
-residue in the atomic editor. It also updates the positions in the
-position editor.
+        This gets the selected residues from the current chain model, and sends
+        that list of residue indices to self.setResidues to update the current
+        residue in the atomic editor. It also updates the positions in the
+        position editor.
         """
         selection = self.currentChainModel.getSelection()
         self.setLoopEditorValues(selection)
