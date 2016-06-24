@@ -18,8 +18,8 @@ except:
 
 class StructurePrediction(baseClass):  #results of secondary-structure prediction
     """
-This class contains the sequence of a chain and the residue numbers 
-where SSEs are predicted to be based on the sequence.
+    This class contains the sequence of a chain and the residue numbers 
+    where SSEs are predicted to be based on the sequence.
     """
 
     def __init__(self, secelDict, chain, params=None, comments=None, qparent=None, secelType=None):
@@ -54,24 +54,24 @@ where SSEs are predicted to be based on the sequence.
     @classmethod
     def load(cls, filename, qparent=None, withStrands=0):
         '''
-Sequence files are a file type we defined. The first line gives the 
-one-letter abbreviations for the sequence. The line below it shows the 
-predicted secondary structure element for each residue as "H" for 
-helix, "E" for strand, and "-" otherwise.  
-Ex 1:
-GAPCSTLARFKEI
-HHHHHH--EEEE
-Ex 2:
-START 45
-SAPQRVPELYC
-EEEHHHHHH-
-
-The first line may give a start residue (useful for post-translational 
-modifications). That line will be interpreted and removed. Linebreaks 
-are then removed. Finally, the first half of the remaining characters 
-are interpreted as sequence, and the second half are treated as 
-structure predictions. The actual file reading and interpreting is 
-handled in C++.
+        Sequence files are a file type we defined. The first line gives the 
+        one-letter abbreviations for the sequence. The line below it shows the 
+        predicted secondary structure element for each residue as "H" for 
+        helix, "E" for strand, and "-" otherwise.  
+        Ex 1:
+        GAPCSTLARFKEI
+        HHHHHH--EEEE
+        Ex 2:
+        START 45
+        SAPQRVPELYC
+        EEEHHHHHH-
+        
+        The first line may give a start residue (useful for post-translational 
+        modifications). That line will be interpreted and removed. Linebreaks 
+        are then removed. Finally, the first half of the remaining characters 
+        are interpreted as sequence, and the second half are treated as 
+        structure predictions. The actual file reading and interpreting is 
+        handled in C++.
         '''
         print "StructurePrediction.load called. cls = " + str(cls) + ", filename = " + str(filename) + " qparent = " + str(qparent)
 
@@ -173,9 +173,9 @@ handled in C++.
         
     def getSecelByIndex(self, index):
         """
-Given a residue number (often referred to as residue index), this 
-returns the Helix or Strand that contains it or a single-residue Coil
-if it is not a part of a Helix or Strand.
+        Given a residue number (often referred to as residue index), this 
+        returns the Helix or Strand that contains it or a single-residue Coil
+        if it is not a part of a Helix or Strand.
         """
         lastSecelEnd = self.chain.getFirstResidueIndex()-1
         nextSecelStart = self.chain.getLastResidueIndex()+1
