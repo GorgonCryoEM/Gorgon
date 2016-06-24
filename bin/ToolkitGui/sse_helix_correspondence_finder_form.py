@@ -684,7 +684,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
             if match.observed is not None:
                 print match
                 startIndex = match.predicted.startIndex
-                stopIndex  = match.predicted.stopIndex + 1
+                stopIndex  = match.predicted.stopIndex
                 print startIndex
                 print stopIndex
                 create_helix(self.app.calphaViewer.renderer,
