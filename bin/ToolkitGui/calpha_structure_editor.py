@@ -111,7 +111,6 @@ class CAlphaStructureEditor(QtGui.QWidget):
             #return
         atomPos = atom.getPosition()
         atomPosMeshCoords =  skeletonViewer.worldToObjectCoordinates(self.CAlphaViewer.objectToWorldCoordinates([atomPos.x(), atomPos.y(), atomPos.z()]))
-        atomPosMeshCoords = Vec3(atomPosMeshCoords[0], atomPosMeshCoords[1], atomPosMeshCoords[2])
 
         if skeletonViewer.loaded:
             assert skeletonViewer.renderer.getSpacingX() == skeletonViewer.renderer.getSpacingY()
