@@ -543,7 +543,7 @@ class CAlphaStructureEditor(QtGui.QWidget):
 
     def posYDecr(self):
         """
-This decreases the position editor's y-coordinate spin box by 1.
+        This decreases the position editor's y-coordinate spin box by 1.
         """
         self.posMoveDict['y'].setValue(self.posMoveDict['y'].value()-1)
 
@@ -579,7 +579,7 @@ This decreases the position editor's y-coordinate spin box by 1.
 
     def posPitchDecr(self):
         """
-This decreases the position editor's pitch spin box by 3.
+        This decreases the position editor's pitch spin box by 3.
         """
         self.posMoveDict['pitch'].setValue(self.posMoveDict['pitch'].value()-3)
 
