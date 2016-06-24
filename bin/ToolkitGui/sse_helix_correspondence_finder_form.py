@@ -647,9 +647,6 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
         skeletonViewer = self.app.viewers['skeleton']
 #         cAlphaViewer.structPred = structPred
 
-        def vector3DFloatToTuple(v3df):
-            return (v3df.x(), v3df.y(), v3df.z())
-
         #Loading Observed SSEs
         print "loading observed SSEs"
         self.app.viewers['sse'].correspondenceEngine.loadSkeletonGraph()
@@ -666,8 +663,8 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
             cppSse = self.app.viewers['sse'].correspondenceEngine.getSkeletonSSE(sseIx)
             # create list of observed helices for this correspondence result
             if cppSse.isHelix():
-                q1 = vector3DFloatToTuple(cppSse.getCornerCell3(1))
-                q2 = vector3DFloatToTuple(cppSse.getCornerCell3(2))
+                q1 = cppSse.getCornerCell3(1)
+                q2 = cppSse.getCornerCell3(2)
             
                 pyHelix = ObservedHelix(sseIx, q1, q2)
                 observedHelices[helixCount] = pyHelix
