@@ -751,21 +751,6 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
         i = start + delta * float(index)
         return self.getIndexedColor(i, 1.0)
     
-    #def getIndexedSheetColor(self, index, size):
-    #    """returns a color for sheet 'index' out of 'size' sheets. colors will be white or black."""
-    #    # start and end are between 0 and 1
-    #    position = float(index)/float(size)
-    #    return QtGui.QColor.fromRgba(QtGui.qRgba(position*255, position*255, position*255, 1.0*255))
-
-    #def getIndexedHelixColor(self, index, size):
-    #    """returns a color for helix 'index' out of 'size' helices. colors will be blue, cyan, green, yellow or red"""
-    #    # start and end are between 0 and 1
-    #    start = float(0.0)
-    #    end = float(1.0)
-    #    delta = (end - start) / float(size)
-    #    i = start + delta * float(index)
-    #    return self.getIndexedColor(i, 1.0)
-            
     def getIndexedColor(self, index, size):
         a = 1.0
         i = float(index)
