@@ -682,10 +682,12 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
         matchList = corrLib.correspondenceList[currCorrIndex].matchList
         for match in matchList:
             if match.observed is not None:
+                startIndex = match.predicted.startIndex
+                stopIndex  = match.predicted.stopIndex + 1
                 create_helix(self.app.calphaViewer.renderer,
                              self.app.structPred.chain,
-                             match.predicted.startIndex,
-                             match.predicted.stopIndex + 1,
+                             startIndex,
+                             stopIndex,
                              match)
 
         self.app.calphaViewer.loaded = True
