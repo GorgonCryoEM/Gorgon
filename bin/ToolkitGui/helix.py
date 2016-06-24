@@ -49,8 +49,8 @@ def create_helix(calphaRenderer, currentChainModel, startIndex, stopIndex, curre
     
     print "Helix Create"
     """
-This creates a C-alpha helix between the C-alpha atoms from residues
-given by self.helixNtermSpinBox and self.helixCtermSpinBox.
+    This creates a C-alpha helix between the C-alpha atoms from residues
+    given by self.helixNtermSpinBox and self.helixCtermSpinBox.
     """
     if observedHelix.__class__.__name__ != 'ObservedHelix':
         raise TypeError, observedHelix.__class__.__name__

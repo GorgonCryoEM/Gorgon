@@ -79,15 +79,15 @@ class CAlphaSequenceDock(QtGui.QDockWidget):
     @classmethod
     def checkPredictionVsModel(cls, structurePrediction, currentChainModel):
         """
-If the chain model's sequence is a subset of the structure prediction's
-    sequence, the model is simply incomplete, and this function adds 
-    the missing residues to the model, without adding any atoms to 
-    those residues. 
-If the sequences are equal, the model will work, and this function does
-    nothing. 
-If the chain model's sequence is not a subset of the structure 
-    prediction's sequence, a SequenceError is raised, because the model
-    can not work with the structure prediction.
+        If the chain model's sequence is a subset of the structure prediction's
+            sequence, the model is simply incomplete, and this function adds 
+            the missing residues to the model, without adding any atoms to 
+            those residues. 
+        If the sequences are equal, the model will work, and this function does
+            nothing. 
+        If the chain model's sequence is not a subset of the structure 
+            prediction's sequence, a SequenceError is raised, because the model
+            can not work with the structure prediction.
         """
         modelResNumSet = set(currentChainModel.residueRange())
         predResNumSet = set(structurePrediction.chain.residueRange())
@@ -121,8 +121,8 @@ If the chain model's sequence is not a subset of the structure
     
     def changeCurrentChainModel(self, currentChainModel):
         '''
-This changes the Chain object that is displayed and is edited by the 
-user.  A chain object represents a possible structure model.
+        This changes the Chain object that is displayed and is edited by the 
+        user.  A chain object represents a possible structure model.
         '''
         self.currentChainModel = currentChainModel
         self.seqWidget.currentChainModel = currentChainModel
@@ -137,8 +137,8 @@ user.  A chain object represents a possible structure model.
     
     def changeSequenceSSE(self, structurePrediction):
         '''
-This changes the structure prediction which has information about the
-sequence and predicted residue indices for helices and strands.
+        This changes the structure prediction which has information about the
+        sequence and predicted residue indices for helices and strands.
         '''
         self.structurePrediction = structurePrediction
     
@@ -147,7 +147,7 @@ sequence and predicted residue indices for helices and strands.
         
     def updateFromViewerSelection(self):
         '''
-This responds to a new selection of atoms in the viewer.
+        This responds to a new selection of atoms in the viewer.
         '''
         self.seqWidget.scrollable.seqView.updateSequenceSelection()
     
@@ -157,9 +157,9 @@ This responds to a new selection of atoms in the viewer.
     
     def toggleMockSideChains(self):
         '''
-This toggles whether mock side-chains are displayed.  Mock side-chains
-represent residues as spheres with relative size of a residue indicated
-by radius and residue type indicated by color. 
+        This toggles whether mock side-chains are displayed.  Mock side-chains
+        represent residues as spheres with relative size of a residue indicated
+        by radius and residue type indicated by color. 
         '''
         viewer = self.viewer
         
