@@ -42,7 +42,11 @@ def place_helix(calphaRenderer, currentChainModel, predHelix, startIndex, stopIn
     currentChainModel.setSelection(newSelection=range(startIndex, 1 + stopIndex))
 
 
-def create_helix(calphaRenderer, currentChainModel, startIndex, stopIndex, observedHelix, direction, predHelix):
+def create_helix(calphaRenderer, currentChainModel, startIndex, stopIndex, currentMatch):
+    observedHelix  = currentMatch.observed
+    direction      = currentMatch.direction
+    predHelix      = currentMatch.predicted
+    
     print "Helix Create"
     """
 This creates a C-alpha helix between the C-alpha atoms from residues

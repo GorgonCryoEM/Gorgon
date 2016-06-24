@@ -277,7 +277,7 @@ This is used for not-yet-implemented and non-applicable widgets.
         #self.redoButton.setEnabled(isAtomicTab or isHelixTab or isPositionTab)
 
     def helixCreateCAhelix(self):
-        create_helix(self.app.calphaViewer.renderer, self.currentChainModel, self.helixNtermSpinBox.value(), self.helixCtermSpinBox.value(), self.app.sseViewer.currentMatch.observed, self.app.sseViewer.currentMatch.direction, self.app.sseViewer.currentMatch.predicted)
+        create_helix(self.app.calphaViewer.renderer, self.currentChainModel, self.helixNtermSpinBox.value(), self.helixCtermSpinBox.value(), self.app.sseViewer.currentMatch)
 
         if not self.app.calphaViewer.loaded:
             self.app.calphaViewer.loaded = True
