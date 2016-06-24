@@ -1381,7 +1381,7 @@
          </widget>
         </item>
         <item row="0" column="3">
-         <widget class="QPushButton" name="pushButtonCancel" >
+         <widget class="QPushButton" name="pushButtonAddHelices">
           <property name="maximumSize">
            <size>
             <width>75</width>
@@ -1389,7 +1389,7 @@
            </size>
           </property>
           <property name="text">
-           <string>Cancel</string>
+           <string>Add Helices</string>
           </property>
          </widget>
         </item>
@@ -1437,7 +1437,7 @@
   <tabstop>pushButtonExportToRosetta</tabstop>
   <tabstop>pushButtonReset</tabstop>
   <tabstop>pushButtonOk</tabstop>
-  <tabstop>pushButtonCancel</tabstop>
+  <tabstop>pushButtonAddHelices</tabstop>
  </tabstops>
  <resources/>
  <connections/>

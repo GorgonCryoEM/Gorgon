@@ -67,7 +67,7 @@ class MainWindowForm4(QtGui.QMainWindow):
         self.form.ui.tabWidget.setCurrentIndex(4)
         self.form.accept()
 
-        self.form.create_all_helices()
+        # self.form.create_all_helices()
 
 #         self.form.viewer.sheetFileName    = QtCore.QString('groel-segment.seq')
 #         self.volumeViewer.load(self.args.volume)

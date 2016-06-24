@@ -707,10 +707,10 @@ class Ui_DialogSSEHelixCorrespondenceFinder(object):
         self.pushButtonOk.setMaximumSize(QtCore.QSize(75, 16777215))
         self.pushButtonOk.setObjectName(_fromUtf8("pushButtonOk"))
         self.gridlayout.addWidget(self.pushButtonOk, 0, 2, 1, 1)
-        self.pushButtonCancel = QtGui.QPushButton(self.layoutWidget)
-        self.pushButtonCancel.setMaximumSize(QtCore.QSize(75, 16777215))
-        self.pushButtonCancel.setObjectName(_fromUtf8("pushButtonCancel"))
-        self.gridlayout.addWidget(self.pushButtonCancel, 0, 3, 1, 1)
+        self.pushButtonAddHelices = QtGui.QPushButton(self.layoutWidget)
+        self.pushButtonAddHelices.setMaximumSize(QtCore.QSize(75, 16777215))
+        self.pushButtonAddHelices.setObjectName(_fromUtf8("pushButtonAddHelices"))
+        self.gridlayout.addWidget(self.pushButtonAddHelices, 0, 3, 1, 1)
         spacerItem5 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.gridlayout.addItem(spacerItem5, 0, 1, 1, 1)
         self.pushButtonReset = QtGui.QPushButton(self.layoutWidget)
@@ -731,7 +731,7 @@ class Ui_DialogSSEHelixCorrespondenceFinder(object):
         DialogSSEHelixCorrespondenceFinder.setTabOrder(self.tableWidgetCorrespondenceList, self.pushButtonExportToRosetta)
         DialogSSEHelixCorrespondenceFinder.setTabOrder(self.pushButtonExportToRosetta, self.pushButtonReset)
         DialogSSEHelixCorrespondenceFinder.setTabOrder(self.pushButtonReset, self.pushButtonOk)
-        DialogSSEHelixCorrespondenceFinder.setTabOrder(self.pushButtonOk, self.pushButtonCancel)
+        DialogSSEHelixCorrespondenceFinder.setTabOrder(self.pushButtonOk, self.pushButtonAddHelices)
 
     def retranslateUi(self, DialogSSEHelixCorrespondenceFinder):
         DialogSSEHelixCorrespondenceFinder.setWindowTitle(_translate("DialogSSEHelixCorrespondenceFinder", "Helix and Sheet Correspondence Finder", None))
@@ -817,6 +817,6 @@ class Ui_DialogSSEHelixCorrespondenceFinder(object):
         self.pushButtonExportToRosetta.setText(_translate("DialogSSEHelixCorrespondenceFinder", "Export Correspondences to Rosetta", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("DialogSSEHelixCorrespondenceFinder", "Results", None))
         self.pushButtonOk.setText(_translate("DialogSSEHelixCorrespondenceFinder", "OK", None))
-        self.pushButtonCancel.setText(_translate("DialogSSEHelixCorrespondenceFinder", "Cancel", None))
+        self.pushButtonAddHelices.setText(_translate("DialogSSEHelixCorrespondenceFinder", "Add Helices", None))
         self.pushButtonReset.setText(_translate("DialogSSEHelixCorrespondenceFinder", "Reset", None))
 
