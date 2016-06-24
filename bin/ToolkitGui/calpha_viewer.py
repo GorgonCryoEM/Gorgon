@@ -45,7 +45,7 @@ class CAlphaViewer(BaseViewer):
         self.displayStyle = self.DisplayStyleBackbone
 #         self.renderer.setDisplayStyle(self.displayStyle)
         self.main_chain = Chain('', self.app)
-        self.structPred = None
+        self.structPred = self.app.structPred
 #         self.createUI()
 #         self.app.viewers["calpha"] = self;
         self.atomsVisible = True
@@ -583,19 +583,6 @@ class CAlphaViewer(BaseViewer):
             chain = None
         self.loadedChains = []
         BaseViewer.unloadData(self)
-    
-    def loadSeq(self, fileName):
-        """
-This function loads a SEQ file and creates a StructurePrediction object.
-        """
-#         fileName = QtGui.QFileDialog.getOpenFileName( self, self.tr('Open Sequence'), '',
-#                                             self.tr('Sequence possibly with SSE predictions (*.seq)') )
-#         fileName = str(fileName)
-        if fileName:
-            self.structPred = StructurePrediction.load(fileName, self.app)
-            return True
-        else:
-            return False
     
     def clearSelection(self):
         BaseViewer.clearSelection(self)

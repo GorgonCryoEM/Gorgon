@@ -7,6 +7,7 @@ from Explorer.skeleton_viewer import SkeletonViewer
 from .sse_helix_correspondence_finder_form import SSEHelixCorrespondenceFinderForm
 from .calpha_viewer import CAlphaViewer
 from .sse_viewer import SSEViewer
+from Toolkit.sse.correspondence.StructurePrediction import StructurePrediction
 
 
 class MainWindowForm4(QtGui.QMainWindow):
@@ -17,6 +18,8 @@ class MainWindowForm4(QtGui.QMainWindow):
         self.args = args
         self.menubar = self.menuBar()
         self.docksMenu = self.menubar.addMenu('&Docks')
+
+        self.structPred = StructurePrediction.load(self.args.sequence, self)
         
         self.viewers = {}
         
@@ -50,7 +53,7 @@ class MainWindowForm4(QtGui.QMainWindow):
 #         self.volumeViewer.load(self.args.volume)
         self.skeletonViewer.load(self.args.skeleton)
         self.sseViewer.loadHelixDataFromFile(self.args.helix)
-        self.calphaViewer.loadSeq(self.args.sequence)
+        # self.calphaViewer.loadSeq(self.args.sequence)
 
         self.form.ui.lineEditSkeletonFile.setText(self.args.skeleton)
         self.form.ui.lineEditSequenceFile.setText(self.args.sequence)
