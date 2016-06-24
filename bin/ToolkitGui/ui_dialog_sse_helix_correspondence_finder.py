@@ -817,6 +817,6 @@ class Ui_DialogSSEHelixCorrespondenceFinder(object):
         self.pushButtonExportToRosetta.setText(_translate("DialogSSEHelixCorrespondenceFinder", "Export Correspondences to Rosetta", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("DialogSSEHelixCorrespondenceFinder", "Results", None))
         self.pushButtonOk.setText(_translate("DialogSSEHelixCorrespondenceFinder", "OK", None))
-        self.pushButtonAddHelices.setText(_translate("DialogSSEHelixCorrespondenceFinder", "Add Helices", None))
+        self.pushButtonAddHelices.setText(_translate("DialogSSEHelixCorrespondenceFinder", "Helices", None))
         self.pushButtonReset.setText(_translate("DialogSSEHelixCorrespondenceFinder", "Reset", None))
 
