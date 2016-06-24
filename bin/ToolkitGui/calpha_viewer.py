@@ -592,8 +592,8 @@ class CAlphaViewer(BaseViewer):
     def processElementClick(self, *argv):
         print argv
         """
-In response to a click on a C-alpha element, this updates the selected
-residues in the Chain object.
+        In response to a click on a C-alpha element, this updates the selected
+        residues in the Chain object.
         """
         if argv[0]: #argv[0] is 0 for a click on an atom
             return
@@ -623,8 +623,8 @@ residues in the Chain object.
             
     def exportData(self):
         """
-This saves the current chain model to a PDB file with no "ATOM" lines
-for atoms that have not been placed.
+        This saves the current chain model to a PDB file with no "ATOM" lines
+        for atoms that have not been placed.
         """
         self.fileName = QtGui.QFileDialog.getSaveFileName(self, self.tr("Save Data"), "",
                                                           self.tr('Atom Positions (*.pdb)'))
@@ -640,11 +640,11 @@ for atoms that have not been placed.
     
     def saveData(self):
         """
-This saves the current chain model to a PDB file with 'ATOM' lines that
-have no coordinates for atoms that have not been placed. These 
-non-standard ATOM lines serve as placeholders so the entire sequence of
-the chain is known including residue numbers ('SEQRES' does not give a 
-starting residue number).
+        This saves the current chain model to a PDB file with 'ATOM' lines that
+        have no coordinates for atoms that have not been placed. These
+        non-standard ATOM lines serve as placeholders so the entire sequence of
+        the chain is known including residue numbers ('SEQRES' does not give a
+        starting residue number).
         """
         self.fileName = QtGui.QFileDialog.getSaveFileName(self, self.tr("Save Data"), "",
                                                           self.tr('Atom Positions (*.pdb)'))
