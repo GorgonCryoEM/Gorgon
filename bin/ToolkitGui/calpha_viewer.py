@@ -526,7 +526,7 @@ class CAlphaViewer(BaseViewer):
         self.renderer.updateTotalScoreSSEHunterAtoms(correlationCoefficient, skeletonCoefficient, geometryCoefficient)
         self.modelChanged()
         
-    def loadData(self):
+    def loadData(self, fileName):
         #Overwriting the function in BaseViewer
         def setupChain(mychain):
             self.main_chain = mychain
@@ -543,7 +543,7 @@ class CAlphaViewer(BaseViewer):
                         atom = renderer.addAtom(atom)
                         mychain[i].addAtomObject(atom)
                                        
-        self.fileName = QtCore.QString('pseudoatoms.pdb')
+        self.fileName = QtCore.QString(fileName)
         fileNameTemp = self.fileName
         self.whichChainID = None
         filename = unicode(self.fileName)
