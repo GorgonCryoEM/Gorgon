@@ -1,4 +1,5 @@
 class ObservedSheet:
+
     def __init__(self, label, cornerList):
         # raise NotImplementedError, 'Not Yet Implemented: ObservedSheet contructor'
         """Note that the label is currently an integer, not a string."""

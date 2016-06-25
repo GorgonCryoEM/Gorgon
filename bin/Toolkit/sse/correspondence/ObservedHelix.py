@@ -1,6 +1,7 @@
 import math
 from Explorer.libs import Vec3
 
+
 class ObservedHelix:
 
     def __init__(self, label, beginningCoord, endCoord ):
