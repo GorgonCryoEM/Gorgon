@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 from ..seq_model.Helix import Helix
 from ..seq_model.Coil import Coil
 from ..seq_model.Strand import Strand
@@ -9,14 +7,15 @@ from libpytoolkit import SeqReader, SeqFileData
 
 try:
     from PyQt4 import QtCore, QtGui
-    qtEnabled=True
-    baseClass=QtCore.QObject
+
+    qtEnabled = True
+    baseClass = QtCore.QObject
 except:
-    qtEnabled=False
-    baseClass=object
+    qtEnabled = False
+    baseClass = object
 
 
-class StructurePrediction(baseClass):  #results of secondary-structure prediction
+class StructurePrediction(baseClass):  # results of secondary-structure prediction
     """
     This class contains the sequence of a chain and the residue numbers 
     where SSEs are predicted to be based on the sequence.
@@ -24,15 +23,15 @@ class StructurePrediction(baseClass):  #results of secondary-structure predictio
 
     def __init__(self, secelDict, chain, params=None, comments=None, qparent=None, secelType=None):
         if qparent and qtEnabled:
-            super(QtCore.QObject,self).__init__(qparent)
-        self.secelDict=secelDict
+            super(QtCore.QObject, self).__init__(qparent)
+        self.secelDict = secelDict
         self.helixDict = {}
         self.strandDict = {}
         self.__updateDicts()
         self.selectedSecel = None
-        self.chain=chain
-        self.params=params
-        self.comments=comments
+        self.chain = chain
+        self.params = params
+        self.comments = comments
         self.app = qparent
         # list of types of secels
         self.secelType = secelType
@@ -50,7 +49,7 @@ class StructurePrediction(baseClass):  #results of secondary-structure predictio
                 self.strandDict[iS] = self.secelDict[i]
                 iS += 1
         return
-    
+
     @classmethod
     def load(cls, filename, qparent=None, withStrands=0):
         '''
@@ -73,14 +72,15 @@ class StructurePrediction(baseClass):  #results of secondary-structure predictio
         structure predictions. The actual file reading and interpreting is 
         handled in C++.
         '''
-        print "StructurePrediction.load called. cls = " + str(cls) + ", filename = " + str(filename) + " qparent = " + str(qparent)
+        print "StructurePrediction.load called. cls = " + str(cls) + ", filename = " + str(
+            filename) + " qparent = " + str(qparent)
 
-        #secelIndex=0
-        secelDict={}
-        secelType={}
-        params=None
-        comments=None
-        
+        # secelIndex=0
+        secelDict = {}
+        secelType = {}
+        params = None
+        comments = None
+
         if filename.split('.')[-1].lower() == 'seq':
             # data is a c++ SEQReader object
             data = SeqReader.loadFile(filename)
@@ -92,7 +92,7 @@ class StructurePrediction(baseClass):  #results of secondary-structure predictio
                 chain = Chain('', qparent)
                 n = 0
                 for char in sequence:
-                    chain[startIndex+n] = Residue(char, chain)
+                    chain[startIndex + n] = Residue(char, chain)
                     n += 1
 
             numSSEs = data.getNumberOfStructures()
@@ -102,29 +102,31 @@ class StructurePrediction(baseClass):  #results of secondary-structure predictio
 
                 if cppSse.isHelix():
                     # create python Helix object using info from c++ SecondaryStructure object
-                    pyHelix = Helix(chain, sseIx, str(cppSse.getSecondaryStructureID()), cppSse.getStartPosition(), cppSse.getEndPosition())
+                    pyHelix = Helix(chain, sseIx, str(cppSse.getSecondaryStructureID()), cppSse.getStartPosition(),
+                                    cppSse.getEndPosition())
                     secelDict[sseIx] = pyHelix
                     secelType[sseIx] = 'helix'
                 elif cppSse.isSheet():
                     # create python strand object using info from c++ SecondaryStructure object
-                    pyStrand = Strand(chain, sseIx, str(cppSse.getSecondaryStructureID()), cppSse.getStartPosition(), cppSse.getEndPosition())
+                    pyStrand = Strand(chain, sseIx, str(cppSse.getSecondaryStructureID()), cppSse.getStartPosition(),
+                                      cppSse.getEndPosition())
                     secelDict[sseIx] = pyStrand
                     secelType[sseIx] = 'strand'
                     pass
-                
+
             # create new python StructurePrediction object and return it
             return StructurePrediction(secelDict, chain, params, comments, qparent, secelType)
         elif filename.split('.')[-1].lower() == 'pdb':
             # create python chain object using the python pdb file loader method
             chain = Chain.load(filename, qparent)
             i = 0
-            #for helixKey in chain.helices.keys():
+            # for helixKey in chain.helices.keys():
             #    print "helixKey " + str(helixKey)
             #    secelDict[i] = chain.helices[helixKey]
             #    i += 1
-            #print "done adding helices. i=" + str(i)
+            # print "done adding helices. i=" + str(i)
             #
-            #for sheetKey in chain.sheets.keys():
+            # for sheetKey in chain.sheets.keys():
             #    print "sheetKey " + str(sheetKey)
             #    for strandKey in chain.sheets[sheetKey].strandList.keys():
             #        print "strandKey " + str(strandKey)
@@ -132,54 +134,54 @@ class StructurePrediction(baseClass):  #results of secondary-structure predictio
             #        # self.sheets[sheetID].strandList[strandNo]=strand
             #        #secelDict[i] = chain.sheets[sheetKey]
             #        i += 1
-            #print "done adding sheets. i=" + str(i)
-            
+            # print "done adding sheets. i=" + str(i)
+
             # create secelDict from chain
-            #for index in chain.residueRange()[::-1]:
+            # for index in chain.residueRange()[::-1]:
             #    if chain.residueList[index] is inputRes:
             #        return index
 
             lastSecel = -1;
 
-            #iterate over all secels. sort is needed because chain.secelList is a dict
+            # iterate over all secels. sort is needed because chain.secelList is a dict
             for index in sorted(chain.secelList):
                 if chain.secelList[index] == lastSecel:
                     pass
-                    #print "same as last secel at " + str(index) + " (" + str(chain.secelList[index]) + ")"
+                    # print "same as last secel at " + str(index) + " (" + str(chain.secelList[index]) + ")"
                 else:
-                    #print "found new secel " + str(index) #+ " (" + str(chain.secelList[index]) + ")"
+                    # print "found new secel " + str(index) #+ " (" + str(chain.secelList[index]) + ")"
                     if chain.secelList[index].type == 'helix':
-                        #print "helix at index " + str(index)
+                        # print "helix at index " + str(index)
                         secelDict[i] = chain.secelList[index]
                         secelType[i] = 'helix'
                         lastSecel = chain.secelList[index]
                         i += 1
                     if chain.secelList[index].type == 'strand' and withStrands == 1:
-                        #print "strand at index " + str(index)
+                        # print "strand at index " + str(index)
                         secelDict[i] = chain.secelList[index]
                         secelType[i] = 'strand'
                         lastSecel = chain.secelList[index]
                         i += 1
-                
-            #chain.helices = {}
-            #chain.sheets = {}
-            #chain.secelList = {}
-            #chain.orphanStrands = {}
-            #chain.atoms = {}
+
+            # chain.helices = {}
+            # chain.sheets = {}
+            # chain.secelList = {}
+            # chain.orphanStrands = {}
+            # chain.atoms = {}
             for resIndex in chain.residueRange():
                 chain[resIndex].clearAtoms()
             # create new python StructurePrediction object and return it
             return StructurePrediction(secelDict, chain, params, comments, qparent, secelType)
-        
+
     def getSecelByIndex(self, index):
         """
         Given a residue number (often referred to as residue index), this 
         returns the Helix or Strand that contains it or a single-residue Coil
         if it is not a part of a Helix or Strand.
         """
-        lastSecelEnd = self.chain.getFirstResidueIndex()-1
-        nextSecelStart = self.chain.getLastResidueIndex()+1
-        
+        lastSecelEnd = self.chain.getFirstResidueIndex() - 1
+        nextSecelStart = self.chain.getLastResidueIndex() + 1
+
         for key in self.secelDict.keys():
             secel = self.secelDict[key]
             if secel.startIndex <= index and index <= secel.stopIndex:
@@ -188,9 +190,9 @@ class StructurePrediction(baseClass):  #results of secondary-structure predictio
                 lastSecelEnd = secel.stopIndex
             if secel.startIndex > index and secel.startIndex < nextSecelStart:
                 nextSecelStart = secel.startIndex
-                                
+
         return Coil(self.chain, 0, 'no-label', lastSecelEnd + 1, nextSecelStart - 1)
-        
+
     def setSecelSelection(self, secel):
         if not secel in self.secelDict.values():
             return
