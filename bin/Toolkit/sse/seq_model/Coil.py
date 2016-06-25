@@ -14,6 +14,7 @@ from .Secel import Secel
 
 
 class Coil(Secel):
+
     def __init__(self, chain, serialNo, label, startIndex, stopIndex, color=None):
         if qtEnabled and color == None:
             color = QtGui.QColor(60, 60, 60)

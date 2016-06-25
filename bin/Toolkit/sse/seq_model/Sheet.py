@@ -7,6 +7,7 @@ from .Strand import Strand
 
 
 class Sheet:
+
     def __init__(self, initialStrand=None):
         self.strandList = {}
         if initialStrand is not None:

@@ -14,6 +14,7 @@ from .Secel import Secel
 
 
 class Strand(Secel):
+
     def __init__(self, chain, strandNo, label, startIndex, stopIndex, color=None):
         if qtEnabled and color == None:
             color = QtGui.QColor(0, 180, 50)
