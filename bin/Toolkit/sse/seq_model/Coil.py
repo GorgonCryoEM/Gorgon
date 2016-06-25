@@ -4,21 +4,21 @@
 
 
 try:
-  from PyQt4 import QtGui
-  qtEnabled=True
+    from PyQt4 import QtGui
+
+    qtEnabled = True
 except:
-  qtEnabled=False
+    qtEnabled = False
 
 from .Secel import Secel
 
 
 class Coil(Secel):
+    def __init__(self, chain, serialNo, label, startIndex, stopIndex, color=None):
+        if qtEnabled and color == None:
+            color = QtGui.QColor(60, 60, 60)
+        Secel.__init__(self, chain, serialNo, label, startIndex, stopIndex, color)
+        self.type = "loop"
 
-  def __init__(self, chain, serialNo, label, startIndex, stopIndex, color=None):
-    if qtEnabled and color==None:
-      color=QtGui.QColor(60,60,60)
-    Secel.__init__(self, chain, serialNo, label, startIndex, stopIndex, color)
-    self.type="loop"
-
-  def toPDB(self):
-    return ''
+    def toPDB(self):
+        return ''
