@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 # Class:  Residue
 # Class Description: Class that models amino acid residues.  Residue objects aggregate Atom objects.
 #                    More info in: seq_model-doc.txt

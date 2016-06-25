@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 # Class:  Sheet
 # Class Description: Class that models beta sheet, which act as containers for beta strand objects
 #                    More info in: seq_model-doc.txt

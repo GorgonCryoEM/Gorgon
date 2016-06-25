@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 # Class:  Secel
 # Class Description:
 #                    More info in: seq_model-doc.txt

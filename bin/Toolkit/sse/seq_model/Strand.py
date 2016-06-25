@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 # Class:  Strand
 # Class Description: Class that models beta strands
 #                    More info in: seq_model-doc.txt

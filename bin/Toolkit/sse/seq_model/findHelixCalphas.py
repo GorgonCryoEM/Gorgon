@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 ###	based on dejavu2pdb by Matthew Baker 06/2003
 
 

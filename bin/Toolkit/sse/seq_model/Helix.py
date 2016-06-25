@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 # Class:  Helix
 # Class Description: Class that models alpha helices
 #                    More info in: seq_model-doc.txt

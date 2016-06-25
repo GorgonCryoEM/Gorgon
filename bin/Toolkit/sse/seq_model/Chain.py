@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 # Class:  Chain
 # Class Description: Class that models polypeptide chains, whih are sequences of Residue objects.
 #                    More info in: seq_model-doc.txt
@@ -984,7 +982,3 @@ This returns a string in the format of an SEQ file for the Chain.
   def getSequence(self):
     startIndex = min(self.residueRange())
     return repr(self).lstrip('.')
-
-if __name__ == '__main__':
-    mychain = Chain.load('1KPO.pdb')
-    print mychain

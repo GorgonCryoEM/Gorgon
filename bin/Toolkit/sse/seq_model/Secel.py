@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 # Class:  Secel
 # Class Description: Superclass that models secondary structure elements.  Subclassed by Helix, Strand, Coil
 #                    More info in: seq_model-doc.txt
