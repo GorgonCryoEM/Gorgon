@@ -54,7 +54,7 @@ namespace Foundation {
 
     inline string StringUtils::StringToUpper(string strToConvert) {
        for(unsigned int i=0;i<strToConvert.length();i++)   {
-          strToConvert[i] = (char)toupper(strToConvert[i]);
+          strToConvert[i] = (char)::toupper(strToConvert[i]);
        }
        return strToConvert;
     }
@@ -62,7 +62,7 @@ namespace Foundation {
     inline string StringUtils::StringToLower(string strToConvert)
     {
        for(unsigned int i=0;i<strToConvert.length();i++)  {
-          strToConvert[i] = (char)tolower(strToConvert[i]);
+          strToConvert[i] = (char)::tolower(strToConvert[i]);
        }
        return strToConvert;
     }

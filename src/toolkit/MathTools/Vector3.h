@@ -266,7 +266,7 @@ namespace GraphMatch {
 
     template <class T>
     inline Vector3<T> Vector3<T>::operator/(const T s) const {
-        assert(isZero(s));
+        assert(!isZero(s));
         return Vector3<T>(x / s, y / s, z / s);
     }
 
