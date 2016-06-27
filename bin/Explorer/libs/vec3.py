@@ -14,3 +14,6 @@ class Vec3(Vec3F):
             raise Exception("Wrong arguments:\nargs:%s\n%s" %(args, kwargs))
 
         super(Vec3, self).__init__(x, y, z)
+
+    def __repr__(self):
+        return "<Vec3(%f, %f, %f)>" % (self[0], self[1], self[2])
