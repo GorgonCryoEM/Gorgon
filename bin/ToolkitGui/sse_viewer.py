@@ -93,7 +93,6 @@ class SSEViewer(BaseViewer):
             print "Problem in sseViewer::drawGL: correspondenceEngine.draw"
 
     def loadHelixDataFromFile(self, fileName):
-        self.setCursor(QtCore.Qt.WaitCursor)
         try:
             self.renderer.loadHelixFile(str(fileName))
             self.loaded = True
@@ -103,7 +102,6 @@ class SSEViewer(BaseViewer):
             QtGui.QMessageBox.critical(self, "Unable to load data file", "The file might be corrupt, or the format may not be supported.", "Ok")
 
             self.loaded = False
-        self.setCursor(QtCore.Qt.WaitCursor)
             
     def loadHelixData(self):
         self.helixFileName = QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Helix Annotations"), "", self.tr(self.renderer.getSupportedHelixLoadFileFormats()))
