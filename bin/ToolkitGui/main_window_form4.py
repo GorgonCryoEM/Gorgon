@@ -31,6 +31,8 @@ class MainWindowForm4(QtGui.QMainWindow):
         self.viewers['skeleton'] = self.skeletonViewer
         self.viewers['sse'] = self.sseViewer
         self.viewers['calpha'] = self.calphaViewer
+
+        self.helixCorrespondanceFinder = SSEHelixCorrespondenceFinderForm(self)
         
         self.scene = []
 #         self.scene.append(self.volumeViewer)
@@ -47,7 +49,7 @@ class MainWindowForm4(QtGui.QMainWindow):
 #         exit()
         
     def load(self):
-        self.form = self.sseViewer.helixCorrespondanceFinder
+        self.form = self.helixCorrespondanceFinder
 #         self.form.show()
 #
 #         self.volumeViewer.load(self.args.volume)

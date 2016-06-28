@@ -34,7 +34,6 @@ class SSEViewer(BaseViewer):
         self.sheetLoaded = False
         self.renderer = SSERenderer()
         self.correspondenceEngine = SSEEngine()
-        self.createUI()
         self.selectEnabled = True
         self.app.viewers["sse"] = self
         self.model2Visible = True

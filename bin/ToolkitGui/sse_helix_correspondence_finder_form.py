@@ -24,9 +24,8 @@ from ToolkitGui.helix import create_helix
 
 class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
 
-    def __init__(self, main, parent=None):
+    def __init__(self, main):
         self.app = main
-        self.viewer = parent
         QtGui.QDialog.__init__(self, main)
         self.constants = IBackEnd()
         
