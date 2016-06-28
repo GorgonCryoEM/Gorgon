@@ -647,10 +647,8 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
         #Loading Observed SSEs
         print "loading observed SSEs"
         self.app.viewers['sse'].correspondenceEngine.loadSkeletonGraph()
-        observedHelices = {}
-        helixCount = 0
-        observedSheets = {}
-        sheetCount = 0
+        observedHelices = []
+        observedSheets = []
         sseCount = self.app.viewers['sse'].correspondenceEngine.getSkeletonSSECount()
 
         print "adding helices to list of observed helices"
@@ -663,11 +661,10 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
                 q1 = cppSse.getCornerCell3(1)
                 q2 = cppSse.getCornerCell3(2)
             
-                observedHelices[helixCount] = ObservedHelix(sseIx, q1, q2)
-                helixCount = helixCount + 1
-        
+                observedHelices.append(ObservedHelix(sseIx, q1, q2))
+
         #TODO: Mike this raises an error!;
-        print "found " + str(helixCount) + " helices and " + str(sheetCount) + " sheets"
+        print "found " + str(len(observedHelices)) + " helices and " + str(len(observedSheets)) + " sheets"
         structObserv = StructureObservation(helixDict = observedHelices, sheetDict = observedSheets)
         print "writing to correspondenceLibrary"
 
