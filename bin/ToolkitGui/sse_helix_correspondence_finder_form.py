@@ -677,7 +677,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
         print "finished creating basic correspondences"
         
     def create_all_helices(self):
-        corrLib = self.app.sseViewer.correspondenceLibrary
+        corrLib = self.correspondenceLibrary
         currCorrIndex = corrLib.getCurrentCorrespondenceIndex()
         matchList = corrLib.correspondenceList[currCorrIndex].matchList
         for match in matchList:
