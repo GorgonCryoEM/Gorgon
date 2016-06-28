@@ -26,6 +26,9 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
 
     def __init__(self, main):
         self.app = main
+        self.sseViewer = self.app.sseViewer
+        self.correspondenceLibrary = CorrespondenceLibrary()
+
         QtGui.QDialog.__init__(self, main)
         self.constants = IBackEnd()
         
@@ -46,8 +49,6 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
         self.dataLoaded = True
         self.allLoaded  = True
 
-        self.sseViewer = self.app.sseViewer
-        self.correspondenceLibrary = self.sseViewer.correspondenceLibrary
 #         exit()
 
     def createUI(self):
