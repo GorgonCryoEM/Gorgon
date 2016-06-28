@@ -88,7 +88,7 @@ class SSEViewer(BaseViewer):
     def extraDrawingRoutines(self):
         try:
             print termcolor.colored('correspondenceEngine.draw', 'yellow')
-            self.app.viewers['sse'].correspondenceEngine.drawAllPaths(0,True,True,True,False)
+            self.correspondenceEngine.drawAllPaths(0,True,True,True,False)
         except:
             print "Problem in sseViewer::drawGL: correspondenceEngine.draw"
 
