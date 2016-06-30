@@ -1064,17 +1064,16 @@ class CAlphaStructureEditor(QtGui.QWidget):
         stop indices for the current secel.  It uses this to set the Nterm and
         Cterm spin boxes in the helix editor.
         """
-        pass
-        # sseViewer = self.app.sseViewer
-        # if not sseViewer.currentMatch:
-        #     return
-        # startIx = sseViewer.currentMatch.predicted.startIndex
-        # stopIx = sseViewer.currentMatch.predicted.stopIndex
-        # #TODO: check on whether the current match is a helix or a strand
-        # self.helixNtermSpinBox.setValue(startIx)
-        # self.helixCtermSpinBox.setValue(stopIx)
-        # self.helixNtermResNameLabel.setText(self.currentChainModel[startIx].symbol3)
-        # self.helixCtermResNameLabel.setText(self.currentChainModel[stopIx].symbol3)
+        sseViewer = self.app.sseViewer
+        if not sseViewer.currentMatch:
+            return
+        startIx = sseViewer.currentMatch.predicted.startIndex
+        stopIx = sseViewer.currentMatch.predicted.stopIndex
+        #TODO: check on whether the current match is a helix or a strand
+        self.helixNtermSpinBox.setValue(startIx)
+        self.helixCtermSpinBox.setValue(stopIx)
+        self.helixNtermResNameLabel.setText(self.currentChainModel[startIx].symbol3)
+        self.helixCtermResNameLabel.setText(self.currentChainModel[stopIx].symbol3)
 
     def updateSelectedResidues(self):
         """
