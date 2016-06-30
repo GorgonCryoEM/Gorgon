@@ -14,7 +14,7 @@ class CAlphaSequenceDock(QtGui.QDockWidget):
         self.app = main
         self.viewer=viewer
         self.skeletonViewer = self.app.skeletonViewer
-        self.sseViewer = self.app.sseViewer
+        # self.sseViewer = self.app.sseViewer
         self.seqWidget = CAlphaSequenceWidget( structurePrediction, currentChainModel, self, self)
         self.setWidget(self.seqWidget)
         self.createActions()
@@ -23,7 +23,7 @@ class CAlphaSequenceDock(QtGui.QDockWidget):
         self.connect(self.seqWidget.structureEditor.mockSidechainsCheckBox,  QtCore.SIGNAL('stateChanged(int)'),  self.toggleMockSideChains)
         if main:
             self.connect(self.app.calphaViewer, QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.updateFromViewerSelection)
-            self.connect(self.app.sseViewer, QtCore.SIGNAL("SSE selected"), self.updateFromSSESelection)
+            # self.connect(self.app.sseViewer, QtCore.SIGNAL("SSE selected"), self.updateFromSSESelection)
     
     @classmethod
     def changeDockVisibility(cls, main, viewer, structurePrediction, currentChainModel):

@@ -47,8 +47,8 @@ class CAlphaStructureEditor(QtGui.QWidget):
         if self.parentWidget().parentWidget().app:
             self.updateCurrentMatch() #In case an observed helix is already selected
             self.CAlphaViewer = self.app.calphaViewer
-            self.connect(self.app.sseViewer,        QtCore.SIGNAL("SSE selected"), self.updateCurrentMatch)
-            self.connect(self.app.sseViewer,        QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.posUpdateValues)
+            # self.connect(self.app.sseViewer,        QtCore.SIGNAL("SSE selected"), self.updateCurrentMatch)
+            # self.connect(self.app.sseViewer,        QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.posUpdateValues)
             self.connect(self.posMoveDict['x'],     QtCore.SIGNAL('valueChanged(double)'), self.posMoveCM_x)
             self.connect(self.posMoveDict['y'],     QtCore.SIGNAL('valueChanged(double)'), self.posMoveCM_y)
             self.connect(self.posMoveDict['z'],     QtCore.SIGNAL('valueChanged(double)'), self.posMoveCM_z)
