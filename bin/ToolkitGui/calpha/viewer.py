@@ -478,8 +478,7 @@ class CAlphaViewer(BaseViewer):
 #         self.flexibleFitter = CAlphaFlexibleFittingForm(self.app, self)
         
     def createActions(self):
-        seqDockAct = QtGui.QAction(self.tr("Semi-&automatic Atom Placement..."), self)
-        seqDockAct.setStatusTip(self.tr("Perform partly automated atom placement: calpha-viewer"))
+        seqDockAct = QtGui.QAction(self.tr("Semi-&automatic Atom Placement: calpha-viewer"), self)
         seqDockAct.setCheckable(True)
         seqDockAct.setChecked(False)
         self.app.docksMenu.addAction(seqDockAct)
