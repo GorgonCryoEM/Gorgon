@@ -29,7 +29,11 @@ class MainWindowForm3(QtGui.QMainWindow):
         self.calphaViewer = CAlphaViewer(self)
         self.sseViewer = SSEViewer(self)
         
-        self.scene = [self.volumeViewer, self.skeletonViewer, self.calphaViewer, self.sseViewer]
+        self.scene = []
+        self.scene.append(self.volumeViewer)
+        self.scene.append(self.skeletonViewer)
+        self.scene.append(self.calphaViewer)
+        self.scene.append(self.sseViewer)
         
 #         for i in xrange(-100, 101, 50):
 #             self.scene.append(Grid3D(self, (i, -100, i), (i, 100, i)))
