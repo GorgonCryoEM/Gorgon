@@ -1,6 +1,6 @@
 import sys
 from PyQt4 import QtCore, QtGui
-from ui_dialog_model import Ui_DialogCAlphaChooseChainModel
+from ui_model import Ui_DialogCAlphaChooseChainModel
 from Toolkit.sse.seq_model.Chain import Chain
 
 

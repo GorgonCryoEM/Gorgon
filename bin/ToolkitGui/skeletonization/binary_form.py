@@ -1,5 +1,5 @@
 from PyQt4 import QtCore, QtGui
-from ui_dialog_binary import Ui_DialogVolumeBinarySkeletonization
+from ui_binary import Ui_DialogVolumeBinarySkeletonization
 
 
 class VolumeBinarySkeletonizationForm(QtGui.QDialog):
