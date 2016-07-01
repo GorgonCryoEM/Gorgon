@@ -4,9 +4,9 @@ import sys, os
 from Explorer import Camera
 from Explorer.volume_viewer import VolumeViewer
 from Explorer.skeleton_viewer import SkeletonViewer
-from ToolkitGui.sse.volume_sse_builder_form import VolumeSSEBuilderForm
+from ToolkitGui.sse.volume_builder_form import VolumeSSEBuilderForm
 from ToolkitGui.calpha.viewer import CAlphaViewer
-from ToolkitGui.sse.sse_viewer import SSEViewer
+from ToolkitGui.sse.viewer import SSEViewer
 from Explorer import Grid3D
 
 

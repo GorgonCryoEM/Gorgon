@@ -1,5 +1,5 @@
 from PyQt4 import QtCore, QtGui
-from ui_dialog_sse_helix_correspondence_finder import Ui_DialogSSEHelixCorrespondenceFinder
+from ui_dialog_helix_correspondence_finder import Ui_DialogSSEHelixCorrespondenceFinder
 from libpytoolkit import SSEEngine, SSEResult, IBackEnd#, Vec3F
 from libpytoolkit import setHelixConstraint
 from Toolkit.sse.correspondence.CorrespondenceLibrary import CorrespondenceLibrary
