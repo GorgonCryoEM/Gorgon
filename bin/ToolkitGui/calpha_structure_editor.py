@@ -1046,12 +1046,12 @@ class CAlphaStructureEditor(QtGui.QWidget):
 
         self.tabWidget.addTab(self.helixTab, self.tr('Helix Editor'))
         self.tabWidget.addTab(self.atomicTab, self.tr('Atomic Editor'))
-        self.tabWidget.addTab(self.loopTab, self.tr('Loop Editor'))
+        # self.tabWidget.addTab(self.loopTab, self.tr('Loop Editor'))
         self.tabWidget.addTab(self.positionTab, self.tr('Position'))
 
         self.setupHelixTab()
         self.setupAtomicTab()
-        self.setupLoopTab()
+        # self.setupLoopTab()
         self.setupPositionTab()
 
         layout.addLayout(topLayout)
