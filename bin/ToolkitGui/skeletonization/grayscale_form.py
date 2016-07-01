@@ -1,5 +1,5 @@
 from PyQt4 import QtCore, QtGui
-from ui_dialog_volume_grayscale_skeletonization import Ui_DialogVolumeGrayscaleSkeletonization
+from ui_dialog_grayscale import Ui_DialogVolumeGrayscaleSkeletonization
 import threading
 
 
