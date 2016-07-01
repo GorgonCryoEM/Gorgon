@@ -687,15 +687,15 @@ class CAlphaStructureEditor(QtGui.QWidget):
                 self.atomicResNumbers[i].setText('')
         self.atomFindPositionPossibilities()
 
-    def setLoopEditorValues(self, newSelection):
-        if(newSelection):
-            self.loopStartSpinBox.setValue(newSelection[0])
-            self.loopStopSpinBox.setValue(newSelection[-1])
-            if(self.builder):
-                self.builder.setLoopAtoms(newSelection[0], newSelection[-1])
-        else:
-            self.loopStartSpinBox.setValue(0)
-            self.loopStopSpinBox.setValue(0)
+    # def setLoopEditorValues(self, newSelection):
+    #     if(newSelection):
+    #         self.loopStartSpinBox.setValue(newSelection[0])
+    #         self.loopStopSpinBox.setValue(newSelection[-1])
+    #         if(self.builder):
+    #             self.builder.setLoopAtoms(newSelection[0], newSelection[-1])
+    #     else:
+    #         self.loopStartSpinBox.setValue(0)
+    #         self.loopStopSpinBox.setValue(0)
 
     def setHelixEditorValues(self, newSelection):
         if(newSelection):
@@ -1083,7 +1083,7 @@ class CAlphaStructureEditor(QtGui.QWidget):
         position editor.
         """
         selection = self.currentChainModel.getSelection()
-        self.setLoopEditorValues(selection)
+        # self.setLoopEditorValues(selection)
         self.setHelixEditorValues(selection)
         self.setResidues(selection)
         self.posUpdateValues()
