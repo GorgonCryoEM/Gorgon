@@ -479,7 +479,7 @@ class CAlphaViewer(BaseViewer):
         
     def createActions(self):
         seqDockAct = QtGui.QAction(self.tr("Semi-&automatic Atom Placement..."), self)
-        seqDockAct.setStatusTip(self.tr("Perform partly automated atom placement"))
+        seqDockAct.setStatusTip(self.tr("Perform partly automated atom placement: calpha-viewer"))
         seqDockAct.setCheckable(True)
         seqDockAct.setChecked(False)
         self.app.docksMenu.addAction(seqDockAct)

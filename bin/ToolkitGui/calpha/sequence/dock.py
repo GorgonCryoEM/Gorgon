@@ -111,7 +111,7 @@ class CAlphaSequenceDock(QtGui.QDockWidget):
                 raise CAlphaSequenceError
     
     def createActions(self):
-        seqDockAct = QtGui.QAction(self.tr("Partly &Automated Atom Placement"), self)
+        seqDockAct = QtGui.QAction(self.tr("Partly &Automated Atom Placement: sequence-dock"), self)
         self.seqDockAct = seqDockAct
         seqDockAct.setStatusTip(self.tr("Place atoms based on predicted SSE's"))
         seqDockAct.setCheckable(True)
