@@ -1,5 +1,5 @@
 from PyQt4 import Qt,QtGui,QtCore
-from .structure_editor import CAlphaStructureEditor
+from ToolkitGui.calpha.structure_editor import CAlphaStructureEditor
 from .scrollable_sequence_view import CAlphaScrollableSequenceView
 from .global_sequence_view import CAlphaGlobalSequenceView
 
