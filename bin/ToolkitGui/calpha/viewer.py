@@ -7,7 +7,7 @@ from Toolkit.sse.seq_model.Chain import Chain
 from ToolkitGui.calpha.sequence.dock import CAlphaSequenceDock
 # from atom_visualization_form import AtomVisualizationForm
 from Toolkit.sse.correspondence.StructurePrediction import StructurePrediction
-from .choose_chain.model import CAlphaChooseChainModel
+# from .choose_chain.model import CAlphaChooseChainModel
 # from calpha_flexible_fitting_form import CAlphaFlexibleFittingForm
 
 from Explorer import Vec3
