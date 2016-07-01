@@ -7,7 +7,7 @@ from Explorer.skeleton_viewer import SkeletonViewer
 from .sse_helix_correspondence_finder_form import SSEHelixCorrespondenceFinderForm
 from .sse_viewer import SSEViewer
 from Toolkit.sse.correspondence.StructurePrediction import StructurePrediction
-from ToolkitGui.calpha.calpha_viewer import CAlphaViewer
+from ToolkitGui.calpha.viewer import CAlphaViewer
 
 
 class MainWindowForm5(QtGui.QMainWindow):

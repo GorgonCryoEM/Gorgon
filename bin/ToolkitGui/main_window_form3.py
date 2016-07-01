@@ -5,7 +5,7 @@ from Explorer import Camera
 from Explorer.volume_viewer import VolumeViewer
 from Explorer.skeleton_viewer import SkeletonViewer
 from .volume_sse_builder_form import VolumeSSEBuilderForm
-from ToolkitGui.calpha.calpha_viewer import CAlphaViewer
+from ToolkitGui.calpha.viewer import CAlphaViewer
 from .sse_viewer import SSEViewer
 from Explorer import Grid3D
 

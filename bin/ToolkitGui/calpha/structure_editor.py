@@ -6,8 +6,8 @@ from libpytoolkit import PDBAtom, PDBBond
 import math
 from Explorer.libs import *
 from ToolkitGui.helix import create_helix
-from .calpha_structure_editor_command_atom_placement import CAlphaStructureEditorCommandAtomPlacement
-from .calpha_structure_editor_command_change_position import CAlphaStructureEditorCommandChangePosition
+from .structure_editor_command_atom_placement import CAlphaStructureEditorCommandAtomPlacement
+from .structure_editor_command_change_position import CAlphaStructureEditorCommandChangePosition
 
 
 class CAlphaStructureEditor(QtGui.QWidget):

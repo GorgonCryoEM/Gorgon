@@ -1,6 +1,6 @@
 from PyQt4 import QtGui
 from Toolkit.sse.seq_model.Chain import Chain
-from ui_dialog_calpha_choose_chain_to_load import Ui_DialogCAlphaChooseChainToLoad
+from ui_dialog_choose_chain_to_load import Ui_DialogCAlphaChooseChainToLoad
 
 
 class CAlphaChooseChainToLoadForm(QtGui.QDialog, Ui_DialogCAlphaChooseChainToLoad):
