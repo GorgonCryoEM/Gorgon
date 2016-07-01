@@ -4,7 +4,7 @@ import sys, os
 from Explorer import Camera
 from Explorer.volume_viewer import VolumeViewer
 from Explorer.skeleton_viewer import SkeletonViewer
-from .volume_grayscale_skeletonization_form import VolumeGrayscaleSkeletonizationForm
+from ToolkitGui.skeletonization.volume_grayscale_skeletonization_form import VolumeGrayscaleSkeletonizationForm
 
 
 class MainWindowForm2(QtGui.QMainWindow):
