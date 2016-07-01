@@ -4,8 +4,8 @@ import sys, os
 from Explorer import Camera
 from Explorer.volume_viewer import VolumeViewer
 from Explorer.skeleton_viewer import SkeletonViewer
-from .sse_helix_correspondence_finder_form import SSEHelixCorrespondenceFinderForm
-from .sse_viewer import SSEViewer
+from ToolkitGui.sse.sse_helix_correspondence_finder_form import SSEHelixCorrespondenceFinderForm
+from ToolkitGui.sse.sse_viewer import SSEViewer
 from Toolkit.sse.correspondence.StructurePrediction import StructurePrediction
 from ToolkitGui.calpha.viewer import CAlphaViewer
 
