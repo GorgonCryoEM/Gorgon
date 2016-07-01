@@ -1,7 +1,7 @@
 from PyQt4 import Qt,QtGui,QtCore
 from ToolkitGui.calpha.structure_editor import CAlphaStructureEditor
-from .scrollable_sequence_view import CAlphaScrollableSequenceView
-from .global_sequence_view import CAlphaGlobalSequenceView
+from .scrollable_view import CAlphaScrollableSequenceView
+from .global_view import CAlphaGlobalSequenceView
 
 
 class CAlphaSequenceWidget(QtGui.QWidget):

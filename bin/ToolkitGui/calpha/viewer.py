@@ -4,7 +4,7 @@ from Explorer.base_viewer import BaseViewer
 from .choose_chain.choose_chain_to_load_form import CAlphaChooseChainToLoadForm
 from .atom_placer_form import CAlphaAtomPlacerForm
 from Toolkit.sse.seq_model.Chain import Chain
-from ToolkitGui.calpha.sequence.sequence_dock import CAlphaSequenceDock
+from ToolkitGui.calpha.sequence.dock import CAlphaSequenceDock
 # from atom_visualization_form import AtomVisualizationForm
 from Toolkit.sse.correspondence.StructurePrediction import StructurePrediction
 from .choose_chain.choose_chain_model import CAlphaChooseChainModel

@@ -1,5 +1,5 @@
 from PyQt4 import Qt,QtGui,QtCore
-from sequence_view import CAlphaSequenceView
+from view import CAlphaSequenceView
 
 
 class CAlphaScrollableSequenceView(QtGui.QScrollArea):
