@@ -8,6 +8,7 @@ from ToolkitGui.sse.volume_builder_form import VolumeSSEBuilderForm
 from ToolkitGui.calpha.viewer import CAlphaViewer
 from ToolkitGui.sse.viewer import SSEViewer
 from Explorer import Grid3D
+from Toolkit.sse.correspondence.StructurePrediction import StructurePrediction
 
 
 class MainWindowForm3(QtGui.QMainWindow):
@@ -19,6 +20,8 @@ class MainWindowForm3(QtGui.QMainWindow):
         self.menubar = self.menuBar()
         self.docksMenu = self.menubar.addMenu('&Docks')
         
+        self.structPred = StructurePrediction.load(self.args.sequence, self)
+
         self.viewers = {}
         
         self.volumeViewer = VolumeViewer(self)
