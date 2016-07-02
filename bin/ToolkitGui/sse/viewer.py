@@ -187,10 +187,6 @@ class SSEViewer(BaseViewer):
                     self.emit(QtCore.SIGNAL("SSE selected"))
                     break
 
-    def fitSelectedSSEs(self):
-        self.renderer.fitSelectedSSEs(self.app.volumeViewer.renderer.getVolume())
-        self.modelChanged()
-        
     def updateCorrespondences(self, corrs):
         self.correspondences  = corrs
         
