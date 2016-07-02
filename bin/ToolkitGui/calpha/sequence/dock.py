@@ -40,7 +40,7 @@ class CAlphaSequenceDock(QtGui.QDockWidget):
                 currentChainModel[i] = res
                 
         if cls.__dock:
-            if cls.__dock.app.docksMenu.getAction("seqDock").isChecked():
+            if True:
                 try:
                     CAlphaSequenceDock.checkPredictionVsModel(structurePrediction, currentChainModel)
                 except CAlphaSequenceError:
