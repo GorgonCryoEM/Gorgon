@@ -19,6 +19,7 @@ class CAlphaStructureEditor(QtGui.QWidget):
             self.app = self.parentWidget().parentWidget().app
 
         self.currentChainModel = currentChainModel
+        self.app.calphaViewer.currentMatch = None
         self.builder = False
         self.atomJustAdded = None
         self.possibleAtomsList = []
@@ -1064,7 +1065,7 @@ class CAlphaStructureEditor(QtGui.QWidget):
         stop indices for the current secel.  It uses this to set the Nterm and
         Cterm spin boxes in the helix editor.
         """
-        sseViewer = self.app.sseViewer
+        sseViewer = self.app.calphaViewer
         if not sseViewer.currentMatch:
             return
         startIx = sseViewer.currentMatch.predicted.startIndex
