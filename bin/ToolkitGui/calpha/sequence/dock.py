@@ -17,7 +17,7 @@ class CAlphaSequenceDock(QtGui.QDockWidget):
         # self.sseViewer = self.app.sseViewer
         self.seqWidget = CAlphaSequenceWidget( structurePrediction, currentChainModel, self, self)
         self.setWidget(self.seqWidget)
-        self.createActions()
+        # self.createActions()
         CAlphaSequenceDock.__dock = self
         self.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea)
         self.connect(self.seqWidget.structureEditor.mockSidechainsCheckBox,  QtCore.SIGNAL('stateChanged(int)'),  self.toggleMockSideChains)
@@ -110,14 +110,14 @@ class CAlphaSequenceDock(QtGui.QDockWidget):
                 print "Model sequence is not a subset of the structure prediction sequence!"
                 raise CAlphaSequenceError
     
-    def createActions(self):
-        seqDockAct = QtGui.QAction(self.tr("Partly &Automated Atom Placement: sequence-dock"), self)
-        self.seqDockAct = seqDockAct
-        seqDockAct.setStatusTip(self.tr("Place atoms based on predicted SSE's"))
-        seqDockAct.setCheckable(True)
-        seqDockAct.setChecked(False)
-        self.connect(seqDockAct, QtCore.SIGNAL("triggered()"), CAlphaSequenceDock.changeDockVisibility)
-        self.app.docksMenu.addAction(seqDockAct)
+    # def createActions(self):
+    #     seqDockAct = QtGui.QAction(self.tr("Partly &Automated Atom Placement: sequence-dock"), self)
+    #     self.seqDockAct = seqDockAct
+    #     seqDockAct.setStatusTip(self.tr("Place atoms based on predicted SSE's"))
+    #     seqDockAct.setCheckable(True)
+    #     seqDockAct.setChecked(False)
+    #     self.connect(seqDockAct, QtCore.SIGNAL("triggered()"), CAlphaSequenceDock.changeDockVisibility)
+    #     self.app.docksMenu.addAction(seqDockAct)
     
     def changeCurrentChainModel(self, currentChainModel):
         '''
