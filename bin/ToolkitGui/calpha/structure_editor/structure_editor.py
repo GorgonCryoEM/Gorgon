@@ -978,11 +978,11 @@ class CAlphaStructureEditor(QtGui.QWidget):
         stop indices for the current secel.  It uses this to set the Nterm and
         Cterm spin boxes in the helix editor.
         """
-        sseViewer = self.app.calphaViewer
-        if not sseViewer.currentMatch:
+        viewer = self.app.calphaViewer
+        if not viewer.currentMatch:
             return
-        startIx = sseViewer.currentMatch.predicted.startIndex
-        stopIx = sseViewer.currentMatch.predicted.stopIndex
+        startIx = viewer.currentMatch.predicted.startIndex
+        stopIx = viewer.currentMatch.predicted.stopIndex
         #TODO: check on whether the current match is a helix or a strand
         self.helixNtermSpinBox.setValue(startIx)
         self.helixCtermSpinBox.setValue(stopIx)
