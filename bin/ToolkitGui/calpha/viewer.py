@@ -2,7 +2,7 @@ from PyQt4 import QtGui, QtCore, QtOpenGL
 from libpytoolkit import CAlphaRenderer
 from Explorer.base_viewer import BaseViewer
 from .choose_chain.to_load_form import CAlphaChooseChainToLoadForm
-from .atom_placer_form import CAlphaAtomPlacerForm
+# from .atom_placer_form import CAlphaAtomPlacerForm
 from Toolkit.sse.seq_model.Chain import Chain
 from ToolkitGui.calpha.sequence.dock import CAlphaSequenceDock
 # from atom_visualization_form import AtomVisualizationForm
@@ -468,15 +468,7 @@ class CAlphaViewer(BaseViewer):
             z = pos.z()*self.renderer.getSpacingZ() + self.renderer.getOriginZ()
             self.app.mainCamera.setCenter(Vec3(x, y, z))
             self.modelChanged()
-    
-    def createUI(self):
-        self.createChildWindows()
 
-    def createChildWindows(self):
-        self.manualAtomPlacer = CAlphaAtomPlacerForm(self.app, self, self.main_chain, self.structPred, self)
-#         self.chooseChainModel = CAlphaChooseChainModel(self.app, self)
-#         self.flexibleFitter = CAlphaFlexibleFittingForm(self.app, self)
-        
     def createActions(self):
         seqDockAct = QtGui.QAction(self.tr("Semi-&automatic Atom Placement: calpha-viewer"), self)
         seqDockAct.setCheckable(True)
