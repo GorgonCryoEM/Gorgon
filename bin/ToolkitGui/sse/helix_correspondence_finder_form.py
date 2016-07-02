@@ -940,7 +940,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
         def constrainPredictedHelix_po():
             correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
             if(correspondenceIndex >= 0):
-                corr = self.sseViewer.correspondenceLibrary.correspondenceList[correspondenceIndex]
+                corr = self.correspondenceLibrary.correspondenceList[correspondenceIndex]
                 for j in range(len(corr.matchList)):
                     match = corr.matchList[j]
                     if(match and match.observed and (match.observed.label == observed)):
@@ -950,7 +950,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
                         newMatch = match
                 match = newMatch
                 match.constrained = constrain
-                match.observed = self.sseViewer.correspondenceLibrary.structureObservation.helixDict[observed]
+                match.observed = self.correspondenceLibrary.structureObservation.helixDict[observed]
             self.selectCorrespondence(correspondenceIndex)
         return constrainPredictedHelix_po
     
@@ -958,9 +958,9 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
         def constrainPredictedStrand_po():
             correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
             if(correspondenceIndex >= 0):
-                corr = self.sseViewer.correspondenceLibrary.correspondenceList[correspondenceIndex]
+                corr = self.correspondenceLibrary.correspondenceList[correspondenceIndex]
                 match = corr.matchList[predicted]
-                match.observed = self.sseViewer.correspondenceLibrary.structureObservation.sheetDict[observed]
+                match.observed = self.correspondenceLibrary.structureObservation.sheetDict[observed]
                 match.constrained = constrain # add or remove constraint
             self.selectCorrespondence(correspondenceIndex)
         return constrainPredictedStrand_po
@@ -974,9 +974,9 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
             matchKey = 0
             matchKeys = []
             correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
-            numH = len(self.sseViewer.correspondenceLibrary.structureObservation.helixDict)
+            numH = len(self.correspondenceLibrary.structureObservation.helixDict)
             if(correspondenceIndex >= 0):
-                corr = self.sseViewer.correspondenceLibrary.correspondenceList[correspondenceIndex]
+                corr = self.correspondenceLibrary.correspondenceList[correspondenceIndex]
                 for i in range(len(corr.matchList)):
                     m = corr.matchList[i]
                     if(m.constrained):
@@ -1002,9 +1002,9 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
                     self.ui.tableWidgetCorrespondenceList.setRangeSelected(QtGui.QTableWidgetSelectionRange(matchItem*2, 0, matchItem*2, 2),True)
 
             if(self.app.mainCamera.mouseRightPressed):
-                predictedHelices = self.sseViewer.correspondenceLibrary.structurePrediction.helixDict
-                predictedStrands = self.sseViewer.correspondenceLibrary.structurePrediction.strandDict
-                predictedSSEs = self.sseViewer.correspondenceLibrary.structurePrediction.secelDict
+                predictedHelices = self.correspondenceLibrary.structurePrediction.helixDict
+                predictedStrands = self.correspondenceLibrary.structurePrediction.strandDict
+                predictedSSEs = self.correspondenceLibrary.structurePrediction.secelDict
                 menu = QtGui.QMenu(self.tr("Constrain observed SSE " + str(observedSSE+1)))
                 i_h = 0
                 i_s = 0
