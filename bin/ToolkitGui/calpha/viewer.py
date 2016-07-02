@@ -509,21 +509,6 @@ class CAlphaViewer(BaseViewer):
 #         self.emitViewerSetCenter()
         self.modelChanged()
         
-    def runSSEHunter(self, threshold, resolution, correlationCoefficient, skeletonCoefficient, geometryCoefficient):
-        if(self.loaded):
-            self.unloadData()
-        self.fileName = ""
-        
-        volumeViewer = self.app.volumeViewer
-        skeletonViewer = self.app.skeletonViewer
-        self.renderer.getSSEHunterAtoms(volumeViewer.renderer.getVolume(), skeletonViewer.renderer.getMesh(), resolution, threshold, correlationCoefficient, skeletonCoefficient, geometryCoefficient)
-
-        self.dirty = False
-        self.loaded = True
-        self.emitModelLoadedPreDraw()
-        self.emitModelLoaded()
-        self.emitViewerSetCenter()
-        
     def updateTotalScoreSSEHunterAtoms(self, correlationCoefficient, skeletonCoefficient, geometryCoefficient):
         self.renderer.updateTotalScoreSSEHunterAtoms(correlationCoefficient, skeletonCoefficient, geometryCoefficient)
         self.modelChanged()
