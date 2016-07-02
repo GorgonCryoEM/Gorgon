@@ -595,7 +595,10 @@ class CAlphaViewer(BaseViewer):
                 self.main_chain.setSelection([atom.getResSeq()])
             print self.main_chain.getSelection()
 #             self.emitAtomSelectionUpdated(self.main_chain.getSelection())
-            self.app.form.atomSelectionChanged(self.main_chain.getSelection())
+            try:
+                self.app.form.atomSelectionChanged(self.main_chain.getSelection())
+            except:
+                print "Exception: self.app.form.atomSelectionChanged"
                 
         if event.button() == QtCore.Qt.RightButton and self.centerOnRMB:
             self.centerOnSelectedAtoms(argv[0], argv[1], argv[2], argv[3], argv[4], argv[5], argv[6])
