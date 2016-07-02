@@ -271,9 +271,6 @@ class CAlphaStructureEditor(QtGui.QWidget):
 
         if not self.app.calphaViewer.loaded:
             self.app.calphaViewer.loaded = True
-        # self.CAlphaViewer.modelChanged()
-        #         else:
-        #             self.CAlphaViewer.modelChanged()
 
         self.loaded = True
         self.app.calphaViewer.modelChanged()
