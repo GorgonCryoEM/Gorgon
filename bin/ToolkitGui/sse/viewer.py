@@ -56,23 +56,6 @@ class SSEViewer(BaseViewer):
         
         self.selectedObjects = []
         self.correspondences = []
-    
-    def createUI(self):
-#         self.createActions()
-        self.createChildWindows()
-
-#     def createActions(self):
-#         self.connect(openHelixAct, QtCore.SIGNAL("triggered()"), self.loadHelixData)
-#         self.connect(openSheetAct, QtCore.SIGNAL("triggered()"), self.loadSheetData)
-#         self.connect(saveHelixAct, QtCore.SIGNAL("triggered()"), self.saveHelixData)
-#         self.connect(saveSheetAct, QtCore.SIGNAL("triggered()"), self.saveSheetData)
-#         self.connect(closeAct, QtCore.SIGNAL("triggered()"), self.unloadData)
-#         self.connect(fitAct, QtCore.SIGNAL("triggered()"), self.fitSelectedSSEs)
-                  
-    def createChildWindows(self):
-#         self.sseBuilder = VolumeSSEBuilderForm(self.app, self, self)
-#         self.sequencePredictor = SSESequencePredictorForm(self.app, self, self)
-        self.helixCorrespondanceFinder = SSEHelixCorrespondenceFinderForm(self.app, self)
         
     def drawGL(self):
 #         BaseViewer.drawGL(self)
