@@ -636,3 +636,31 @@ class CAlphaViewer(BaseViewer):
     
     def emitAtomSelectionUpdated(self, selection):
         self.emit(QtCore.SIGNAL("atomSelectionUpdated(PyQt_PyObject)"), selection)
+
+    def updateCurrentMatch(self, sseType, sseIndex):
+        # When an element is selected in this viewer, if that item is a helix,
+        # this sets self.currentMatch to the observed, predicted match for that
+        # helix. It then emits an 'SSE selected' signal.
+        print "Helix #: ", sseIndex
+
+        self.currentMatch = None
+
+        if self.multipleSelection == False:
+            self.selectedObjects = []
+
+        self.selectedObjects.append(sseIndex)
+
+        if sseType == 0:
+            try:
+                self.correspondenceLibrary
+            except AttributeError:
+                return
+            corrLib = self.correspondenceLibrary
+            currCorrIndex = corrLib.getCurrentCorrespondenceIndex()
+            matchList = corrLib.correspondenceList[currCorrIndex].matchList
+            for match in matchList:
+                if match.observed is not None and match.observed.label == sseIndex:
+                    self.currentMatch = match
+                    print self.currentMatch
+                    self.emit(QtCore.SIGNAL("SSE selected"))
+                    break
