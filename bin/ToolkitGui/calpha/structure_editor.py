@@ -688,16 +688,6 @@ class CAlphaStructureEditor(QtGui.QWidget):
                 self.atomicResNumbers[i].setText('')
         self.atomFindPositionPossibilities()
 
-    # def setLoopEditorValues(self, newSelection):
-    #     if(newSelection):
-    #         self.loopStartSpinBox.setValue(newSelection[0])
-    #         self.loopStopSpinBox.setValue(newSelection[-1])
-    #         if(self.builder):
-    #             self.builder.setLoopAtoms(newSelection[0], newSelection[-1])
-    #     else:
-    #         self.loopStartSpinBox.setValue(0)
-    #         self.loopStopSpinBox.setValue(0)
-
     def setHelixEditorValues(self, newSelection):
         if(newSelection):
             self.helixNtermSpinBox.setValue(newSelection[0])
@@ -705,46 +695,6 @@ class CAlphaStructureEditor(QtGui.QWidget):
         else:
             self.helixNtermSpinBox.setValue(0)
             self.helixCtermSpinBox.setValue(0)
-
-    def updateLoopEditorEnables(self):
-        pass
-#         volumeViewer = self.app.volumeViewer
-#
-#         self.loopVolumeLoadButton.setVisible(not volumeViewer.loaded)
-#         if(volumeViewer.loaded):
-#             if(self.loopBuildingStarted):
-#                 self.loopVolumeLoadedLabel.setVisible(True)
-#                 self.loopVolumeLoadedLabel.setText(self.tr('Place starting point: \tCtrl/Apple + Click \nPlace loop atoms: \tAlt + Mouse Move \nSketch intended loop: \tShift + Mouse Move \nCancel current loop: \tEsc'))
-#             else:
-#                 self.loopVolumeLoadedLabel.setVisible(False)
-#         else:
-#             self.loopVolumeLoadedLabel.setVisible(True)
-#             self.loopVolumeLoadedLabel.setText(self.tr('Volume not loaded.  Please load a volume to place loops.'))
-#
-#         self.loopStartEndBuildingButton.setEnabled(volumeViewer.loaded)
-#         self.loopStartLabel.setEnabled(volumeViewer.loaded)
-#         self.loopStartSpinBox.setEnabled(volumeViewer.loaded)
-#         self.loopStopLabel.setEnabled(volumeViewer.loaded)
-#         self.loopStopSpinBox.setEnabled(volumeViewer.loaded)
-
-    def startEndLoopBuilding(self):
-        self.loopBuildingStarted = not self.loopBuildingStarted
-        self.updateLoopEditorEnables()
-
-        if(self.loopBuildingStarted):
-            self.loopStartEndBuildingButton.setText('End Loop Placement')
-            self.setCursor(QtCore.Qt.BusyCursor)
-            self.builder = CAlphaInteractiveLoopBuilder(self.app, self.currentChainModel)
-            self.builder.setLoopAtoms(self.loopStartSpinBox.value(), self.loopStopSpinBox.value())
-            self.setCursor(QtCore.Qt.ArrowCursor)
-            self.bringToFront()
-        else:
-            self.loopStartEndBuildingButton.setText('Start Loop Placement')
-            del self.builder
-            self.builder = False
-
-    def getLoopLength(self):
-        return self.loopStopSpinBox.value() - self.loopStartSpinBox.value()
 
     def setupAtomicTab(self):
         #These go in the atomic tab
