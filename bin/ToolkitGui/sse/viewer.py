@@ -47,7 +47,7 @@ class SSEViewer(BaseViewer):
 #         self.visualizationOptions.ui.checkBoxModel3Visible.setVisible(False)
 #         self.visualizationOptions.ui.pushButtonModel3Color.setVisible(False)
         
-        self.connect(self, QtCore.SIGNAL('elementSelected (int, int, int, int, int, int, QMouseEvent)'), self.updateCurrentMatch)
+        # self.connect(self, QtCore.SIGNAL('elementSelected (int, int, int, int, int, int, QMouseEvent)'), self.updateCurrentMatch)
         
 #         self.connect(self.app.viewers["volume"], QtCore.SIGNAL('modelLoaded()'), self.updateActionsAndMenus)
 #         self.connect(self.app.viewers["volume"], QtCore.SIGNAL('modelUnloaded()'), self.updateActionsAndMenus)
@@ -142,33 +142,33 @@ class SSEViewer(BaseViewer):
             if self.correspondenceEngine.getSkeletonSSE(i).isSheet():
                 self.renderer.loadGraphSSE(i, self.correspondenceEngine.getSkeletonSSE(i), offsetx, offsety, offsetz, scalex, scaley, scalez)
 
-    def updateCurrentMatch(self, sseType, sseIndex):
-        # When an element is selected in this viewer, if that item is a helix,
-        # this sets self.currentMatch to the observed, predicted match for that
-        # helix. It then emits an 'SSE selected' signal.
-        print "Helix #: ", sseIndex
-        
-        self.currentMatch = None
-        
-        if self.multipleSelection == False:
-            self.selectedObjects = []
-
-        self.selectedObjects.append(sseIndex)
-            
-        if sseType == 0:
-            try:
-                self.correspondenceLibrary
-            except AttributeError:
-                return
-            corrLib = self.correspondenceLibrary
-            currCorrIndex = corrLib.getCurrentCorrespondenceIndex()
-            matchList = corrLib.correspondenceList[currCorrIndex].matchList
-            for match in matchList:
-                if match.observed is not None and match.observed.label == sseIndex:
-                    self.currentMatch = match
-                    print self.currentMatch
-                    self.emit(QtCore.SIGNAL("SSE selected"))
-                    break
+    # def updateCurrentMatch(self, sseType, sseIndex):
+    #     # When an element is selected in this viewer, if that item is a helix,
+    #     # this sets self.currentMatch to the observed, predicted match for that
+    #     # helix. It then emits an 'SSE selected' signal.
+    #     print "Helix #: ", sseIndex
+    #
+    #     self.currentMatch = None
+    #
+    #     if self.multipleSelection == False:
+    #         self.selectedObjects = []
+    #
+    #     self.selectedObjects.append(sseIndex)
+    #
+    #     if sseType == 0:
+    #         try:
+    #             self.correspondenceLibrary
+    #         except AttributeError:
+    #             return
+    #         corrLib = self.correspondenceLibrary
+    #         currCorrIndex = corrLib.getCurrentCorrespondenceIndex()
+    #         matchList = corrLib.correspondenceList[currCorrIndex].matchList
+    #         for match in matchList:
+    #             if match.observed is not None and match.observed.label == sseIndex:
+    #                 self.currentMatch = match
+    #                 print self.currentMatch
+    #                 self.emit(QtCore.SIGNAL("SSE selected"))
+    #                 break
 
     def updateCorrespondences(self, corrs):
         self.correspondences  = corrs
