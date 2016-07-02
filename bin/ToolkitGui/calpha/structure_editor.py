@@ -245,16 +245,6 @@ class CAlphaStructureEditor(QtGui.QWidget):
             self.parentWidget().scrollable.seqView.setSequenceSelection(newSelection)
             #self.setResidues(newSelection)
 
-    def clearMockSidechains(self,  chain):
-        """
-        This changes the atoms' properties back to default.
-        """
-        for index in chain.residueRange():
-            res = chain[index]
-            res.setCAlphaColorToDefault()
-            res.setCAlphaSizeToDefault()
-        #print "The mock side-chains should be cleared, but not yet drawn to the screen."
-
     def enableDisable(self):
         """
         Depending on which tab is active, this enables and disables widtets.
