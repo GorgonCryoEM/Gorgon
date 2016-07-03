@@ -1,4 +1,4 @@
-from PyQt4 import Qt,QtGui,QtCore
+from PyQt4 import Qt, QtGui, QtCore
 
 
 class CAlphaSequenceView(QtGui.QWidget):
