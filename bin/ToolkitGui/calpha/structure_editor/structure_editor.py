@@ -204,68 +204,6 @@ class CAlphaStructureEditor(QtGui.QWidget):
             self.undoStack.push(command)
             self.bringToFront()
 
-    def atomForwardBackwardChange(self):
-        """
-        This reponds to whether the atomic editor should be moving forward
-        through the chain or backward.
-        """
-        if self.atomicForwardRadioButton.isChecked():
-            self.atomicResNumbers[1].setStyleSheet("QLabel {color: green; font-size: 12pt}")
-            self.atomicResNames[1].setStyleSheet("QLabel {color: green; font-size: 40pt}")
-            self.atomicResNumbers[-1].setStyleSheet("QLabel {color: black; font-size: 12pt}")
-            self.atomicResNames[-1].setStyleSheet("QLabel {color: black; font-size: 40pt}")
-        elif self.atomicBackwardRadioButton.isChecked():
-            self.atomicResNumbers[-1].setStyleSheet("QLabel {color: green; font-size: 12pt}")
-            self.atomicResNames[-1].setStyleSheet("QLabel {color: green; font-size: 40pt}")
-            self.atomicResNumbers[1].setStyleSheet("QLabel {color: black; font-size: 12pt}")
-            self.atomicResNames[1].setStyleSheet("QLabel {color: black; font-size: 40pt}")
-
-    def atomNextButtonPress(self):
-        """
-        This moves to the next residue and updates the selected residue.
-        """
-        currentChainModel = self.parentWidget().currentChainModel
-        if currentChainModel.getSelection():
-            newSelection = [ currentChainModel.getSelection()[-1] + 1 ]
-            if newSelection[0] > max(currentChainModel.residueRange()):
-                return
-            self.parentWidget().scrollable.seqView.setSequenceSelection(newSelection)
-            #self.setResidues(newSelection)
-
-    def atomPrevButtonPress(self):
-        """
-        This moves to the previous residue and updates the selected residue.
-        """
-        #self.parentWidget() returns a CAlphaSequenceWidget object
-        currentChainModel = self.parentWidget().currentChainModel
-        if currentChainModel.getSelection():
-            newSelection = [ currentChainModel.getSelection()[-1] - 1 ]
-            if newSelection[0] <min(currentChainModel.residueRange()):
-                return
-            self.parentWidget().scrollable.seqView.setSequenceSelection(newSelection)
-            #self.setResidues(newSelection)
-
-    def enableDisable(self):
-        """
-        Depending on which tab is active, this enables and disables widtets.
-        This is used for not-yet-implemented and non-applicable widgets.
-        """
-        currentTab = self.tabWidget.currentWidget()
-        isHelixTab = currentTab is self.helixTab
-        isAtomicTab = currentTab is self.atomicTab
-        isLoopTab = currentTab is self.loopTab
-        isPositionTab = currentTab is self.positionTab
-
-        for index in range( len(self.possibleAtomsList) ):
-            atom = self.possibleAtomsList[index]
-            atom.setVisible(isAtomicTab)
-
-        if(len(self.possibleAtomsList) > 0):
-            self.CAlphaViewer.modelChanged()
-
-        #self.undoButton.setEnabled(isAtomicTab or isHelixTab or isPositionTab)
-        #self.redoButton.setEnabled(isAtomicTab or isHelixTab or isPositionTab)
-
     def helixCreateCAhelix(self):
         create_helix(self.app.calphaViewer.renderer, self.currentChainModel, self.helixNtermSpinBox.value(), self.helixCtermSpinBox.value(), self.app.sseViewer.currentMatch)
 
@@ -812,6 +750,68 @@ class CAlphaStructureEditor(QtGui.QWidget):
             self.helixCtermResNameLabel.setText(ctext)
         except:
             pass
+
+    def atomForwardBackwardChange(self):
+        """
+        This reponds to whether the atomic editor should be moving forward
+        through the chain or backward.
+        """
+        if self.atomicForwardRadioButton.isChecked():
+            self.atomicResNumbers[1].setStyleSheet("QLabel {color: green; font-size: 12pt}")
+            self.atomicResNames[1].setStyleSheet("QLabel {color: green; font-size: 40pt}")
+            self.atomicResNumbers[-1].setStyleSheet("QLabel {color: black; font-size: 12pt}")
+            self.atomicResNames[-1].setStyleSheet("QLabel {color: black; font-size: 40pt}")
+        elif self.atomicBackwardRadioButton.isChecked():
+            self.atomicResNumbers[-1].setStyleSheet("QLabel {color: green; font-size: 12pt}")
+            self.atomicResNames[-1].setStyleSheet("QLabel {color: green; font-size: 40pt}")
+            self.atomicResNumbers[1].setStyleSheet("QLabel {color: black; font-size: 12pt}")
+            self.atomicResNames[1].setStyleSheet("QLabel {color: black; font-size: 40pt}")
+
+    def atomNextButtonPress(self):
+        """
+        This moves to the next residue and updates the selected residue.
+        """
+        currentChainModel = self.parentWidget().currentChainModel
+        if currentChainModel.getSelection():
+            newSelection = [ currentChainModel.getSelection()[-1] + 1 ]
+            if newSelection[0] > max(currentChainModel.residueRange()):
+                return
+            self.parentWidget().scrollable.seqView.setSequenceSelection(newSelection)
+            #self.setResidues(newSelection)
+
+    def atomPrevButtonPress(self):
+        """
+        This moves to the previous residue and updates the selected residue.
+        """
+        #self.parentWidget() returns a CAlphaSequenceWidget object
+        currentChainModel = self.parentWidget().currentChainModel
+        if currentChainModel.getSelection():
+            newSelection = [ currentChainModel.getSelection()[-1] - 1 ]
+            if newSelection[0] <min(currentChainModel.residueRange()):
+                return
+            self.parentWidget().scrollable.seqView.setSequenceSelection(newSelection)
+            #self.setResidues(newSelection)
+
+    def enableDisable(self):
+        """
+        Depending on which tab is active, this enables and disables widtets.
+        This is used for not-yet-implemented and non-applicable widgets.
+        """
+        currentTab = self.tabWidget.currentWidget()
+        isHelixTab = currentTab is self.helixTab
+        isAtomicTab = currentTab is self.atomicTab
+        isLoopTab = currentTab is self.loopTab
+        isPositionTab = currentTab is self.positionTab
+
+        for index in range( len(self.possibleAtomsList) ):
+            atom = self.possibleAtomsList[index]
+            atom.setVisible(isAtomicTab)
+
+        if(len(self.possibleAtomsList) > 0):
+            self.CAlphaViewer.modelChanged()
+
+            #self.undoButton.setEnabled(isAtomicTab or isHelixTab or isPositionTab)
+            #self.redoButton.setEnabled(isAtomicTab or isHelixTab or isPositionTab)
 
     def posMoveCM_x(self):
         """
