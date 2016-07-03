@@ -103,6 +103,276 @@ class CAlphaStructureEditor(QtGui.QWidget):
         layout.addWidget(self.tabWidget)
         self.setLayout(layout)
 
+    def setupAtomicTab(self):
+        #These go in the atomic tab
+        self.atomicPossibilityNumSpinBox = QtGui.QSpinBox()
+        self.atomicPossibilityNumSpinBox.setRange(0, 0)
+        self.atomicNumPossibilities = QtGui.QLabel('of ?')
+        self.atomicForwardRadioButton = QtGui.QRadioButton('Next Atom')
+        self.atomicForwardRadioButton.setChecked(True)
+        self.atomicBackwardRadioButton = QtGui.QRadioButton('Previous Atom')
+        self.atomicResNames = { -2:QtGui.QLabel('?'),  -1:QtGui.QLabel('?'),  0:QtGui.QLabel('?'), 1:QtGui.QLabel('?'), 2:QtGui.QLabel('?') }
+        self.atomicResNumbers = { -2:QtGui.QLabel('#?'),  -1:QtGui.QLabel('#?'),  0:QtGui.QLabel('#?'), 1:QtGui.QLabel('#?'), 2:QtGui.QLabel('#?') }
+        self.atomicCAdoubleSpinBox = QtGui.QDoubleSpinBox()
+        self.atomicCAdoubleSpinBox.setValue(3.8)
+        self.atomicCAlabel = QtGui.QLabel('C-Alpha Distance:')
+        self.atomicDirectionlabel1 = QtGui.QLabel('Place:')
+        self.atomicDirectionlabel2 = QtGui.QLabel('/')
+        self.atomicChoiceLabel = QtGui.QLabel('Use Choice:')
+        self.atomicAcceptButton = QtGui.QPushButton("Accept")
+        self.atomicAcceptButton.setEnabled(False)
+
+        for i in self.atomicResNames.keys():
+            self.atomicResNames[i].setStyleSheet("QLabel {color: gray; font-size: 40pt}")#.setFont(resNameFont)
+            self.atomicResNumbers[i].setAlignment(QtCore.Qt.AlignHCenter)
+            self.atomicResNumbers[i].setStyleSheet("QLabel {color: gray; font-size: 12pt}") #.setFont(resIndexFont)
+
+        self.atomicResNumbers[0].setStyleSheet("QLabel {color: white; background-color:black; font-size: 12pt}") #This uses syntax similar to Cascading Style Sheets (CSS)
+        self.atomicResNames[0].setStyleSheet("QLabel {color: white; background-color:black; font-size: 40pt}")
+        self.atomicResNumbers[1].setStyleSheet("QLabel {color: green; font-size: 12pt}") #This uses syntax similar to Cascading Style Sheets (CSS)
+        self.atomicResNames[1].setStyleSheet("QLabel {color: green; font-size: 40pt}")
+
+        self.atomicBack1resButton = QtGui.QPushButton('<-')
+        self.atomicForward1resButton = QtGui.QPushButton('->')
+
+        settingsLayout = QtGui.QGridLayout()
+        settingsLayout.addWidget(self.atomicCAlabel, 0, 0, 1, 1)
+        settingsLayout.addWidget(self.atomicCAdoubleSpinBox, 0, 1, 1, 2)
+        settingsLayout.addWidget(self.atomicDirectionlabel1, 1, 0, 1, 1)
+
+        directionLayout = QtGui.QHBoxLayout()
+        directionLayout.addWidget(self.atomicForwardRadioButton)
+        directionLayout.addWidget(self.atomicDirectionlabel2)
+        directionLayout.addWidget(self.atomicBackwardRadioButton)
+        directionLayout.addStretch()
+
+        settingsLayout.addLayout(directionLayout, 1, 1, 1, 2)
+
+        atomic3ResLayout = QtGui.QHBoxLayout()
+        atomic3ResSublayouts = {-2:QtGui.QVBoxLayout(), -1:QtGui.QVBoxLayout(), 0:QtGui.QVBoxLayout(), 1:QtGui.QVBoxLayout(), 2:QtGui.QVBoxLayout() }
+
+        atomic3ResLayout.addWidget(self.atomicBack1resButton)
+        for i in sorted(atomic3ResSublayouts.keys()):
+            atomic3ResSublayouts[i].addWidget(self.atomicResNumbers[i])
+            atomic3ResSublayouts[i].addWidget(self.atomicResNames[i])
+            atomic3ResLayout.addLayout(atomic3ResSublayouts[i])
+
+        atomic3ResLayout.addWidget(self.atomicForward1resButton)
+        atomic3ResLayout.addStretch()
+        settingsLayout.addLayout(atomic3ResLayout, 2, 1, 1, 2)
+
+        settingsLayout.addWidget(self.atomicChoiceLabel, 3, 0, 1, 1)
+        settingsLayout.addWidget(self.atomicPossibilityNumSpinBox, 3, 1, 1, 1)
+        settingsLayout.addWidget(self.atomicNumPossibilities, 3, 2, 1, 1)
+
+        lastButtonLayout = QtGui.QHBoxLayout()
+        lastButtonLayout.addStretch()
+        lastButtonLayout.addWidget(self.atomicAcceptButton)
+        lastButtonParentLayout = QtGui.QVBoxLayout()
+        lastButtonParentLayout.addSpacing(15)
+        lastButtonParentLayout.addLayout(lastButtonLayout)
+
+        settingsLayout.addLayout(lastButtonParentLayout, 4, 0, 1, 3)
+
+        self.atomicTab.setLayout(settingsLayout)
+
+    def setupHelixTab(self):
+        #These go in the Helix tab
+        self.helixAcceptButton = QtGui.QPushButton("Accept")
+        NterminusLabel = QtGui.QLabel('N term')
+        self.helixNtermResNameLabel = QtGui.QLabel('???')
+        self.helixNtermSpinBox = QtGui.QSpinBox()
+        CterminusLabel = QtGui.QLabel('C term')
+        self.helixCtermResNameLabel = QtGui.QLabel('???')
+        self.helixCtermSpinBox = QtGui.QSpinBox()
+        self.helixDecreasePositionButton = QtGui.QPushButton('-')
+        self.helixIncreasePositionButton = QtGui.QPushButton('+')
+        positionLabel = QtGui.QLabel(self.tr('Position'))
+        self.helixFlipButton = QtGui.QPushButton(self.tr('Flip'))
+
+        if self.currentChainModel.residueRange():
+            minIx = min(self.currentChainModel.residueRange())
+            maxIx = max(self.currentChainModel.residueRange())
+        else:
+            minIx = 1
+            maxIx = 10000
+        self.helixNtermSpinBox.setRange(minIx, maxIx)
+        self.helixCtermSpinBox.setRange(minIx, maxIx)
+
+        self.helixDecreasePositionButton.setMaximumWidth(30)
+        self.helixIncreasePositionButton.setMaximumWidth(30)
+
+        termLayout = QtGui.QGridLayout()
+        termLayout.addWidget(NterminusLabel, 0, 0, 1, 1)
+        termLayout.addWidget(self.helixNtermResNameLabel, 0, 1, 1, 1)
+        termLayout.addWidget(self.helixNtermSpinBox, 0, 2, 1, 1)
+
+        termLayout.addWidget(CterminusLabel, 1, 0, 1, 1)
+        termLayout.addWidget(self.helixCtermResNameLabel, 1, 1, 1, 1)
+        termLayout.addWidget(self.helixCtermSpinBox, 1, 2, 1, 1)
+
+        positionLayout = QtGui.QHBoxLayout()
+        positionLayout.addStretch()
+        positionLayout.addWidget(self.helixDecreasePositionButton)
+        positionLayout.addWidget(positionLabel)
+        positionLayout.addWidget(self.helixIncreasePositionButton)
+
+        termLayout.addLayout(positionLayout, 2, 2, 1, 1)
+
+        flipLayout = QtGui.QHBoxLayout()
+        flipLayout.addWidget(self.helixFlipButton)
+        flipLayout.addStretch()
+        flipLayout.addWidget(self.helixAcceptButton)
+
+        helixLayout  = QtGui.QVBoxLayout()
+        helixLayout.addLayout(termLayout)
+        helixLayout.addLayout(flipLayout)
+        self.helixTab.setLayout(helixLayout)
+
+    def setupLoopTab(self):
+        self.loopBuildingStarted = False
+
+        self.loopVolumeLoadedLabel = QtGui.QLabel('Volume not loaded.  Please load a volume to place loops.')
+        self.loopVolumeLoadButton = QtGui.QPushButton('Load Volume')
+        self.loopStartEndBuildingButton = QtGui.QPushButton('Start Loop Placement')
+
+        self.loopStartLabel = QtGui.QLabel('Start Residue:')
+        self.loopStartSpinBox = QtGui.QSpinBox()
+        self.loopStartSpinBox.setMaximum(10000)
+        self.loopStopLabel = QtGui.QLabel('Stop Residue:')
+        self.loopStopSpinBox = QtGui.QSpinBox()
+        self.loopStopSpinBox.setMaximum(10000)
+
+        loopLayout = QtGui.QGridLayout()
+        loopLayout.addWidget(self.loopVolumeLoadedLabel, 0, 0, 1, 2)
+        loopLayout.addWidget(self.loopVolumeLoadButton, 1, 0, 1, 1)
+        loopLayout.addWidget(self.loopStartEndBuildingButton, 2, 0, 1, 1)
+        loopLayout.addWidget(self.loopStartLabel, 3, 0, 1, 1)
+        loopLayout.addWidget(self.loopStartSpinBox, 3, 1, 1, 1)
+        loopLayout.addWidget(self.loopStopLabel, 4, 0, 1, 1)
+        loopLayout.addWidget(self.loopStopSpinBox, 4, 1, 1, 1)
+        self.loopTab.setLayout(loopLayout)
+
+        self.connect(self.loopVolumeLoadButton, QtCore.SIGNAL('clicked()'), self.loadLoopVolume)
+        self.connect(self.loopStartEndBuildingButton, QtCore.SIGNAL('clicked()'), self.startEndLoopBuilding)
+
+        self.updateLoopEditorEnables()
+
+    def loadLoopVolume(self):
+        self.app.volumeViewer.loadData()
+        self.bringToFront()
+
+    def setupPositionTab(self):
+        self.posTranslateGroup = QtGui.QGroupBox('Translate:')
+        self.posRotateGroup = QtGui.QGroupBox('Rotate:')
+        self.posMoveLabelsDict = {
+            'x': QtGui.QLabel('X:'),
+            'y': QtGui.QLabel('Y:'),
+            'z': QtGui.QLabel('Z:'),
+            'roll': QtGui.QLabel('Roll:'),
+            'pitch': QtGui.QLabel('Pitch:'),
+            'yaw': QtGui.QLabel('Yaw:')
+        }
+
+        self.posMoveDict = {
+            'x': QtGui.QDoubleSpinBox(),
+            'y': QtGui.QDoubleSpinBox(),
+            'z': QtGui.QDoubleSpinBox(),
+            'roll': QtGui.QSlider(),
+            'pitch': QtGui.QSlider(),
+            'yaw': QtGui.QSlider()
+        }
+        for key in ['x', 'y', 'z']:
+            self.posMoveDict[key].setRange(-10000, 10000)
+        for key in ['roll', 'pitch', 'yaw']:
+            self.posMoveDict[key].setRange(-180, 180)
+            self.posMoveDict[key].setOrientation(QtCore.Qt.Horizontal)
+
+        self.posDecreaseButtonDict = {
+            'x': QtGui.QPushButton('-'),
+            'y': QtGui.QPushButton('-'),
+            'z': QtGui.QPushButton('-'),
+            'roll': QtGui.QPushButton('-3'),
+            'pitch': QtGui.QPushButton('-3'),
+            'yaw': QtGui.QPushButton('-3')
+        }
+        self.posIncreaseButtonDict = {
+            'x': QtGui.QPushButton('+'),
+            'y': QtGui.QPushButton('+'),
+            'z': QtGui.QPushButton('+'),
+            'roll': QtGui.QPushButton('+3'),
+            'pitch': QtGui.QPushButton('+3'),
+            'yaw': QtGui.QPushButton('+3')
+        }
+        for key in self.posDecreaseButtonDict.keys():
+            self.posDecreaseButtonDict[key].setMaximumWidth(30)
+            self.posIncreaseButtonDict[key].setMaximumWidth(30)
+
+        posSpinLabelLayoutDict = {
+            'x': QtGui.QHBoxLayout(),
+            'y': QtGui.QHBoxLayout(),
+            'z': QtGui.QHBoxLayout(),
+            'roll': QtGui.QHBoxLayout(),
+            'pitch': QtGui.QHBoxLayout(),
+            'yaw': QtGui.QHBoxLayout()
+        }
+
+        self.posMoveLabelValuesDict = {
+            'roll': QtGui.QLabel('0'),
+            'pitch': QtGui.QLabel('0'),
+            'yaw': QtGui.QLabel('0')
+        }
+
+        def updateValue(label):
+            def updateValueHandler(value):
+                #label.setText(QtCore.QString("%(#)04d" %{"#": value}))
+                label.setText(QtCore.QString("%(#)d" %{"#": value}))
+
+            return updateValueHandler
+
+        def addElement(key, row, layout, addValue):
+            layout.addWidget(self.posMoveLabelsDict[key], row, 0, 1, 1)
+            layout.addWidget(self.posDecreaseButtonDict[key], row, 1, 1, 1)
+            layout.addWidget(self.posMoveDict[key], row, 2, 1, 1)
+            layout.addWidget(self.posIncreaseButtonDict[key], row, 3, 1, 1)
+            if(addValue):
+                layout.addWidget(self.posMoveLabelValuesDict[key], row, 4, 1, 1)
+                self.connect(self.posMoveDict[key], QtCore.SIGNAL("valueChanged(int)"), updateValue(self.posMoveLabelValuesDict[key]))
+
+        translateLayout = QtGui.QGridLayout()
+        addElement('x', 0, translateLayout, False)
+        addElement('y', 1, translateLayout, False)
+        addElement('z', 2, translateLayout, False)
+        self.posTranslateGroup.setLayout(translateLayout)
+
+        rotateLayout = QtGui.QGridLayout()
+        addElement('roll', 0, rotateLayout, True)
+        addElement('pitch', 1, rotateLayout, True)
+        addElement('yaw', 2, rotateLayout, True)
+        self.posRotateGroup.setLayout(rotateLayout)
+
+        positionLayout = QtGui.QVBoxLayout()
+        positionLayout.addWidget(self.posTranslateGroup)
+        positionLayout.addWidget(self.posRotateGroup)
+        self.positionTab.setLayout(positionLayout)
+
+        self.connect(self.posDecreaseButtonDict['x'], QtCore.SIGNAL('clicked()'), self.posXDecr)
+        self.connect(self.posDecreaseButtonDict['y'], QtCore.SIGNAL('clicked()'), self.posYDecr)
+        self.connect(self.posDecreaseButtonDict['z'], QtCore.SIGNAL('clicked()'), self.posZDecr)
+        self.connect(self.posIncreaseButtonDict['x'], QtCore.SIGNAL('clicked()'), self.posXIncr)
+        self.connect(self.posIncreaseButtonDict['y'], QtCore.SIGNAL('clicked()'), self.posYIncr)
+        self.connect(self.posIncreaseButtonDict['z'], QtCore.SIGNAL('clicked()'), self.posZIncr)
+        self.connect(self.posDecreaseButtonDict['roll'], QtCore.SIGNAL('clicked()'), self.posRollDecr)
+        self.connect(self.posIncreaseButtonDict['roll'], QtCore.SIGNAL('clicked()'), self.posRollIncr)
+        self.connect(self.posDecreaseButtonDict['pitch'], QtCore.SIGNAL('clicked()'), self.posPitchDecr)
+        self.connect(self.posIncreaseButtonDict['pitch'], QtCore.SIGNAL('clicked()'), self.posPitchIncr)
+        self.connect(self.posDecreaseButtonDict['yaw'], QtCore.SIGNAL('clicked()'), self.posYawDecr)
+        self.connect(self.posIncreaseButtonDict['yaw'], QtCore.SIGNAL('clicked()'), self.posYawIncr)
+
+        self.roll = 0
+        self.pitch = 0
+        self.yaw = 0
+
     def atomChoosePossibleAtom(self, choiceNum):
         """
         This function highlights one of the possible atoms which will be chosen
@@ -423,276 +693,6 @@ class CAlphaStructureEditor(QtGui.QWidget):
                 self.atomicResNames[i].setText('')
                 self.atomicResNumbers[i].setText('')
         self.atomFindPositionPossibilities()
-
-    def setupAtomicTab(self):
-        #These go in the atomic tab
-        self.atomicPossibilityNumSpinBox = QtGui.QSpinBox()
-        self.atomicPossibilityNumSpinBox.setRange(0, 0)
-        self.atomicNumPossibilities = QtGui.QLabel('of ?')
-        self.atomicForwardRadioButton = QtGui.QRadioButton('Next Atom')
-        self.atomicForwardRadioButton.setChecked(True)
-        self.atomicBackwardRadioButton = QtGui.QRadioButton('Previous Atom')
-        self.atomicResNames = { -2:QtGui.QLabel('?'),  -1:QtGui.QLabel('?'),  0:QtGui.QLabel('?'), 1:QtGui.QLabel('?'), 2:QtGui.QLabel('?') }
-        self.atomicResNumbers = { -2:QtGui.QLabel('#?'),  -1:QtGui.QLabel('#?'),  0:QtGui.QLabel('#?'), 1:QtGui.QLabel('#?'), 2:QtGui.QLabel('#?') }
-        self.atomicCAdoubleSpinBox = QtGui.QDoubleSpinBox()
-        self.atomicCAdoubleSpinBox.setValue(3.8)
-        self.atomicCAlabel = QtGui.QLabel('C-Alpha Distance:')
-        self.atomicDirectionlabel1 = QtGui.QLabel('Place:')
-        self.atomicDirectionlabel2 = QtGui.QLabel('/')
-        self.atomicChoiceLabel = QtGui.QLabel('Use Choice:')
-        self.atomicAcceptButton = QtGui.QPushButton("Accept")
-        self.atomicAcceptButton.setEnabled(False)
-
-        for i in self.atomicResNames.keys():
-            self.atomicResNames[i].setStyleSheet("QLabel {color: gray; font-size: 40pt}")#.setFont(resNameFont)
-            self.atomicResNumbers[i].setAlignment(QtCore.Qt.AlignHCenter)
-            self.atomicResNumbers[i].setStyleSheet("QLabel {color: gray; font-size: 12pt}") #.setFont(resIndexFont)
-
-        self.atomicResNumbers[0].setStyleSheet("QLabel {color: white; background-color:black; font-size: 12pt}") #This uses syntax similar to Cascading Style Sheets (CSS)
-        self.atomicResNames[0].setStyleSheet("QLabel {color: white; background-color:black; font-size: 40pt}")
-        self.atomicResNumbers[1].setStyleSheet("QLabel {color: green; font-size: 12pt}") #This uses syntax similar to Cascading Style Sheets (CSS)
-        self.atomicResNames[1].setStyleSheet("QLabel {color: green; font-size: 40pt}")
-
-        self.atomicBack1resButton = QtGui.QPushButton('<-')
-        self.atomicForward1resButton = QtGui.QPushButton('->')
-
-        settingsLayout = QtGui.QGridLayout()
-        settingsLayout.addWidget(self.atomicCAlabel, 0, 0, 1, 1)
-        settingsLayout.addWidget(self.atomicCAdoubleSpinBox, 0, 1, 1, 2)
-        settingsLayout.addWidget(self.atomicDirectionlabel1, 1, 0, 1, 1)
-
-        directionLayout = QtGui.QHBoxLayout()
-        directionLayout.addWidget(self.atomicForwardRadioButton)
-        directionLayout.addWidget(self.atomicDirectionlabel2)
-        directionLayout.addWidget(self.atomicBackwardRadioButton)
-        directionLayout.addStretch()
-
-        settingsLayout.addLayout(directionLayout, 1, 1, 1, 2)
-
-        atomic3ResLayout = QtGui.QHBoxLayout()
-        atomic3ResSublayouts = {-2:QtGui.QVBoxLayout(), -1:QtGui.QVBoxLayout(), 0:QtGui.QVBoxLayout(), 1:QtGui.QVBoxLayout(), 2:QtGui.QVBoxLayout() }
-
-        atomic3ResLayout.addWidget(self.atomicBack1resButton)
-        for i in sorted(atomic3ResSublayouts.keys()):
-            atomic3ResSublayouts[i].addWidget(self.atomicResNumbers[i])
-            atomic3ResSublayouts[i].addWidget(self.atomicResNames[i])
-            atomic3ResLayout.addLayout(atomic3ResSublayouts[i])
-
-        atomic3ResLayout.addWidget(self.atomicForward1resButton)
-        atomic3ResLayout.addStretch()
-        settingsLayout.addLayout(atomic3ResLayout, 2, 1, 1, 2)
-
-        settingsLayout.addWidget(self.atomicChoiceLabel, 3, 0, 1, 1)
-        settingsLayout.addWidget(self.atomicPossibilityNumSpinBox, 3, 1, 1, 1)
-        settingsLayout.addWidget(self.atomicNumPossibilities, 3, 2, 1, 1)
-
-        lastButtonLayout = QtGui.QHBoxLayout()
-        lastButtonLayout.addStretch()
-        lastButtonLayout.addWidget(self.atomicAcceptButton)
-        lastButtonParentLayout = QtGui.QVBoxLayout()
-        lastButtonParentLayout.addSpacing(15)
-        lastButtonParentLayout.addLayout(lastButtonLayout)
-
-        settingsLayout.addLayout(lastButtonParentLayout, 4, 0, 1, 3)
-
-        self.atomicTab.setLayout(settingsLayout)
-
-    def setupHelixTab(self):
-        #These go in the Helix tab
-        self.helixAcceptButton = QtGui.QPushButton("Accept")
-        NterminusLabel = QtGui.QLabel('N term')
-        self.helixNtermResNameLabel = QtGui.QLabel('???')
-        self.helixNtermSpinBox = QtGui.QSpinBox()
-        CterminusLabel = QtGui.QLabel('C term')
-        self.helixCtermResNameLabel = QtGui.QLabel('???')
-        self.helixCtermSpinBox = QtGui.QSpinBox()
-        self.helixDecreasePositionButton = QtGui.QPushButton('-')
-        self.helixIncreasePositionButton = QtGui.QPushButton('+')
-        positionLabel = QtGui.QLabel(self.tr('Position'))
-        self.helixFlipButton = QtGui.QPushButton(self.tr('Flip'))
-
-        if self.currentChainModel.residueRange():
-            minIx = min(self.currentChainModel.residueRange())
-            maxIx = max(self.currentChainModel.residueRange())
-        else:
-            minIx = 1
-            maxIx = 10000
-        self.helixNtermSpinBox.setRange(minIx, maxIx)
-        self.helixCtermSpinBox.setRange(minIx, maxIx)
-
-        self.helixDecreasePositionButton.setMaximumWidth(30)
-        self.helixIncreasePositionButton.setMaximumWidth(30)
-
-        termLayout = QtGui.QGridLayout()
-        termLayout.addWidget(NterminusLabel, 0, 0, 1, 1)
-        termLayout.addWidget(self.helixNtermResNameLabel, 0, 1, 1, 1)
-        termLayout.addWidget(self.helixNtermSpinBox, 0, 2, 1, 1)
-
-        termLayout.addWidget(CterminusLabel, 1, 0, 1, 1)
-        termLayout.addWidget(self.helixCtermResNameLabel, 1, 1, 1, 1)
-        termLayout.addWidget(self.helixCtermSpinBox, 1, 2, 1, 1)
-
-        positionLayout = QtGui.QHBoxLayout()
-        positionLayout.addStretch()
-        positionLayout.addWidget(self.helixDecreasePositionButton)
-        positionLayout.addWidget(positionLabel)
-        positionLayout.addWidget(self.helixIncreasePositionButton)
-
-        termLayout.addLayout(positionLayout, 2, 2, 1, 1)
-
-        flipLayout = QtGui.QHBoxLayout()
-        flipLayout.addWidget(self.helixFlipButton)
-        flipLayout.addStretch()
-        flipLayout.addWidget(self.helixAcceptButton)
-
-        helixLayout  = QtGui.QVBoxLayout()
-        helixLayout.addLayout(termLayout)
-        helixLayout.addLayout(flipLayout)
-        self.helixTab.setLayout(helixLayout)
-
-    def setupLoopTab(self):
-        self.loopBuildingStarted = False
-
-        self.loopVolumeLoadedLabel = QtGui.QLabel('Volume not loaded.  Please load a volume to place loops.')
-        self.loopVolumeLoadButton = QtGui.QPushButton('Load Volume')
-        self.loopStartEndBuildingButton = QtGui.QPushButton('Start Loop Placement')
-
-        self.loopStartLabel = QtGui.QLabel('Start Residue:')
-        self.loopStartSpinBox = QtGui.QSpinBox()
-        self.loopStartSpinBox.setMaximum(10000)
-        self.loopStopLabel = QtGui.QLabel('Stop Residue:')
-        self.loopStopSpinBox = QtGui.QSpinBox()
-        self.loopStopSpinBox.setMaximum(10000)
-
-        loopLayout = QtGui.QGridLayout()
-        loopLayout.addWidget(self.loopVolumeLoadedLabel, 0, 0, 1, 2)
-        loopLayout.addWidget(self.loopVolumeLoadButton, 1, 0, 1, 1)
-        loopLayout.addWidget(self.loopStartEndBuildingButton, 2, 0, 1, 1)
-        loopLayout.addWidget(self.loopStartLabel, 3, 0, 1, 1)
-        loopLayout.addWidget(self.loopStartSpinBox, 3, 1, 1, 1)
-        loopLayout.addWidget(self.loopStopLabel, 4, 0, 1, 1)
-        loopLayout.addWidget(self.loopStopSpinBox, 4, 1, 1, 1)
-        self.loopTab.setLayout(loopLayout)
-
-        self.connect(self.loopVolumeLoadButton, QtCore.SIGNAL('clicked()'), self.loadLoopVolume)
-        self.connect(self.loopStartEndBuildingButton, QtCore.SIGNAL('clicked()'), self.startEndLoopBuilding)
-
-        self.updateLoopEditorEnables()
-
-    def loadLoopVolume(self):
-        self.app.volumeViewer.loadData()
-        self.bringToFront()
-
-    def setupPositionTab(self):
-        self.posTranslateGroup = QtGui.QGroupBox('Translate:')
-        self.posRotateGroup = QtGui.QGroupBox('Rotate:')
-        self.posMoveLabelsDict = {
-                              'x': QtGui.QLabel('X:'),
-                              'y': QtGui.QLabel('Y:'),
-                              'z': QtGui.QLabel('Z:'),
-                              'roll': QtGui.QLabel('Roll:'),
-                              'pitch': QtGui.QLabel('Pitch:'),
-                              'yaw': QtGui.QLabel('Yaw:')
-                              }
-
-        self.posMoveDict = {
-                                   'x': QtGui.QDoubleSpinBox(),
-                                   'y': QtGui.QDoubleSpinBox(),
-                                   'z': QtGui.QDoubleSpinBox(),
-                                    'roll': QtGui.QSlider(),
-                                    'pitch': QtGui.QSlider(),
-                                    'yaw': QtGui.QSlider()
-                                   }
-        for key in ['x', 'y', 'z']:
-            self.posMoveDict[key].setRange(-10000, 10000)
-        for key in ['roll', 'pitch', 'yaw']:
-            self.posMoveDict[key].setRange(-180, 180)
-            self.posMoveDict[key].setOrientation(QtCore.Qt.Horizontal)
-
-        self.posDecreaseButtonDict = {
-                                   'x': QtGui.QPushButton('-'),
-                                   'y': QtGui.QPushButton('-'),
-                                   'z': QtGui.QPushButton('-'),
-                                   'roll': QtGui.QPushButton('-3'),
-                                   'pitch': QtGui.QPushButton('-3'),
-                                   'yaw': QtGui.QPushButton('-3')
-                                   }
-        self.posIncreaseButtonDict = {
-                                   'x': QtGui.QPushButton('+'),
-                                   'y': QtGui.QPushButton('+'),
-                                   'z': QtGui.QPushButton('+'),
-                                   'roll': QtGui.QPushButton('+3'),
-                                   'pitch': QtGui.QPushButton('+3'),
-                                   'yaw': QtGui.QPushButton('+3')
-                                   }
-        for key in self.posDecreaseButtonDict.keys():
-            self.posDecreaseButtonDict[key].setMaximumWidth(30)
-            self.posIncreaseButtonDict[key].setMaximumWidth(30)
-
-        posSpinLabelLayoutDict = {
-                              'x': QtGui.QHBoxLayout(),
-                              'y': QtGui.QHBoxLayout(),
-                              'z': QtGui.QHBoxLayout(),
-                              'roll': QtGui.QHBoxLayout(),
-                              'pitch': QtGui.QHBoxLayout(),
-                              'yaw': QtGui.QHBoxLayout()
-                              }
-
-        self.posMoveLabelValuesDict = {
-                              'roll': QtGui.QLabel('0'),
-                              'pitch': QtGui.QLabel('0'),
-                              'yaw': QtGui.QLabel('0')
-                              }
-
-        def updateValue(label):
-            def updateValueHandler(value):
-                #label.setText(QtCore.QString("%(#)04d" %{"#": value}))
-                label.setText(QtCore.QString("%(#)d" %{"#": value}))
-
-            return updateValueHandler
-
-        def addElement(key, row, layout, addValue):
-            layout.addWidget(self.posMoveLabelsDict[key], row, 0, 1, 1)
-            layout.addWidget(self.posDecreaseButtonDict[key], row, 1, 1, 1)
-            layout.addWidget(self.posMoveDict[key], row, 2, 1, 1)
-            layout.addWidget(self.posIncreaseButtonDict[key], row, 3, 1, 1)
-            if(addValue):
-                layout.addWidget(self.posMoveLabelValuesDict[key], row, 4, 1, 1)
-                self.connect(self.posMoveDict[key], QtCore.SIGNAL("valueChanged(int)"), updateValue(self.posMoveLabelValuesDict[key]))
-
-        translateLayout = QtGui.QGridLayout()
-        addElement('x', 0, translateLayout, False)
-        addElement('y', 1, translateLayout, False)
-        addElement('z', 2, translateLayout, False)
-        self.posTranslateGroup.setLayout(translateLayout)
-
-        rotateLayout = QtGui.QGridLayout()
-        addElement('roll', 0, rotateLayout, True)
-        addElement('pitch', 1, rotateLayout, True)
-        addElement('yaw', 2, rotateLayout, True)
-        self.posRotateGroup.setLayout(rotateLayout)
-
-        positionLayout = QtGui.QVBoxLayout()
-        positionLayout.addWidget(self.posTranslateGroup)
-        positionLayout.addWidget(self.posRotateGroup)
-        self.positionTab.setLayout(positionLayout)
-
-        self.connect(self.posDecreaseButtonDict['x'], QtCore.SIGNAL('clicked()'), self.posXDecr)
-        self.connect(self.posDecreaseButtonDict['y'], QtCore.SIGNAL('clicked()'), self.posYDecr)
-        self.connect(self.posDecreaseButtonDict['z'], QtCore.SIGNAL('clicked()'), self.posZDecr)
-        self.connect(self.posIncreaseButtonDict['x'], QtCore.SIGNAL('clicked()'), self.posXIncr)
-        self.connect(self.posIncreaseButtonDict['y'], QtCore.SIGNAL('clicked()'), self.posYIncr)
-        self.connect(self.posIncreaseButtonDict['z'], QtCore.SIGNAL('clicked()'), self.posZIncr)
-        self.connect(self.posDecreaseButtonDict['roll'], QtCore.SIGNAL('clicked()'), self.posRollDecr)
-        self.connect(self.posIncreaseButtonDict['roll'], QtCore.SIGNAL('clicked()'), self.posRollIncr)
-        self.connect(self.posDecreaseButtonDict['pitch'], QtCore.SIGNAL('clicked()'), self.posPitchDecr)
-        self.connect(self.posIncreaseButtonDict['pitch'], QtCore.SIGNAL('clicked()'), self.posPitchIncr)
-        self.connect(self.posDecreaseButtonDict['yaw'], QtCore.SIGNAL('clicked()'), self.posYawDecr)
-        self.connect(self.posIncreaseButtonDict['yaw'], QtCore.SIGNAL('clicked()'), self.posYawIncr)
-
-        self.roll = 0
-        self.pitch = 0
-        self.yaw = 0
 
     def updateCurrentMatch(self):
         """
