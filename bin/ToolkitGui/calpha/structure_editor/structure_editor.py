@@ -60,6 +60,49 @@ class CAlphaStructureEditor(QtGui.QWidget):
 #             self.connect(self.app.volumeViewer, QtCore.SIGNAL("modelLoaded()"), self.updateLoopEditorEnables)
 #             self.connect(self.app.volumeViewer, QtCore.SIGNAL("modelUnloaded()"), self.updateLoopEditorEnables)
 
+    def setupUi(self):
+        #These go on the left hand side
+        self.undoButton = QtGui.QPushButton('Undo')
+        self.undoButton.setEnabled(self.undoStack.canUndo())
+        self.redoButton = QtGui.QPushButton('Redo')
+        self.redoButton.setEnabled(self.undoStack.canRedo())
+        self.mockSidechainsCheckBox = QtGui.QCheckBox('Mock Sidechains')
+        self.removeButton = QtGui.QPushButton('Remove Selected Atoms')
+
+        self.tabWidget = QtGui.QTabWidget()
+        self.helixTab = QtGui.QWidget()
+        self.atomicTab = QtGui.QWidget()
+        self.loopTab = QtGui.QWidget()
+        self.positionTab = QtGui.QWidget()
+
+        resNameFont = QtGui.QFont(self.font())
+        resNameFont.setPointSize(41)
+        resIndexFont = QtGui.QFont(self.font())
+        resIndexFont.setPointSize(13)
+
+        layout = QtGui.QVBoxLayout()
+
+        topLayout = QtGui.QGridLayout()
+        topLayout.addWidget(self.undoButton, 0, 0, 1, 1)
+        topLayout.addWidget(self.redoButton, 0, 1, 1, 1)
+        topLayout.addWidget(self.removeButton, 0, 3, 1, 1)
+
+        topLayout.addWidget(self.mockSidechainsCheckBox, 1, 0, 1, 4)
+
+        self.tabWidget.addTab(self.helixTab, self.tr('Helix Editor'))
+        self.tabWidget.addTab(self.atomicTab, self.tr('Atomic Editor'))
+        # self.tabWidget.addTab(self.loopTab, self.tr('Loop Editor'))
+        self.tabWidget.addTab(self.positionTab, self.tr('Position'))
+
+        self.setupHelixTab()
+        self.setupAtomicTab()
+        # self.setupLoopTab()
+        self.setupPositionTab()
+
+        layout.addLayout(topLayout)
+        layout.addWidget(self.tabWidget)
+        self.setLayout(layout)
+
     def atomChoosePossibleAtom(self, choiceNum):
         """
         This function highlights one of the possible atoms which will be chosen
@@ -650,49 +693,6 @@ class CAlphaStructureEditor(QtGui.QWidget):
         self.roll = 0
         self.pitch = 0
         self.yaw = 0
-
-    def setupUi(self):
-        #These go on the left hand side
-        self.undoButton = QtGui.QPushButton('Undo')
-        self.undoButton.setEnabled(self.undoStack.canUndo())
-        self.redoButton = QtGui.QPushButton('Redo')
-        self.redoButton.setEnabled(self.undoStack.canRedo())
-        self.mockSidechainsCheckBox = QtGui.QCheckBox('Mock Sidechains')
-        self.removeButton = QtGui.QPushButton('Remove Selected Atoms')
-
-        self.tabWidget = QtGui.QTabWidget()
-        self.helixTab = QtGui.QWidget()
-        self.atomicTab = QtGui.QWidget()
-        self.loopTab = QtGui.QWidget()
-        self.positionTab = QtGui.QWidget()
-
-        resNameFont = QtGui.QFont(self.font())
-        resNameFont.setPointSize(41)
-        resIndexFont = QtGui.QFont(self.font())
-        resIndexFont.setPointSize(13)
-
-        layout = QtGui.QVBoxLayout()
-
-        topLayout = QtGui.QGridLayout()
-        topLayout.addWidget(self.undoButton, 0, 0, 1, 1)
-        topLayout.addWidget(self.redoButton, 0, 1, 1, 1)
-        topLayout.addWidget(self.removeButton, 0, 3, 1, 1)
-
-        topLayout.addWidget(self.mockSidechainsCheckBox, 1, 0, 1, 4)
-
-        self.tabWidget.addTab(self.helixTab, self.tr('Helix Editor'))
-        self.tabWidget.addTab(self.atomicTab, self.tr('Atomic Editor'))
-        # self.tabWidget.addTab(self.loopTab, self.tr('Loop Editor'))
-        self.tabWidget.addTab(self.positionTab, self.tr('Position'))
-
-        self.setupHelixTab()
-        self.setupAtomicTab()
-        # self.setupLoopTab()
-        self.setupPositionTab()
-
-        layout.addLayout(topLayout)
-        layout.addWidget(self.tabWidget)
-        self.setLayout(layout)
 
     def updateCurrentMatch(self):
         """
