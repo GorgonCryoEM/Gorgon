@@ -183,6 +183,27 @@ class CAlphaStructureEditor(QtGui.QWidget):
             self.atomEnableTabElements(True)
             self.parentWidget().parentWidget().viewer.modelChanged()
 
+    def atomPlaceCAatom(self):
+            print "Atom place"
+            possibilityNum = self.atomicPossibilityNumSpinBox.value()
+            chosenAtom = self.possibleAtomsList[possibilityNum-1]
+            #self.parentWidget()=>CAlphaSequenceWidget, self.parentWidget().parentWidget() => CAlphaSequenceDock
+            viewer = self.parentWidget().parentWidget().viewer
+            for atom in self.possibleAtomsList:
+                if atom is chosenAtom:
+                    chosenCoordinates = chosenAtom.getPosition()
+                viewer.renderer.deleteAtom(atom.getHashKey())
+                del atom
+            self.possibleAtomsList = []
+            if self.atomicBackwardRadioButton.isChecked():
+                resSeqNum = int(self.atomicResNumbers[-1].text())
+            elif self.atomicForwardRadioButton.isChecked():
+                resSeqNum = int(self.atomicResNumbers[1].text())
+            command = CAlphaStructureEditorCommandAtomPlacement( self.currentChainModel, self, resSeqNum, chosenCoordinates, viewer,
+                                description = "Accept Location of C-alpha atom for residue #%s" % resSeqNum )
+            self.undoStack.push(command)
+            self.bringToFront()
+
     def atomForwardBackwardChange(self):
         """
         This reponds to whether the atomic editor should be moving forward
@@ -210,27 +231,6 @@ class CAlphaStructureEditor(QtGui.QWidget):
                 return
             self.parentWidget().scrollable.seqView.setSequenceSelection(newSelection)
             #self.setResidues(newSelection)
-
-    def atomPlaceCAatom(self):
-            print "Atom place"
-            possibilityNum = self.atomicPossibilityNumSpinBox.value()
-            chosenAtom = self.possibleAtomsList[possibilityNum-1]
-            #self.parentWidget()=>CAlphaSequenceWidget, self.parentWidget().parentWidget() => CAlphaSequenceDock
-            viewer = self.parentWidget().parentWidget().viewer
-            for atom in self.possibleAtomsList:
-                if atom is chosenAtom:
-                    chosenCoordinates = chosenAtom.getPosition()
-                viewer.renderer.deleteAtom(atom.getHashKey())
-                del atom
-            self.possibleAtomsList = []
-            if self.atomicBackwardRadioButton.isChecked():
-                resSeqNum = int(self.atomicResNumbers[-1].text())
-            elif self.atomicForwardRadioButton.isChecked():
-                resSeqNum = int(self.atomicResNumbers[1].text())
-            command = CAlphaStructureEditorCommandAtomPlacement( self.currentChainModel, self, resSeqNum, chosenCoordinates, viewer,
-                                description = "Accept Location of C-alpha atom for residue #%s" % resSeqNum )
-            self.undoStack.push(command)
-            self.bringToFront()
 
     def atomPrevButtonPress(self):
         """
