@@ -492,24 +492,6 @@ class CAlphaStructureEditor(QtGui.QWidget):
         self.app.mainCamera.updateGL()
         self.bringToFront()
 
-    def helixDecreaseButtonPress(self):
-        """
-        This decreases the start and stop residue numbers by one.
-        """
-        startIx = self.helixNtermSpinBox.value()
-        stopIx = self.helixCtermSpinBox.value()
-        startIx -= 1
-        stopIx -= 1
-        try:
-            ntext = self.currentChainModel[startIx].symbol3
-            ctext = self.currentChainModel[stopIx].symbol3
-            self.helixNtermSpinBox.setValue(startIx)
-            self.helixNtermResNameLabel.setText(ntext)
-            self.helixCtermSpinBox.setValue(stopIx)
-            self.helixCtermResNameLabel.setText(ctext)
-        except:
-            pass
-
     def helixFindSelectedCAHelices(self):
         """
         This finds C-alpha helices that contain the selected residue numbers.
@@ -707,6 +689,24 @@ class CAlphaStructureEditor(QtGui.QWidget):
         stopIx = self.helixCtermSpinBox.value()
         startIx += 1
         stopIx += 1
+        try:
+            ntext = self.currentChainModel[startIx].symbol3
+            ctext = self.currentChainModel[stopIx].symbol3
+            self.helixNtermSpinBox.setValue(startIx)
+            self.helixNtermResNameLabel.setText(ntext)
+            self.helixCtermSpinBox.setValue(stopIx)
+            self.helixCtermResNameLabel.setText(ctext)
+        except:
+            pass
+
+    def helixDecreaseButtonPress(self):
+        """
+        This decreases the start and stop residue numbers by one.
+        """
+        startIx = self.helixNtermSpinBox.value()
+        stopIx = self.helixCtermSpinBox.value()
+        startIx -= 1
+        stopIx -= 1
         try:
             ntext = self.currentChainModel[startIx].symbol3
             ctext = self.currentChainModel[stopIx].symbol3
