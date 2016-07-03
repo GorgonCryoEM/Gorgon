@@ -381,14 +381,6 @@ class CAlphaStructureEditor(QtGui.QWidget):
                 self.atomicResNumbers[i].setText('')
         self.atomFindPositionPossibilities()
 
-    def setHelixEditorValues(self, newSelection):
-        if(newSelection):
-            self.helixNtermSpinBox.setValue(newSelection[0])
-            self.helixCtermSpinBox.setValue(newSelection[-1])
-        else:
-            self.helixNtermSpinBox.setValue(0)
-            self.helixCtermSpinBox.setValue(0)
-
     def setupAtomicTab(self):
         #These go in the atomic tab
         self.atomicPossibilityNumSpinBox = QtGui.QSpinBox()
@@ -732,6 +724,13 @@ class CAlphaStructureEditor(QtGui.QWidget):
         self.setResidues(selection)
         self.posUpdateValues()
 
+    def setHelixEditorValues(self, newSelection):
+        if(newSelection):
+            self.helixNtermSpinBox.setValue(newSelection[0])
+            self.helixCtermSpinBox.setValue(newSelection[-1])
+        else:
+            self.helixNtermSpinBox.setValue(0)
+            self.helixCtermSpinBox.setValue(0)
 
     def helixIncreaseButtonPress(self):
         """
