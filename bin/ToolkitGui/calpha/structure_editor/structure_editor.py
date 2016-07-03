@@ -492,12 +492,6 @@ class CAlphaStructureEditor(QtGui.QWidget):
         self.app.mainCamera.updateGL()
         self.bringToFront()
 
-    def atomEnableTabElements(self, enable):
-        self.atomicAcceptButton.setEnabled(enable)
-
-    def bringToFront(self):
-        self.dock.raise_()
-
     def helixDecreaseButtonPress(self):
         """
         This decreases the start and stop residue numbers by one.
@@ -690,6 +684,12 @@ class CAlphaStructureEditor(QtGui.QWidget):
         self.setHelixEditorValues(selection)
         self.setResidues(selection)
         self.posUpdateValues()
+
+    def atomEnableTabElements(self, enable):
+        self.atomicAcceptButton.setEnabled(enable)
+
+    def bringToFront(self):
+        self.dock.raise_()
 
     def setHelixEditorValues(self, newSelection):
         if(newSelection):
