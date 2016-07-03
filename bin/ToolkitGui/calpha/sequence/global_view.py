@@ -21,8 +21,8 @@ class CAlphaGlobalSequenceView(QtGui.QWidget):
     
   def setStructurePrediction(self, newStructurePrediction):
     """
-This sets the structure prediction used by the CAlphaGlobalSequenceView, and
-updates its size based on the length of the sequence.
+    This sets the structure prediction used by the CAlphaGlobalSequenceView, and
+    updates its size based on the length of the sequence.
     """
     self.structurePrediction = newStructurePrediction
     self.connect(self.structurePrediction.chain, QtCore.SIGNAL("selection updated"), self.__selectionUpdated)
