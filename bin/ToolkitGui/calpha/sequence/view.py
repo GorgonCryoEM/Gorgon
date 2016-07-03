@@ -27,8 +27,8 @@ class CAlphaSequenceView(QtGui.QWidget):
 
   def setStructurePrediction(self, newStructurePrediction):
     '''
-This function changes what structure prediction is used for sequence
-and predicted residue indices of helices and strands.
+    This function changes what structure prediction is used for sequence
+    and predicted residue indices of helices and strands.
     '''
     self.structurePrediction = newStructurePrediction
     self.structurePrediction.chain.fillGaps()
@@ -198,8 +198,8 @@ and predicted residue indices of helices and strands.
 
   def getResidueIndexByMousePosition(self,x,y):
     '''
-Given the x, y coordinates of a user mouse click on the CAlphaSequenceView, 
-this returns the residue index of that residue.
+    Given the x, y coordinates of a user mouse click on the CAlphaSequenceView,
+    this returns the residue index of that residue.
     '''
     metrics=QtGui.QFontMetrics(self.font)
     cellHeight=metrics.lineSpacing()
@@ -212,15 +212,15 @@ this returns the residue index of that residue.
 
   def mousePressEvent(self, mouseEvent):
     '''
-If the user left clicks on a box representing a predicted helix or an 
-arrow representing a predicted strand, its residues are selected.  If 
-the control key is also pressed, it adds to or removes from the current 
-selection.
+    If the user left clicks on a box representing a predicted helix or an
+    arrow representing a predicted strand, its residues are selected.  If
+    the control key is also pressed, it adds to or removes from the current
+    selection.
 
-If the user left clicks on a residue, it becomes the new selection.  If
-the control key is also pressed, it is added to or removed from the 
-selection.  If the shift key is pressed, a continuous sequence of
-residues is selected.
+    If the user left clicks on a residue, it becomes the new selection.  If
+    the control key is also pressed, it is added to or removed from the
+    selection.  If the shift key is pressed, a continuous sequence of
+    residues is selected.
     '''
 
     if mouseEvent.button() == QtCore.Qt.LeftButton and mouseEvent.y() < self.cellHeight():
@@ -294,19 +294,19 @@ residues is selected.
 
   def incrementPointSize(self):
     '''
-This increases font size.
+    This increases font size.
     '''
     self.setFontSize(self.fontSize + 2)
 
   def decrementPointSize(self):
     '''
-This decreases font size.
+    This decreases font size.
     '''
     self.setFontSize(self.fontSize - 2)
 
   def updatePanelHeight(self):
     '''
-This updates the height and width of the CAlphaSequenceView.
+    This updates the height and width of the CAlphaSequenceView.
     '''
     metrics=QtGui.QFontMetrics(self.font)
     height=int(3.5*metrics.lineSpacing())
@@ -315,10 +315,10 @@ This updates the height and width of the CAlphaSequenceView.
 
   def setSequenceSelection(self, newSelection=None, removeOne=None, addOne=None, addRange=None):
     '''
-This changes what residues are selected in both the structure 
-prediction and the chain model by replacing the selection, removing a 
-residue from the selection, adding a residue to the selection, or 
-adding a list of residues to the selection.
+    This changes what residues are selected in both the structure
+    prediction and the chain model by replacing the selection, removing a
+    residue from the selection, adding a residue to the selection, or
+    adding a list of residues to the selection.
     '''
     dock = self.parentWidget().parentWidget().parentWidget().parentWidget()
     viewer = dock.viewer
@@ -351,9 +351,9 @@ adding a list of residues to the selection.
     
   def updateSequenceSelection(self):
     '''
-Based on the selection in the current chain model, this updates the 
-selection in the structure prediction and displays the changes in the
-CAlphaSequenceView.
+    Based on the selection in the current chain model, this updates the
+    selection in the structure prediction and displays the changes in the
+    CAlphaSequenceView.
     '''
     selection = self.currentChainModel.getSelection()
     self.structurePrediction.chain.setSelection(selection)
