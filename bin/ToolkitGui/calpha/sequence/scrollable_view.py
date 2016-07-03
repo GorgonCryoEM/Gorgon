@@ -21,8 +21,8 @@ class CAlphaScrollableSequenceView(QtGui.QScrollArea):
 
   def updateHeight(self):
     """
-This resizes the CAlphaScrollableSequenceView's height based on the size of 
-the CAlphaSequenceView.
+    This resizes the CAlphaScrollableSequenceView's height based on the size of
+    the CAlphaSequenceView.
     """
     scrollbar=self.horizontalScrollBar()
     scrollbarHeight=scrollbar.height()
