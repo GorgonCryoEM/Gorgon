@@ -258,10 +258,6 @@ class CAlphaStructureEditor(QtGui.QWidget):
 
         self.updateLoopEditorEnables()
 
-    def loadLoopVolume(self):
-        self.app.volumeViewer.loadData()
-        self.bringToFront()
-
     def setupPositionTab(self):
         self.posTranslateGroup = QtGui.QGroupBox('Translate:')
         self.posRotateGroup = QtGui.QGroupBox('Rotate:')
