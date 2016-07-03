@@ -381,214 +381,6 @@ class CAlphaStructureEditor(QtGui.QWidget):
         else:
             raise ValueError, len(helices)
 
-    def helixIncreaseButtonPress(self):
-        """
-        This increases the start and stop residue numbers by one.
-        """
-        startIx = self.helixNtermSpinBox.value()
-        stopIx = self.helixCtermSpinBox.value()
-        startIx += 1
-        stopIx += 1
-        try:
-            ntext = self.currentChainModel[startIx].symbol3
-            ctext = self.currentChainModel[stopIx].symbol3
-            self.helixNtermSpinBox.setValue(startIx)
-            self.helixNtermResNameLabel.setText(ntext)
-            self.helixCtermSpinBox.setValue(stopIx)
-            self.helixCtermResNameLabel.setText(ctext)
-        except:
-            pass
-
-    def posMoveCM_x(self):
-        """
-        This translates the selection on the x-axis.
-        """
-        if(not self.undoInProgress):
-            oldX = self.x
-            newX = self.posMoveDict['x'].value()
-            moveX =  newX - oldX
-            self.x = newX
-            translateVector = Vec3(moveX, 0, 0)
-            command = CAlphaStructureEditorCommandChangePosition(self.CAlphaViewer, self, True, translateVector, False, None, None, oldX, newX, 'x')
-            self.undoStack.push(command)
-        self.app.calphaViewer.modelChanged()
-        self.app.mainCamera.updateGL()
-
-    def posMoveCM_y(self):
-        """
-        This translates the selection on the y-axis.
-        """
-        if(not self.undoInProgress):
-            oldY = self.y
-            newY = self.posMoveDict['y'].value()
-            moveY =  newY - oldY
-            self.y = newY
-            translateVector = Vec3(0, moveY, 0)
-            command = CAlphaStructureEditorCommandChangePosition(self.CAlphaViewer, self, True, translateVector, False, None, None, oldY, newY, 'y')
-            self.undoStack.push(command)
-        self.app.calphaViewer.modelChanged()
-        self.app.mainCamera.updateGL()
-
-    def posMoveCM_z(self):
-        """
-        This translates the selection on the z-axis.
-        """
-        if(not self.undoInProgress):
-            oldZ = self.z
-            newZ = self.posMoveDict['z'].value()
-            moveZ = newZ - oldZ
-            self.z = newZ
-            translateVector = Vec3(0, 0, moveZ)
-            command = CAlphaStructureEditorCommandChangePosition(self.CAlphaViewer, self, True, translateVector, False, None, None, oldZ, newZ, 'z')
-            self.undoStack.push(command)
-        self.app.calphaViewer.modelChanged()
-        self.app.mainCamera.updateGL()
-
-    def posRotateCM_roll(self, angle):
-        """
-        This rotates the selection around its 'center of mass' (actually
-        geometric center) in a clockwise direction around a normal line to the
-        screen.
-        """
-        if(not self.undoInProgress):
-            axis = self.CAlphaViewer.worldToObjectCoordinates(self.app.mainCamera.look)
-            oldAngle = self.roll
-
-            axis = Vec3(axis[0], axis[1], axis[2])
-
-            cm = self.CAlphaViewer.renderer.selectionCenterOfMass()
-            newAngle = math.pi*angle/180
-
-            command = CAlphaStructureEditorCommandChangePosition(self.CAlphaViewer, self, False, None, True, cm, axis, oldAngle, angle, 'roll')
-            self.undoStack.push(command)
-        self.app.calphaViewer.modelChanged()
-        self.app.mainCamera.updateGL()
-
-    def posRotateCM_pitch(self, angle):
-        """
-        This rotates the selection around its 'center of mass' (actually
-        geometric center) around a line parallel to a horizontal line on the
-        screen.
-        """
-        if(not self.undoInProgress):
-            axis = self.CAlphaViewer.worldToObjectCoordinates(self.app.mainCamera.right)
-            oldAngle = self.pitch
-
-            axis = Vec3(axis[0], axis[1], axis[2])
-
-            cm = self.CAlphaViewer.renderer.selectionCenterOfMass()
-            newAngle = math.pi*angle/180
-
-            command = CAlphaStructureEditorCommandChangePosition(self.CAlphaViewer, self, False, None, True, cm, axis, oldAngle, angle, 'pitch')
-            self.undoStack.push(command)
-        self.app.calphaViewer.modelChanged()
-        self.app.mainCamera.updateGL()
-
-    def posRotateCM_yaw(self, angle):
-        """
-        This rotates the selection around its 'center of mass' (actually
-        geometric center) around a line parallel to a vertical line on the
-        screen.
-        """
-        if(not self.undoInProgress):
-            axis = self.CAlphaViewer.worldToObjectCoordinates(self.app.mainCamera.up)
-            axis = (-1*axis[0], -1*axis[1], -1*axis[2])
-            oldAngle = self.yaw
-
-            axis = Vec3(axis[0], axis[1], axis[2])
-            cm = self.CAlphaViewer.renderer.selectionCenterOfMass()
-            newAngle = math.pi*angle/180
-            command = CAlphaStructureEditorCommandChangePosition(self.CAlphaViewer, self, False, None, True, cm, axis, oldAngle, angle, 'yaw')
-            self.undoStack.push(command)
-        self.app.calphaViewer.modelChanged()
-        self.app.mainCamera.updateGL()
-
-    def posUpdateValues(self):
-        """
-        This updates the spin boxes to show the C-alpha coordinates of the
-        selection's geometric center.
-        """
-        cAlphaRenderer = self.app.calphaViewer.renderer
-        cm = cAlphaRenderer.selectionCenterOfMass()
-        self.x = cm.x()
-        self.y = cm.y()
-        self.z = cm.z()
-        self.posMoveDict['x'].setValue(cm.x())
-        self.posMoveDict['y'].setValue(cm.y())
-        self.posMoveDict['z'].setValue(cm.z())
-
-    def posXDecr(self):
-        """
-        This decreases the position editor's x-coordinate spin box by 1.
-        """
-        self.posMoveDict['x'].setValue(self.posMoveDict['x'].value()-1)
-
-    def posXIncr(self):
-        """
-        This increases the position editor's x-cordinate spin box by 1.
-        """
-        self.posMoveDict['x'].setValue(self.posMoveDict['x'].value()+1)
-
-    def posYDecr(self):
-        """
-        This decreases the position editor's y-coordinate spin box by 1.
-        """
-        self.posMoveDict['y'].setValue(self.posMoveDict['y'].value()-1)
-
-    def posYIncr(self):
-        """
-        This increases the position editor's y-coordinate spin box by 1.
-        """
-        self.posMoveDict['y'].setValue(self.posMoveDict['y'].value()+1)
-
-    def posZDecr(self):
-        """
-        This decreases the position editor's z-coordinate spin box by 1.
-        """
-        self.posMoveDict['z'].setValue(self.posMoveDict['z'].value()-1)
-
-    def posZIncr(self):
-        """
-        This increases the position editor's z-coordinate spin box by 1.
-        """
-        self.posMoveDict['z'].setValue(self.posMoveDict['z'].value()+1)
-
-    def posRollDecr(self):
-        """
-        This decreases the position editor's roll spin box by 3.
-        """
-        self.posMoveDict['roll'].setValue(self.posMoveDict['roll'].value()-3)
-
-    def posRollIncr(self):
-        """
-        This increases the position editor's roll spin box by 3.
-        """
-        self.posMoveDict['roll'].setValue(self.posMoveDict['roll'].value()+3)
-
-    def posPitchDecr(self):
-        """
-        This decreases the position editor's pitch spin box by 3.
-        """
-        self.posMoveDict['pitch'].setValue(self.posMoveDict['pitch'].value()-3)
-
-    def posPitchIncr(self):
-        """
-        This increases the position editor's pitch spin box by 3.
-        """
-        self.posMoveDict['pitch'].setValue(self.posMoveDict['pitch'].value() + 3)
-
-    def posYawDecr(self):
-        """
-        This decreases the position editor's yaw spin box by 3.
-        """
-        self.posMoveDict['yaw'].setValue(self.posMoveDict['yaw'].value() - 3)
-
-    def posYawIncr(self):
-        """
-        This increases the position editor's yaw spin box by 3.
-        """
-        self.posMoveDict['yaw'].setValue(self.posMoveDict['yaw'].value()+3)
-
     def removeSelectedAtoms(self):
         #This deletes the selected atoms and the attached bonds. It also removes
         #any secels that contain those atoms from the chain.
@@ -1002,3 +794,211 @@ class CAlphaStructureEditor(QtGui.QWidget):
         self.setResidues(selection)
         self.posUpdateValues()
 
+
+    def helixIncreaseButtonPress(self):
+        """
+        This increases the start and stop residue numbers by one.
+        """
+        startIx = self.helixNtermSpinBox.value()
+        stopIx = self.helixCtermSpinBox.value()
+        startIx += 1
+        stopIx += 1
+        try:
+            ntext = self.currentChainModel[startIx].symbol3
+            ctext = self.currentChainModel[stopIx].symbol3
+            self.helixNtermSpinBox.setValue(startIx)
+            self.helixNtermResNameLabel.setText(ntext)
+            self.helixCtermSpinBox.setValue(stopIx)
+            self.helixCtermResNameLabel.setText(ctext)
+        except:
+            pass
+
+    def posMoveCM_x(self):
+        """
+        This translates the selection on the x-axis.
+        """
+        if(not self.undoInProgress):
+            oldX = self.x
+            newX = self.posMoveDict['x'].value()
+            moveX =  newX - oldX
+            self.x = newX
+            translateVector = Vec3(moveX, 0, 0)
+            command = CAlphaStructureEditorCommandChangePosition(self.CAlphaViewer, self, True, translateVector, False, None, None, oldX, newX, 'x')
+            self.undoStack.push(command)
+        self.app.calphaViewer.modelChanged()
+        self.app.mainCamera.updateGL()
+
+    def posMoveCM_y(self):
+        """
+        This translates the selection on the y-axis.
+        """
+        if(not self.undoInProgress):
+            oldY = self.y
+            newY = self.posMoveDict['y'].value()
+            moveY =  newY - oldY
+            self.y = newY
+            translateVector = Vec3(0, moveY, 0)
+            command = CAlphaStructureEditorCommandChangePosition(self.CAlphaViewer, self, True, translateVector, False, None, None, oldY, newY, 'y')
+            self.undoStack.push(command)
+        self.app.calphaViewer.modelChanged()
+        self.app.mainCamera.updateGL()
+
+    def posMoveCM_z(self):
+        """
+        This translates the selection on the z-axis.
+        """
+        if(not self.undoInProgress):
+            oldZ = self.z
+            newZ = self.posMoveDict['z'].value()
+            moveZ = newZ - oldZ
+            self.z = newZ
+            translateVector = Vec3(0, 0, moveZ)
+            command = CAlphaStructureEditorCommandChangePosition(self.CAlphaViewer, self, True, translateVector, False, None, None, oldZ, newZ, 'z')
+            self.undoStack.push(command)
+        self.app.calphaViewer.modelChanged()
+        self.app.mainCamera.updateGL()
+
+    def posRotateCM_roll(self, angle):
+        """
+        This rotates the selection around its 'center of mass' (actually
+        geometric center) in a clockwise direction around a normal line to the
+        screen.
+        """
+        if(not self.undoInProgress):
+            axis = self.CAlphaViewer.worldToObjectCoordinates(self.app.mainCamera.look)
+            oldAngle = self.roll
+
+            axis = Vec3(axis[0], axis[1], axis[2])
+
+            cm = self.CAlphaViewer.renderer.selectionCenterOfMass()
+            newAngle = math.pi*angle/180
+
+            command = CAlphaStructureEditorCommandChangePosition(self.CAlphaViewer, self, False, None, True, cm, axis, oldAngle, angle, 'roll')
+            self.undoStack.push(command)
+        self.app.calphaViewer.modelChanged()
+        self.app.mainCamera.updateGL()
+
+    def posRotateCM_pitch(self, angle):
+        """
+        This rotates the selection around its 'center of mass' (actually
+        geometric center) around a line parallel to a horizontal line on the
+        screen.
+        """
+        if(not self.undoInProgress):
+            axis = self.CAlphaViewer.worldToObjectCoordinates(self.app.mainCamera.right)
+            oldAngle = self.pitch
+
+            axis = Vec3(axis[0], axis[1], axis[2])
+
+            cm = self.CAlphaViewer.renderer.selectionCenterOfMass()
+            newAngle = math.pi*angle/180
+
+            command = CAlphaStructureEditorCommandChangePosition(self.CAlphaViewer, self, False, None, True, cm, axis, oldAngle, angle, 'pitch')
+            self.undoStack.push(command)
+        self.app.calphaViewer.modelChanged()
+        self.app.mainCamera.updateGL()
+
+    def posRotateCM_yaw(self, angle):
+        """
+        This rotates the selection around its 'center of mass' (actually
+        geometric center) around a line parallel to a vertical line on the
+        screen.
+        """
+        if(not self.undoInProgress):
+            axis = self.CAlphaViewer.worldToObjectCoordinates(self.app.mainCamera.up)
+            axis = (-1*axis[0], -1*axis[1], -1*axis[2])
+            oldAngle = self.yaw
+
+            axis = Vec3(axis[0], axis[1], axis[2])
+            cm = self.CAlphaViewer.renderer.selectionCenterOfMass()
+            newAngle = math.pi*angle/180
+            command = CAlphaStructureEditorCommandChangePosition(self.CAlphaViewer, self, False, None, True, cm, axis, oldAngle, angle, 'yaw')
+            self.undoStack.push(command)
+        self.app.calphaViewer.modelChanged()
+        self.app.mainCamera.updateGL()
+
+    def posUpdateValues(self):
+        """
+        This updates the spin boxes to show the C-alpha coordinates of the
+        selection's geometric center.
+        """
+        cAlphaRenderer = self.app.calphaViewer.renderer
+        cm = cAlphaRenderer.selectionCenterOfMass()
+        self.x = cm.x()
+        self.y = cm.y()
+        self.z = cm.z()
+        self.posMoveDict['x'].setValue(cm.x())
+        self.posMoveDict['y'].setValue(cm.y())
+        self.posMoveDict['z'].setValue(cm.z())
+
+    def posXDecr(self):
+        """
+        This decreases the position editor's x-coordinate spin box by 1.
+        """
+        self.posMoveDict['x'].setValue(self.posMoveDict['x'].value()-1)
+
+    def posXIncr(self):
+        """
+        This increases the position editor's x-cordinate spin box by 1.
+        """
+        self.posMoveDict['x'].setValue(self.posMoveDict['x'].value()+1)
+
+    def posYDecr(self):
+        """
+        This decreases the position editor's y-coordinate spin box by 1.
+        """
+        self.posMoveDict['y'].setValue(self.posMoveDict['y'].value()-1)
+
+    def posYIncr(self):
+        """
+        This increases the position editor's y-coordinate spin box by 1.
+        """
+        self.posMoveDict['y'].setValue(self.posMoveDict['y'].value()+1)
+
+    def posZDecr(self):
+        """
+        This decreases the position editor's z-coordinate spin box by 1.
+        """
+        self.posMoveDict['z'].setValue(self.posMoveDict['z'].value()-1)
+
+    def posZIncr(self):
+        """
+        This increases the position editor's z-coordinate spin box by 1.
+        """
+        self.posMoveDict['z'].setValue(self.posMoveDict['z'].value()+1)
+
+    def posRollDecr(self):
+        """
+        This decreases the position editor's roll spin box by 3.
+        """
+        self.posMoveDict['roll'].setValue(self.posMoveDict['roll'].value()-3)
+
+    def posRollIncr(self):
+        """
+        This increases the position editor's roll spin box by 3.
+        """
+        self.posMoveDict['roll'].setValue(self.posMoveDict['roll'].value()+3)
+
+    def posPitchDecr(self):
+        """
+        This decreases the position editor's pitch spin box by 3.
+        """
+        self.posMoveDict['pitch'].setValue(self.posMoveDict['pitch'].value()-3)
+
+    def posPitchIncr(self):
+        """
+        This increases the position editor's pitch spin box by 3.
+        """
+        self.posMoveDict['pitch'].setValue(self.posMoveDict['pitch'].value() + 3)
+
+    def posYawDecr(self):
+        """
+        This decreases the position editor's yaw spin box by 3.
+        """
+        self.posMoveDict['yaw'].setValue(self.posMoveDict['yaw'].value() - 3)
+
+    def posYawIncr(self):
+        """
+        This increases the position editor's yaw spin box by 3.
+        """
+        self.posMoveDict['yaw'].setValue(self.posMoveDict['yaw'].value()+3)
