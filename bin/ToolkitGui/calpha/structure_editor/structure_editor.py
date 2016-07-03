@@ -360,9 +360,6 @@ class CAlphaStructureEditor(QtGui.QWidget):
         viewer.modelChanged()
         self.previouslySelectedPossibleAtom = atomToDisplay
 
-    def atomEnableTabElements(self, enable):
-        self.atomicAcceptButton.setEnabled(enable)
-
     def atomFindPositionPossibilities(self):
         self.atomEnableTabElements(False)
         self.possibleAtomsList = []
@@ -494,6 +491,9 @@ class CAlphaStructureEditor(QtGui.QWidget):
         self.app.calphaViewer.modelChanged()
         self.app.mainCamera.updateGL()
         self.bringToFront()
+
+    def atomEnableTabElements(self, enable):
+        self.atomicAcceptButton.setEnabled(enable)
 
     def bringToFront(self):
         self.dock.raise_()
