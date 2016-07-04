@@ -105,11 +105,6 @@ class CAlphaViewer(BaseViewer):
             self.setAtomColorsAndVisibility(self.displayStyle)
             self.modelChanged()
 
-    def clearSelection(self):
-        BaseViewer.clearSelection(self)
-        self.main_chain.setSelection([], None, None, None)
-        self.emitAtomSelectionUpdated(self.main_chain.getSelection())
-
     def processElementClick(self, *argv):
         print argv
         """
@@ -229,6 +224,11 @@ class CAlphaViewer(BaseViewer):
             z = pos.z() * self.renderer.getSpacingZ() + self.renderer.getOriginZ()
             self.app.mainCamera.setCenter(Vec3(x, y, z))
             self.modelChanged()
+
+    def clearSelection(self):
+        BaseViewer.clearSelection(self)
+        self.main_chain.setSelection([], None, None, None)
+        self.emitAtomSelectionUpdated(self.main_chain.getSelection())
 
     def loadSSEHunterData(self, fileName):
         if (self.loaded):
