@@ -1,7 +1,6 @@
 from PyQt4 import QtGui, QtCore, QtOpenGL
 from libpytoolkit import CAlphaRenderer
 from Explorer.base_viewer import BaseViewer
-from .choose_chain.to_load_form import CAlphaChooseChainToLoadForm
 # from .atom_placer_form import CAlphaAtomPlacerForm
 from Toolkit.sse.seq_model.Chain import Chain
 from ToolkitGui.calpha.sequence.dock import CAlphaSequenceDock
@@ -198,31 +197,29 @@ class CAlphaViewer(BaseViewer):
         self.whichChainID = None
         filename = unicode(self.fileName)
         if filename.split('.')[-1].lower() == 'pdb':
-            dlg = CAlphaChooseChainToLoadForm(unicode(self.fileName))
-            if dlg.exec_():
-                self.whichChainID = 'ALL'
-                if not self.fileName.isEmpty():
-                    if (self.loaded):
-                        self.unloadData()
+            self.whichChainID = 'ALL'
+            if not self.fileName.isEmpty():
+                if (self.loaded):
+                    self.unloadData()
 
-                    self.fileName = fileNameTemp
-                    
-                    if self.whichChainID == 'ALL':
-                        mychainKeys = Chain.loadAllChains(str(self.fileName), qparent=self.app)
-                        for chainKey in mychainKeys:
-                            setupChain(Chain.getChain(chainKey))
-                    else:
-                        mychain = Chain.load(str(self.fileName), qparent=self.app, whichChainID=self.whichChainID)
-                        setupChain(mychain)
-        
-    #                     if not self.loaded:
-                    self.dirty = False
-                    self.loaded = True
-                    self.setAtomColorsAndVisibility(self.displayStyle)
-#                     self.emitModelLoadedPreDraw()
-#                     self.emitModelLoaded()
-#                     self.emitViewerSetCenter()
-                    self.modelChanged()
+                self.fileName = fileNameTemp
+                
+                if self.whichChainID == 'ALL':
+                    mychainKeys = Chain.loadAllChains(str(self.fileName), qparent=self.app)
+                    for chainKey in mychainKeys:
+                        setupChain(Chain.getChain(chainKey))
+                else:
+                    mychain = Chain.load(str(self.fileName), qparent=self.app, whichChainID=self.whichChainID)
+                    setupChain(mychain)
+    
+#                     if not self.loaded:
+                self.dirty = False
+                self.loaded = True
+                self.setAtomColorsAndVisibility(self.displayStyle)
+#                self.emitModelLoadedPreDraw()
+#                self.emitModelLoaded()
+#                self.emitViewerSetCenter()
+                self.modelChanged()
         
         print "self.renderer.getAtomCount(): ", self.renderer.getAtomCount()
     
