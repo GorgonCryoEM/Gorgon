@@ -25,14 +25,11 @@ class CAlphaGlobalSequenceView(QtGui.QWidget):
         updates its size based on the length of the sequence.
         """
         self.structurePrediction = newStructurePrediction
-        self.connect(self.structurePrediction.chain, QtCore.SIGNAL("selection updated"), self.__selectionUpdated)
+        self.connect(self.structurePrediction.chain, QtCore.SIGNAL("selection updated"), self.repaint)
         seqLength = len(self.structurePrediction.chain.residueRange())
         self.nRows = 1 + seqLength / self.nCols
         self.resize(QtCore.QSize(self.widgetWidth, self.nRows * self.cellHeight))
         self.setMinimumSize(QtCore.QSize(self.widgetWidth, self.nRows * self.cellHeight))  # Neccessary when adding as a widget.
-        self.repaint()
-
-    def __selectionUpdated(self):
         self.repaint()
 
     def updateViewportRange(self):
