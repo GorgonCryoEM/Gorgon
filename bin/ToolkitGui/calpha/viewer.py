@@ -130,14 +130,6 @@ class CAlphaViewer(BaseViewer):
                 sseData[1] = self.ribbonMouseMapping[2][hitStack[1]]
         return sseData
 
-    def setSegments(self, num_segments):
-        self.renderer.setNumSegments(num_segments)
-        self.modelChanged()
-
-    def setSlices(self, num_slices):
-        self.renderer.setNumSlices(num_slices)
-        self.modelChanged()
-    
     def centerOnSelectedAtoms(self, *argv):
         # This centers the CAMERA on the last selected atom.
         if not argv:
@@ -376,6 +368,14 @@ class CAlphaViewer(BaseViewer):
                     print self.currentMatch
                     self.emit(QtCore.SIGNAL("SSE selected"))
                     break
+
+    def setSegments(self, num_segments):
+        self.renderer.setNumSegments(num_segments)
+        self.modelChanged()
+
+    def setSlices(self, num_slices):
+        self.renderer.setNumSlices(num_slices)
+        self.modelChanged()
 
     # Overridden
     def getDrawColors(self):
