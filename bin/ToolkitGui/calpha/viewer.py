@@ -71,6 +71,24 @@ class CAlphaViewer(BaseViewer):
         self.ui.pushButtonSave.clicked.connect(self.saveData)
         self.createActions()
       
+    def createActions(self):
+        seqDockAct = QtGui.QAction(self.tr("Semi-&automatic Atom Placement: calpha-viewer"), self)
+        seqDockAct.setCheckable(True)
+        seqDockAct.setChecked(False)
+        self.app.docksMenu.addAction(seqDockAct)
+
+        def showDock():
+            loaded = True
+            if not self.structPred:
+                loaded = self.loadSeq()
+            if self.structPred:
+                self.main_chain = self.structPred.chain
+            if loaded:
+                CAlphaSequenceDock.changeDockVisibility(self.app, self, self.structPred, self.main_chain)
+
+        self.connect(seqDockAct, QtCore.SIGNAL("triggered()"), showDock)
+    #         self.app.actions.addAction("seqDock", seqDockAct)
+
     def updateTotalScoreSSEHunterAtoms(self, correlationCoefficient, skeletonCoefficient, geometryCoefficient):
         self.renderer.updateTotalScoreSSEHunterAtoms(correlationCoefficient, skeletonCoefficient, geometryCoefficient)
         self.modelChanged()
@@ -102,24 +120,6 @@ class CAlphaViewer(BaseViewer):
                     print self.currentMatch
                     self.emit(QtCore.SIGNAL("SSE selected"))
                     break
-
-    def createActions(self):
-        seqDockAct = QtGui.QAction(self.tr("Semi-&automatic Atom Placement: calpha-viewer"), self)
-        seqDockAct.setCheckable(True)
-        seqDockAct.setChecked(False)
-        self.app.docksMenu.addAction(seqDockAct)
-
-        def showDock():
-            loaded = True
-            if not self.structPred:
-                loaded = self.loadSeq()
-            if self.structPred:
-                self.main_chain = self.structPred.chain
-            if loaded:
-                CAlphaSequenceDock.changeDockVisibility(self.app, self, self.structPred, self.main_chain)
-
-        self.connect(seqDockAct, QtCore.SIGNAL("triggered()"), showDock)
-    #         self.app.actions.addAction("seqDock", seqDockAct)
 
     def formatRibbonHitstack(self, hitStack):
         sseData = [-1, " ", " "]
