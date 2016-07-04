@@ -121,20 +121,6 @@ class CAlphaViewer(BaseViewer):
                     self.emit(QtCore.SIGNAL("SSE selected"))
                     break
 
-    def formatRibbonHitstack(self, hitStack):
-        sseData = [-1, " ", " "]
-        if (len(hitStack) <= 2):
-            subsceneIx = hitStack[0]
-            sseData[0] = subsceneIx
-            if (subsceneIx == 0):
-                sseData[1] = self.ribbonMouseMapping[0][hitStack[1]]
-            if (subsceneIx == 1):
-                sseData[1] = self.ribbonMouseMapping[1][hitStack[1]][0]
-                sseData[2] = self.ribbonMouseMapping[1][hitStack[1]][1]
-            elif (subsceneIx == 2):
-                sseData[1] = self.ribbonMouseMapping[2][hitStack[1]]
-        return sseData
-
     def centerOnSelectedAtoms(self, *argv):
         # This centers the CAMERA on the last selected atom.
         if not argv:
@@ -285,6 +271,20 @@ class CAlphaViewer(BaseViewer):
             selectedChain.saveToPDB(self.fileName)
             self.dirty = False
             self.setCursor(QtCore.Qt.ArrowCursor)
+
+    def formatRibbonHitstack(self, hitStack):
+        sseData = [-1, " ", " "]
+        if (len(hitStack) <= 2):
+            subsceneIx = hitStack[0]
+            sseData[0] = subsceneIx
+            if (subsceneIx == 0):
+                sseData[1] = self.ribbonMouseMapping[0][hitStack[1]]
+            if (subsceneIx == 1):
+                sseData[1] = self.ribbonMouseMapping[1][hitStack[1]][0]
+                sseData[2] = self.ribbonMouseMapping[1][hitStack[1]][1]
+            elif (subsceneIx == 2):
+                sseData[1] = self.ribbonMouseMapping[2][hitStack[1]]
+        return sseData
 
    # Overridden
     def initializeGLDisplayType(self):
