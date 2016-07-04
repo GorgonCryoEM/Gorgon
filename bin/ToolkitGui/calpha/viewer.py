@@ -121,89 +121,6 @@ class CAlphaViewer(BaseViewer):
         self.connect(seqDockAct, QtCore.SIGNAL("triggered()"), showDock)
     #         self.app.actions.addAction("seqDock", seqDockAct)
 
-   # Overridden
-    def initializeGLDisplayType(self):
-        super(CAlphaViewer, self).initializeGLDisplayType()
-        
-        glPolygonMode(GL_FRONT, GL_FILL)
-        glPolygonMode(GL_BACK, GL_FILL)
-        glShadeModel(GL_SMOOTH)
-
-    # Overridden
-    def setDisplayStyle(self, style):
-        if style != self.displayStyle:
-            self.displayStyle = style
-            self.renderer.setDisplayStyle(self.displayStyle)
-            self.setAtomColorsAndVisibility(self.displayStyle)
-            self.modelChanged()
-
-    def processElementClick(self, *argv):
-        print argv
-        """
-        In response to a click on a C-alpha element, this updates the selected
-        residues in the Chain object.
-        """
-        if argv[0]:  # argv[0] is 0 for a click on an atom
-            return
-        hits = argv[:-1]
-        event = argv[-1]
-        print "...event: ", event
-        if event.button() == QtCore.Qt.LeftButton:
-            print "...if"
-            if event.modifiers() & QtCore.Qt.CTRL:  # Multiple selection mode
-                print ".....if"
-                atom = CAlphaRenderer.getAtomFromHitStack(self.renderer, hits[0], False, *hits[1:])
-                if atom.getResSeq() in self.main_chain.getSelection():
-                    self.main_chain.setSelection(removeOne=atom.getResSeq())
-                else:
-                    print "....else"
-                    self.main_chain.setSelection(addOne=atom.getResSeq())
-            else:
-                atom = CAlphaRenderer.getAtomFromHitStack(self.renderer, hits[0], True, *hits[1:])
-                print 'Residue #:', atom.getResSeq()
-                self.main_chain.setSelection([atom.getResSeq()])
-            print self.main_chain.getSelection()
-            self.emitAtomSelectionUpdated(self.main_chain.getSelection())
-            # try:
-            #     self.app.form.atomSelectionChanged(self.main_chain.getSelection())
-            # except:
-            #     print "Exception: self.app.form.atomSelectionChanged"
-
-        if event.button() == QtCore.Qt.RightButton and self.centerOnRMB:
-            self.centerOnSelectedAtoms(argv[0], argv[1], argv[2], argv[3], argv[4], argv[5], argv[6])
-
-    # Overridden
-    def emitElementClicked(self, hitStack, event):
-        print "emitElementClicked overridden: ", self.title, hitStack
-        print "self.displayStyle: ", self.displayStyle
-        if (self.displayStyle == self.DisplayStyleRibbon):
-            sseData = self.formatRibbonHitstack(hitStack)
-            self.emit(QtCore.SIGNAL("ribbonClicked (int, PyQt_PyObject, PyQt_PyObject, QMouseEvent)"), sseData[0],
-                      sseData[1], sseData[2], event)
-        else:
-            BaseViewer.emitElementClicked(self, hitStack, event)
-
-    # Overridden
-    def emitElementSelected(self, hitStack, event):
-        if (self.displayStyle == self.DisplayStyleRibbon):
-            sseData = self.formatRibbonHitstack(hitStack)
-            self.emit(QtCore.SIGNAL("ribbonSelected (int, PyQt_PyObject, PyQt_PyObject, QMouseEvent)"), sseData[0],
-                      sseData[1], sseData[2], event)
-        else:
-            BaseViewer.emitElementSelected(self, hitStack, event)
-
-    # Overridden
-    def emitElementMouseOver(self, hitStack, event):
-        if (self.displayStyle == self.DisplayStyleRibbon):
-            sseData = self.formatRibbonHitstack(hitStack)
-            self.emit(QtCore.SIGNAL("ribbonMouseOver (int, PyQt_PyObject, PyQt_PyObject, QMouseEvent)"), sseData[0],
-                      sseData[1], sseData[2], event)
-        else:
-            BaseViewer.emitElementMouseOver(self, hitStack, event)
-
-    def emitAtomSelectionUpdated(self, selection):
-        self.emit(QtCore.SIGNAL("atomSelectionUpdated(PyQt_PyObject)"), selection)
-
     def formatRibbonHitstack(self, hitStack):
         sseData = [-1, " ", " "]
         if (len(hitStack) <= 2):
@@ -368,6 +285,89 @@ class CAlphaViewer(BaseViewer):
             selectedChain.saveToPDB(self.fileName)
             self.dirty = False
             self.setCursor(QtCore.Qt.ArrowCursor)
+
+   # Overridden
+    def initializeGLDisplayType(self):
+        super(CAlphaViewer, self).initializeGLDisplayType()
+        
+        glPolygonMode(GL_FRONT, GL_FILL)
+        glPolygonMode(GL_BACK, GL_FILL)
+        glShadeModel(GL_SMOOTH)
+
+    # Overridden
+    def setDisplayStyle(self, style):
+        if style != self.displayStyle:
+            self.displayStyle = style
+            self.renderer.setDisplayStyle(self.displayStyle)
+            self.setAtomColorsAndVisibility(self.displayStyle)
+            self.modelChanged()
+
+    def processElementClick(self, *argv):
+        print argv
+        """
+        In response to a click on a C-alpha element, this updates the selected
+        residues in the Chain object.
+        """
+        if argv[0]:  # argv[0] is 0 for a click on an atom
+            return
+        hits = argv[:-1]
+        event = argv[-1]
+        print "...event: ", event
+        if event.button() == QtCore.Qt.LeftButton:
+            print "...if"
+            if event.modifiers() & QtCore.Qt.CTRL:  # Multiple selection mode
+                print ".....if"
+                atom = CAlphaRenderer.getAtomFromHitStack(self.renderer, hits[0], False, *hits[1:])
+                if atom.getResSeq() in self.main_chain.getSelection():
+                    self.main_chain.setSelection(removeOne=atom.getResSeq())
+                else:
+                    print "....else"
+                    self.main_chain.setSelection(addOne=atom.getResSeq())
+            else:
+                atom = CAlphaRenderer.getAtomFromHitStack(self.renderer, hits[0], True, *hits[1:])
+                print 'Residue #:', atom.getResSeq()
+                self.main_chain.setSelection([atom.getResSeq()])
+            print self.main_chain.getSelection()
+            self.emitAtomSelectionUpdated(self.main_chain.getSelection())
+            # try:
+            #     self.app.form.atomSelectionChanged(self.main_chain.getSelection())
+            # except:
+            #     print "Exception: self.app.form.atomSelectionChanged"
+
+        if event.button() == QtCore.Qt.RightButton and self.centerOnRMB:
+            self.centerOnSelectedAtoms(argv[0], argv[1], argv[2], argv[3], argv[4], argv[5], argv[6])
+
+    # Overridden
+    def emitElementClicked(self, hitStack, event):
+        print "emitElementClicked overridden: ", self.title, hitStack
+        print "self.displayStyle: ", self.displayStyle
+        if (self.displayStyle == self.DisplayStyleRibbon):
+            sseData = self.formatRibbonHitstack(hitStack)
+            self.emit(QtCore.SIGNAL("ribbonClicked (int, PyQt_PyObject, PyQt_PyObject, QMouseEvent)"), sseData[0],
+                      sseData[1], sseData[2], event)
+        else:
+            BaseViewer.emitElementClicked(self, hitStack, event)
+
+    # Overridden
+    def emitElementSelected(self, hitStack, event):
+        if (self.displayStyle == self.DisplayStyleRibbon):
+            sseData = self.formatRibbonHitstack(hitStack)
+            self.emit(QtCore.SIGNAL("ribbonSelected (int, PyQt_PyObject, PyQt_PyObject, QMouseEvent)"), sseData[0],
+                      sseData[1], sseData[2], event)
+        else:
+            BaseViewer.emitElementSelected(self, hitStack, event)
+
+    # Overridden
+    def emitElementMouseOver(self, hitStack, event):
+        if (self.displayStyle == self.DisplayStyleRibbon):
+            sseData = self.formatRibbonHitstack(hitStack)
+            self.emit(QtCore.SIGNAL("ribbonMouseOver (int, PyQt_PyObject, PyQt_PyObject, QMouseEvent)"), sseData[0],
+                      sseData[1], sseData[2], event)
+        else:
+            BaseViewer.emitElementMouseOver(self, hitStack, event)
+
+    def emitAtomSelectionUpdated(self, selection):
+        self.emit(QtCore.SIGNAL("atomSelectionUpdated(PyQt_PyObject)"), selection)
 
     def setSegments(self, num_segments):
         self.renderer.setNumSegments(num_segments)
