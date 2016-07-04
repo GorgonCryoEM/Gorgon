@@ -1,5 +1,5 @@
 from PyQt4 import Qt,QtGui,QtCore
-from .widget import CAlphaSequenceWidget
+from .sequence.widget import CAlphaSequenceWidget
 # from calpha_sequence_error import CAlphaSequenceError
 
 
