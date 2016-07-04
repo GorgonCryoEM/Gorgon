@@ -65,6 +65,8 @@ class CAlphaViewer(BaseViewer):
         self.ribbonMouseMapping[1] = {}
         self.ribbonMouseMapping[2] = {}
         self.connect(self, QtCore.SIGNAL("elementClicked (int, int, int, int, int, int, QMouseEvent)"), self.processElementClick)
+        self.connect(self, QtCore.SIGNAL("modelChanged"), self.modelChanged)
+        # self.emit(QtCore.SIGNAL('modelChanged'))
         self.ui.pushButtonSave.clicked.connect(self.saveData)
         self.createActions()
       
@@ -594,12 +596,12 @@ class CAlphaViewer(BaseViewer):
                 print 'Residue #:', atom.getResSeq()
                 self.main_chain.setSelection([atom.getResSeq()])
             print self.main_chain.getSelection()
-#             self.emitAtomSelectionUpdated(self.main_chain.getSelection())
-            try:
-                self.app.form.atomSelectionChanged(self.main_chain.getSelection())
-            except:
-                print "Exception: self.app.form.atomSelectionChanged"
-                
+            self.emitAtomSelectionUpdated(self.main_chain.getSelection())
+            # try:
+            #     self.app.form.atomSelectionChanged(self.main_chain.getSelection())
+            # except:
+            #     print "Exception: self.app.form.atomSelectionChanged"
+
         if event.button() == QtCore.Qt.RightButton and self.centerOnRMB:
             self.centerOnSelectedAtoms(argv[0], argv[1], argv[2], argv[3], argv[4], argv[5], argv[6])
             

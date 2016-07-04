@@ -39,6 +39,7 @@ class CAlphaSequenceView(QtGui.QWidget):
         self.repaint()
 
     def __selectionUpdated(self):
+        self.emit(QtCore.SIGNAL('modelChanged'))
         self.repaint()
 
     def __paintIndices(self, painter, metrics, cellWidth, cellHeight):
