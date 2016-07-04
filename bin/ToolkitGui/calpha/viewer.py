@@ -155,6 +155,253 @@ class CAlphaViewer(BaseViewer):
                 sseData[1] = self.ribbonMouseMapping[2][hitStack[1]]
         return sseData
 
+    def setSegments(self, num_segments):
+        self.renderer.setNumSegments(num_segments)
+        self.modelChanged()
+
+    def setSlices(self, num_slices):
+        self.renderer.setNumSlices(num_slices)
+        self.modelChanged()
+    
+    def centerOnSelectedAtoms(self, *argv):
+        # This centers the CAMERA on the last selected atom.
+        if not argv:
+            chain = self.main_chain
+            resIndices = chain.getSelection()
+            posList = []
+            for resIndex in resIndices:
+                try:
+                    atom = chain[resIndex].getAtom('CA')
+                except KeyError:
+                    continue
+                if not atom:
+                    continue
+                posList.append(atom.getPosition())
+            if not posList:
+                return
+            pos = posList[0]
+            for position in posList[1:]:
+                pos += position
+            pos = pos * (1.0 / len(posList))
+
+        elif argv:
+            if argv[0]:  # argv[0] is 0 for a click on an atom
+                return
+            try:
+                atom = CAlphaRenderer.getAtomFromHitStack(self.renderer, argv[0], True, *argv[1:-1])
+            except:
+                return
+            pos = atom.getPosition()
+        if not pos:
+            return
+        # print viewer.renderer.getSpacingX(), viewer.renderer.getSpacingY(), viewer.renderer.getSpacingZ()
+        if atom and atom.getVisible():
+            x = pos.x() * self.renderer.getSpacingX() + self.renderer.getOriginX()
+            y = pos.y() * self.renderer.getSpacingY() + self.renderer.getOriginY()
+            z = pos.z() * self.renderer.getSpacingZ() + self.renderer.getOriginZ()
+            self.app.mainCamera.setCenter(Vec3(x, y, z))
+            self.modelChanged()
+
+    def createActions(self):
+        seqDockAct = QtGui.QAction(self.tr("Semi-&automatic Atom Placement: calpha-viewer"), self)
+        seqDockAct.setCheckable(True)
+        seqDockAct.setChecked(False)
+        self.app.docksMenu.addAction(seqDockAct)
+
+        def showDock():
+            loaded = True
+            if not self.structPred:
+                loaded = self.loadSeq()
+            if self.structPred:
+                self.main_chain = self.structPred.chain
+            if loaded:
+                CAlphaSequenceDock.changeDockVisibility(self.app, self, self.structPred, self.main_chain)
+
+        self.connect(seqDockAct, QtCore.SIGNAL("triggered()"), showDock)
+#         self.app.actions.addAction("seqDock", seqDockAct)
+    
+    def loadSSEHunterData(self, fileName):
+        if (self.loaded):
+            self.unloadData()
+        self.fileName = fileName
+        self.renderer.loadSSEHunterFile(str(fileName))
+        volumeViewer = self.app.volumeViewer
+        skeletonViewer = self.app.skeletonViewer
+        
+        self.dirty = False
+        self.loaded = True
+#         self.emitModelLoadedPreDraw()
+#         self.emitModelLoaded()
+#         self.emitViewerSetCenter()
+        self.modelChanged()
+        
+    def updateTotalScoreSSEHunterAtoms(self, correlationCoefficient, skeletonCoefficient, geometryCoefficient):
+        self.renderer.updateTotalScoreSSEHunterAtoms(correlationCoefficient, skeletonCoefficient, geometryCoefficient)
+        self.modelChanged()
+        
+    def loadData(self, fileName):
+        #Overwriting the function in BaseViewer
+        def setupChain(mychain):
+            self.main_chain = mychain
+            self.loadedChains.append(mychain)
+            mychain.setViewer(self)
+            #Chain.setSelectedChainKey(mychain.getIDs())
+            mychain.addCalphaBonds()
+            mychain.addSideChainBonds()
+            renderer = self.renderer
+            for i in mychain.residueRange():
+                for atomName in mychain[i].getAtomNames():
+                    atom = mychain[i].getAtom(atomName)
+                    if atom:
+                        atom = renderer.addAtom(atom)
+                        mychain[i].addAtomObject(atom)
+
+        self.fileName = QtCore.QString(fileName)
+        fileNameTemp = self.fileName
+        self.whichChainID = None
+        filename = unicode(self.fileName)
+        if filename.split('.')[-1].lower() == 'pdb':
+            dlg = CAlphaChooseChainToLoadForm(unicode(self.fileName))
+            if dlg.exec_():
+                self.whichChainID = 'ALL'
+                if not self.fileName.isEmpty():
+                    if (self.loaded):
+                        self.unloadData()
+
+                    self.fileName = fileNameTemp
+                    
+                    if self.whichChainID == 'ALL':
+                        mychainKeys = Chain.loadAllChains(str(self.fileName), qparent=self.app)
+                        for chainKey in mychainKeys:
+                            setupChain(Chain.getChain(chainKey))
+                    else:
+                        mychain = Chain.load(str(self.fileName), qparent=self.app, whichChainID=self.whichChainID)
+                        setupChain(mychain)
+        
+    #                     if not self.loaded:
+                    self.dirty = False
+                    self.loaded = True
+                    self.setAtomColorsAndVisibility(self.displayStyle)
+#                     self.emitModelLoadedPreDraw()
+#                     self.emitModelLoaded()
+#                     self.emitViewerSetCenter()
+                    self.modelChanged()
+        
+        print "self.renderer.getAtomCount(): ", self.renderer.getAtomCount()
+    
+    def unloadData(self):
+        # overwriting the function in base viewer
+        for chain in self.loadedChains:
+            del chain
+            chain = None
+        self.loadedChains = []
+        BaseViewer.unloadData(self)
+    
+    def clearSelection(self):
+        BaseViewer.clearSelection(self)
+        self.main_chain.setSelection([], None, None, None)
+        self.emitAtomSelectionUpdated(self.main_chain.getSelection())
+
+    def processElementClick(self, *argv):
+        print argv
+        """
+        In response to a click on a C-alpha element, this updates the selected
+        residues in the Chain object.
+        """
+        if argv[0]:  # argv[0] is 0 for a click on an atom
+            return
+        hits = argv[:-1]
+        event = argv[-1]
+        print "...event: ", event
+        if event.button() == QtCore.Qt.LeftButton:
+            print "...if"
+            if event.modifiers() & QtCore.Qt.CTRL:  # Multiple selection mode
+                print ".....if"
+                atom = CAlphaRenderer.getAtomFromHitStack(self.renderer, hits[0], False, *hits[1:])
+                if atom.getResSeq() in self.main_chain.getSelection():
+                    self.main_chain.setSelection(removeOne=atom.getResSeq())
+                else:
+                    print "....else"
+                    self.main_chain.setSelection(addOne=atom.getResSeq())
+            else:
+                atom = CAlphaRenderer.getAtomFromHitStack(self.renderer, hits[0], True, *hits[1:])
+                print 'Residue #:', atom.getResSeq()
+                self.main_chain.setSelection([atom.getResSeq()])
+            print self.main_chain.getSelection()
+            self.emitAtomSelectionUpdated(self.main_chain.getSelection())
+            # try:
+            #     self.app.form.atomSelectionChanged(self.main_chain.getSelection())
+            # except:
+            #     print "Exception: self.app.form.atomSelectionChanged"
+
+        if event.button() == QtCore.Qt.RightButton and self.centerOnRMB:
+            self.centerOnSelectedAtoms(argv[0], argv[1], argv[2], argv[3], argv[4], argv[5], argv[6])
+
+    def exportData(self):
+        """
+        This saves the current chain model to a PDB file with no "ATOM" lines
+        for atoms that have not been placed.
+        """
+        self.fileName = QtGui.QFileDialog.getSaveFileName(self, self.tr("Save Data"), "",
+                                                          self.tr('Atom Positions (*.pdb)'))
+        if not self.fileName.isEmpty():
+            self.setCursor(QtCore.Qt.WaitCursor)
+            selectedChain = self.main_chain
+            PDBstring = selectedChain.toPDB(CAlphaPlaceholders=False)
+            F = open(self.fileName, 'w')
+            F.write(PDBstring)
+            F.close()
+            self.dirty = False
+            self.setCursor(QtCore.Qt.ArrowCursor)
+    
+    def saveData(self):
+        """
+        This saves the current chain model to a PDB file with 'ATOM' lines that
+        have no coordinates for atoms that have not been placed. These
+        non-standard ATOM lines serve as placeholders so the entire sequence of
+        the chain is known including residue numbers ('SEQRES' does not give a
+        starting residue number).
+        """
+        self.fileName = QtGui.QFileDialog.getSaveFileName(self, self.tr("Save Data"), "",
+                                                          self.tr('Atom Positions (*.pdb)'))
+        if not self.fileName.isEmpty():
+            self.setCursor(QtCore.Qt.WaitCursor)
+            selectedChain = self.main_chain
+            selectedChain.saveToPDB(self.fileName)
+            self.dirty = False
+            self.setCursor(QtCore.Qt.ArrowCursor)
+    
+    def emitAtomSelectionUpdated(self, selection):
+        self.emit(QtCore.SIGNAL("atomSelectionUpdated(PyQt_PyObject)"), selection)
+
+    def updateCurrentMatch(self, sseType, sseIndex):
+        # When an element is selected in this viewer, if that item is a helix,
+        # this sets self.currentMatch to the observed, predicted match for that
+        # helix. It then emits an 'SSE selected' signal.
+        print "Helix #: ", sseIndex
+
+        self.currentMatch = None
+
+        if self.multipleSelection == False:
+            self.selectedObjects = []
+
+        self.selectedObjects.append(sseIndex)
+
+        if sseType == 0:
+            try:
+                self.correspondenceLibrary
+            except AttributeError:
+                return
+            corrLib = self.correspondenceLibrary
+            currCorrIndex = corrLib.getCurrentCorrespondenceIndex()
+            matchList = corrLib.correspondenceList[currCorrIndex].matchList
+            for match in matchList:
+                if match.observed is not None and match.observed.label == sseIndex:
+                    self.currentMatch = match
+                    print self.currentMatch
+                    self.emit(QtCore.SIGNAL("SSE selected"))
+                    break
+
     def setAtomColorsAndVisibility(self, displayStyle):
         if displayStyle == self.DisplayStyleBackbone:
             self.setAllAtomColor(self.getAtomColor())
@@ -427,250 +674,3 @@ class CAlphaViewer(BaseViewer):
         self.strandsVisible = visible
         self.setAtomColorsAndVisibility(self.displayStyle)
         self.modelChanged()
-    
-    def setSegments(self, num_segments):
-        self.renderer.setNumSegments(num_segments)
-        self.modelChanged()
-
-    def setSlices(self, num_slices):
-        self.renderer.setNumSlices(num_slices)
-        self.modelChanged()
-    
-    def centerOnSelectedAtoms(self, *argv):
-        # This centers the CAMERA on the last selected atom.
-        if not argv:
-            chain = self.main_chain
-            resIndices = chain.getSelection()
-            posList = []
-            for resIndex in resIndices:
-                try:
-                    atom = chain[resIndex].getAtom('CA')
-                except KeyError:
-                    continue
-                if not atom:
-                    continue
-                posList.append(atom.getPosition())
-            if not posList:
-                return
-            pos = posList[0]
-            for position in posList[1:]:
-                pos += position
-            pos = pos * (1.0 / len(posList))
-
-        elif argv:
-            if argv[0]:  # argv[0] is 0 for a click on an atom
-                return
-            try:
-                atom = CAlphaRenderer.getAtomFromHitStack(self.renderer, argv[0], True, *argv[1:-1])
-            except:
-                return
-            pos = atom.getPosition()
-        if not pos:
-            return
-        # print viewer.renderer.getSpacingX(), viewer.renderer.getSpacingY(), viewer.renderer.getSpacingZ()
-        if atom and atom.getVisible():
-            x = pos.x() * self.renderer.getSpacingX() + self.renderer.getOriginX()
-            y = pos.y() * self.renderer.getSpacingY() + self.renderer.getOriginY()
-            z = pos.z() * self.renderer.getSpacingZ() + self.renderer.getOriginZ()
-            self.app.mainCamera.setCenter(Vec3(x, y, z))
-            self.modelChanged()
-
-    def createActions(self):
-        seqDockAct = QtGui.QAction(self.tr("Semi-&automatic Atom Placement: calpha-viewer"), self)
-        seqDockAct.setCheckable(True)
-        seqDockAct.setChecked(False)
-        self.app.docksMenu.addAction(seqDockAct)
-
-        def showDock():
-            loaded = True
-            if not self.structPred:
-                loaded = self.loadSeq()
-            if self.structPred:
-                self.main_chain = self.structPred.chain
-            if loaded:
-                CAlphaSequenceDock.changeDockVisibility(self.app, self, self.structPred, self.main_chain)
-
-        self.connect(seqDockAct, QtCore.SIGNAL("triggered()"), showDock)
-#         self.app.actions.addAction("seqDock", seqDockAct)
-    
-    def loadSSEHunterData(self, fileName):
-        if (self.loaded):
-            self.unloadData()
-        self.fileName = fileName
-        self.renderer.loadSSEHunterFile(str(fileName))
-        volumeViewer = self.app.volumeViewer
-        skeletonViewer = self.app.skeletonViewer
-        
-        self.dirty = False
-        self.loaded = True
-#         self.emitModelLoadedPreDraw()
-#         self.emitModelLoaded()
-#         self.emitViewerSetCenter()
-        self.modelChanged()
-        
-    def updateTotalScoreSSEHunterAtoms(self, correlationCoefficient, skeletonCoefficient, geometryCoefficient):
-        self.renderer.updateTotalScoreSSEHunterAtoms(correlationCoefficient, skeletonCoefficient, geometryCoefficient)
-        self.modelChanged()
-        
-    def loadData(self, fileName):
-        #Overwriting the function in BaseViewer
-        def setupChain(mychain):
-            self.main_chain = mychain
-            self.loadedChains.append(mychain)
-            mychain.setViewer(self)
-            #Chain.setSelectedChainKey(mychain.getIDs())
-            mychain.addCalphaBonds()
-            mychain.addSideChainBonds()
-            renderer = self.renderer
-            for i in mychain.residueRange():
-                for atomName in mychain[i].getAtomNames():
-                    atom = mychain[i].getAtom(atomName)
-                    if atom:
-                        atom = renderer.addAtom(atom)
-                        mychain[i].addAtomObject(atom)
-
-        self.fileName = QtCore.QString(fileName)
-        fileNameTemp = self.fileName
-        self.whichChainID = None
-        filename = unicode(self.fileName)
-        if filename.split('.')[-1].lower() == 'pdb':
-            dlg = CAlphaChooseChainToLoadForm(unicode(self.fileName))
-            if dlg.exec_():
-                self.whichChainID = 'ALL'
-                if not self.fileName.isEmpty():
-                    if (self.loaded):
-                        self.unloadData()
-
-                    self.fileName = fileNameTemp
-                    
-                    if self.whichChainID == 'ALL':
-                        mychainKeys = Chain.loadAllChains(str(self.fileName), qparent=self.app)
-                        for chainKey in mychainKeys:
-                            setupChain(Chain.getChain(chainKey))
-                    else:
-                        mychain = Chain.load(str(self.fileName), qparent=self.app, whichChainID=self.whichChainID)
-                        setupChain(mychain)
-        
-    #                     if not self.loaded:
-                    self.dirty = False
-                    self.loaded = True
-                    self.setAtomColorsAndVisibility(self.displayStyle)
-#                     self.emitModelLoadedPreDraw()
-#                     self.emitModelLoaded()
-#                     self.emitViewerSetCenter()
-                    self.modelChanged()
-        
-        print "self.renderer.getAtomCount(): ", self.renderer.getAtomCount()
-    
-    def unloadData(self):
-        # overwriting the function in base viewer
-        for chain in self.loadedChains:
-            del chain
-            chain = None
-        self.loadedChains = []
-        BaseViewer.unloadData(self)
-    
-    def clearSelection(self):
-        BaseViewer.clearSelection(self)
-        self.main_chain.setSelection([], None, None, None)
-        self.emitAtomSelectionUpdated(self.main_chain.getSelection())
-
-    def processElementClick(self, *argv):
-        print argv
-        """
-        In response to a click on a C-alpha element, this updates the selected
-        residues in the Chain object.
-        """
-        if argv[0]:  # argv[0] is 0 for a click on an atom
-            return
-        hits = argv[:-1]
-        event = argv[-1]
-        print "...event: ", event
-        if event.button() == QtCore.Qt.LeftButton:
-            print "...if"
-            if event.modifiers() & QtCore.Qt.CTRL:  # Multiple selection mode
-                print ".....if"
-                atom = CAlphaRenderer.getAtomFromHitStack(self.renderer, hits[0], False, *hits[1:])
-                if atom.getResSeq() in self.main_chain.getSelection():
-                    self.main_chain.setSelection(removeOne=atom.getResSeq())
-                else:
-                    print "....else"
-                    self.main_chain.setSelection(addOne=atom.getResSeq())
-            else:
-                atom = CAlphaRenderer.getAtomFromHitStack(self.renderer, hits[0], True, *hits[1:])
-                print 'Residue #:', atom.getResSeq()
-                self.main_chain.setSelection([atom.getResSeq()])
-            print self.main_chain.getSelection()
-            self.emitAtomSelectionUpdated(self.main_chain.getSelection())
-            # try:
-            #     self.app.form.atomSelectionChanged(self.main_chain.getSelection())
-            # except:
-            #     print "Exception: self.app.form.atomSelectionChanged"
-
-        if event.button() == QtCore.Qt.RightButton and self.centerOnRMB:
-            self.centerOnSelectedAtoms(argv[0], argv[1], argv[2], argv[3], argv[4], argv[5], argv[6])
-
-    def exportData(self):
-        """
-        This saves the current chain model to a PDB file with no "ATOM" lines
-        for atoms that have not been placed.
-        """
-        self.fileName = QtGui.QFileDialog.getSaveFileName(self, self.tr("Save Data"), "",
-                                                          self.tr('Atom Positions (*.pdb)'))
-        if not self.fileName.isEmpty():
-            self.setCursor(QtCore.Qt.WaitCursor)
-            selectedChain = self.main_chain
-            PDBstring = selectedChain.toPDB(CAlphaPlaceholders=False)
-            F = open(self.fileName, 'w')
-            F.write(PDBstring)
-            F.close()
-            self.dirty = False
-            self.setCursor(QtCore.Qt.ArrowCursor)
-    
-    def saveData(self):
-        """
-        This saves the current chain model to a PDB file with 'ATOM' lines that
-        have no coordinates for atoms that have not been placed. These
-        non-standard ATOM lines serve as placeholders so the entire sequence of
-        the chain is known including residue numbers ('SEQRES' does not give a
-        starting residue number).
-        """
-        self.fileName = QtGui.QFileDialog.getSaveFileName(self, self.tr("Save Data"), "",
-                                                          self.tr('Atom Positions (*.pdb)'))
-        if not self.fileName.isEmpty():
-            self.setCursor(QtCore.Qt.WaitCursor)
-            selectedChain = self.main_chain
-            selectedChain.saveToPDB(self.fileName)
-            self.dirty = False
-            self.setCursor(QtCore.Qt.ArrowCursor)
-    
-    def emitAtomSelectionUpdated(self, selection):
-        self.emit(QtCore.SIGNAL("atomSelectionUpdated(PyQt_PyObject)"), selection)
-
-    def updateCurrentMatch(self, sseType, sseIndex):
-        # When an element is selected in this viewer, if that item is a helix,
-        # this sets self.currentMatch to the observed, predicted match for that
-        # helix. It then emits an 'SSE selected' signal.
-        print "Helix #: ", sseIndex
-
-        self.currentMatch = None
-
-        if self.multipleSelection == False:
-            self.selectedObjects = []
-
-        self.selectedObjects.append(sseIndex)
-
-        if sseType == 0:
-            try:
-                self.correspondenceLibrary
-            except AttributeError:
-                return
-            corrLib = self.correspondenceLibrary
-            currCorrIndex = corrLib.getCurrentCorrespondenceIndex()
-            matchList = corrLib.correspondenceList[currCorrIndex].matchList
-            for match in matchList:
-                if match.observed is not None and match.observed.label == sseIndex:
-                    self.currentMatch = match
-                    print self.currentMatch
-                    self.emit(QtCore.SIGNAL("SSE selected"))
-                    break
