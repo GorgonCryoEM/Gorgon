@@ -105,6 +105,46 @@ class CAlphaViewer(BaseViewer):
             self.setAtomColorsAndVisibility(self.displayStyle)
             self.modelChanged()
 
+    def clearSelection(self):
+        BaseViewer.clearSelection(self)
+        self.main_chain.setSelection([], None, None, None)
+        self.emitAtomSelectionUpdated(self.main_chain.getSelection())
+
+    def processElementClick(self, *argv):
+        print argv
+        """
+        In response to a click on a C-alpha element, this updates the selected
+        residues in the Chain object.
+        """
+        if argv[0]:  # argv[0] is 0 for a click on an atom
+            return
+        hits = argv[:-1]
+        event = argv[-1]
+        print "...event: ", event
+        if event.button() == QtCore.Qt.LeftButton:
+            print "...if"
+            if event.modifiers() & QtCore.Qt.CTRL:  # Multiple selection mode
+                print ".....if"
+                atom = CAlphaRenderer.getAtomFromHitStack(self.renderer, hits[0], False, *hits[1:])
+                if atom.getResSeq() in self.main_chain.getSelection():
+                    self.main_chain.setSelection(removeOne=atom.getResSeq())
+                else:
+                    print "....else"
+                    self.main_chain.setSelection(addOne=atom.getResSeq())
+            else:
+                atom = CAlphaRenderer.getAtomFromHitStack(self.renderer, hits[0], True, *hits[1:])
+                print 'Residue #:', atom.getResSeq()
+                self.main_chain.setSelection([atom.getResSeq()])
+            print self.main_chain.getSelection()
+            self.emitAtomSelectionUpdated(self.main_chain.getSelection())
+            # try:
+            #     self.app.form.atomSelectionChanged(self.main_chain.getSelection())
+            # except:
+            #     print "Exception: self.app.form.atomSelectionChanged"
+
+        if event.button() == QtCore.Qt.RightButton and self.centerOnRMB:
+            self.centerOnSelectedAtoms(argv[0], argv[1], argv[2], argv[3], argv[4], argv[5], argv[6])
+
     # Overridden
     def emitElementClicked(self, hitStack, event):
         print "emitElementClicked overridden: ", self.title, hitStack
@@ -266,46 +306,6 @@ class CAlphaViewer(BaseViewer):
             chain = None
         self.loadedChains = []
         BaseViewer.unloadData(self)
-    
-    def clearSelection(self):
-        BaseViewer.clearSelection(self)
-        self.main_chain.setSelection([], None, None, None)
-        self.emitAtomSelectionUpdated(self.main_chain.getSelection())
-
-    def processElementClick(self, *argv):
-        print argv
-        """
-        In response to a click on a C-alpha element, this updates the selected
-        residues in the Chain object.
-        """
-        if argv[0]:  # argv[0] is 0 for a click on an atom
-            return
-        hits = argv[:-1]
-        event = argv[-1]
-        print "...event: ", event
-        if event.button() == QtCore.Qt.LeftButton:
-            print "...if"
-            if event.modifiers() & QtCore.Qt.CTRL:  # Multiple selection mode
-                print ".....if"
-                atom = CAlphaRenderer.getAtomFromHitStack(self.renderer, hits[0], False, *hits[1:])
-                if atom.getResSeq() in self.main_chain.getSelection():
-                    self.main_chain.setSelection(removeOne=atom.getResSeq())
-                else:
-                    print "....else"
-                    self.main_chain.setSelection(addOne=atom.getResSeq())
-            else:
-                atom = CAlphaRenderer.getAtomFromHitStack(self.renderer, hits[0], True, *hits[1:])
-                print 'Residue #:', atom.getResSeq()
-                self.main_chain.setSelection([atom.getResSeq()])
-            print self.main_chain.getSelection()
-            self.emitAtomSelectionUpdated(self.main_chain.getSelection())
-            # try:
-            #     self.app.form.atomSelectionChanged(self.main_chain.getSelection())
-            # except:
-            #     print "Exception: self.app.form.atomSelectionChanged"
-
-        if event.button() == QtCore.Qt.RightButton and self.centerOnRMB:
-            self.centerOnSelectedAtoms(argv[0], argv[1], argv[2], argv[3], argv[4], argv[5], argv[6])
 
     def exportData(self):
         """
