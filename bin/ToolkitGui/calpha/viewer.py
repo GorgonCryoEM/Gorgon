@@ -3,7 +3,7 @@ from libpytoolkit import CAlphaRenderer
 from Explorer.base_viewer import BaseViewer
 # from .atom_placer_form import CAlphaAtomPlacerForm
 from Toolkit.sse.seq_model.Chain import Chain
-from ToolkitGui.calpha.dock import CAlphaSequenceDock
+from ToolkitGui.calpha.sequence_dock import CAlphaSequenceDock
 # from atom_visualization_form import AtomVisualizationForm
 from Toolkit.sse.correspondence.StructurePrediction import StructurePrediction
 # from .choose_chain.model import CAlphaChooseChainModel
