@@ -89,10 +89,6 @@ class CAlphaViewer(BaseViewer):
         self.connect(seqDockAct, QtCore.SIGNAL("triggered()"), showDock)
     #         self.app.actions.addAction("seqDock", seqDockAct)
 
-    def updateTotalScoreSSEHunterAtoms(self, correlationCoefficient, skeletonCoefficient, geometryCoefficient):
-        self.renderer.updateTotalScoreSSEHunterAtoms(correlationCoefficient, skeletonCoefficient, geometryCoefficient)
-        self.modelChanged()
-
     def updateCurrentMatch(self, sseType, sseIndex):
         # When an element is selected in this viewer, if that item is a helix,
         # this sets self.currentMatch to the observed, predicted match for that
