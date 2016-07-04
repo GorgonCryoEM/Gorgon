@@ -71,6 +71,38 @@ class CAlphaViewer(BaseViewer):
         self.ui.pushButtonSave.clicked.connect(self.saveData)
         self.createActions()
       
+    def updateTotalScoreSSEHunterAtoms(self, correlationCoefficient, skeletonCoefficient, geometryCoefficient):
+        self.renderer.updateTotalScoreSSEHunterAtoms(correlationCoefficient, skeletonCoefficient, geometryCoefficient)
+        self.modelChanged()
+
+    def updateCurrentMatch(self, sseType, sseIndex):
+        # When an element is selected in this viewer, if that item is a helix,
+        # this sets self.currentMatch to the observed, predicted match for that
+        # helix. It then emits an 'SSE selected' signal.
+        print "Helix #: ", sseIndex
+
+        self.currentMatch = None
+
+        if self.multipleSelection == False:
+            self.selectedObjects = []
+
+        self.selectedObjects.append(sseIndex)
+
+        if sseType == 0:
+            try:
+                self.correspondenceLibrary
+            except AttributeError:
+                return
+            corrLib = self.correspondenceLibrary
+            currCorrIndex = corrLib.getCurrentCorrespondenceIndex()
+            matchList = corrLib.correspondenceList[currCorrIndex].matchList
+            for match in matchList:
+                if match.observed is not None and match.observed.label == sseIndex:
+                    self.currentMatch = match
+                    print self.currentMatch
+                    self.emit(QtCore.SIGNAL("SSE selected"))
+                    break
+
     def createActions(self):
         seqDockAct = QtGui.QAction(self.tr("Semi-&automatic Atom Placement: calpha-viewer"), self)
         seqDockAct.setCheckable(True)
@@ -245,10 +277,6 @@ class CAlphaViewer(BaseViewer):
 #         self.emitViewerSetCenter()
         self.modelChanged()
         
-    def updateTotalScoreSSEHunterAtoms(self, correlationCoefficient, skeletonCoefficient, geometryCoefficient):
-        self.renderer.updateTotalScoreSSEHunterAtoms(correlationCoefficient, skeletonCoefficient, geometryCoefficient)
-        self.modelChanged()
-        
     def loadData(self, fileName):
         #Overwriting the function in BaseViewer
         def setupChain(mychain):
@@ -340,34 +368,6 @@ class CAlphaViewer(BaseViewer):
             selectedChain.saveToPDB(self.fileName)
             self.dirty = False
             self.setCursor(QtCore.Qt.ArrowCursor)
-
-    def updateCurrentMatch(self, sseType, sseIndex):
-        # When an element is selected in this viewer, if that item is a helix,
-        # this sets self.currentMatch to the observed, predicted match for that
-        # helix. It then emits an 'SSE selected' signal.
-        print "Helix #: ", sseIndex
-
-        self.currentMatch = None
-
-        if self.multipleSelection == False:
-            self.selectedObjects = []
-
-        self.selectedObjects.append(sseIndex)
-
-        if sseType == 0:
-            try:
-                self.correspondenceLibrary
-            except AttributeError:
-                return
-            corrLib = self.correspondenceLibrary
-            currCorrIndex = corrLib.getCurrentCorrespondenceIndex()
-            matchList = corrLib.correspondenceList[currCorrIndex].matchList
-            for match in matchList:
-                if match.observed is not None and match.observed.label == sseIndex:
-                    self.currentMatch = match
-                    print self.currentMatch
-                    self.emit(QtCore.SIGNAL("SSE selected"))
-                    break
 
     def setSegments(self, num_segments):
         self.renderer.setNumSegments(num_segments)
