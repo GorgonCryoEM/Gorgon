@@ -71,6 +71,24 @@ class CAlphaViewer(BaseViewer):
         self.ui.pushButtonSave.clicked.connect(self.saveData)
         self.createActions()
       
+    def createActions(self):
+        seqDockAct = QtGui.QAction(self.tr("Semi-&automatic Atom Placement: calpha-viewer"), self)
+        seqDockAct.setCheckable(True)
+        seqDockAct.setChecked(False)
+        self.app.docksMenu.addAction(seqDockAct)
+
+        def showDock():
+            loaded = True
+            if not self.structPred:
+                loaded = self.loadSeq()
+            if self.structPred:
+                self.main_chain = self.structPred.chain
+            if loaded:
+                CAlphaSequenceDock.changeDockVisibility(self.app, self, self.structPred, self.main_chain)
+
+        self.connect(seqDockAct, QtCore.SIGNAL("triggered()"), showDock)
+    #         self.app.actions.addAction("seqDock", seqDockAct)
+
    # Overridden
     def initializeGLDisplayType(self):
         super(CAlphaViewer, self).initializeGLDisplayType()
@@ -169,24 +187,6 @@ class CAlphaViewer(BaseViewer):
             self.app.mainCamera.setCenter(Vec3(x, y, z))
             self.modelChanged()
 
-    def createActions(self):
-        seqDockAct = QtGui.QAction(self.tr("Semi-&automatic Atom Placement: calpha-viewer"), self)
-        seqDockAct.setCheckable(True)
-        seqDockAct.setChecked(False)
-        self.app.docksMenu.addAction(seqDockAct)
-
-        def showDock():
-            loaded = True
-            if not self.structPred:
-                loaded = self.loadSeq()
-            if self.structPred:
-                self.main_chain = self.structPred.chain
-            if loaded:
-                CAlphaSequenceDock.changeDockVisibility(self.app, self, self.structPred, self.main_chain)
-
-        self.connect(seqDockAct, QtCore.SIGNAL("triggered()"), showDock)
-#         self.app.actions.addAction("seqDock", seqDockAct)
-    
     def loadSSEHunterData(self, fileName):
         if (self.loaded):
             self.unloadData()
