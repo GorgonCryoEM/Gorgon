@@ -134,6 +134,9 @@ class CAlphaViewer(BaseViewer):
         else:
             BaseViewer.emitElementMouseOver(self, hitStack, event)
 
+    def emitAtomSelectionUpdated(self, selection):
+        self.emit(QtCore.SIGNAL("atomSelectionUpdated(PyQt_PyObject)"), selection)
+
     def formatRibbonHitstack(self, hitStack):
         sseData = [-1, " ", " "]
         if (len(hitStack) <= 2):
@@ -337,9 +340,6 @@ class CAlphaViewer(BaseViewer):
             selectedChain.saveToPDB(self.fileName)
             self.dirty = False
             self.setCursor(QtCore.Qt.ArrowCursor)
-    
-    def emitAtomSelectionUpdated(self, selection):
-        self.emit(QtCore.SIGNAL("atomSelectionUpdated(PyQt_PyObject)"), selection)
 
     def updateCurrentMatch(self, sseType, sseIndex):
         # When an element is selected in this viewer, if that item is a helix,
