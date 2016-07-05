@@ -245,7 +245,7 @@ class CAlphaStructureEditor(QtGui.QWidget):
             self.bringToFront()
 
     def helixCreateCAhelix(self):
-        create_helix(self.app.calphaViewer.renderer, self.currentChainModel, self.helixNtermSpinBox.value(), self.helixCtermSpinBox.value(), self.app.sseViewer.currentMatch)
+        create_helix(self.app.calphaViewer.renderer, self.currentChainModel, self.app.sseViewer.currentMatch)
 
         if not self.app.calphaViewer.loaded:
             self.app.calphaViewer.loaded = True
