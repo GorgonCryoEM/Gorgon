@@ -20,8 +20,8 @@ class CAlphaStructureEditorCommandAtomPlacement(QtGui.QUndoCommand):
         
     def redo(self):
         """
-In addition to being called to redo an action, this is called the first
-time the action occurs.
+        In addition to being called to redo an action, this is called the first
+        time the action occurs.
         """
         raw = PDBAtom(self.currentChainModel.getPdbID(), self.currentChainModel.getChainID(), self.resSeqNum, 'CA')
         raw.setPosition(self.chosenCoordinates)
