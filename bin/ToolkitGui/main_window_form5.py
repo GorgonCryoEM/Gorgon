@@ -20,6 +20,8 @@ class MainWindowForm5(QtGui.QMainWindow):
         self.docksMenu = self.menubar.addMenu('&Docks')
 
         self.structPred = StructurePrediction.load(self.args.calpha, self)
+        print self.structPred.chain
+        # exit()
         
         self.viewers = {}
         
@@ -51,7 +53,8 @@ class MainWindowForm5(QtGui.QMainWindow):
         self.skeletonViewer.load(self.args.skeleton)
         # self.sseViewer.loadHelixDataFromFile(self.args.helix)
         self.calphaViewer.loadData(self.args.calpha)
-        print "self.calphaViewer.main_chain: ", self.calphaViewer.main_chain
+        print "self.calphaViewer.main_chain:\n", self.calphaViewer.main_chain
+        print "self.structPred.chain\n", self.structPred.chain
         # exit()
 
     def exitApplication(self):

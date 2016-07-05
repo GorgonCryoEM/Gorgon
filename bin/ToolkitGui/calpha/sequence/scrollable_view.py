@@ -373,9 +373,12 @@ class CAlphaSequenceView(QtGui.QWidget):
         self.structurePrediction.chain.setSelection(newSelection, removeOne, addOne, addRange)
         self.currentChainModel.setSelection(newSelection, removeOne, addOne, addRange)
 
+        print "self.currentChainModel: ", self.currentChainModel
         sss = self.currentChainModel.getSelection()
         print "  ..sss ", sss
         for i in sss:
+            print "   ...self.currentChainModel[i]: ", self.currentChainModel[i]
+            print self.currentChainModel[i].getAtomNames()
             try:
                 selectedAtom = self.currentChainModel[i].getAtom('CA')
                 print "  ...selectedAtom: ", selectedAtom
