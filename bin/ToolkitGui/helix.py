@@ -6,7 +6,10 @@ from Toolkit.sse.seq_model.Helix import Helix
 from Toolkit.sse.seq_model.findHelixCalphas import helixEndpointsToCAlphaPositions
 
 
-def place_helix(calphaRenderer, currentChainModel, predHelix, startIndex, stopIndex, coord1, coord2):
+def place_helix(calphaRenderer, currentChainModel, predHelix, coord1, coord2):
+    startIndex = predHelix.startIndex
+    stopIndex  = predHelix.stopIndex
+    
     helix = Helix(currentChainModel, predHelix.serialNo, predHelix.label, startIndex, stopIndex)
 
     currentChainModel.addHelix(predHelix.serialNo, helix)
@@ -75,4 +78,4 @@ def create_helix(calphaRenderer, currentChainModel, currentMatch):
     coord1 = coord1 + endMoveVector
     coord2 = coord2 + startMoveVector
 
-    place_helix(calphaRenderer, currentChainModel, predHelix, startIndex, stopIndex, coord1, coord2)
+    place_helix(calphaRenderer, currentChainModel, predHelix, coord1, coord2)
