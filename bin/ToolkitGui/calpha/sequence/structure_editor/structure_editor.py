@@ -244,6 +244,16 @@ class CAlphaStructureEditor(QtGui.QWidget):
             self.undoStack.push(command)
             self.bringToFront()
 
+    def clearMockSidechains(self,  chain):
+        """
+        This changes the atoms' properties back to default.
+        """
+        for index in chain.residueRange():
+            res = chain[index]
+            res.setCAlphaColorToDefault()
+            res.setCAlphaSizeToDefault()
+        #print "The mock side-chains should be cleared, but not yet drawn to the screen."
+
     def helixCreateCAhelix(self):
         create_helix(self.app.calphaViewer.renderer, self.currentChainModel, self.app.sseViewer.currentMatch)
 
