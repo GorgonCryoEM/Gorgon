@@ -427,6 +427,30 @@ class CAlphaStructureEditor(QtGui.QWidget):
         self.helixNtermResNameLabel.setText(self.currentChainModel[startIx].symbol3)
         self.helixCtermResNameLabel.setText(self.currentChainModel[stopIx].symbol3)
 
+    def renderMockSidechains(self,  chain):
+        """
+        This sets the colors and sizes of the spheres that represent mock
+        sidechains but does not update the screen.
+        """
+        color = {
+            'greasy': (0.0, 1.0, 0.0, 1.0),
+            'polarNoSulfur': (0.0, 0.0, 0.6, 1.0),
+            'charged': (0.0, 0.0, 1.0, 1.0),
+            'sulfur': (1.0, 1.0, 0.0, 1.0)
+        }
+        for index in chain.residueRange():
+            res = chain[index]
+            atom = res.getAtom('CA')
+            if not atom:
+                continue
+            size = 1.8 * res.size[res.symbol3]
+            atom.setAtomRadius( size  )
+            for key in color.keys():
+                if res.symbol3 in res.residueTypes[key]:
+                    atom.setColor( *color[key] )
+                    break
+        #print "The mock side-chains should be ready to draw to the screen"
+
     def updateSelectedResidues(self):
         """
         This gets the selected residues from the current chain model, and sends
