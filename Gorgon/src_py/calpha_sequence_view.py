@@ -316,8 +316,11 @@ adding a list of residues to the selection.
     # renderer = viewer.renderer
     # app = dock.app
   
+    print "..setSequenceSelection"
     selectionToClear = self.currentChainModel.getSelection()
+    print "  ..selectionToClear ", selectionToClear
     for i in selectionToClear:
+      print "...for i in selectionToClear:"
       try:
         self.structurePrediction.chain[i]
       except KeyError:
@@ -328,14 +331,19 @@ adding a list of residues to the selection.
     self.structurePrediction.chain.setSelection(newSelection,removeOne,addOne,addRange)
     self.currentChainModel.setSelection(newSelection,removeOne,addOne,addRange)
   
-    for i in self.currentChainModel.getSelection():
+    sss = self.currentChainModel.getSelection()
+    print "  ..sss ", sss
+    for i in sss:
+      print "...for i in self.currentChainModel.getSelection():"
       try:
         selectedAtom = self.currentChainModel[ i ].getAtom('CA')
+        print "  ...selectedAtom: ", selectedAtom
       except KeyError:
         continue
       if not selectedAtom:
         continue
       selectedAtom.setSelected(True)
+      print "...selectedAtom.setSelected(True) ", selectedAtom.getSelected()
   
     dock = self.parentWidget().parentWidget().parentWidget().parentWidget()
     viewer = dock.viewer
