@@ -38,7 +38,6 @@ class CAlphaViewer(BaseViewer):
         self.colors["C-Alpha:Sulphur"    ] = QtGui.QColor( 255, 255, 0, 255)
         self.colors["C-Alpha:BoundingBox"] = QtGui.QColor( 255, 255, 255, 255)
         self.isClosedMesh = False
-        self.centerOnRMB = True
         self.selectEnabled = True
         self.renderer = CAlphaRenderer()
         self.displayStyle = self.DisplayStyleBackbone
@@ -325,7 +324,7 @@ class CAlphaViewer(BaseViewer):
             # except:
             #     print "Exception: self.app.form.atomSelectionChanged"
 
-        if event.button() == QtCore.Qt.RightButton and self.centerOnRMB:
+        if event.button() == QtCore.Qt.RightButton:
             self.centerOnSelectedAtoms(argv[0], argv[1], argv[2], argv[3], argv[4], argv[5], argv[6])
 
     # Overridden
