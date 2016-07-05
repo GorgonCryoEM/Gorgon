@@ -358,11 +358,3 @@ class CAlphaViewer(BaseViewer):
 
     def emitAtomSelectionUpdated(self, selection):
         self.emit(QtCore.SIGNAL("atomSelectionUpdated(PyQt_PyObject)"), selection)
-
-    def setSegments(self, num_segments):
-        self.renderer.setNumSegments(num_segments)
-        self.modelChanged()
-
-    def setSlices(self, num_slices):
-        self.renderer.setNumSlices(num_slices)
-        self.modelChanged()
