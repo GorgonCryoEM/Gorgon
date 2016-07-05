@@ -252,31 +252,9 @@ residues is selected.
       additionalResidue=self.getResidueIndexByMousePosition(mouseEvent.x(),mouseEvent.y())
       self.parentWidget().parentWidget().parentWidget().structureEditor.setResidues([additionalResidue])
       
-      #  CTRL key pressed
-      if mouseEvent.modifiers() & QtCore.Qt.CTRL:
-        if additionalResidue not in self.structurePrediction.chain.getSelection():
-          self.setSequenceSelection(addOne=additionalResidue)
-        else:
-          self.setSequenceSelection(removeOne=additionalResidue)
-
-      #  SHIFT key pressed
-      elif mouseEvent.modifiers() & QtCore.Qt.SHIFT:
-        additionalResidue=self.getResidueIndexByMousePosition(mouseEvent.x(),mouseEvent.y())
-        if additionalResidue > sorted(self.structurePrediction.chain.getSelection())[-1]:
-          addedRange=range( 1+sorted(self.structurePrediction.chain.getSelection())[-1],1+additionalResidue)
-          self.setSequenceSelection(addRange=addedRange)
-        elif additionalResidue < sorted(self.structurePrediction.chain.getSelection())[0]:
-          addedRange=range( additionalResidue, sorted(self.structurePrediction.chain.getSelection())[0])
-          self.setSequenceSelection(addRange=addedRange)
-
       #  No key pressed
-      elif mouseEvent.modifiers() == QtCore.Qt.NoModifier:
+      if mouseEvent.modifiers() == QtCore.Qt.NoModifier:
         self.setSequenceSelection(newSelection=[additionalResidue])
-      
-    if mouseEvent.buttons() & QtCore.Qt.MidButton:
-      self.setCursor(QtCore.Qt.ClosedHandCursor)
-      self.mouseXInitial=mouseEvent.globalX()
-      self.scrollbarInitialX=self.scrollbar.value()
 
     self.repaint()
 
