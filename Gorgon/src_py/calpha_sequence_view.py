@@ -331,10 +331,11 @@ adding a list of residues to the selection.
     self.structurePrediction.chain.setSelection(newSelection,removeOne,addOne,addRange)
     self.currentChainModel.setSelection(newSelection,removeOne,addOne,addRange)
   
+    print "self.currentChainModel: ", self.currentChainModel
     sss = self.currentChainModel.getSelection()
     print "  ..sss ", sss
     for i in sss:
-      print "...for i in self.currentChainModel.getSelection():"
+      print "   ...self.currentChainModel[i]: ", self.currentChainModel[i]
       try:
         selectedAtom = self.currentChainModel[ i ].getAtom('CA')
         print "  ...selectedAtom: ", selectedAtom
