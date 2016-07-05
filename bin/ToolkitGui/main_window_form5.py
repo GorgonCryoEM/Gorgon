@@ -55,6 +55,7 @@ class MainWindowForm5(QtGui.QMainWindow):
         print "self.calphaViewer.main_chain:\n", self.calphaViewer.main_chain
         print "self.structPred.chain\n", self.structPred.chain
         # exit()
+        self.structPred.chain = self.calphaViewer.main_chain 
 
     def exitApplication(self):
         QtGui.qApp.closeAllWindows()
