@@ -313,33 +313,33 @@ prediction and the chain model by replacing the selection, removing a
 residue from the selection, adding a residue to the selection, or 
 adding a list of residues to the selection.
     '''
-    dock = self.parentWidget().parentWidget().parentWidget().parentWidget()
-    viewer = dock.viewer
-    renderer = viewer.renderer
-    app = dock.app
-    
+    # renderer = viewer.renderer
+    # app = dock.app
+  
     selectionToClear = self.currentChainModel.getSelection()
     for i in selectionToClear:
-        try: 
-            self.structurePrediction.chain[i]
-        except KeyError: 
-            continue
-        atom = self.currentChainModel[i].getAtom('CA')
-        if atom:
-            atom.setSelected(False)
+      try:
+        self.structurePrediction.chain[i]
+      except KeyError:
+        continue
+      atom = self.currentChainModel[i].getAtom('CA')
+      if atom:
+        atom.setSelected(False)
     self.structurePrediction.chain.setSelection(newSelection,removeOne,addOne,addRange)
     self.currentChainModel.setSelection(newSelection,removeOne,addOne,addRange)
-    
+  
     for i in self.currentChainModel.getSelection():
-        try:
-            selectedAtom = self.currentChainModel[ i ].getAtom('CA')
-        except KeyError:
-            continue
-        if not selectedAtom:
-            continue    
-        selectedAtom.setSelected(True)
-        
-    viewer.centerOnSelectedAtoms()    
+      try:
+        selectedAtom = self.currentChainModel[ i ].getAtom('CA')
+      except KeyError:
+        continue
+      if not selectedAtom:
+        continue
+      selectedAtom.setSelected(True)
+  
+    dock = self.parentWidget().parentWidget().parentWidget().parentWidget()
+    viewer = dock.viewer
+    viewer.centerOnSelectedAtoms()
     viewer.emitModelChanged()
     
   def updateSequenceSelection(self):
