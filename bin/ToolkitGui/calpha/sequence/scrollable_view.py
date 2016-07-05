@@ -359,7 +359,9 @@ class CAlphaSequenceView(QtGui.QWidget):
         renderer = viewer.renderer
         app = dock.app
 
+        print "..setSequenceSelection"
         selectionToClear = self.currentChainModel.getSelection()
+        print "  ..selectionToClear ", selectionToClear
         for i in selectionToClear:
             try:
                 self.structurePrediction.chain[i]
@@ -371,14 +373,20 @@ class CAlphaSequenceView(QtGui.QWidget):
         self.structurePrediction.chain.setSelection(newSelection, removeOne, addOne, addRange)
         self.currentChainModel.setSelection(newSelection, removeOne, addOne, addRange)
 
-        for i in self.currentChainModel.getSelection():
+        sss = self.currentChainModel.getSelection()
+        print "  ..sss ", sss
+        for i in sss:
             try:
                 selectedAtom = self.currentChainModel[i].getAtom('CA')
+                print "  ...selectedAtom: ", selectedAtom
             except KeyError:
+                print "  ..OOps: Exception: selectedAtom = self.currentChainModel[i].getAtom('CA')"
                 continue
             if not selectedAtom:
+                print "  ...if not selectedAtom:"
                 continue
             selectedAtom.setSelected(True)
+            print "...selectedAtom.setSelected(True) ", selectedAtom.getSelected()
 
         viewer.centerOnSelectedAtoms()
         viewer.modelChanged()

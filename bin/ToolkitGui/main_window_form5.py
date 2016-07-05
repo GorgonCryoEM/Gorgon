@@ -51,6 +51,8 @@ class MainWindowForm5(QtGui.QMainWindow):
         self.skeletonViewer.load(self.args.skeleton)
         # self.sseViewer.loadHelixDataFromFile(self.args.helix)
         self.calphaViewer.loadData(self.args.calpha)
+        print "self.calphaViewer.main_chain: ", self.calphaViewer.main_chain
+        # exit()
 
     def exitApplication(self):
         QtGui.qApp.closeAllWindows()
