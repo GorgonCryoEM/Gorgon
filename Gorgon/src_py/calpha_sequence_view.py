@@ -233,14 +233,17 @@ residues is selected.
     '''
 
     if mouseEvent.button() == QtCore.Qt.LeftButton and mouseEvent.y() < self.cellHeight():
+      print "...if1 mouseEvent.button() == QtCore.Qt.LeftButton and mouseEvent.y() < self.cellHeight():"
       residue=self.getResidueIndexByMousePosition(mouseEvent.x(),self.cellHeight() +1)
       secel = self.structurePrediction.getSecelByIndex(residue)
       self.structurePrediction.setSecelSelection(secel)
       newSelection=range(secel.startIndex, secel.stopIndex+1)
       #  CTRL key pressed
       if mouseEvent.modifiers() & QtCore.Qt.CTRL:
+        print "  ...if mouseEvent.modifiers() & QtCore.Qt.CTRL:"
         self.setSequenceSelection(addRange=newSelection)
       else:
+        print "   ...else: mouseEvent.modifiers() & QtCore.Qt.CTRL:"
         self.setSequenceSelection(newSelection)
       
       self.parentWidget().parentWidget().parentWidget().structureEditor.setResidues(newSelection)
@@ -249,11 +252,13 @@ residues is selected.
 
     # LEFT MOUSE PRESS
     if mouseEvent.button() == QtCore.Qt.LeftButton and mouseEvent.y() < 2 * self.cellHeight():
+      print "...if2 mouseEvent.button() == QtCore.Qt.LeftButton and mouseEvent.y() < 2 * self.cellHeight():"
       additionalResidue=self.getResidueIndexByMousePosition(mouseEvent.x(),mouseEvent.y())
       self.parentWidget().parentWidget().parentWidget().structureEditor.setResidues([additionalResidue])
       
       #  No key pressed
       if mouseEvent.modifiers() == QtCore.Qt.NoModifier:
+        print "   ...if mouseEvent.modifiers() == QtCore.Qt.NoModifier:"
         self.setSequenceSelection(newSelection=[additionalResidue])
 
     self.repaint()
