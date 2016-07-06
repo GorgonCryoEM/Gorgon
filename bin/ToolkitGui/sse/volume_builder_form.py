@@ -92,7 +92,13 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
                                                                                                                                         
     def modelLoaded(self):
         #self.detectSSEAct.setEnabled(True)
-        pass
+        maxDensity = self.volumeViewer.renderer.getMaxDensity()
+        minDensity = self.volumeViewer.renderer.getMinDensity()
+        defaultDensity = (minDensity + maxDensity) / 2
+
+        self.doubleSpinBoxThreshold.setValue(defaultDensity)
+        
+        print minDensity, maxDensity, defaultDensity
        
     def modelUnloaded(self):
         #self.detectSSEAct.setEnabled(False)
@@ -148,6 +154,7 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
 #         patoms = self.calphaViewer.loadSSEHunterData('pseudoatoms.pdb')
 #         self.calphaViewer.loadData()
         sseh = pySSEHunter(self.args.volume, self.args.skeleton, self.args.output, False)
+        sseh.threshold = threshold
         patoms = sseh.getScoredAtoms(correlationWeight, skeletonWeight, geometryWeight)
 #
         for pseudoatom in patoms:
