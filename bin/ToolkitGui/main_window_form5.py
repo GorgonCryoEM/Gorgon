@@ -20,7 +20,6 @@ class MainWindowForm5(QtGui.QMainWindow):
         self.docksMenu = self.menubar.addMenu('&Docks')
 
         self.structPred = StructurePrediction.load(self.args.calpha, self)
-        print self.structPred.chain
         # exit()
         
         self.viewers = {}
