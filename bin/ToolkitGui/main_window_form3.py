@@ -57,6 +57,12 @@ class MainWindowForm3(QtGui.QMainWindow):
         # self.calphaViewer.loadSSEHunterData('pseudoatoms.pdb')
         self.form.modelLoaded()
 #         self.volumeViewer.renderer.printVertices()
+        minDensity = self.volumeViewer.renderer.getMinDensity()
+        maxDensity = self.volumeViewer.renderer.getMaxDensity()
+        defaultDensity = (minDensity + maxDensity) / 2
+        self.form.lineEditMin.setText("%.2f" % minDensity)
+        self.form.lineEditMax.setText("%.2f" % maxDensity)
+        self.form.lineEditMean.setText("%.2f" % defaultDensity)
         
     def exitApplication(self):
         QtGui.qApp.closeAllWindows()
