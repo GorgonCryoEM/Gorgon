@@ -160,27 +160,27 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
         self.setCursor(QtCore.Qt.BusyCursor)
         self.viewer.renderer.setSurfaceValue(newLevel)
         self.setCursor(QtCore.Qt.ArrowCursor)
-        self.viewer.emitModelChanged()
+        self.viewer.modelChanged()
         
     def updateIsoValueMax(self, newLevel):
         self.setCursor(QtCore.Qt.BusyCursor)
         self.viewer.renderer.setMaxSurfaceValue(newLevel)
         self.setCursor(QtCore.Qt.ArrowCursor)
-        self.viewer.emitModelChanged()
+        self.viewer.modelChanged()
     
     def getSamplingValue(self):
         return int(self.ui.comboBoxSamplingInterval.itemText(self.ui.comboBoxSamplingInterval.currentIndex()))
     
     def samplingChanged(self, ix):
         self.viewer.renderer.setSampleInterval(self.getSamplingValue())
-        self.viewer.emitModelChanged()
+        self.viewer.modelChanged()
         
     def displayRadiusChanged(self, newRadius):
         newRadius = int(round(newRadius))
         self.viewer.renderer.setDisplayRadius(newRadius)
-        self.viewer.emitModelChanged()
+        self.viewer.modelChanged()
         
     def displayRadiusEnabled(self, enabled):
         self.viewer.renderer.useDisplayRadius(enabled)
-        self.viewer.emitModelChanged()
+        self.viewer.modelChanged()
         
