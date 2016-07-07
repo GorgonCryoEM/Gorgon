@@ -71,37 +71,36 @@
          </layout>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_7">
-          <item>
-           <widget class="QLabel" name="label_Min">
-            <property name="text">
-             <string>Min</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="label_Mean">
-            <property name="text">
-             <string>Mean</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="label_Max">
-            <property name="text">
-             <string>Max</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
+         <layout class="QHBoxLayout" name="horizontalLayout_7"/>
         </item>
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_6">
           <item>
+           <widget class="QLabel" name="label_Min">
+            <property name="text">
+             <string>Min:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QLineEdit" name="lineEditMin"/>
           </item>
           <item>
+           <widget class="QLabel" name="label_Mean">
+            <property name="text">
+             <string>Mean:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QLineEdit" name="lineEditMean"/>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_Max">
+            <property name="text">
+             <string>Max:</string>
+            </property>
+           </widget>
           </item>
           <item>
            <widget class="QLineEdit" name="lineEditMax"/>
