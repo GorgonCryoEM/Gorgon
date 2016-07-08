@@ -63,6 +63,9 @@ class MainWindowForm3(QtGui.QMainWindow):
         self.form.lineEditMin.setText("%.2f" % minDensity)
         self.form.lineEditMax.setText("%.2f" % maxDensity)
         self.form.lineEditMean.setText("%.2f" % defaultDensity)
+        self.form.lineEditMin.setReadOnly(True)
+        self.form.lineEditMax.setReadOnly(True)
+        self.form.lineEditMean.setReadOnly(True)
         
     def exitApplication(self):
         QtGui.qApp.closeAllWindows()
