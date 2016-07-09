@@ -8,16 +8,15 @@
 #include "LinearSolver.h"
 #include "Matlab.h"
 
+#include <numeric>
+
 namespace MathTools {
 
     void LinearSolver::FindBestFitLine(Vec3F & pt1, Vec3F & pt2, vector<Vec3F> pts) {
-        Vec3F avg = Vec3F(0,0,0);
-        for(unsigned int i = 0; i < pts.size(); i++) {
-            avg += pts[i];
-        }
-        if(pts.size() > 0) {
+        Vec3F avg = accumulate(pts.begin(), pts.end(), Vec3F(0,0,0));
+        
+        if(pts.size() > 0)
             avg = avg * (1.0f/(float)pts.size());
-        }
 
         float sX2 = 0, sY2 = 0, sZ2 = 0, sXY = 0, sXZ = 0, sYZ = 0;
         Vec3F dp;
@@ -46,10 +45,10 @@ namespace MathTools {
 
         Vec3F n = Vec3F(eigenInfo.vecs[0][0], eigenInfo.vecs[0][1], eigenInfo.vecs[0][2]);
 
+        /*
         float maxT = MIN_FLOAT;
         float minT = MAX_FLOAT;
         float t;
-        /*
         for(unsigned int i = 0; i < pts.size(); i++) {
             t = (pts[i] - avg) * n;
             minT = min(minT, t);
