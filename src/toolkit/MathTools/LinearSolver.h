@@ -14,13 +14,11 @@ using namespace GraphMatch;
 
 namespace MathTools {
 
-    class LinearSolver {
-        public:
-        public:
-            static void FindBestFitLine(Vec3F & pt1, Vec3F & pt2, vector<Vec3F> pts);
+    namespace LinearSolver {
+            void FindBestFitLine(Vec3F & pt1, Vec3F & pt2, vector<Vec3F> pts);
             // Find the orthogonal distances from points to a line given by pt1 & pt2. Return the sum of the squares of those distance.
-            static double SumDistSqrd(Vec3F pt1, Vec3F pt2, vector<Vec3F> pts);
-            static MatrixFloat FindRotationTranslation(vector<Vec3F> l1, vector<Vec3F> l2);
+            double SumDistSqrd(Vec3F pt1, Vec3F pt2, vector<Vec3F> pts);
+            MatrixFloat FindRotationTranslation(vector<Vec3F> l1, vector<Vec3F> l2);
     };
 
 } /* namespace MathTools */
