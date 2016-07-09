@@ -51,6 +51,9 @@ namespace Visualization {
 
     void SSERenderer::addSSEPoint(Vec3F p) {
         tempSSEPoints.push_back(p);
+        cout<<"   ."<<tempSSEPoints.size()
+                <<"\t"<<p
+                <<endl;
     }
 
     void SSERenderer::draw(int subSceneIndex, bool selectEnabled) {

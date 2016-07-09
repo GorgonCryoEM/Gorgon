@@ -215,10 +215,12 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
         
         self.sseViewer.renderer.startNewSSE();
         
+        print "...pushAtomsToEngine:"
         for i in range(atomCnt):
             atom = self.calphaViewer.renderer.getSelectedAtom(i)
             position = atom.getPosition()
             self.sseViewer.renderer.addSSEPoint(position)
+            print "   ...", atom, position
         
     def selectionToSheet(self, result):
         self.pushAtomsToEngine()
