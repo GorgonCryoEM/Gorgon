@@ -204,15 +204,10 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
             
         self.sseViewer.renderer.finalizeHelix()
         
-        if(self.sseViewer.loaded):
-            self.sseViewer.helixLoaded = True
-            self.sseViewer.dirty = True
-            self.sseViewer.modelChanged()
-        else:
-            self.sseViewer.loaded = True
-            self.sseViewer.helixLoaded = True
-            self.sseViewer.dirty = True
-            self.sseViewer.modelChanged()
+        self.sseViewer.loaded = True
+        self.sseViewer.helixLoaded = True
+        self.sseViewer.dirty = True
+        self.sseViewer.modelChanged()
 #         self.bringToFront()
     
     def pushAtomsToEngine(self):
