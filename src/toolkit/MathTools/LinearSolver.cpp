@@ -64,8 +64,8 @@ namespace MathTools {
         pt2 = avg + n * maxT;
         */
 
-        pt1 = avg + n * ((pts[0] - avg) * n);
-        pt2 = avg + n * ((pts[pts.size()-1] - avg) * n);
+        pt1 = avg + n * ((pts.front() - avg) * n);
+        pt2 = avg + n * ((pts.back()  - avg) * n);
         
         cout<<"    ...pts:\n"<<pts<<endl;
         cout<<"    ...pt1: "<<pt1<<endl;
