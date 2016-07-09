@@ -457,6 +457,18 @@ namespace Visualization {
         sheets.clear();
     }
 
+    void SSERenderer::removeSelectedSSEs() {
+        vector<Shape*> newHelices;
+        for(unsigned int i = 0; i < helices.size(); i++) {
+            if(helices[i]->isSelected()) {
+                delete helices[i];
+            } else {
+                newHelices.push_back(helices[i]);
+            }
+        }
+        helices = newHelices;
+    }
+
     int SSERenderer::getHelixCount() {
         return helices.size();
     }
