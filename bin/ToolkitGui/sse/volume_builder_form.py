@@ -87,8 +87,8 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
     def removeSSE(self, temp):
         if(QtGui.QMessageBox.question(self, "Remove Selected SSEs?", "This will remove the selected SSEs. Are you sure?", "Yes", "Cancel") == 0):
             self.viewer.renderer.removeSelectedSSEs()
-            self.viewer.emitModelLoaded()
-            self.bringToFront()
+            self.viewer.modelChanged()
+            # self.bringToFront()
                                                                                                                                         
     def modelLoaded(self):
         #self.detectSSEAct.setEnabled(True)
