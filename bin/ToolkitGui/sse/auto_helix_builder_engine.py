@@ -1,6 +1,6 @@
 from math import *
 # from libpyGORGON import PDBAtom, Vector3DFloat, LinearSolver
-from libpytoolkit import PDBAtom, LinearSolver
+from libpytoolkit import PDBAtom, findBestFitLine, sumDistSqrd
 from Explorer import Vec3
 
 
@@ -120,8 +120,8 @@ class AutoHelixBuilderEngine:
         start_pt = Vec3(0,0,0)
         end_pt = Vec3(0,0,0)
         positions = [atom.getPosition() for atom in atom_list]
-        LinearSolver.findBestFitLine(start_pt, end_pt, positions)
-        avg_ortho_distance = sqrt( LinearSolver.sumDistSqrd(start_pt, end_pt, positions) ) / len(positions)
+        findBestFitLine(start_pt, end_pt, positions)
+        avg_ortho_distance = sqrt( sumDistSqrd(start_pt, end_pt, positions) ) / len(positions)
         return avg_ortho_distance <= self.pt_line_dist_thresh
 
     def nearest_neighbor(self,atom_num):

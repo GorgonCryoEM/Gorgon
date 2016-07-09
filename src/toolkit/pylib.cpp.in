@@ -655,10 +655,7 @@ BOOST_PYTHON_MODULE(@current_pylib@)
         .def("setMax", &MinMax::setMax)
     ;
 
-    class_<LinearSolver>("LinearSolver")
-        .def("findBestFitLine", &LinearSolver::FindBestFitLine)
-        .staticmethod("findBestFitLine")
-        .def("sumDistSqrd", LinearSolver::SumDistSqrd)
-        .staticmethod("sumDistSqrd")
-    ;
+    
+        def("findBestFitLine", &LinearSolver::FindBestFitLine);
+        def("sumDistSqrd", &LinearSolver::SumDistSqrd);
 }
