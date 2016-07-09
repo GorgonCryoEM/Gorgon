@@ -84,8 +84,8 @@ namespace MathTools {
             exit(0);
         }
 
-        Vec3F c1 = Vec3F(0,0,0);
-        Vec3F c2 = Vec3F(0,0,0);
+        Vec3F c1(0,0,0);
+        Vec3F c2(0,0,0);
 
         unsigned int n = l1.size();
 
@@ -113,9 +113,9 @@ namespace MathTools {
         }
 
         MatrixFloat covar = MatrixFloat::Covariance(m1, m2);
-        MatrixFloat u = MatrixFloat(3,3);
-        MatrixFloat v = MatrixFloat(3,3);
-        MatrixFloat w = MatrixFloat(3,3);
+        MatrixFloat u(3,3);
+        MatrixFloat v(3,3);
+        MatrixFloat w(3,3);
 
         covar.SingularValueDecomposition(u, w, v);
 
