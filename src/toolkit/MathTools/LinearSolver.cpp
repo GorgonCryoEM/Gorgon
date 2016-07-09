@@ -7,12 +7,18 @@
 
 #include "LinearSolver.h"
 #include "Matlab.h"
+#include "Core/Output.h"
 
 #include <numeric>
+
+using namespace Core;
 
 namespace MathTools {
 
     void LinearSolver::FindBestFitLine(Vec3F & pt1, Vec3F & pt2, vector<Vec3F> pts) {
+        
+        cout<<"   LinearSolver::FindBestFitLine"<<endl;
+        
         Vec3F avg = accumulate(pts.begin(), pts.end(), Vec3F(0,0,0));
         
         if(pts.size() > 0)
@@ -60,6 +66,10 @@ namespace MathTools {
 
         pt1 = avg + n * ((pts[0] - avg) * n);
         pt2 = avg + n * ((pts[pts.size()-1] - avg) * n);
+        
+        cout<<"    ...pts:\n"<<pts<<endl;
+        cout<<"    ...pt1: "<<pt1<<endl;
+        cout<<"    ...pt2: "<<pt2<<endl;
 
     }
 
