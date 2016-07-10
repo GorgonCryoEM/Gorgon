@@ -18,6 +18,7 @@ class MainWindowForm5(QtGui.QMainWindow):
         self.args = args
         self.menubar = self.menuBar()
         self.docksMenu = self.menubar.addMenu('&Docks')
+        self.docks = []
 
         self.structPred = StructurePrediction.load(self.args.calpha, self)
         # exit()

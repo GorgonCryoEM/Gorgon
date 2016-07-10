@@ -15,6 +15,7 @@ class MainWindowForm2(QtGui.QMainWindow):
         self.args = args
         self.menubar = self.menuBar()
         self.docksMenu = self.menubar.addMenu('&Docks')
+        self.docks = []
         
         self.volume = VolumeViewer(self)
         self.skeleton = SkeletonViewer(self)

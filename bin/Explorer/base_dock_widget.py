@@ -9,6 +9,9 @@ class BaseDockWidget(QtGui.QWidget):
         self.dock.setAllowedAreas(allowedAreas)
         self.dock.setWidget(parent)
         main.addDockWidget(defaultArea, self.dock)
+        if main.docks:
+            main.tabifyDockWidget(main.docks[-1], self.dock)
+        main.docks.append(self.dock)
         
         dockVisible = self.toggleViewAction()
 
