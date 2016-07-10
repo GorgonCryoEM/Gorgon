@@ -19,7 +19,11 @@ class MainWindowForm2(QtGui.QMainWindow):
         
         self.volume = VolumeViewer(self)
         self.skeleton = SkeletonViewer(self)
-        self.scene = [self.volume, self.skeleton]
+
+        self.scene = []
+        self.scene.append(self.volume)
+        self.scene.append(self.skeleton)
+
         self.mainCamera = Camera(self.scene, self)
         self.setCentralWidget(self.mainCamera)
         
