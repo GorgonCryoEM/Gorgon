@@ -12,6 +12,7 @@ class BaseDockWidget(QtGui.QWidget):
         if main.docks:
             main.tabifyDockWidget(main.docks[-1], self.dock)
         main.docks.append(self.dock)
+        main.docks[0].raise_()
         
         dockVisible = self.toggleViewAction()
 
