@@ -7,10 +7,10 @@ from Explorer.skeleton_viewer import SkeletonViewer
 from ToolkitGui.skeletonization.binary_form import VolumeBinarySkeletonizationForm
 
 
-class MainWindowForm(QtGui.QMainWindow):
+class MainWindowForm1(QtGui.QMainWindow):
 
     def __init__(self, version, args):
-        super(MainWindowForm, self).__init__()
+        super(MainWindowForm1, self).__init__()
         
         self.args = args
         self.menubar = self.menuBar()
