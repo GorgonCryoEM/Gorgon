@@ -12,10 +12,9 @@ class VolumeViewer(BaseViewer):
 
     def __init__(self, main, parent=None):
         self.title = "Volume"
-        super(VolumeViewer, self).__init__(main, parent)
+        super(VolumeViewer, self).__init__(VolumeRenderer(), main, parent)
         self.shortTitle = "VOL"
         
-        self.renderer = VolumeRenderer()
         self.loaded = False
         
         self.setColor(QtGui.QColor(50, 200, 50, 150))

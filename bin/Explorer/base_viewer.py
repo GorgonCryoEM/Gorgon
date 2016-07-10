@@ -21,13 +21,14 @@ class BaseViewer(BaseDockWidget):
     
     display_styles = [wireframe, flat, smooth]
     
-    def __init__(self, main, parent=None):
+    def __init__(self, renderer, main, parent=None):
         super(BaseViewer, self).__init__(
                                 main,
                                 self,
                                 self.title,
                                 QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea,
                                 QtCore.Qt.RightDockWidgetArea)
+        self.renderer = renderer
         self.app = main
         self.sceneIndex = -1;
         self.loaded = False

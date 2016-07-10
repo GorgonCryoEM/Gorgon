@@ -23,7 +23,7 @@ class CAlphaViewer(BaseViewer):
     
     def __init__(self, main, parent=None):
         self.title = "C-Alpha"
-        super(CAlphaViewer, self).__init__(main, parent)
+        super(CAlphaViewer, self).__init__(CAlphaRenderer(), main, parent)
         self.shortTitle = "CAL"
         self.app = main
         self.colors = {}
@@ -39,7 +39,6 @@ class CAlphaViewer(BaseViewer):
         self.colors["C-Alpha:BoundingBox"] = QtGui.QColor( 255, 255, 255, 255)
         self.isClosedMesh = False
         self.selectEnabled = True
-        self.renderer = CAlphaRenderer()
         self.displayStyle = self.DisplayStyleBackbone
 #         self.renderer.setDisplayStyle(self.displayStyle)
         self.structPred = self.app.structPred
