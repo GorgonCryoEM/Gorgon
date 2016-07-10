@@ -66,7 +66,8 @@ class CAlphaViewer(BaseViewer):
         self.connect(self, QtCore.SIGNAL("modelChanged"), self.modelChanged)
         # self.emit(QtCore.SIGNAL('modelChanged'))
         self.ui.pushButtonSave.clicked.connect(self.saveData)
-        self.createActions()
+        if self.app.hasSemiAtomicPlacementForm:
+            self.createActions()
       
     def createActions(self):
         seqDockAct = QtGui.QAction(self.tr("Semi-&automatic Atom Placement: calpha-viewer"), self)

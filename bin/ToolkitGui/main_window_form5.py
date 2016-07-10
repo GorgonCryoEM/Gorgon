@@ -19,6 +19,7 @@ class MainWindowForm5(QtGui.QMainWindow):
         self.menubar = self.menuBar()
         self.docksMenu = self.menubar.addMenu('&Docks')
         self.docks = []
+        self.hasSemiAtomicPlacementForm = True
 
         self.structPred = StructurePrediction.load(self.args.calpha, self)
         # exit()
