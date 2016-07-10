@@ -10,7 +10,7 @@ from auto_helix_builder_engine import AutoHelixBuilderEngine
 
 class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
         
-    def __init__(self, main, volume, skeleton, args, parent=None):
+    def __init__(self, main, volume, skeleton, args, dockArea=QtCore.Qt.RightDockWidgetArea, parent=None):
         QtGui.QDialog.__init__(self, main)
         self.app = main
         self.volumeViewer = volume
@@ -23,7 +23,7 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
         dock = QtGui.QDockWidget("SSEBuilder", volume)
         dock.setWidget(self)
         dock.setAllowedAreas(QtCore.Qt.AllDockWidgetAreas)
-        self.app.addDockWidget(QtCore.Qt.LeftDockWidgetArea, dock)
+        self.app.addDockWidget(dockArea, dock)
 
         self.connect(self.volumeViewer, QtCore.SIGNAL("modelLoaded()"),   self.modelLoaded)
         self.connect(self.volumeViewer, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)
