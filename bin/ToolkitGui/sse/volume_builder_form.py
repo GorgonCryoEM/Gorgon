@@ -59,7 +59,7 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
     def disableSavePseudoatoms(self):
         self.pushButtonSavePseudoatoms.setEnabled(False)
     
-    def savePseudoatoms(self, temp):
+    def savePseudoatoms(self):
         fileName = QtGui.QFileDialog.getSaveFileName(self, self.tr("Save Pseudoatoms"), "", self.tr("Protein Data Bank (PDB) Format (*.pdb)"))
         if not fileName.isEmpty():
             self.setCursor(QtCore.Qt.WaitCursor)
