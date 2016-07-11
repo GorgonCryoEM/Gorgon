@@ -56,7 +56,7 @@ class MainWindowForm3(QtGui.QMainWindow):
     def load(self):
         self.volumeViewer.load(self.args.volume)
         self.skeletonViewer.load(self.args.skeleton)
-        # self.calphaViewer.loadSSEHunterData('pseudoatoms.pdb')
+        self.calphaViewer.loadSSEHunterData('pseudoatoms_thr_20.pdb')
         self.form.modelLoaded()
 #         self.volumeViewer.renderer.printVertices()
         minDensity = self.volumeViewer.renderer.getMinDensity()
