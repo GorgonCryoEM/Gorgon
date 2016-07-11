@@ -49,7 +49,7 @@ class CAlphaSequenceDock(QtGui.QDockWidget):
                     sequence of the structure prediction (from SEQ file)" )
                     cls.__dock.app.actions.getAction("seqDock").setChecked(False)
                     return
-                cls.__dock.app.addDockWidget(QtCore.Qt.RightDockWidgetArea, cls.__dock)
+                cls.__dock.app.addDockWidget(QtCore.Qt.LeftDockWidgetArea, cls.__dock)
                 cls.__dock.changeCurrentChainModel(currentChainModel)
                 cls.__dock.show()
             else:
@@ -65,7 +65,7 @@ class CAlphaSequenceDock(QtGui.QDockWidget):
                     return
                 
                 dock = CAlphaSequenceDock(main, viewer, structurePrediction, currentChainModel)
-                main.addDockWidget(QtCore.Qt.RightDockWidgetArea, dock)
+                main.addDockWidget(QtCore.Qt.LeftDockWidgetArea, dock)
                 dock.show()
                 dock.raise_()
             else:
