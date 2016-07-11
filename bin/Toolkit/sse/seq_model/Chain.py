@@ -813,6 +813,8 @@ class Chain(baseClass):
           ADD A RANGE OF RESIDUES to the existing selection: use 'addRange' 
           parameter
         '''
+        print "  ----Chain.setSelection"
+        print newSelection, removeOne, addOne, addRange
         selectionToClear = self.getSelection()
         for i in selectionToClear:
             if (i in self.residueRange()):
@@ -841,6 +843,7 @@ class Chain(baseClass):
                 if atom:
                     atom.setSelected(True)
 
+        print "qtEnabled: ", qtEnabled
         if qtEnabled:
             self.emit(QtCore.SIGNAL('selection updated'))
 

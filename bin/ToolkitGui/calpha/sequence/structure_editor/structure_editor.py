@@ -459,6 +459,8 @@ class CAlphaStructureEditor(QtGui.QWidget):
         position editor.
         """
         selection = self.currentChainModel.getSelection()
+        print "---------updateSelectedResidues: "
+        print selection
         # self.setLoopEditorValues(selection)
         self.setHelixEditorValues(selection)
         self.setResidues(selection)
