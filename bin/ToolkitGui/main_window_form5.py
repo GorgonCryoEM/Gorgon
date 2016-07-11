@@ -8,6 +8,7 @@ from ToolkitGui.sse.helix_correspondence_finder_form import SSEHelixCorresponden
 from ToolkitGui.sse.viewer import SSEViewer
 from Toolkit.sse.correspondence.StructurePrediction import StructurePrediction
 from ToolkitGui.calpha.viewer import CAlphaViewer
+from ToolkitGui.calpha.sequence_dock import CAlphaSequenceDock
 
 
 class MainWindowForm5(QtGui.QMainWindow):
@@ -58,6 +59,7 @@ class MainWindowForm5(QtGui.QMainWindow):
         print "self.structPred.chain\n", self.structPred.chain
         # exit()
         self.structPred.chain = self.calphaViewer.main_chain 
+        CAlphaSequenceDock.changeDockVisibility(self, self.calphaViewer, self.structPred, self.structPred.chain)
 
     def exitApplication(self):
         QtGui.qApp.closeAllWindows()
