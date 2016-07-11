@@ -72,7 +72,7 @@ class CAlphaViewer(BaseViewer):
     def createActions(self):
         seqDockAct = QtGui.QAction(self.tr("Semi-&automatic Atom Placement: calpha-viewer"), self)
         seqDockAct.setCheckable(True)
-        seqDockAct.setChecked(False)
+        seqDockAct.setChecked(True)
         self.app.docksMenu.addAction(seqDockAct)
 
         def showDock():
@@ -81,7 +81,7 @@ class CAlphaViewer(BaseViewer):
                 loaded = self.loadSeq()
             if self.structPred:
                 self.main_chain = self.structPred.chain
-            if loaded:
+            if True:
                 CAlphaSequenceDock.changeDockVisibility(self.app, self, self.structPred, self.main_chain)
 
         self.connect(seqDockAct, QtCore.SIGNAL("triggered()"), showDock)
