@@ -385,6 +385,37 @@ namespace Visualization {
         return moved;
     }
 
+    bool SSERenderer::selectionClear() {
+        if(Renderer::SelectionClear()) {
+
+            for(unsigned int i = 0; i < helices.size(); i++) {
+                helices[i]->SetSelected(false);
+            }
+
+            if(sheetMesh != NULL) {
+                for(unsigned int i = 0; i < sheetMesh->faces.size(); i++) {
+                    sheetMesh->faces[i].tag.selected = false;
+                }
+                for(int i = 0; i <= sheetCount; i++) {
+                    selectedSheets[i] = false;
+                }
+            }
+
+            if(graphSheetMesh != NULL) {
+                for(unsigned int i = 0; i < graphSheetMesh->faces.size(); i++) {
+                    graphSheetMesh->faces[i].tag.selected = false;
+                }
+                for(int i = 0; i <= graphSheetCount; i++) {
+                    selectedGraphSheets[i] = false;
+                }
+            }
+            selectedHelices.clear();
+            selectedPDBHelices.clear();
+            return true;
+        }
+        return false;
+    }
+
     void SSERenderer::clearOtherHighlights(){
         selectedPDBHelices.clear();
     }
