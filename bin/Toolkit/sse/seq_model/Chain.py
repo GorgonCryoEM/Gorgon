@@ -843,7 +843,6 @@ class Chain(baseClass):
                 if atom:
                     atom.setSelected(True)
 
-        print "qtEnabled: ", qtEnabled
         if qtEnabled:
             self.emit(QtCore.SIGNAL('selection updated'))
 
