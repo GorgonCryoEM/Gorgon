@@ -137,7 +137,7 @@ namespace Visualization {
             vector<int> getSelectedHelixIndices();
             void setHelixCorrs( vector < int > flatCorrespondences);
             void setSelectedSSEHelices(vector<int>);
-            bool selectionClear();
+            void selectionClear();
             void clearOtherHighlights();
             void setFeatureVecs(vector<Vec3F> flatFeatureVecs);
             void setHelixColor(int helixNum, float r, float g, float b);

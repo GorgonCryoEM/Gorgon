@@ -341,6 +341,10 @@ class BaseViewer(BaseDockWidget):
         else:
             raise Exception("Unable to call renderer.get3DCoordinates method due as there are too many levels in the hit stack")
 
+    def clearSelection(self):
+        self.renderer.selectionClear()
+        self.modelChanged()
+            
     def performElementSelection(self, hitStack):
         #Override this method to enable mouse selection functionality
         pass

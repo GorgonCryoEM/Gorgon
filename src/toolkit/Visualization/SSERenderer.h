@@ -77,7 +77,7 @@ namespace Visualization {
             vector<int> getSelectedHelixIndices();
             void setHelixCorrs(vector<int> flatCorrespondences);
             void setSelectedPDBHelices(vector<int> indices);
-            bool selectionClear();
+            void selectionClear();
             void clearOtherHighlights();
 
         private:

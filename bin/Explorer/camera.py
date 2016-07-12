@@ -373,6 +373,7 @@ class Camera(QtOpenGL.QGLWidget):
                 if (e.modifiers() & QtCore.Qt.CTRL):        # Multiple selection mode
                     self.scene[sceneId].processMouseClick(minNames, e, False)
                 else:                                           # Single selection mode
+                    self.scene[sceneId].clearSelection()
                     self.scene[sceneId].processMouseClick(minNames, e, True)
                             
             elif (right):                                # Focusing on current point
