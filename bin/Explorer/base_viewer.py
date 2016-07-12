@@ -342,6 +342,7 @@ class BaseViewer(BaseDockWidget):
             raise Exception("Unable to call renderer.get3DCoordinates method due as there are too many levels in the hit stack")
 
     def clearSelection(self):
+        print "   ...clearSelection", self.title
         self.renderer.selectionClear()
         self.modelChanged()
             
