@@ -362,17 +362,17 @@ class BaseViewer(BaseDockWidget):
             for i in range(5):
                 if(len(hitStack) > i+1):
                     hits[i] = int(hitStack[i+1]) #On a 64 bit system, some of these are type numpy.int32 rather than int
-            self.performElementSelection(hitStack)
+            # self.performElementSelection(hitStack)
             if len(hitStack) == 0:
                 hitStack.append(-1)
             if(len(hitStack) <= 6):
                 #On a 64 bit system, hitStack[0] is of type numpy.int32 rather than int (which is 64 bit)
                 self.renderer.selectionToggle(int(hitStack[0]), forceTrue, hits[0], hits[1], hits[2], hits[3], hits[4])
-            else:
-                raise Exception("Unable to call renderer.select method due as there are too many levels in the hit stack")
+            # else:
+            #     raise Exception("Unable to call renderer.select method due as there are too many levels in the hit stack")
             self.modelChanged()
             self.emitElementClicked(hitStack, e)
-            self.emitElementSelected(hitStack, e)
+            # self.emitElementSelected(hitStack, e)
 
     def processMouseClickRay(self, ray, rayWidth, eye, e):
         self.emitMouseClickRay(ray, rayWidth, eye, e)
