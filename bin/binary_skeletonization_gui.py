@@ -10,10 +10,6 @@ import sys
 import argparse
 
 from ToolkitGui import BinarySkeletonization
-from ToolkitGui import GrayscaleSkeletonization
-from ToolkitGui import SSEIdentification
-from ToolkitGui import SSECorrespondence
-from ToolkitGui import CalphaAtomPlacement
 
 
 def main():
