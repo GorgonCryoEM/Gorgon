@@ -9,11 +9,11 @@ from OpenGL.GLUT import *
 import sys
 import argparse
 
-from ToolkitGui import MainWindowForm1
-from ToolkitGui import MainWindowForm2
-from ToolkitGui import MainWindowForm3
-from ToolkitGui import MainWindowForm4
-from ToolkitGui import MainWindowForm5
+from ToolkitGui import BinarySkeletonization
+from ToolkitGui import GrayscaleSkeletonization
+from ToolkitGui import SSEIdentification
+from ToolkitGui import SSECorrespondence
+from ToolkitGui import CalphaAtomPlacement
 
 
 def main():
@@ -30,11 +30,11 @@ def main():
     app = QtGui.QApplication(sys.argv)
 
     windows = []
-    # windows.append(MainWindowForm1('2.2.2', args))
-    # windows.append(MainWindowForm2('2.2.3', args))
-    windows.append(MainWindowForm3('2.2.4', args))
-    # windows.append(MainWindowForm4('2.2.5', args))
-    # windows.append(MainWindowForm5('2.2.6', args))
+    # windows.append(BinarySkeletonization('2.2.2', args))
+    # windows.append(GrayscaleSkeletonization('2.2.3', args))
+    windows.append(SSEIdentification('2.2.4', args))
+    # windows.append(SSECorrespondence('2.2.5', args))
+    # windows.append(CalphaAtomPlacement('2.2.6', args))
 #     exit()
     
     for window in windows:

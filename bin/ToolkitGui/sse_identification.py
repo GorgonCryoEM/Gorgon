@@ -11,10 +11,10 @@ from Explorer import Grid3D
 from Toolkit.sse.correspondence.StructurePrediction import StructurePrediction
 
 
-class MainWindowForm3(QtGui.QMainWindow):
+class SSEIdentification(QtGui.QMainWindow):
 
     def __init__(self, version, args):
-        super(MainWindowForm3, self).__init__()
+        super(SSEIdentification, self).__init__()
         
         self.args = args
         self.menubar = self.menuBar()

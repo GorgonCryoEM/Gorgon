@@ -9,7 +9,7 @@ from OpenGL.GLUT import *
 import sys
 import argparse
 
-from ToolkitGui import MainWindowForm3
+from ToolkitGui import SSEIdentification
 
 
 def main():
@@ -22,7 +22,7 @@ def main():
 
     app = QtGui.QApplication(sys.argv)
 
-    window = MainWindowForm3('2.2.4', args)
+    window = SSEIdentification('2.2.4', args)
     
     window.resize(800, 600)
     window.show()

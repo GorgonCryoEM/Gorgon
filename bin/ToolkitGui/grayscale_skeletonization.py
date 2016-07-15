@@ -7,10 +7,10 @@ from Explorer.skeleton_viewer import SkeletonViewer
 from ToolkitGui.skeletonization.grayscale_form import VolumeGrayscaleSkeletonizationForm
 
 
-class MainWindowForm2(QtGui.QMainWindow):
+class GrayscaleSkeletonization(QtGui.QMainWindow):
 
     def __init__(self, version, args):
-        super(MainWindowForm2, self).__init__()
+        super(GrayscaleSkeletonization, self).__init__()
         
         self.args = args
         self.menubar = self.menuBar()
