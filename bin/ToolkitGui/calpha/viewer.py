@@ -156,8 +156,9 @@ class CAlphaViewer(BaseViewer):
 
     def clearSelection(self):
         BaseViewer.clearSelection(self)
-        self.main_chain.setSelection([], None, None, None)
-        self.emitAtomSelectionUpdated(self.main_chain.getSelection())
+        if self.main_chain:
+            self.main_chain.setSelection([], None, None, None)
+            self.emitAtomSelectionUpdated(self.main_chain.getSelection())
 
     def loadSSEHunterData(self, fileName):
         if (self.loaded):
@@ -309,17 +310,24 @@ class CAlphaViewer(BaseViewer):
             if event.modifiers() & QtCore.Qt.CTRL:  # Multiple selection mode
                 print ".....if"
                 atom = CAlphaRenderer.getAtomFromHitStack(self.renderer, hits[0], False, *hits[1:])
-                if atom.getResSeq() in self.main_chain.getSelection():
-                    self.main_chain.setSelection(removeOne=atom.getResSeq())
+                if self.main_chain:
+                    if atom.getResSeq() in self.main_chain.getSelection():
+                        self.main_chain.setSelection(removeOne=atom.getResSeq())
+                    else:
+                        print "....else"
+                        self.main_chain.setSelection(addOne=atom.getResSeq())
                 else:
-                    print "....else"
-                    self.main_chain.setSelection(addOne=atom.getResSeq())
+                    self.app.form.atomSelectionChanged(atom.getResSeq())
             else:
                 atom = CAlphaRenderer.getAtomFromHitStack(self.renderer, hits[0], True, *hits[1:])
                 print 'Residue #:', atom.getResSeq()
-                self.main_chain.setSelection([atom.getResSeq()])
-            print self.main_chain.getSelection()
-            self.emitAtomSelectionUpdated(self.main_chain.getSelection())
+                if self.main_chain:
+                    self.main_chain.setSelection([atom.getResSeq()])
+                else:
+                    self.app.form.atomSelectionChanged(atom.getResSeq())
+            if self.main_chain:
+                print self.main_chain.getSelection()
+                self.emitAtomSelectionUpdated(self.main_chain.getSelection())
             # try:
             #     self.app.form.atomSelectionChanged(self.main_chain.getSelection())
             # except:
