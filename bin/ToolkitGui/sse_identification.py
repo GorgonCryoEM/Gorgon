@@ -22,7 +22,7 @@ class SSEIdentification(QtGui.QMainWindow):
         self.docks = []
         self.hasSemiAtomicPlacementForm = False
         
-        self.structPred = StructurePrediction.load(self.args.sequence, self)
+        self.structPred = None
 
         self.viewers = {}
         
