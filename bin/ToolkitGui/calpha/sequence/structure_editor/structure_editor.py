@@ -68,6 +68,7 @@ class CAlphaStructureEditor(QtGui.QWidget):
         self.redoButton.setEnabled(self.undoStack.canRedo())
         self.mockSidechainsCheckBox = QtGui.QCheckBox('Mock Sidechains')
         self.removeButton = QtGui.QPushButton('Remove Selected Atoms')
+        self.helixFlipButton = QtGui.QPushButton(self.tr('Flip'))
 
         self.tabWidget = QtGui.QTabWidget()
         self.helixTab = QtGui.QWidget()
@@ -86,6 +87,7 @@ class CAlphaStructureEditor(QtGui.QWidget):
         topLayout.addWidget(self.undoButton, 0, 0, 1, 1)
         topLayout.addWidget(self.redoButton, 0, 1, 1, 1)
         topLayout.addWidget(self.removeButton, 0, 3, 1, 1)
+        topLayout.addWidget(self.helixFlipButton, 0, 2, 1, 1)
 
         topLayout.addWidget(self.mockSidechainsCheckBox, 1, 0, 1, 4)
 
@@ -551,7 +553,6 @@ class CAlphaStructureEditor(QtGui.QWidget):
         self.helixDecreasePositionButton = QtGui.QPushButton('-')
         self.helixIncreasePositionButton = QtGui.QPushButton('+')
         positionLabel = QtGui.QLabel(self.tr('Position'))
-        self.helixFlipButton = QtGui.QPushButton(self.tr('Flip'))
     
         if self.currentChainModel.residueRange():
             minIx = min(self.currentChainModel.residueRange())
