@@ -66,7 +66,7 @@ class Ui_DialogVolumeSSEBuilder(object):
         self.label_Mean = QtGui.QLabel(self.layoutWidget)
         self.label_Mean.setObjectName(_fromUtf8("label_Mean"))
         self.horizontalLayout_6.addWidget(self.label_Mean)
-        self.lineEditMean = QtGui.QLineEdit(self.layoutWidget)
+        self.lineEditMean = QtGui.QSpinBox(self.layoutWidget)
         self.lineEditMean.setObjectName(_fromUtf8("lineEditMean"))
         self.horizontalLayout_6.addWidget(self.lineEditMean)
         self.label_Max = QtGui.QLabel(self.layoutWidget)

@@ -64,10 +64,11 @@ class SSEIdentification(QtGui.QMainWindow):
         defaultDensity = (minDensity + maxDensity) / 2
         self.form.lineEditMin.setText("%.2f" % minDensity)
         self.form.lineEditMax.setText("%.2f" % maxDensity)
-        self.form.lineEditMean.setText("%.2f" % defaultDensity)
+        self.form.lineEditMean.setValue(defaultDensity)
+        self.form.lineEditMean.valueChanged.connect(self.volumeViewer.renderer.setSurfaceValue)
+        self.form.lineEditMean.valueChanged.connect(self.volumeViewer.modelChanged)
         self.form.lineEditMin.setReadOnly(True)
         self.form.lineEditMax.setReadOnly(True)
-        self.form.lineEditMean.setReadOnly(True)
         
     def exitApplication(self):
         QtGui.qApp.closeAllWindows()
