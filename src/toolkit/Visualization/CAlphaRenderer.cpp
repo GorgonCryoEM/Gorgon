@@ -1265,6 +1265,10 @@ namespace Visualization {
     void CAlphaRenderer::deleteAtom(unsigned long long index) {
         atoms.erase(atoms.find(index));
     }
+    
+    void CAlphaRenderer::deleteAtoms() {
+        atoms.clear();
+    }
 
     void CAlphaRenderer::deleteBond(int index) {
         bonds.erase(bonds.begin() + index);

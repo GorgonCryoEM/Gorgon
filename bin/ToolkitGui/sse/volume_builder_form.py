@@ -157,6 +157,7 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
         sseh.threshold = threshold
         patoms = sseh.getScoredAtoms(correlationWeight, skeletonWeight, geometryWeight)
 #
+        self.calphaViewer.renderer.deleteAtoms()
         for pseudoatom in patoms:
             self.calphaViewer.renderer.addAtom(pseudoatom)
          
