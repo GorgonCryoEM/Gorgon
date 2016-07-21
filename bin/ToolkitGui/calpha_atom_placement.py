@@ -27,7 +27,7 @@ class CalphaAtomPlacement(QtGui.QMainWindow):
         
         self.viewers = {}
         
-#         self.volumeViewer = VolumeViewer(self)
+        self.volumeViewer = VolumeViewer(self)
         self.skeletonViewer = SkeletonViewer(self)
         # self.sseViewer    = SSEViewer(self)
         self.calphaViewer = CAlphaViewer(self)
@@ -37,7 +37,7 @@ class CalphaAtomPlacement(QtGui.QMainWindow):
         self.viewers['calpha'] = self.calphaViewer
         
         self.scene = []
-#         self.scene.append(self.volumeViewer)
+        self.scene.append(self.volumeViewer)
         self.scene.append(self.skeletonViewer)
         # self.scene.append(self.sseViewer)
         self.scene.append(self.calphaViewer)
@@ -51,7 +51,7 @@ class CalphaAtomPlacement(QtGui.QMainWindow):
 #         exit()
         
     def load(self):
-#         self.volumeViewer.load(self.args.volume)
+        self.volumeViewer.load(self.args.volume)
         self.skeletonViewer.load(self.args.skeleton)
         # self.sseViewer.loadHelixDataFromFile(self.args.helix)
         self.calphaViewer.loadData(self.args.calpha)

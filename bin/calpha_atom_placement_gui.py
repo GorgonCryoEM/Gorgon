@@ -15,6 +15,7 @@ from ToolkitGui import CalphaAtomPlacement
 def main():
     parser = argparse.ArgumentParser(description='Gorgon Calpha Atom Placement Gui')
     
+    parser.add_argument('volume')
     parser.add_argument('skeleton')
     parser.add_argument('calpha')
     args = parser.parse_args()
