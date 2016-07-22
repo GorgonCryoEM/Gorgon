@@ -9,7 +9,7 @@ class Filter(Operation):
 
 class Normalize(Filter):
 
-    def __init__(self, input, output, args):
+    def __init__(self, input, output, args=None):
         super(Normalize, self).__init__(input, output)
 
     def _run(self):
@@ -18,7 +18,7 @@ class Normalize(Filter):
 
 class LowPass(Filter):
 
-    def __init__(self, input, output, args):
+    def __init__(self, input, output, args=None):
         super(LowPass, self).__init__(input, output)
         
     def _run(self):
@@ -27,7 +27,7 @@ class LowPass(Filter):
 
 class Gaussian(Filter):
 
-    def __init__(self, input, output, args):
+    def __init__(self, input, output, args=None):
         super(Gaussian, self).__init__(input, output)
         
     def _run(self):

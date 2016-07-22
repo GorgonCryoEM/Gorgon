@@ -18,7 +18,7 @@ class Skeletonizer(Operation):
         
 class Binary(Skeletonizer):
 
-    def __init__(self, input, output, args):
+    def __init__(self, input, output, args=None):
         super(Binary, self).__init__(input, output)
         
     def _run(self):
@@ -34,7 +34,7 @@ class Binary(Skeletonizer):
 
 class GrayScale(Skeletonizer):
 
-    def __init__(self, input, output, args):
+    def __init__(self, input, output, args=None):
         super(GrayScale, self).__init__(input, output)
 
     def _run(self):
