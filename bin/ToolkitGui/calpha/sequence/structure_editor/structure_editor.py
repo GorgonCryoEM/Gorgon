@@ -38,13 +38,13 @@ class CAlphaStructureEditor(QtGui.QWidget):
         self.connect(self.redoButton,                   QtCore.SIGNAL('clicked()'), self.undoStack.redo)
         self.connect(self.undoStack,                    QtCore.SIGNAL('canRedoChanged(bool)'), self.redoButton.setEnabled)
         self.connect(self.undoStack,                    QtCore.SIGNAL('canUndoChanged (bool)'), self.undoButton.setEnabled)
-        self.connect(self.helixDecreasePositionButton,  QtCore.SIGNAL('clicked()'), self.helixDecreaseButtonPress)
-        self.connect(self.helixIncreasePositionButton,  QtCore.SIGNAL('clicked()'), self.helixIncreaseButtonPress)
+        # self.connect(self.helixDecreasePositionButton,  QtCore.SIGNAL('clicked()'), self.helixDecreaseButtonPress)
+        # self.connect(self.helixIncreasePositionButton,  QtCore.SIGNAL('clicked()'), self.helixIncreaseButtonPress)
         self.connect(self.helixFlipButton,              QtCore.SIGNAL('clicked()'), self.helixFlipButtonPress)
         self.connect(self.currentChainModel,            QtCore.SIGNAL('selection updated'), self.updateSelectedResidues)
         self.connect(self.tabWidget,                    QtCore.SIGNAL('currentChanged(int)'), self.enableDisable)
         self.connect(self.atomicAcceptButton,           QtCore.SIGNAL('clicked()'), self.atomPlaceCAatom)
-        self.connect(self.helixAcceptButton,            QtCore.SIGNAL('clicked()'), self.helixCreateCAhelix)
+        # self.connect(self.helixAcceptButton,            QtCore.SIGNAL('clicked()'), self.helixCreateCAhelix)
         if self.parentWidget().parentWidget().app:
             self.updateCurrentMatch() #In case an observed helix is already selected
             self.CAlphaViewer = self.app.calphaViewer
@@ -617,10 +617,10 @@ class CAlphaStructureEditor(QtGui.QWidget):
         loopLayout.addWidget(self.loopStopSpinBox, 4, 1, 1, 1)
         self.loopTab.setLayout(loopLayout)
 
-        self.connect(self.loopVolumeLoadButton, QtCore.SIGNAL('clicked()'), self.loadLoopVolume)
-        self.connect(self.loopStartEndBuildingButton, QtCore.SIGNAL('clicked()'), self.startEndLoopBuilding)
-
-        self.updateLoopEditorEnables()
+        # self.connect(self.loopVolumeLoadButton, QtCore.SIGNAL('clicked()'), self.loadLoopVolume)
+        # self.connect(self.loopStartEndBuildingButton, QtCore.SIGNAL('clicked()'), self.startEndLoopBuilding)
+        # 
+        # self.updateLoopEditorEnables()
 
     def setupPositionTab(self):
         self.posTranslateGroup = QtGui.QGroupBox('Translate:')
