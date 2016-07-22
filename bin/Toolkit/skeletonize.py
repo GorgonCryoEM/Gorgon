@@ -1,3 +1,4 @@
+import argparse
 from .operation import Operation
 
 
@@ -19,14 +20,22 @@ class Skeletonizer(Operation):
 class Binary(Skeletonizer):
 
     def __init__(self, input, output, args=None):
-        super(Binary, self).__init__(input, output)
+        parser = argparse.ArgumentParser()
+        parser.add_argument("--thresh")
+        parser.add_argument("--min_curve_length", default=4)
+        parser.add_argument("--min_surface_size", default=4)
+
+        self.args = parser.parse_args(args)
         
+        super(Binary, self).__init__(input, output)
+
     def _run(self):
         self.logger.debug(__file__)
         self.logger.debug("Binary._run")
         self.logger.debug(self.renderer)
         self.logger.debug("renderer.getSize(): %d" % self.renderer.getSize())
-        self.skeleton = self.renderer.performBinarySkeletonizationJu2007(self.defaultDensity(), 4, 4)
+        thresh = float(self.args.thresh) if self.args.thresh else self.defaultDensity()
+        self.skeleton = self.renderer.performBinarySkeletonizationJu2007(thresh, self.args.min_curve_length, self.args.min_surface_size)
         self.logger.debug(self.renderer)
         self.logger.debug(self.skeleton)
         self.logger.debug("skeleton.getSize(): %d" % self.skeleton.getSize())
