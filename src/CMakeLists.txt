@@ -2,7 +2,6 @@
 # Set installation locations
 # --------------------------------------------------------------------
 set(target_installation_locations ${CMAKE_BINARY_DIR}/bin/ ${CMAKE_BINARY_DIR}/tests/)
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # --------------------------------------------------------------------
 #http://www.cmake.org/Wiki/CMake_RPATH_handling
 # use, i.e. don't skip the full RPATH for the build tree
