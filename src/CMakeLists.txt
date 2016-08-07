@@ -1,8 +1,4 @@
 # --------------------------------------------------------------------
-# Set installation locations
-# --------------------------------------------------------------------
-set(target_installation_locations ${CMAKE_BINARY_DIR}/bin/ ${CMAKE_BINARY_DIR}/tests/)
-# --------------------------------------------------------------------
 #http://www.cmake.org/Wiki/CMake_RPATH_handling
 # use, i.e. don't skip the full RPATH for the build tree
 #SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
@@ -12,7 +8,7 @@ set(target_installation_locations ${CMAKE_BINARY_DIR}/bin/ ${CMAKE_BINARY_DIR}/t
 #SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 #
 # the RPATH to be used when installing
-SET(CMAKE_INSTALL_RPATH ${target_installation_locations})
+SET(CMAKE_INSTALL_RPATH ${CMAKE_BINARY_DIR}/bin/)
 #
 # don't add the automatically determined parts of the RPATH
 # which point to directories outside the build tree to the install RPATH
