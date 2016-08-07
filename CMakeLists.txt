@@ -7,7 +7,6 @@ PROJECT(Gorgon
 set(legacy_trgt_name pyGORGON)
 
 include(cmake/functions.cmake)
-include(cmake/Configure.cmake)
 include(cmake/Debug.cmake)
 
 include(cmake/MacOSX/init.cmake)
