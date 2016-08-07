@@ -93,7 +93,6 @@ function(add_module proj)
                 
     set_target_properties(py${proj_low} PROPERTIES INCLUDE_DIRECTORIES "${pyincludes}")
     target_link_libraries(py${proj_low} ${proj_low}                     ${pylibs}     )
-#    target_link_libraries(py${proj_low} ${proj_low} ${GORGON_LIBRARIES})
     
     if(ENABLE_CMAKE_DEBUG_OUTPUT)
         message("\nDebug: ${proj_low}")
@@ -135,7 +134,6 @@ function(add_module proj)
             )
             
     if(WIN32)
-        rename_target_windows(${${proj}_trgt_name})
         install_dlls(${proj_low})
     endif()    
 endfunction()
