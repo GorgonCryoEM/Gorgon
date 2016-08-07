@@ -65,8 +65,6 @@ function(add_module proj)
     configure_file(${CMAKE_CURRENT_LIST_DIR}/pylib.cpp.in
                     ${CMAKE_BINARY_DIR}/src/py${proj_low}.cpp
                    )
-    
-    add_library(${proj_low} SHARED ${srcs})
 
     list(APPEND includes
                 ${GORGON_EXTERNAL_LIBRARIES_DIR}
@@ -75,10 +73,8 @@ function(add_module proj)
                 ""
                 )
                 
-    set_target_properties(${proj_low} PROPERTIES INCLUDE_DIRECTORIES ${includes})
-    target_link_libraries(${proj_low}                                ${libs}    )
                    
-    add_library(py${proj_low} MODULE ${CMAKE_BINARY_DIR}/src/py${proj_low}.cpp)
+    add_library(py${proj_low} SHARED ${CMAKE_BINARY_DIR}/src/py${proj_low}.cpp ${srcs})
 
     list(APPEND pyincludes
                 ${CMAKE_CURRENT_SOURCE_DIR}
@@ -92,24 +88,9 @@ function(add_module proj)
                 )
                 
     set_target_properties(py${proj_low} PROPERTIES INCLUDE_DIRECTORIES "${pyincludes}")
-    target_link_libraries(py${proj_low} ${proj_low}                     ${pylibs}     )
+    target_link_libraries(py${proj_low}                                 ${pylibs}     )
     
     if(ENABLE_CMAKE_DEBUG_OUTPUT)
-        message("\nDebug: ${proj_low}")
-    
-        get_target_property(includes ${proj_low} INCLUDE_DIRECTORIES)
-        get_target_property(libs     ${proj_low} LINK_LIBRARIES)
-    
-        message("includes")
-        foreach(i ${includes})
-          message(STATUS "${i}")
-        endforeach()
-        
-        message("libs")
-        foreach(i ${libs})
-          message(STATUS "${i}")
-        endforeach()
-
         message("Debug: py${proj_low}")
     
         get_target_property(includes py${proj_low} INCLUDE_DIRECTORIES)
@@ -128,7 +109,7 @@ function(add_module proj)
         message("Debug: py${proj_low} END\n")
     endif()
     
-    install_wrapper(TARGETS ${proj_low} py${proj_low}
+    install_wrapper(TARGETS py${proj_low}
             DESTINATIONS ${target_installation_locations}
             COMPONENT ${${proj_low}_install_component}
             )
