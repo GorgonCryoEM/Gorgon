@@ -87,8 +87,18 @@ function(add_module proj)
                 ${PYTHON_LIBRARY}
                 )
                 
-    set_target_properties(py${proj_low} PROPERTIES INCLUDE_DIRECTORIES "${pyincludes}")
-    target_link_libraries(py${proj_low}                                 ${pylibs}     )
+    if(NOT WIN32)
+        set(libsuffix .so)
+    else()
+        set(libsuffix .pyd)
+    endif()
+
+    set_target_properties(py${proj_low} PROPERTIES
+                                     PREFIX lib
+                                     SUFFIX ${libsuffix}
+                                     INCLUDE_DIRECTORIES "${pyincludes}"
+                                    )
+    target_link_libraries(py${proj_low} ${pylibs})
     
     if(ENABLE_CMAKE_DEBUG_OUTPUT)
         message("Debug: py${proj_low}")
