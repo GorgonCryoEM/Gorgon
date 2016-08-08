@@ -56,7 +56,7 @@ function(add_custom_target_wrapper)
     endforeach()
 endfunction()
 # --------------------------------------------------------------------
-function(add_module proj)
+function(setup_libpy proj)
     set(proj_low ${${proj}_trgt_name})
     
     file(GLOB_RECURSE srcs "*.cpp")
@@ -146,6 +146,6 @@ function(init)
     to_title_case(${proj} proj)
     set_proj_vars(${proj})
     
-    add_module(${proj})
+    setup_libpy(${proj})
 endfunction()
 # --------------------------------------------------------------------
