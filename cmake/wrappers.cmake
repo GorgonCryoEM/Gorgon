@@ -32,7 +32,7 @@ function(install_to_destinations)
     endforeach()
 endfunction()
 # --------------------------------------------------------------------
-function(add_custom_target_wrapper)
+function(add_custom_target_and_install_to_destinations)
     set(options)
     set(oneValueArgs TARGET COMPONENT)
     set(multiValueArgs TARGETS FILES PROGRAMS DIRECTORY DESTINATIONS DEPENDS)
