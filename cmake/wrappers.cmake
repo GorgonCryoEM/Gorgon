@@ -140,7 +140,7 @@ function(add_subdirectory_wrapper proj)
             )
 endfunction()
 # --------------------------------------------------------------------
-function(cmakelist)
+function(init)
     set(proj ${CMAKE_CURRENT_SOURCE_DIR})
     string(REGEX REPLACE ".*/" "" proj ${proj})
     to_title_case(${proj} proj)
