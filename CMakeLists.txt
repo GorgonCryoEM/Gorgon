@@ -61,6 +61,7 @@ endforeach()
 # --------------------------------------------------------------------
 # Include and link directories, targets, target link libraries
 # --------------------------------------------------------------------
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 list(APPEND GORGON_INCLUDE_DIRS
 	${CMAKE_CURRENT_SOURCE_DIR}
 	${GORGON_EXTERNAL_LIBRARIES_DIR}
