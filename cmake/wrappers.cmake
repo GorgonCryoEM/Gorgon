@@ -1,4 +1,4 @@
-function(install_wrapper)
+function(install_to_destinations)
     set(options)
     set(oneValueArgs COMPONENT)
     set(multiValueArgs TARGETS FILES PROGRAMS DIRECTORY DESTINATIONS)
@@ -48,7 +48,7 @@ function(add_custom_target_wrapper)
     foreach(t ${types})
         set(t_contents ${p_${t}})
         if(t_contents)
-            install_wrapper(${t} ${t_contents}
+            install_to_destinations(${t} ${t_contents}
                     DESTINATIONS ${p_DESTINATIONS}
                     COMPONENT ${p_COMPONENT}
                     )
@@ -119,7 +119,7 @@ function(add_module proj)
         message("Debug: py${proj_low} END\n")
     endif()
     
-    install_wrapper(TARGETS py${proj_low}
+    install_to_destinations(TARGETS py${proj_low}
             DESTINATIONS ${target_installation_locations}
             COMPONENT ${${proj_low}_install_component}
             )

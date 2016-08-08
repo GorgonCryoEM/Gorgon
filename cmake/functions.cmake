@@ -39,7 +39,7 @@ function(install_dlls trgt)
     set(trgt ${${trgt}_trgt_name})
     rename_target_windows(py${trgt})
     
-    install_wrapper(FILES ${win_dlls}
+    install_to_destinations(FILES ${win_dlls}
             DESTINATIONS ${target_installation_locations}
             COMPONENT ${${trgt}_install_component}
             )
