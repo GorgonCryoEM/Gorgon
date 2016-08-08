@@ -1,4 +1,4 @@
-add_custom_target_wrapper(TARGET Explorer
+add_custom_target_and_install_to_destinations(TARGET Explorer
         PROGRAMS ${CMAKE_SOURCE_DIR}/bin/explorer.py
         DIRECTORY ${CMAKE_SOURCE_DIR}/bin/Explorer ${CMAKE_SOURCE_DIR}/bin/ToolkitGui
         DESTINATIONS ${CMAKE_BINARY_DIR}/bin

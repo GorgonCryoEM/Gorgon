@@ -1,4 +1,4 @@
-add_custom_target_wrapper(TARGET Tests
+add_custom_target_and_install_to_destinations(TARGET Tests
                 DIRECTORY ${CMAKE_SOURCE_DIR}/tests
                 DESTINATIONS ${CMAKE_BINARY_DIR}
                 DEPENDS Programs
