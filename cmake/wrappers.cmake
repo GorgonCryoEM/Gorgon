@@ -122,7 +122,7 @@ function(setup_libpy proj)
     endif()    
 endfunction()
 # --------------------------------------------------------------------
-function(add_subdirectory_wrapper proj)
+function(add_subdirectory_and_add_custom_target proj)
     string(TOLOWER ${proj} proj_low)
     
     add_subdirectory(${proj_low})
