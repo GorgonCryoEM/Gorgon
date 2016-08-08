@@ -66,21 +66,13 @@ function(setup_libpy proj)
                     ${CMAKE_BINARY_DIR}/src/py${proj_low}.cpp
                    )
 
-    list(APPEND includes
-                ${GORGON_EXTERNAL_LIBRARIES_DIR}
-                )
-    list(APPEND libs
-                ""
-                )
-                
-                   
     add_library(py${proj_low} SHARED ${CMAKE_BINARY_DIR}/src/py${proj_low}.cpp ${srcs})
 
     list(APPEND pyincludes
                 ${CMAKE_CURRENT_SOURCE_DIR}
                 ${Boost_INCLUDE_DIR}
                 ${PYTHON_INCLUDE_DIR}
-                ${includes}
+                ${GORGON_EXTERNAL_LIBRARIES_DIR}
                 )
     list(APPEND pylibs
                 ${Boost_LIBRARIES}
