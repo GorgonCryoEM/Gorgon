@@ -15,7 +15,6 @@ SET(CMAKE_INSTALL_RPATH ${CMAKE_BINARY_DIR}/bin/)
 #SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 # --------------------------------------------------------------------
-include(${CMAKE_SOURCE_DIR}/cmake/wrappers.cmake)
 
 add_subdirectory(hello)
 # --------------------------------------------------------------------
