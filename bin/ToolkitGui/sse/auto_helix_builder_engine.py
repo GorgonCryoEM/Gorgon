@@ -1,5 +1,4 @@
 from math import *
-# from libpyGORGON import PDBAtom, Vector3DFloat, LinearSolver
 from libpytoolkit import PDBAtom, findBestFitLine, sumDistSqrd
 from Explorer import Vec3
 
