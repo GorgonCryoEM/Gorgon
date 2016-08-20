@@ -98,29 +98,3 @@ endif()
 # Install Step
 # --------------------------------------------------------------------
 # --------------------------------------------------------------------
-# Package Step
-# --------------------------------------------------------------------
-add_custom_target(Package
-        COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Package -P cmake_install.cmake
-        DEPENDS Gorgon
-        )
-        
-add_custom_target(Package-only
-        COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Package -P cmake_install.cmake
-        )
-        
-if(APPLE)
-    include(cmake/MacOSX/package.cmake)
-elseif(WIN32)
-    include(cmake/Windows/package.cmake)
-else()
-    install(CODE "execute_process(COMMAND pyinstaller ${run_dir}/gorgon.pyw
-                                                        --distpath=${package_dir}
-                                                        --clean -y
-        WORKING_DIRECTORY ${run_dir})"
-        DEPENDS Gorgon
-        COMPONENT "Package"
-        )
-endif()
-
-# --------------------------------------------------------------------
