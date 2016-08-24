@@ -18,10 +18,10 @@ function(install_to_destinations)
     endforeach()
 endfunction()
 # --------------------------------------------------------------------
-function(add_custom_target_and_install_to_destinations)
+function(add_custom_target_wrapper)
     set(options)
-    set(oneValueArgs TARGET COMPONENT)
-    set(multiValueArgs TARGETS FILES PROGRAMS DIRECTORY DESTINATIONS DEPENDS)
+    set(oneValueArgs TARGET)
+    set(multiValueArgs DEPENDS)
     cmake_parse_arguments(p "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
     
     add_custom_target(${p_TARGET}
