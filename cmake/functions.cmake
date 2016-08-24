@@ -40,7 +40,7 @@ function(install_dlls trgt)
     rename_target_windows(py${trgt})
     
     install_to_destinations(FILES ${win_dlls}
-            DESTINATIONS ${target_installation_locations}
+            DESTINATIONS ${CMAKE_BINARY_DIR}/bin/${proj_low}
             COMPONENT ${${trgt}_install_component}
             )
 endfunction()
