@@ -138,6 +138,7 @@ function(init)
     string(REGEX REPLACE ".*/" "" proj ${proj})
     to_title_case(${proj} proj)
     set_proj_vars(${proj})
+    set(current_trgt_name ${proj} PARENT_SCOPE)
     
     setup_libpy(${proj})
 endfunction()
