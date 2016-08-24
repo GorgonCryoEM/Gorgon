@@ -28,18 +28,6 @@ function(add_custom_target_and_install_to_destinations)
         COMMAND ${CMAKE_COMMAND} -DCOMPONENT=${p_TARGET} -P cmake_install.cmake
         DEPENDS ${p_DEPENDS}
         )
-        
-    set(types TARGETS FILES PROGRAMS DIRECTORY)
-    
-    foreach(t ${types})
-        set(t_contents ${p_${t}})
-        if(t_contents)
-            install_to_destinations(${t} ${t_contents}
-                    DESTINATIONS ${p_DESTINATIONS}
-                    COMPONENT ${p_COMPONENT}
-                    )
-        endif()
-    endforeach()
 endfunction()
 # --------------------------------------------------------------------
 function(setup_libpy proj)
