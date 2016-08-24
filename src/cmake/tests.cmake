@@ -1,8 +1,10 @@
-add_custom_target_and_install_to_destinations(TARGET Tests
-                DIRECTORY ${CMAKE_SOURCE_DIR}/tests
-                DESTINATIONS ${CMAKE_BINARY_DIR}
-                DEPENDS Programs
-                COMPONENT Tests
+add_custom_target_wrapper(TARGET Tests
+        DEPENDS Programs
+        )
+install_to_destinations(
+        DIRECTORY ${CMAKE_SOURCE_DIR}/tests
+        DESTINATIONS ${CMAKE_BINARY_DIR}
+        COMPONENT Tests
         )
 
 install_to_destinations(
