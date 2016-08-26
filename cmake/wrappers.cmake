@@ -58,15 +58,16 @@ endfunction()
 # --------------------------------------------------------------------
 function(setup_libpy proj)
     set(proj_low ${${proj}_trgt_name})
+    set(py_proj py${proj_low})
     
     file(GLOB_RECURSE srcs "*.cpp")
     
-    set(current_pylib "libpy${proj_low}")    
+    set(current_pylib "lib${py_proj}")    
     configure_file(${CMAKE_CURRENT_LIST_DIR}/pylib.cpp.in
-                    ${CMAKE_BINARY_DIR}/src/py${proj_low}.cpp
+                    ${CMAKE_BINARY_DIR}/src/${py_proj}.cpp
                    )
 
-    add_library(py${proj_low} SHARED ${CMAKE_BINARY_DIR}/src/py${proj_low}.cpp ${srcs})
+    add_library(${py_proj} SHARED ${CMAKE_BINARY_DIR}/src/${py_proj}.cpp ${srcs})
 
     list(APPEND pyincludes
                 ${CMAKE_CURRENT_SOURCE_DIR}
@@ -85,18 +86,18 @@ function(setup_libpy proj)
         set(libsuffix .pyd)
     endif()
 
-    set_target_properties(py${proj_low} PROPERTIES
+    set_target_properties(${py_proj} PROPERTIES
                                      PREFIX lib
                                      SUFFIX ${libsuffix}
                                      INCLUDE_DIRECTORIES "${pyincludes}"
                                     )
-    target_link_libraries(py${proj_low} ${pylibs})
+    target_link_libraries(${py_proj} ${pylibs})
     
     if(ENABLE_CMAKE_DEBUG_OUTPUT)
-        message("Debug: py${proj_low}")
+        message("Debug: ${py_proj}")
     
-        get_target_property(includes py${proj_low} INCLUDE_DIRECTORIES)
-        get_target_property(libs     py${proj_low} LINK_LIBRARIES)
+        get_target_property(includes ${py_proj} INCLUDE_DIRECTORIES)
+        get_target_property(libs     ${py_proj} LINK_LIBRARIES)
     
         message("includes")
         foreach(i ${includes})
@@ -108,10 +109,10 @@ function(setup_libpy proj)
           message(STATUS "${i}")
         endforeach()
         
-        message("Debug: py${proj_low} END\n")
+        message("Debug: ${py_proj} END\n")
     endif()
     
-    install_to_destinations(TARGETS py${proj_low}
+    install_to_destinations(TARGETS ${py_proj}
             DESTINATIONS ${target_installation_locations}
             COMPONENT ${${proj_low}_install_component}
             )
