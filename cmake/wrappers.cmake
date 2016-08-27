@@ -122,14 +122,13 @@ function(setup_libpy proj)
     endif()    
 endfunction()
 # --------------------------------------------------------------------
-function(add_subdirectory_and_add_custom_target proj)
-    string(TOLOWER ${proj} proj_low)
-    
-    add_subdirectory(${proj_low})
-    
+function(add_custom_targets_trgt_and_trgt_only proj)
     add_custom_target(${proj}
             COMMAND ${CMAKE_COMMAND} -DCOMPONENT=${proj} -P cmake_install.cmake
-            DEPENDS py${proj_low}
+            DEPENDS py${${proj}_trgt_name}
+            )
+    add_custom_target(${proj}-only
+            COMMAND ${CMAKE_COMMAND} -DCOMPONENT=${proj} -P cmake_install.cmake
             )
 endfunction()
 # --------------------------------------------------------------------
@@ -141,5 +140,6 @@ function(init)
     set(current_trgt_name ${proj} PARENT_SCOPE)
     
     setup_libpy(${proj})
+    add_custom_targets_trgt_and_trgt_only(${proj})
 endfunction()
 # --------------------------------------------------------------------
