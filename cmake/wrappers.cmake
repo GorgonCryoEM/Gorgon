@@ -1,59 +1,33 @@
 function(install_to_destinations)
+    set(types TARGETS FILES PROGRAMS DIRECTORY)
     set(options)
     set(oneValueArgs COMPONENT)
-    set(multiValueArgs TARGETS FILES PROGRAMS DIRECTORY DESTINATIONS)
+    set(multiValueArgs ${types} DESTINATIONS)
     cmake_parse_arguments(p "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
     
-    if(p_TARGETS)
-      set(type TARGETS)
-    endif()
-    
-    if(p_FILES)
-      set(type FILES)
-    endif()
-    
-    if(p_PROGRAMS)
-      set(type PROGRAMS)
-    endif()
-
-    if(p_DIRECTORY)
-      set(type DIRECTORY)
-    endif()
-
-    set(type_contents p_${type})
-    
     foreach(d ${p_DESTINATIONS})
-      foreach(t ${${type_contents}})
-          install(${type} ${t}
-                  DESTINATION ${d}
-                  COMPONENT ${p_COMPONENT}
-                  )
-      endforeach()
+        foreach(t ${types})
+            set(contents ${p_${t}})
+            if(contents)
+                install(${t} ${contents}
+                      DESTINATION ${d}
+                      COMPONENT ${p_COMPONENT}
+                      )
+            endif()
+        endforeach()
     endforeach()
 endfunction()
 # --------------------------------------------------------------------
-function(add_custom_target_and_install_to_destinations)
+function(add_custom_target_wrapper)
     set(options)
-    set(oneValueArgs TARGET COMPONENT)
-    set(multiValueArgs TARGETS FILES PROGRAMS DIRECTORY DESTINATIONS DEPENDS)
+    set(oneValueArgs TARGET)
+    set(multiValueArgs DEPENDS)
     cmake_parse_arguments(p "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
     
     add_custom_target(${p_TARGET}
         COMMAND ${CMAKE_COMMAND} -DCOMPONENT=${p_TARGET} -P cmake_install.cmake
         DEPENDS ${p_DEPENDS}
         )
-        
-    set(types TARGETS FILES PROGRAMS DIRECTORY)
-    
-    foreach(t ${types})
-        set(t_contents ${p_${t}})
-        if(t_contents)
-            install_to_destinations(${t} ${t_contents}
-                    DESTINATIONS ${p_DESTINATIONS}
-                    COMPONENT ${p_COMPONENT}
-                    )
-        endif()
-    endforeach()
 endfunction()
 # --------------------------------------------------------------------
 function(setup_libpy proj)
