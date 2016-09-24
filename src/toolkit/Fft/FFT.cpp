@@ -2,6 +2,7 @@
 // Created by shadow_walker on 9/23/16.
 //
 
+#include "eman/FFT.h"
 
 // *************************************************************************************************
 // Code below can go in cpp file
