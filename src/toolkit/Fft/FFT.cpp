@@ -19,7 +19,7 @@ const int EMfft::EMAN2_FFTW2_OUT_OF_PLACE=0;
 
 
 #ifdef FFTW3
-inline EMfft::EMfftw3_cache::EMfftw3_cache() :
+EMfft::EMfftw3_cache::EMfftw3_cache() :
 		num_plans(0)
 {
 	for(int i = 0; i < EMFFTW3_CACHE_SIZE; ++i)
@@ -32,7 +32,7 @@ inline EMfft::EMfftw3_cache::EMfftw3_cache() :
 	}
 }
 
-inline void EMfft::EMfftw3_cache::debug_plans()
+void EMfft::EMfftw3_cache::debug_plans()
 {
 	for(int i = 0; i < EMFFTW3_CACHE_SIZE; ++i)
 	{
@@ -44,7 +44,7 @@ inline void EMfft::EMfftw3_cache::debug_plans()
 	}
 }
 
-inline EMfft::EMfftw3_cache::~EMfftw3_cache()
+EMfft::EMfftw3_cache::~EMfftw3_cache()
 {
 	for(int i = 0; i < EMFFTW3_CACHE_SIZE; ++i)
 	{
@@ -56,7 +56,7 @@ inline EMfft::EMfftw3_cache::~EMfftw3_cache()
 	}
 }
 
-inline fftwf_plan EMfft::EMfftw3_cache::get_plan(const int rank_in, const int x, const int y, const int z, const int r2c_flag, const int ip_flag, fftwf_complex* complex_data, float* real_data )
+fftwf_plan EMfft::EMfftw3_cache::get_plan(const int rank_in, const int x, const int y, const int z, const int r2c_flag, const int ip_flag, fftwf_complex* complex_data, float* real_data )
 {
 
 	if ( rank_in > 3 || rank_in < 1 ) throw InvalidValueException(rank_in, "Error, can not get an FFTW plan using rank out of the range [1,3]");
@@ -138,7 +138,7 @@ EMfft::EMfftw3_cache EMfft::plan_cache;
 
 #ifdef FFTW3
 
-inline int EMfft::real_to_complex_1d(float *real_data, float *complex_data, int n)
+int EMfft::real_to_complex_1d(float *real_data, float *complex_data, int n)
 {//cout<<"doing fftw3"<<endl;
 #ifdef FFTW_PLAN_CACHING
 	bool ip = ( complex_data == real_data );
@@ -154,7 +154,7 @@ inline int EMfft::real_to_complex_1d(float *real_data, float *complex_data, int 
 	return 0;
 }
 
-inline int EMfft::complex_to_real_1d(float *complex_data, float *real_data, int n)
+int EMfft::complex_to_real_1d(float *complex_data, float *real_data, int n)
 {
 #ifdef FFTW_PLAN_CACHING
 	bool ip = ( complex_data == real_data );
@@ -171,7 +171,7 @@ inline int EMfft::complex_to_real_1d(float *complex_data, float *real_data, int 
 	return 0;
 }
 
-inline int EMfft::real_to_complex_nd(float *real_data, float *complex_data, int nx, int ny, int nz)
+int EMfft::real_to_complex_nd(float *real_data, float *complex_data, int nx, int ny, int nz)
 {
 	const int rank = get_rank(ny, nz);
 	int dims[3];
@@ -210,7 +210,7 @@ inline int EMfft::real_to_complex_nd(float *real_data, float *complex_data, int 
 	return 0;
 }
 
-inline int EMfft::complex_to_real_nd(float *complex_data, float *real_data, int nx, int ny, int nz)
+int EMfft::complex_to_real_nd(float *complex_data, float *real_data, int nx, int ny, int nz)
 {
 	const int rank = get_rank(ny, nz);
 	int dims[3];
