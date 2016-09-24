@@ -49,39 +49,39 @@ namespace GraphMatch {
         }
     };
 
-    SSEResult::SSEResult()
+    inline SSEResult::SSEResult()
     					: cost(0), helixCount(0)
     {}
 
-    SSEResult::SSEResult(Node * node, int nHelix)
+    inline SSEResult::SSEResult(Node * node, int nHelix)
     					: correspondence(node->GetNodeCorrespondence()),
 						  cost(node->GetCost()),
 						  helixCount(nHelix)
     {}
 
-    SSEResult::SSEResult(vector<int> corr, double cst, int nHelix)
+    inline SSEResult::SSEResult(vector<int> corr, double cst, int nHelix)
 						: correspondence(corr),
 						  cost(cst),
 						  helixCount(nHelix)
     {}
 
-    double SSEResult::getCost() {
+    inline double SSEResult::getCost() {
         return cost;
     }
 
-    int SSEResult::getNodeCount() {
+    inline int SSEResult::getNodeCount() {
         return correspondence.size();
     }
 
-    int SSEResult::getHelixCount() {
+    inline int SSEResult::getHelixCount() {
         return helixCount;
     }
 
-    int SSEResult::getSkeletonNode(int sequenceNode) {
+    inline int SSEResult::getSkeletonNode(int sequenceNode) {
         return correspondence[sequenceNode];
     }
 
-    int SSEResult::nodeToHelix(int nodeId) {
+    inline int SSEResult::nodeToHelix(int nodeId) {
         if(nodeId >= 0) {
             if (nodeId < 2 * helixCount) {
                 return (int)(nodeId / 2);
