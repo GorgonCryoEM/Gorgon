@@ -91,6 +91,11 @@ function(setup_libpy proj)
             DESTINATIONS ${CMAKE_BINARY_DIR}/bin/${proj_low}
             COMPONENT ${${proj_low}_install_component}
             )
+        
+    install(DIRECTORY ${CMAKE_SOURCE_DIR}/bin/${proj_low}
+            DESTINATION ${CMAKE_BINARY_DIR}/bin
+            COMPONENT ${${proj_low}_install_component}
+            )
             
     if(WIN32)
         install_dlls(${proj_low})
