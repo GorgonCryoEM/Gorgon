@@ -9,6 +9,7 @@
 #include <Foundation/Rasterizer.h>
 #include <map>
 #include <queue>
+#include <fstream>
 #ifdef _WIN32
 	#include <hash_map>
 	using namespace stdext;
@@ -29,7 +30,7 @@ namespace Protein_Morph {
     struct NonManifoldMeshEdge : public NonManifoldMeshBase {
         unsigned int vertexIds[2];
         vector<unsigned int> faceIds;
-        unsigned char tag;
+        string tag;
     };
     ostream& operator<<(ostream& out, const NonManifoldMeshEdge& obj){
         return out<<"\033[34m"
@@ -41,7 +42,7 @@ namespace Protein_Morph {
     struct NonManifoldMeshFace : public NonManifoldMeshBase {
         vector<unsigned int> edgeIds;
         vector<unsigned int> vertexIds;
-        unsigned char tag;
+        string tag;
     };
     ostream& operator<<(ostream& out, const NonManifoldMeshFace& obj){
             return out<<"\033[34m"
@@ -82,8 +83,8 @@ namespace Protein_Morph {
         bool IsEdgePresent(int vertexId1, int vertexId2);
         bool IsSurfaceVertex(int ix);
         int AddVertex(NonManifoldMeshVertex vertex);
-        int AddVertex(Vector3DFloat location, bool tag = NULL);
-        int AddHashedVertex(Vector3DFloat location, int hashKey, bool tag = NULL);
+        int AddVertex(Vector3DFloat location);
+        int AddHashedVertex(Vector3DFloat location, int hashKey);
         int AddEdge(NonManifoldMeshEdge edge);
         int AddFace(NonManifoldMeshFace face);
         int GetVertexIndex(int vertexId);
@@ -91,9 +92,9 @@ namespace Protein_Morph {
         int GetEdgeIndex(int edgeId);
         int GetEdgeIndex(int vertexId1, int vertexId2);
         int GetClosestVertexIndex(Vector3DFloat pos);
-        void AddEdge(int vertexId1, int vertexId2, unsigned char tag = NULL);
-        void AddQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4, unsigned char newEdgeTag = NULL, unsigned char faceTag = NULL);
-        void AddTriangle(int vertexId1, int vertexId2, int vertexId3, unsigned char newEdgeTag = NULL, unsigned char faceTag = NULL);
+        void AddEdge(int vertexId1, int vertexId2, string tag = "");
+        void AddQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4, string newEdgeTag = "", string faceTag = "");
+        void AddTriangle(int vertexId1, int vertexId2, int vertexId3, string newEdgeTag = "", string faceTag = "");
         void MarkFixedVertices();
         void MergeMesh(NonManifoldMesh * srcMesh);
         void RemoveFace(int faceId);
@@ -249,18 +250,18 @@ namespace Protein_Morph {
         return vertex.id;
     }
 
-    int NonManifoldMesh::AddVertex(Vector3DFloat location, bool tag) {
+    int NonManifoldMesh::AddVertex(Vector3DFloat location) {
         NonManifoldMeshVertex v;
         v.position = location;
-        v.tag = tag;
+//        v.tag = tag;
         return AddVertex(v);
     }
 
-    int NonManifoldMesh::AddHashedVertex(Vector3DFloat location, int hashKey, bool tag) {
+    int NonManifoldMesh::AddHashedVertex(Vector3DFloat location, int hashKey) {
         HashMapType::const_iterator pos = vertexHashMap.find(hashKey);
         int vertexId;
         if(pos == vertexHashMap.end()) {
-            vertexId = AddVertex(location, tag);
+            vertexId = AddVertex(location);
             vertexHashMap[hashKey] = vertexId;
         } else {
             vertexId = pos->second;
@@ -307,7 +308,7 @@ namespace Protein_Morph {
         return edgeId;
     }
 
-    void NonManifoldMesh::AddEdge(int vertexId1, int vertexId2, unsigned char tag){
+    void NonManifoldMesh::AddEdge(int vertexId1, int vertexId2, string tag){
         NonManifoldMeshEdge edge;
         edge.tag = tag;
         edge.faceIds.clear();
@@ -318,12 +319,12 @@ namespace Protein_Morph {
         vertices[GetVertexIndex(vertexId2)].edgeIds.push_back(edgeId);
     }
 
-    void NonManifoldMesh::AddQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4, unsigned char newEdgeTag, unsigned char faceTag) {
+    void NonManifoldMesh::AddQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4, string newEdgeTag, string faceTag) {
         AddTriangle(vertexId1, vertexId2, vertexId3, newEdgeTag, faceTag);
         AddTriangle(vertexId1, vertexId3, vertexId4, newEdgeTag, faceTag);
     }
 
-    void NonManifoldMesh::AddTriangle(int vertexId1, int vertexId2, int vertexId3, unsigned char newEdgeTag, unsigned char faceTag) {
+    void NonManifoldMesh::AddTriangle(int vertexId1, int vertexId2, int vertexId3, string newEdgeTag, string faceTag) {
         if(!IsEdgePresent(vertexId1, vertexId2)) {
                 AddEdge(vertexId1, vertexId2, newEdgeTag);
         }
@@ -520,62 +521,80 @@ namespace Protein_Morph {
 
     void NonManifoldMesh::ToOffCells(string fileName) {
         RemoveNullEntries();
-        FILE * outFile = fopen(fileName.c_str(), "wt");
-        fprintf(outFile, "OFF\n");
-        fprintf(outFile, "%i %li %i\n", (int)vertices.size(), faces.size() + edges.size(), 0);
+        ofstream outFile(fileName.c_str());
+        outFile<<"OFF\n";
+        outFile<<vertices.size()
+               <<" "<<faces.size() + edges.size()
+               <<" 0"
+               <<endl;
         int i,j;
         for(i = 0; i < (int)vertices.size(); i++) {
-            fprintf(outFile, "%lf %lf %lf\n", origin.X() + scale.X() * vertices[i].position.X(), origin.Y() + scale.Y() * vertices[i].position.Y(), origin.Z() + scale.Z() * vertices[i].position.Z());
+            outFile<<" "<<origin.X() + scale.X() * vertices[i].position.X()
+                   <<" "<<origin.Y() + scale.Y() * vertices[i].position.Y()
+                   <<" "<<origin.Z() + scale.Z() * vertices[i].position.Z()
+                   <<endl;
         }
         int lastVertex;
         for(i = 0; i < (int)faces.size(); i++) {
-            fprintf(outFile, "%li ", faces[i].edgeIds.size());
+            outFile<<faces[i].edgeIds.size();
             lastVertex = -1;
 
             for(j =0; j < (int)faces[i].vertexIds.size(); j++) {
-                fprintf(outFile, "%i ", GetVertexIndex(faces[i].vertexIds[j]));
+                outFile<<GetVertexIndex(faces[i].vertexIds[j]);
             }
 
-            fprintf(outFile, "\n");
+            outFile<<endl;
         }
 
         for(i = 0; i < (int)edges.size(); i++) {
-            fprintf(outFile, "4 %i %i %i %i \n", edges[i].vertexIds[0], edges[i].vertexIds[0], edges[i].vertexIds[1], edges[i].vertexIds[1]);
+            outFile<<"4"
+                   <<" "<<edges[i].vertexIds[0]
+                   <<" "<<edges[i].vertexIds[0]
+                   <<" "<<edges[i].vertexIds[1]
+                   <<" "<<edges[i].vertexIds[1]
+                   <<endl;
         }
-        fclose(outFile);
+        outFile.close();
     }
 
 
     void NonManifoldMesh::ToMathematicaFile(string fileName) {
         RemoveNullEntries();
-        FILE * outF = fopen(fileName.c_str(), "wt");
+        ofstream outF(fileName.c_str());
         // Vertices
-        fprintf(outF, "{\n");
-        fprintf(outF, "{");
+        outF<<"{\n";
+        outF<<"{";
         for(unsigned int i = 0; i < vertices.size(); i++) {
-            fprintf(outF, "{%lf, %lf, %lf}", vertices[i].position.X(), vertices[i].position.Y(), vertices[i].position.Z());
+            outF<<"{"
+                <<vertices[i].position.X()
+                <<" "<<vertices[i].position.Y()
+                <<" "<<vertices[i].position.Z()
+                <<"}";
             if(i != (int)vertices.size()-1) {
-                fprintf(outF, ", ");
+                outF<<", ";
             }
         }
-        fprintf(outF, "},\n");
+        outF<<"},\n";
 
         // Edges
-        fprintf(outF, "{");
+        outF<<"{";
         for(unsigned int i = 0; i < edges.size(); i++) {
-            fprintf(outF, "{%li, %li}", edges[i].vertexIds[0]+1, edges[i].vertexIds[1]+1);
+            outF<<"{"
+                <<edges[i].vertexIds[0]+1
+                <<" "<<edges[i].vertexIds[1]+1
+                <<"}";
             if(i != (int)edges.size()-1) {
-                fprintf(outF, ", ");
+                outF<<", ";
             }
         }
-        fprintf(outF, "},\n");
+        outF<<"},\n";
 
         // Faces
-        fprintf(outF, "{");
+        outF<<"{";
         int lastVertex;
         for(unsigned int i = 0; i < faces.size(); i++) {
             lastVertex = -1;
-            fprintf(outF, "{");
+            outF<<"{";
             for(int j = (int)faces[i].edgeIds.size()-1; j >= 0; j--) {
                 if((edges[faces[i].edgeIds[j]].vertexIds[0] == edges[faces[i].edgeIds[(j+1)%faces[i].edgeIds.size()]].vertexIds[0]) ||
                     (edges[faces[i].edgeIds[j]].vertexIds[0] == edges[faces[i].edgeIds[(j+1)%faces[i].edgeIds.size()]].vertexIds[1])) {
@@ -583,22 +602,22 @@ namespace Protein_Morph {
                 } else {
                     lastVertex = edges[faces[i].edgeIds[j]].vertexIds[0];
                 }
-                fprintf(outF, "%li", lastVertex+1);
+                outF<<lastVertex+1;
                 if(j != 0) {
-                    fprintf(outF, ", ");
+                    outF<<", ";
                 }
             }
-            fprintf(outF, "}");
+            outF<<"}";
 
             if(i != (int)faces.size()-1) {
-                fprintf(outF, ", ");
+                outF<<", ";
             }
         }
-        fprintf(outF, "}\n");
+        outF<<"}\n";
 
-        fprintf(outF, "}");
+        outF<<"}";
 
-        fclose(outF);
+        outF.close();
     }
     Volume * NonManifoldMesh::ToVolume() {
         double minPos[3] = {MAX_DOUBLE,MAX_DOUBLE,MAX_DOUBLE};
@@ -716,33 +735,33 @@ namespace Protein_Morph {
     }
     NonManifoldMesh * NonManifoldMesh::LoadOffFile(string fileName) {
         NonManifoldMesh * mesh = new NonManifoldMesh();
-        FILE * inFile = fopen(fileName.c_str(), "rt");
-        char strTemp[255];
+        ifstream inFile(fileName.c_str());
+        string strTemp;
         int nVertices, nEdges, nFaces;
         int lVertices, lFaces;
         lVertices = 0;
         lFaces = 0;
 
-        fscanf(inFile, "%s\n", strTemp);
+        inFile>>strTemp;
         //printf("[%s]\n", strTemp);
-        fscanf(inFile, "%d %d %d\n", &nVertices, &nFaces, &nEdges);
+        inFile>>nVertices>>nFaces>>nEdges;
         //printf("[%d] [%d] [%d]\n", nVertices, nFaces, nEdges);
 
         float xPos, yPos, zPos;
         lVertices = 0;
         for(int i=0; i < nVertices; i++) {
             lVertices++;
-            fscanf(inFile, "%f %f %f", &xPos, &yPos, &zPos);
+            inFile>>xPos>>yPos>>zPos;
             //printf("[%f] [%f] [%f]\n", xPos, yPos, zPos);
             mesh->AddVertex(Vector3DFloat(xPos, yPos, zPos));
-            fgets(strTemp, 255, inFile);
+            inFile>>strTemp;
         }
 
 
         int faceNodes[100], nFaceNodes;
         lFaces = 0;
         for(int i=0; i < nFaces; i++) {
-            fscanf(inFile, "%d", &nFaceNodes);
+            inFile>>nFaceNodes;
             //printf("[%d]\n", nFaceNodes);
             switch(nFaceNodes) {
                 case 1:
@@ -752,8 +771,8 @@ namespace Protein_Morph {
                 case 4:
                     lFaces++;
                     for(int i = 0; i < nFaceNodes; i++) {
-                        fscanf(inFile, "");
-                        fscanf(inFile, "%d", &faceNodes[i]);
+//                        fscanf(inFile, "");
+                        inFile>>faceNodes[i];
                     }
 
                     if((faceNodes[0] != faceNodes[1]) && (faceNodes[0] != faceNodes[2]) && (faceNodes[0] != faceNodes[3])
@@ -766,8 +785,8 @@ namespace Protein_Morph {
                 default :
                     lFaces++;
                     for(int i = 0; i < nFaceNodes; i++) {
-                        fscanf(inFile, "");
-                        fscanf(inFile, "%d", &faceNodes[i]);
+//                        fscanf(inFile, "");
+                        inFile>>faceNodes[i];
                     }
                     for(int i = 2; i < nFaceNodes; i++) {
                         mesh->AddTriangle(faceNodes[0], faceNodes[i-1], faceNodes[i]);
@@ -775,7 +794,7 @@ namespace Protein_Morph {
                     break;
 
             }
-            fgets(strTemp, 255, inFile);
+            inFile>>strTemp;
         }
 
         //printf(" Vertices %d of %d loaded.  Faces %d of %d loaded", lVertices, nVertices, lFaces, nFaces);
@@ -788,7 +807,7 @@ namespace Protein_Morph {
         //	}
         //}
 
-        fclose(inFile);
+        inFile.close();
         return mesh;
     }
     vector<unsigned int> NonManifoldMesh::GetPath(unsigned int edge0Ix, unsigned int edge1Ix) {

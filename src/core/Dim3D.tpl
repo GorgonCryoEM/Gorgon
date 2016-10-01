@@ -1,8 +1,8 @@
 /*
  * Dim3D.cpp
  *
- *  Created on: Jan 7, 2016
- *      Author: shadow_walker
+ * Author: shadow_walker <shadowwalkersb@gmail.com>
+ *
  */
 
 //template<class T>

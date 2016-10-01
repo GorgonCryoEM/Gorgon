@@ -1,8 +1,8 @@
 /*
  * Dim3D.h
  *
- *  Created on: Jan 7, 2016
- *      Author: shadow_walker
+ * Author: shadow_walker <shadowwalkersb@gmail.com>
+ *
  */
 
 #ifndef SRC_CORE_DIM3D_H_

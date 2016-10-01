@@ -27,14 +27,14 @@ def main():
     for k in mode_map:
         group.add_argument('--'+k, choices=(mode_map[k]))
 
-    args = parser.parse_args()
+    args, args_extra = parser.parse_known_args()
     
 #     Initialize object requested in the parser
     for k in mode_map:
         opt = getattr(args, k)
         if opt:
             mode = globals()[mode_map[k][opt]]
-            mode(args.input, args.output)
+            mode(args.input, args.output, args_extra)
             
 # 	Logging setup
     loglevel = getattr(logging, args.loglevel.upper())

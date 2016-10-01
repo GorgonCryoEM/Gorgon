@@ -1,0 +1,32 @@
+digraph "packages_Toolkit" {
+charset="utf-8"
+rankdir=BT
+"0" [label="/Users/durmaz/Files/eclipse_workspace/workspace_work/gitGorgon/bin/Toolkit/__init__.py", shape="box"];
+"1" [label="/Users/durmaz/Files/eclipse_workspace/workspace_work/gitGorgon/bin/Toolkit/filter.py", shape="box"];
+"2" [label="/Users/durmaz/Files/eclipse_workspace/workspace_work/gitGorgon/bin/Toolkit/operation.py", shape="box"];
+"3" [label="/Users/durmaz/Files/eclipse_workspace/workspace_work/gitGorgon/bin/Toolkit/skeletonize.py", shape="box"];
+"4" [label="/Users/durmaz/Files/eclipse_workspace/workspace_work/gitGorgon/bin/Toolkit/sse/__init__.py", shape="box"];
+"5" [label="/Users/durmaz/Files/eclipse_workspace/workspace_work/gitGorgon/bin/Toolkit/sse/correspondence/Correspondence.py", shape="box"];
+"6" [label="/Users/durmaz/Files/eclipse_workspace/workspace_work/gitGorgon/bin/Toolkit/sse/correspondence/CorrespondenceLibrary.py", shape="box"];
+"7" [label="/Users/durmaz/Files/eclipse_workspace/workspace_work/gitGorgon/bin/Toolkit/sse/correspondence/Match.py", shape="box"];
+"8" [label="/Users/durmaz/Files/eclipse_workspace/workspace_work/gitGorgon/bin/Toolkit/sse/correspondence/ObservedHelix.py", shape="box"];
+"9" [label="/Users/durmaz/Files/eclipse_workspace/workspace_work/gitGorgon/bin/Toolkit/sse/correspondence/ObservedSheet.py", shape="box"];
+"10" [label="/Users/durmaz/Files/eclipse_workspace/workspace_work/gitGorgon/bin/Toolkit/sse/correspondence/ObservedStrand.py", shape="box"];
+"11" [label="/Users/durmaz/Files/eclipse_workspace/workspace_work/gitGorgon/bin/Toolkit/sse/correspondence/StructureObservation.py", shape="box"];
+"12" [label="/Users/durmaz/Files/eclipse_workspace/workspace_work/gitGorgon/bin/Toolkit/sse/correspondence/StructurePrediction.py", shape="box"];
+"13" [label="/Users/durmaz/Files/eclipse_workspace/workspace_work/gitGorgon/bin/Toolkit/sse/correspondence/__init__.py", shape="box"];
+"14" [label="/Users/durmaz/Files/eclipse_workspace/workspace_work/gitGorgon/bin/Toolkit/sse/seq_model/Chain.py", shape="box"];
+"15" [label="/Users/durmaz/Files/eclipse_workspace/workspace_work/gitGorgon/bin/Toolkit/sse/seq_model/Coil.py", shape="box"];
+"16" [label="/Users/durmaz/Files/eclipse_workspace/workspace_work/gitGorgon/bin/Toolkit/sse/seq_model/Helix.py", shape="box"];
+"17" [label="/Users/durmaz/Files/eclipse_workspace/workspace_work/gitGorgon/bin/Toolkit/sse/seq_model/Residue.py", shape="box"];
+"18" [label="/Users/durmaz/Files/eclipse_workspace/workspace_work/gitGorgon/bin/Toolkit/sse/seq_model/Secel.py", shape="box"];
+"19" [label="/Users/durmaz/Files/eclipse_workspace/workspace_work/gitGorgon/bin/Toolkit/sse/seq_model/SeqModelTests.py", shape="box"];
+"20" [label="/Users/durmaz/Files/eclipse_workspace/workspace_work/gitGorgon/bin/Toolkit/sse/seq_model/Sheet.py", shape="box"];
+"21" [label="/Users/durmaz/Files/eclipse_workspace/workspace_work/gitGorgon/bin/Toolkit/sse/seq_model/Strand.py", shape="box"];
+"22" [label="/Users/durmaz/Files/eclipse_workspace/workspace_work/gitGorgon/bin/Toolkit/sse/seq_model/__init__.py", shape="box"];
+"23" [label="/Users/durmaz/Files/eclipse_workspace/workspace_work/gitGorgon/bin/Toolkit/sse/seq_model/findHelixCalphas.py", shape="box"];
+"24" [label="/Users/durmaz/Files/eclipse_workspace/workspace_work/gitGorgon/bin/Toolkit/sse/sse_helix_correspondence_finder_form.py", shape="box"];
+"25" [label="/Users/durmaz/Files/eclipse_workspace/workspace_work/gitGorgon/bin/Toolkit/sse/sse_hunter.py", shape="box"];
+"26" [label="/Users/durmaz/Files/eclipse_workspace/workspace_work/gitGorgon/bin/Toolkit/sse/sse_math.py", shape="box"];
+"27" [label="/Users/durmaz/Files/eclipse_workspace/workspace_work/gitGorgon/bin/Toolkit/sse/ui_dialog_sse_helix_correspondence_finder.py", shape="box"];
+}

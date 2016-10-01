@@ -1,6 +1,6 @@
 # Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
 # Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
-# Description:   A widget that can be used to find correspondance between helices 
+# Description:   A widget that can be used to find correspondance between helices
 
 
 from PyQt4 import QtCore, QtGui
@@ -24,22 +24,24 @@ from OpenGL.GLUT import *
 
 import math
 
-class SSEHelixCorrespondenceFinderForm(BaseDockWidget):   
+
+class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
+
     def __init__(self, main, viewer, parent=None):
-        BaseDockWidget.__init__(self, 
-                               main, 
-                               "Find SSE Correspondences", 
-                               "Find the correspondence between observed and predicted SSEs", 
-                               "perform_SSEFindHelixCorrespondences", 
-                               "actions-sse-findhelixcorrespondences", 
-                               "actions-sse", 
-                               QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea, 
-                               QtCore.Qt.RightDockWidgetArea, 
+        BaseDockWidget.__init__(self,
+                               main,
+                               "Find SSE Correspondences",
+                               "Find the correspondence between observed and predicted SSEs",
+                               "perform_SSEFindHelixCorrespondences",
+                               "actions-sse-findhelixcorrespondences",
+                               "actions-sse",
+                               QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea,
+                               QtCore.Qt.RightDockWidgetArea,
                                parent)
         self.executed = False
         self.app = main
         self.app.themes.addDefaultRGB("CorrespondenceFinder:BackboneTrace", 255, 255, 255, 255)
-        self.viewer = viewer        
+        self.viewer = viewer
         self.createUI()
         self.createActions()
         self.loadingCorrespondance = False
@@ -50,7 +52,7 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
 
     def createUI(self):
         self.ui = Ui_DialogSSEHelixCorrespondenceFinder()
-        self.ui.setupUi(self)       
+        self.ui.setupUi(self)
         self.connect(self.ui.pushButtonGetHelixLengthFile, QtCore.SIGNAL("pressed ()"), self.getHelixLengthFile)
         self.connect(self.ui.pushButtonGetHelixLocationFile, QtCore.SIGNAL("pressed ()"), self.getHelixLocationFile)
         self.connect(self.ui.pushButtonGetSheetLocationFile, QtCore.SIGNAL("pressed ()"), self.getSheetLocationFile)
@@ -109,7 +111,6 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
         self.ui.checkBoxShowSheetCorners.setChecked(False)
         self.ui.checkBoxShowAllPaths.setChecked(False)
 
-
         # Matching Settings tab
         self.ui.doubleSpinBoxEuclideanToPDBRatio.setValue(10.0)
         self.ui.radioButtonAbsoluteDifference.setChecked(True)
@@ -134,7 +135,7 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
 
         # Results tab
         self.ui.tableWidgetCorrespondenceList.clearContents()
-        self.ui.tabWidget.setCurrentIndex(0)         
+        self.ui.tabWidget.setCurrentIndex(0)
         self.ui.comboBoxCorrespondences.setCurrentIndex(-1)
 
         self.checkOk()
@@ -151,14 +152,14 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
     def getHelixLocationFile(self):
         self.viewer.loadHelixData()
         self.ui.lineEditHelixLocationFile.setText(self.viewer.helixFileName)
-        self.checkOk()  
-        self.bringToFront()   
+        self.checkOk()
+        self.bringToFront()
 
     def getSheetLocationFile(self):
         self.viewer.loadSheetData()
         self.ui.lineEditSheetLocationFile.setText(self.viewer.sheetFileName)
-        self.checkOk()  
-        self.bringToFront()  
+        self.checkOk()
+        self.bringToFront()
 
     def getSkeletonFile(self):
         self.app.viewers["skeleton"].loadData()
@@ -182,7 +183,6 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
         self.loadSettings()
         self.bringToFront()
         
-    
     def checkOk(self):
         """
         This checks if all files necessary for the correspondence search have been loaded. If so, the
@@ -194,12 +194,12 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
 
         allLoaded = not(self.ui.lineEditHelixLocationFile.text().isEmpty()
                            or self.ui.lineEditSheetLocationFile.text().isEmpty()
-                           or self.ui.lineEditSkeletonFile.text().isEmpty() 
+                           or self.ui.lineEditSkeletonFile.text().isEmpty()
                            or self.ui.lineEditSequenceFile.text().isEmpty())
 
         self.dataLoaded = not((self.ui.lineEditHelixLocationFile.text().isEmpty()
                            and self.ui.lineEditSheetLocationFile.text().isEmpty())
-                           or self.ui.lineEditSkeletonFile.text().isEmpty() 
+                           or self.ui.lineEditSkeletonFile.text().isEmpty()
                            or self.ui.lineEditSequenceFile.text().isEmpty())
         self.ui.pushButtonOk.setEnabled(self.dataLoaded)
         
@@ -210,17 +210,17 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
         if(self.dataLoaded):
             self.executed = False
             self.createBasicCorrespondence()
-            print "after creating basic correspondence (1), secelDict has length " + str(len(self.viewer.correspondenceLibrary.structurePrediction.secelDict))   
+            print "after creating basic correspondence (1), secelDict has length " + str(len(self.viewer.correspondenceLibrary.structurePrediction.secelDict))
             #self.createBasicCorrespondence()
-            print "after creating basic correspondence (2), secelDict has length " + str(len(self.viewer.correspondenceLibrary.structurePrediction.secelDict))   
+            print "after creating basic correspondence (2), secelDict has length " + str(len(self.viewer.correspondenceLibrary.structurePrediction.secelDict))
             self.viewer.correspondenceLibrary.correspondenceList = self.populateEmptyResults(self.viewer.correspondenceLibrary)
             print "correspondenceList has length " + str(len(self.viewer.correspondenceLibrary.correspondenceList))
             self.populateComboBox(self.viewer.correspondenceLibrary)
             self.viewer.makeSheetSurfaces(self.app.viewers['skeleton'].renderer.getOriginX(), self.app.viewers['skeleton'].renderer.getOriginY(), self.app.viewers['skeleton'].renderer.getOriginZ(), self.app.viewers['skeleton'].renderer.getSpacingX(), self.app.viewers['skeleton'].renderer.getSpacingY(), self.app.viewers['skeleton'].renderer.getSpacingZ())
             if(allLoaded):
-                self.ui.tabWidget.setCurrentIndex(1)         
+                self.ui.tabWidget.setCurrentIndex(1)
         else:
-            print "data not loaded"                        
+            print "data not loaded"
         print "correspondence index at end is " + str(self.ui.comboBoxCorrespondences.currentIndex())
         print "end checkOk"
     
@@ -281,13 +281,11 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
         """Called when the missing helices checkbox is checked."""
         self.ui.spinBoxMissingSheetCount.setEnabled(checked)
 
-            
-
     def modelChanged(self):
         if(not self.viewer.loaded) and self.app.actions.getAction("perform_SSEFindHelixCorrespondences").isChecked():
-            self.app.actions.getAction("perform_SSEFindHelixCorrespondences").trigger()        
+            self.app.actions.getAction("perform_SSEFindHelixCorrespondences").trigger()
         
-    def createActions(self):               
+    def createActions(self):
         self.corrAct = self.displayAct
         self.connect(self.displayAct, QtCore.SIGNAL("toggled (bool)"), self.visibilityChanged)
     
@@ -314,11 +312,11 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
             oldCursor = self.cursor()
             self.setCursor(QtCore.Qt.BusyCursor)
                    
-            print "calling setConstantsFromFile" 
+            print "calling setConstantsFromFile"
             self.setConstants()
             self.viewer.correspondenceEngine.setConstantsFromFile(str(self.ui.lineEditSettingsFile.text()))
     
-            print "copying constants from file to GUI" 
+            print "copying constants from file to GUI"
             self.getConstants()
     
             print "getting settings filename"
@@ -414,14 +412,13 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
         else:
             self.viewer.correspondenceEngine.setConstantInt("INCLUDE_STRANDS", 0)
 
-
         #Matching Settings tab
         self.viewer.correspondenceEngine.setConstant("EUCLIDEAN_VOXEL_TO_PDB_RATIO", self.ui.doubleSpinBoxEuclideanToPDBRatio.value())
         if(self.ui.radioButtonAbsoluteDifference.isChecked()):
             self.viewer.correspondenceEngine.setConstantInt("COST_FUNCTION", 1)
         elif (self.ui.radioButtonNormalizedDifference.isChecked()):
             self.viewer.correspondenceEngine.setConstantInt("COST_FUNCTION", 2)
-        else :
+        else:
             self.viewer.correspondenceEngine.setConstantInt("COST_FUNCTION", 3)
 
         self.viewer.correspondenceEngine.setConstant("LOOP_WEIGHT_COEFFICIENT", self.ui.doubleSpinBoxLoopImportance.value())
@@ -431,7 +428,7 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
         if(self.ui.checkBoxMissingHelices.isChecked()):
             self.viewer.correspondenceEngine.setConstantInt("MISSING_HELIX_COUNT", self.ui.spinBoxMissingHelixCount.value())
         else:
-            self.viewer.correspondenceEngine.setConstantInt("MISSING_HELIX_COUNT", -1)            
+            self.viewer.correspondenceEngine.setConstantInt("MISSING_HELIX_COUNT", -1)
         self.viewer.correspondenceEngine.setConstant("MISSING_HELIX_PENALTY", self.ui.doubleSpinBoxHelixMissingPenalty.value())
         self.viewer.correspondenceEngine.setConstant("MISSING_HELIX_PENALTY_SCALED", self.ui.doubleSpinBoxHelixMissingPenaltyScaled.value())
         self.viewer.correspondenceEngine.setConstant("START_END_MISSING_HELIX_PENALTY", self.ui.doubleSpinBoxEndHelixMissingPenalty.value())
@@ -440,32 +437,29 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
         if(self.ui.checkBoxMissingSheets.isChecked()):
             self.viewer.correspondenceEngine.setConstantInt("MISSING_SHEET_COUNT", self.ui.spinBoxMissingSheetCount.value())
         else:
-            self.viewer.correspondenceEngine.setConstantInt("MISSING_SHEET_COUNT", -1)            
+            self.viewer.correspondenceEngine.setConstantInt("MISSING_SHEET_COUNT", -1)
         self.viewer.correspondenceEngine.setConstant("MISSING_SHEET_PENALTY", self.ui.doubleSpinBoxSheetMissingPenalty.value())
         self.viewer.correspondenceEngine.setConstant("MISSING_SHEET_PENALTY_SCALED", self.ui.doubleSpinBoxSheetMissingPenaltyScaled.value())
         
         # no longer needed?
-        self.viewer.correspondenceEngine.setConstantBool("NORMALIZE_GRAPHS", True)        
+        self.viewer.correspondenceEngine.setConstantBool("NORMALIZE_GRAPHS", True)
 
-        
-    
-    
         #Tab 4 User Constraints
         # comment out the constraint clearing so that constraints can be loaded from settings files
         #self.viewer.correspondenceEngine.clearAllConstraints()
         correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
         if(correspondenceIndex >= 0):
             corr = self.viewer.correspondenceLibrary.correspondenceList[correspondenceIndex]
-            predictedGraphNode = 1            
+            predictedGraphNode = 1
             nObservedHelices = len(self.viewer.correspondenceLibrary.structureObservation.helixDict)
             for i in range(len(corr.matchList)):
-                match = corr.matchList[i]                
+                match = corr.matchList[i]
                 self.userConstraints[i] = match.constrained
                 if match.predicted.type == 'helix':
-                    if match.constrained: 
+                    if match.constrained:
                         if(match.observed):
                             self.viewer.correspondenceEngine.setHelixConstraint(predictedGraphNode, 2*match.observed.label + 1)
-                        else:      
+                        else:
                             self.viewer.correspondenceEngine.setHelixConstraint(predictedGraphNode, -1)
                 if match.predicted.type == 'strand':
                     if(not self.ui.checkBoxIncludeSheets.isChecked()):
@@ -475,7 +469,7 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
                     elif(match.constrained):
                         if(match.observed):
                             self.viewer.correspondenceEngine.setNodeConstraint(predictedGraphNode, match.observed.label + nObservedHelices + 1)
-                        else:      
+                        else:
                             self.viewer.correspondenceEngine.setNodeConstraint(predictedGraphNode, -1)
                 if (match.predicted.type) == 'strand':
                     predictedGraphNode += 1
@@ -489,8 +483,8 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
         self.ui.doubleSpinBoxEuclideanDistance.setValue(self.viewer.correspondenceEngine.getConstantDouble("EUCLIDEAN_DISTANCE_THRESHOLD"))
         self.ui.spinBoxMinSheetSize.setValue(self.viewer.correspondenceEngine.getConstantInt("MINIMUM_SHEET_SIZE"))
         self.ui.doubleSpinBoxMaxSheetDistance.setValue(self.viewer.correspondenceEngine.getConstantDouble("MAXIMUM_DISTANCE_SHEET_SKELETON"))
-        self.ui.doubleSpinBoxSheetSelfLoopLength.setValue(self.viewer.correspondenceEngine.getConstantDouble("SHEET_SELF_LOOP_LENGTH")) 
-        self.ui.doubleSpinBoxSheetMergeThreshold.setValue(self.viewer.correspondenceEngine.getConstantDouble("SHEET_MERGE_THRESHOLD")) 
+        self.ui.doubleSpinBoxSheetSelfLoopLength.setValue(self.viewer.correspondenceEngine.getConstantDouble("SHEET_SELF_LOOP_LENGTH"))
+        self.ui.doubleSpinBoxSheetMergeThreshold.setValue(self.viewer.correspondenceEngine.getConstantDouble("SHEET_MERGE_THRESHOLD"))
         if(self.viewer.correspondenceEngine.getConstantInt("INCLUDE_STRANDS") == 1):
             self.ui.checkBoxIncludeStrands.setChecked(True)
         else:
@@ -526,15 +520,15 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
         
         self.ui.checkBoxIncludeSheets.setChecked(True)
         self.ui.doubleSpinBoxSheetImportance.setEnabled(True)
-        self.ui.doubleSpinBoxSheetImportance.setValue(self.viewer.correspondenceEngine.getConstantDouble("SHEET_WEIGHT_COEFFICIENT")) 
+        self.ui.doubleSpinBoxSheetImportance.setValue(self.viewer.correspondenceEngine.getConstantDouble("SHEET_WEIGHT_COEFFICIENT"))
         self.ui.checkBoxMissingSheets.setEnabled(True)
         if (self.viewer.correspondenceEngine.getConstantInt("MISSING_SHEET_COUNT") == -1):
             self.ui.checkBoxMissingSheets.setChecked(False)
         else:
             self.ui.checkBoxMissingSheets.setChecked(True)
             self.ui.spinBoxMissingSheetCount.setValue(self.viewer.correspondenceEngine.getConstantInt("MISSING_SHEET_COUNT"))
-        self.ui.doubleSpinBoxSheetMissingPenalty.setEnabled(True) 
-        self.ui.doubleSpinBoxSheetMissingPenalty.setValue(self.viewer.correspondenceEngine.getConstantDouble("MISSING_SHEET_PENALTY")) 
+        self.ui.doubleSpinBoxSheetMissingPenalty.setEnabled(True)
+        self.ui.doubleSpinBoxSheetMissingPenalty.setValue(self.viewer.correspondenceEngine.getConstantDouble("MISSING_SHEET_PENALTY"))
         self.ui.doubleSpinBoxSheetMissingPenaltyScaled.setEnabled(True)
         self.ui.doubleSpinBoxSheetMissingPenaltyScaled.setValue(self.viewer.correspondenceEngine.getConstantDouble("MISSING_SHEET_PENALTY_SCALED"))
 
@@ -605,23 +599,21 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
 
         # create one empty result
         corrList = []
-        matchList = []            
+        matchList = []
         
         # build an empty correspondence result by creating an empty match for each secondary structure element.
-        for i in range(len(library.structurePrediction.secelDict)):                                   
+        for i in range(len(library.structurePrediction.secelDict)):
             observed = None
             predicted = library.structurePrediction.secelDict[i]
             currentMatch = Match(observed, predicted, Match.FORWARD)
-            currentMatch.constrained = False     
-            matchList.append(currentMatch)                                              
-        corr = Correspondence(library=library, matchList=matchList, score=0)            
+            currentMatch.constrained = False
+            matchList.append(currentMatch)
+        corr = Correspondence(library=library, matchList=matchList, score=0)
         self.lastCorrespondence = corr # used in accept() method
         # add the empty correspondence to the list
         corrList.append(corr)
         return corrList
             
-
-    
     def populateResults(self, library):
 
         print "Starting to populate results. Found " + str(self.resultCount) + " results."
@@ -632,7 +624,7 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
         
         # iterate over all results from correspondence algorithm
         #print "Iterating over results."
-        for i in range(self.resultCount):                                
+        for i in range(self.resultCount):
             # create a Correspondence object and add it to the list
             # start from correspondenceEngine result
             result = self.viewer.correspondenceEngine.getResult(i+1)
@@ -678,7 +670,7 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
                         if isHelix:
                             # helix in skeleton graph
                             observed = library.structureObservation.helixDict[observedNo]
-                        else: # sheet 
+                        else: # sheet
                             observed = library.structureObservation.sheetDict[observedNo - result.getHelixCount()]
                     else:
                         observed = None
@@ -689,8 +681,8 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
                     # if this helix has a constraint, store the constraint in the Match object
                     if(self.userConstraints.has_key(j - helicesPassed)):
                         currentMatch.constrained = self.userConstraints[j - helicesPassed]
-                    else :                      
-                        currentMatch.constrained = False     
+                    else:
+                        currentMatch.constrained = False
                     # append this match to the list of matches for this result
                     matchList.append(currentMatch)
                              
@@ -715,9 +707,8 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
         self.ui.comboBoxCorrespondences.clear()
         # add all correspondence to pulldown menu
         for i in range(len(library.correspondenceList)):
-            corr = library.correspondenceList[i]                               
+            corr = library.correspondenceList[i]
             self.ui.comboBoxCorrespondences.addItem("Correspondence " + str(i+1) + " - [Cost: " + str(corr.score) + "]")
-                   
                    
     def createBasicCorrespondence(self):
         """Writes search parameters to correspondence object, loads predicted structure and observed structure, and creates correspondence library"""
@@ -727,10 +718,9 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
 
         # put user-entered match parameters from UI into the correspondence object
         print "setting constants"
-        self.setConstants()          
+        self.setConstants()
         
-        
-        #Loading Predicted SSEs                     
+        #Loading Predicted SSEs
         print "loading predicted SSEs"
         self.viewer.correspondenceEngine.loadSequenceGraph()
         
@@ -744,6 +734,7 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
         sseViewer = self.app.viewers['sse']
         skeletonViewer = self.app.viewers['skeleton']
         cAlphaViewer.structPred = structPred
+
         def vector3DFloatToTuple(v3df):
             return (v3df.x(), v3df.y(), v3df.z())
         
@@ -794,27 +785,25 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
         structObserv = StructureObservation(helixDict = observedHelices, sheetDict = observedSheets)
         print "writing to correspondenceLibrary"
 
-        # create a new python CorrespondenceLibrary object 
-        self.viewer.correspondenceLibrary = CorrespondenceLibrary(sp = structPred, so = structObserv)          
+        # create a new python CorrespondenceLibrary object
+        self.viewer.correspondenceLibrary = CorrespondenceLibrary(sp = structPred, so = structObserv)
                
         self.setCursor(oldCursor)
         
-        print "finished creating basic correspondences" 
+        print "finished creating basic correspondences"
         
     def accept(self):
         print "beginning search"
         oldCursor = self.cursor()
         self.setCursor(QtCore.Qt.BusyCursor)
 
-
         # save the settings used to generate the last result, in case this search fails
         if self.executed:
             lastCorrespondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
             self.lastCorrespondence = self.viewer.correspondenceLibrary.correspondenceList[lastCorrespondenceIndex]
         
-        
         # read user parameters, read skeleton and sequence files, create correspondence library
-        self.createBasicCorrespondence()   
+        self.createBasicCorrespondence()
                 
         # execute correspondence query and do cleanup
         memErr = False
@@ -831,13 +820,13 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
         self.setCursor(oldCursor)
 
         if self.resultCount > 0:
-            self.executed = True 
-            # populate the list of found correspondences        
+            self.executed = True
+            # populate the list of found correspondences
             print "populating result list"
             self.viewer.correspondenceLibrary.correspondenceList = self.populateResults(self.viewer.correspondenceLibrary)
 
         else:
-            self.executed = False 
+            self.executed = False
             if memErr:
                 QtGui.QMessageBox.warning(self.app, "Insufficient Memory", "Insufficient memory to complete the search. Try adding or removing constraints.")
             else:
@@ -847,9 +836,9 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
             self.viewer.correspondenceLibrary.correspondenceList = []
             self.viewer.correspondenceLibrary.correspondenceList.append(self.lastCorrespondence)
 
-        self.populateComboBox(self.viewer.correspondenceLibrary)     
+        self.populateComboBox(self.viewer.correspondenceLibrary)
         self.viewer.emitModelChanged()
-        self.ui.tabWidget.setCurrentIndex(4)         
+        self.ui.tabWidget.setCurrentIndex(4)
         print "done with search"
                 
     def reject(self):  
@@ -877,10 +866,9 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
     #def getIndexedSheetColor(self, index, size):
     #    """returns a color for sheet 'index' out of 'size' sheets. colors will be white or black."""
     #    # start and end are between 0 and 1
-    #    position = float(index)/float(size)                
-    #    return QtGui.QColor.fromRgba(QtGui.qRgba(position*255, position*255, position*255, 1.0*255))                    
+    #    position = float(index)/float(size)
+    #    return QtGui.QColor.fromRgba(QtGui.qRgba(position*255, position*255, position*255, 1.0*255))
 
-            
     #def getIndexedHelixColor(self, index, size):
     #    """returns a color for helix 'index' out of 'size' helices. colors will be blue, cyan, green, yellow or red"""
     #    # start and end are between 0 and 1
@@ -888,7 +876,7 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
     #    end = float(1.0)
     #    delta = (end - start) / float(size)
     #    i = start + delta * float(index)
-    #    return self.getIndexedColor(i, 1.0)    
+    #    return self.getIndexedColor(i, 1.0)
             
     def getIndexedColor(self, index, size):
         a = 1.0
@@ -938,7 +926,7 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
         self.ui.tableWidgetCorrespondenceList.clearContents()
         if(correspondenceIndex >= 0):
             corr = self.viewer.correspondenceLibrary.correspondenceList[correspondenceIndex]
-            self.ui.tableWidgetCorrespondenceList.setRowCount(2*len(corr.matchList)-1)   
+            self.ui.tableWidgetCorrespondenceList.setRowCount(2*len(corr.matchList)-1)
             notMissing = {}
             
             # count number of helices and sheets in this correspondence
@@ -956,7 +944,6 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
                         #print "found helix"
                         helixCount += 1
 
-           
             helixIndex = 0
             sheetIndex = 0
 
@@ -1011,14 +998,14 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
                         self.viewer.renderer.setSSEColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
                         self.viewer.correspondenceEngine.setSSEColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
 
-                    notMissing[match.observed.label] = True                                                     
+                    notMissing[match.observed.label] = True
             
                 checkBox = QtGui.QCheckBox()
                 self.ui.tableWidgetCorrespondenceList.setCellWidget(sseRow, 2, checkBox)
                 self.connect(checkBox, QtCore.SIGNAL("stateChanged (int)"), self.constraintAdded)
                 if(match.constrained):
                     self.ui.tableWidgetCorrespondenceList.cellWidget(sseRow, 2).setCheckState(QtCore.Qt.Checked)
-                else :
+                else:
                     #print "i=" + str(i)
                     self.ui.tableWidgetCorrespondenceList.cellWidget(sseRow, 2).setCheckState(QtCore.Qt.Unchecked)
                     
@@ -1027,11 +1014,10 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
                 # add row with loop info
                 if (i < len(corr.matchList)-1 ):
                     resCount = corr.matchList[i+1].predicted.startIndex - corr.matchList[i].predicted.stopIndex
-                    cellItemLoop =  QtGui.QTableWidgetItem("loop: " + str(resCount) + " residues")           
+                    cellItemLoop =  QtGui.QTableWidgetItem("loop: " + str(resCount) + " residues")
                     self.ui.tableWidgetCorrespondenceList.setItem(loopRow, 0, cellItemLoop)
                     self.ui.tableWidgetCorrespondenceList.resizeRowToContents(loopRow)
      
-            
             # relabel rows of table
             rowLabels = []
             for i in range(len(corr.matchList)):
@@ -1046,7 +1032,6 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
                 if(not notMissing.has_key(i)):
                     self.viewer.renderer.setHelixColor(i, 0.5, 0.5, 0.5, 1.0)
                 
-                    
         self.viewer.correspondenceEngine.setVisibleCorrespondence(correspondenceIndex)
         self.viewer.correspondenceLibrary.setCurrentCorrespondenceIndex(correspondenceIndex)
         self.viewer.emitModelChanged()
@@ -1055,8 +1040,8 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
     def drawOverlay(self):
         if self.executed and self.corrAct.isChecked():
             glPushAttrib(GL_LIGHTING_BIT)
-            self.viewer.setMaterials(self.app.themes.getColor("CorrespondenceFinder:BackboneTrace"))  
-            # calls Draw method of c++ SSECorrespondenceEngine object          
+            self.viewer.setMaterials(self.app.themes.getColor("CorrespondenceFinder:BackboneTrace"))
+            # calls Draw method of c++ SSECorrespondenceEngine object
             self.viewer.correspondenceEngine.draw(0)
             glPopAttrib()
         if self.corrAct.isChecked() and self.dataLoaded and (self.ui.checkBoxShowAllPaths.isChecked() or self.ui.checkBoxShowHelixCorners.isChecked() or self.ui.checkBoxShowSheetCorners.isChecked() or self.ui.checkBoxShowSheetColors.isChecked() ) :

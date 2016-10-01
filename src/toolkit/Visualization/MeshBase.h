@@ -1,0 +1,58 @@
+/*
+ * MeshBase.h
+ *
+ * Author: shadow_walker <shadowwalkersb@gmail.com>
+ *
+ */
+
+#ifndef SRC_TOOLKIT_VISUALIZATION_MESHBASE_H_
+#define SRC_TOOLKIT_VISUALIZATION_MESHBASE_H_
+
+#include <map>
+#include <set>
+#include <vector>
+//#include <string>
+//#include "OpenGLUtils.h"
+#include "MathTools/Vector3.h"
+#include "Vertex.h"
+#include "Core/IdList.h"
+
+using namespace std;
+//using namespace Foundation;
+using namespace GraphMatch;
+
+namespace Core {
+
+    typedef vector<IdList >   TF;
+    typedef Vector3<TKey> Vec3U;
+    typedef map<TKey, Vertex> MUV;
+
+    class MeshBase {
+        public:
+            virtual int addVertex(Vec3F vertex, int id);
+            virtual int addFace(IdList face);
+            virtual TKey addFace(Vec3U face);
+            virtual MUV getVertices() const;
+
+            virtual void clear();
+            virtual Vec3F getVertexNormal(TKey id);
+            virtual Vec3F getFaceNormal(TKey faceHash);
+
+            void printVertices() const;
+        protected:
+            MUV vertices;
+            TF faces;
+
+            friend ostream & operator<<(ostream & out, const MeshBase & obj) {
+                return out
+                        <<"MeshBase:\n"
+                        <<"vertices.size(): "<<obj.vertices.size()<<endl
+                        <<"faces.size(): "<<obj.faces.size()
+                        <<endl;
+            }
+
+    };
+
+} /* namespace Core */
+
+#endif /* SRC_TOOLKIT_VISUALIZATION_MESHBASE_H_ */
