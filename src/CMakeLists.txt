@@ -22,24 +22,4 @@ add_subdirectory(hello)
 # --------------------------------------------------------------------
 include(cmake/programs.cmake)
 include(cmake/demo.cmake)
-include(cmake/tests.cmake)
 include(cmake/explorer.cmake)
-# --------------------------------------------------------------------
-# Tests
-# --------------------------------------------------------------------
-add_custom_target(test-verbose
-        COMMAND ${CMAKE_CTEST_COMMAND} -V -C Release
-        DEPENDS Tests
-        )
-        
-add_test(NAME test-all
-        COMMAND nosetests --with-doctest --doctest-tests -vv
-        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-        )
-# --------------------------------------------------------------------
-add_custom_target(test-verbose-quick
-        COMMAND nosetests --with-doctest --doctest-tests -s -vv -a \!long
-        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-        DEPENDS Tests
-        )
-# --------------------------------------------------------------------
