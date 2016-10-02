@@ -97,28 +97,6 @@ endif()
 # --------------------------------------------------------------------
 # Install Step
 # --------------------------------------------------------------------
-install(TARGETS ${legacy_trgt_name}
-        LIBRARY
-        DESTINATION ${run_dir}
-        COMPONENT "Gorgon"
-        )
-
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/Gorgon/src_py/
-        DESTINATION ${run_dir}
-        COMPONENT "Gorgon"
-        FILES_MATCHING
-        PATTERN "*.py"
-        )
-
-add_custom_target(Gorgon
-        COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Gorgon -P cmake_install.cmake
-        DEPENDS ${legacy_trgt_name}
-        )
-
-add_custom_target(Gorgon-only
-        COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Gorgon -P cmake_install.cmake
-        )
-        
 include(cmake/Windows/install.cmake)
 # --------------------------------------------------------------------
 # Package Step
