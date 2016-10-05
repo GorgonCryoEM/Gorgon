@@ -3,7 +3,7 @@
 import argparse
 import logging
 
-from Toolkit import *
+from toolkit import *
 
 
 def main():
