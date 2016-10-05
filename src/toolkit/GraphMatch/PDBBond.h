@@ -21,39 +21,39 @@ namespace GraphMatch {
         bool selected;
     };
 
-    PDBBond::PDBBond() {
+    inline PDBBond::PDBBond() {
         this->atom0Ix = 0;
         this->atom1Ix = 0;
         this->selected = false;
     }
 
-    PDBBond::PDBBond(unsigned long long atom0Index, unsigned long long atom1Index, bool selected) {
+    inline PDBBond::PDBBond(unsigned long long atom0Index, unsigned long long atom1Index, bool selected) {
         this->atom0Ix = atom0Index;
         this->atom1Ix = atom1Index;
         this->selected = selected;
     }
 
-    unsigned long long PDBBond::GetAtom0Ix() {
+    inline unsigned long long PDBBond::GetAtom0Ix() {
         return atom0Ix;
     }
 
-    unsigned long long PDBBond::GetAtom1Ix() {
+    inline unsigned long long PDBBond::GetAtom1Ix() {
         return atom1Ix;
     }
 
-    bool PDBBond::GetSelected() {
+    inline bool PDBBond::GetSelected() {
         return selected;
     }
 
-    void PDBBond::SetAtom0Ix(unsigned long long ix) {
+    inline void PDBBond::SetAtom0Ix(unsigned long long ix) {
         atom0Ix = ix;
     }
 
-    void PDBBond::SetAtom1Ix(unsigned long long ix){
+    inline void PDBBond::SetAtom1Ix(unsigned long long ix){
         atom1Ix = ix;
     }
 
-    void PDBBond::SetSelected(bool selected) {
+    inline void PDBBond::SetSelected(bool selected) {
         this->selected = selected;
     }
 

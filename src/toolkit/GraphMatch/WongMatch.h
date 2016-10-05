@@ -76,15 +76,15 @@ namespace GraphMatch {
             int bestMatches[RESULT_COUNT][MAX_NODES];
     };
 
-    void WongMatch::set_MISSING_HELIX_COUNT(int n) {
+    inline void WongMatch::set_MISSING_HELIX_COUNT(int n) {
         nMissHelix = n;
     }
 
-    void WongMatch::set_MISSING_SHEET_COUNT(int n) {
+    inline void WongMatch::set_MISSING_SHEET_COUNT(int n) {
         nMissSheet = n;
     }
 
-    WongMatch::WongMatch(Graph & pGraph, Graph & bGraph,
+    inline WongMatch::WongMatch(Graph & pGraph, Graph & bGraph,
                          int missingHelixCount,
                          int missingSheetCount)
                 : patternGraph(pGraph), baseGraph(bGraph)
@@ -94,7 +94,7 @@ namespace GraphMatch {
         nMissSheet = missingSheetCount;
     }
 
-    WongMatch::~WongMatch() {
+    inline WongMatch::~WongMatch() {
         for(unsigned int i = 0; i < usedNodes.size(); i++)
             delete usedNodes[i];
 
