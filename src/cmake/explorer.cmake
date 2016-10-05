@@ -1,5 +1,5 @@
 add_custom_target_wrapper(TARGET Explorer
-        DEPENDS Hello Toolkit Programs
+        DEPENDS Programs
         )
 install_to_destinations(
         PROGRAMS ${CMAKE_SOURCE_DIR}/bin/explorer.py
