@@ -5,7 +5,7 @@ add_custom_target_wrapper(TARGET Programs
         )
 install_to_destinations(
         PROGRAMS ${progs}
-        DIRECTORY ${CMAKE_SOURCE_DIR}/bin/Toolkit ${CMAKE_SOURCE_DIR}/bin/Core
+        DIRECTORY ${CMAKE_SOURCE_DIR}/bin/Core
         DESTINATIONS ${CMAKE_BINARY_DIR}/bin
         COMPONENT Programs
         )
