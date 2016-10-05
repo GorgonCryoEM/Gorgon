@@ -88,12 +88,7 @@ function(setup_libpy proj)
     endif()
     
     install_to_destinations(TARGETS ${py_proj}
-            DESTINATIONS ${CMAKE_BINARY_DIR}/bin/${proj_low}
-            COMPONENT ${${proj_low}_install_component}
-            )
-        
-    install(DIRECTORY ${CMAKE_SOURCE_DIR}/bin/${proj_low}
-            DESTINATION ${CMAKE_BINARY_DIR}/bin
+            DESTINATIONS ${CMAKE_BINARY_DIR}/gorgon/${proj_low}
             COMPONENT ${${proj_low}_install_component}
             )
             
