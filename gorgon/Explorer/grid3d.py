@@ -1,12 +1,10 @@
-from PyQt4 import QtGui, QtCore, QtOpenGL
+from OpenGL.GL import *
+from PyQt4 import QtGui
+
+from gorgon.libs import Vec3
 from . import BaseViewer
 from ..toolkit.libpytoolkit import RendererBase
-from .libs import Vec3
 from ..toolkit.libpytoolkit import drawLine
-
-from OpenGL.GL import *
-from OpenGL.GLU import *
-from OpenGL.GLUT import *
 
 
 class Grid3D(BaseViewer):

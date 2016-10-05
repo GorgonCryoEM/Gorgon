@@ -1,6 +1,6 @@
 import math
-from PyQt4 import QtGui, QtCore
-from .....Explorer.libs import Vec3
+
+from PyQt4 import QtGui
 
 
 class CAlphaStructureEditorCommandChangePosition(QtGui.QUndoCommand):

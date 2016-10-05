@@ -1,16 +1,14 @@
-from PyQt4 import QtGui, QtCore, QtOpenGL
+from PyQt4 import QtGui
+
 from base_viewer import BaseViewer
+from gorgon.libs import Vec3
 from ..toolkit.libpytoolkit import RendererBase
 from ..toolkit.libpytoolkit import drawSphere, drawLine, drawCylinder
-from .libs import Vec3
+
 
 # from volume_surface_editor_form import VolumeSurfaceEditorForm
 # from model_visualization_form import ModelVisualizationForm
 # from string import split, upper
-
-from OpenGL.GL import *
-from OpenGL.GLU import *
-from OpenGL.GLUT import *
 
 
 class Sphere(BaseViewer):

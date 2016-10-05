@@ -1,5 +1,4 @@
-import math
-from ....Explorer.libs import Vec3
+from gorgon.libs import Vec3
 
 
 class ObservedHelix:

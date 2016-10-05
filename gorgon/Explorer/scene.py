@@ -1,12 +1,8 @@
-from PyQt4 import QtGui, QtCore, QtOpenGL
+from PyQt4 import QtCore
 
-from .libs import Vec3
-# from line import Line
-# from line0 import Line0
-# from dot import Dot
-from volume_viewer import VolumeViewer
 from skeleton_viewer import SkeletonViewer
 from sphere import Sphere
+from volume_viewer import VolumeViewer
 
 
 class Scene:
