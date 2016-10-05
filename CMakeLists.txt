@@ -4,8 +4,6 @@ PROJECT(Gorgon
         LANGUAGES CXX
         )
 
-set(legacy_trgt_name pyGORGON)
-
 include(cmake/functions.cmake)
 include(cmake/Debug.cmake)
 
@@ -68,8 +66,6 @@ list(APPEND GORGON_INCLUDE_DIRS
 	)
 
 include_directories(${GORGON_INCLUDE_DIRS})
-ADD_LIBRARY(${legacy_trgt_name} MODULE ${CMAKE_BINARY_DIR}/src/LibPyGorgon.cpp)
-target_link_libraries(${legacy_trgt_name} ${GORGON_LIBRARIES})
 # --------------------------------------------------------------------
 # Add subdirectories and enable testing
 # --------------------------------------------------------------------
@@ -93,8 +89,6 @@ if(ENABLE_CMAKE_DEBUG_OUTPUT)
       message(STATUS "DIRS='${dir}'")
     endforeach()
 
-    get_property(dirs TARGET ${legacy_trgt_name} PROPERTY LINK_LIBRARIES)
-
     foreach(dir ${GORGON_LIBRARIES})
       message("LIBS='${dir}'")
     endforeach()
@@ -103,53 +97,4 @@ endif()
 # --------------------------------------------------------------------
 # Install Step
 # --------------------------------------------------------------------
-install(TARGETS ${legacy_trgt_name}
-        LIBRARY
-        DESTINATION ${run_dir}
-        COMPONENT "Gorgon"
-        )
-
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/Gorgon/src_py/
-        DESTINATION ${run_dir}
-        COMPONENT "Gorgon"
-        FILES_MATCHING
-        PATTERN "*.py"
-        )
-
-add_custom_target(Gorgon
-        COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Gorgon -P cmake_install.cmake
-        DEPENDS ${legacy_trgt_name}
-        )
-
-add_custom_target(Gorgon-only
-        COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Gorgon -P cmake_install.cmake
-        )
-        
-include(cmake/Windows/install.cmake)
-# --------------------------------------------------------------------
-# Package Step
-# --------------------------------------------------------------------
-add_custom_target(Package
-        COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Package -P cmake_install.cmake
-        DEPENDS Gorgon
-        )
-        
-add_custom_target(Package-only
-        COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Package -P cmake_install.cmake
-        )
-        
-if(APPLE)
-    include(cmake/MacOSX/package.cmake)
-elseif(WIN32)
-    include(cmake/Windows/package.cmake)
-else()
-    install(CODE "execute_process(COMMAND pyinstaller ${run_dir}/gorgon.pyw
-                                                        --distpath=${package_dir}
-                                                        --clean -y
-        WORKING_DIRECTORY ${run_dir})"
-        DEPENDS Gorgon
-        COMPONENT "Package"
-        )
-endif()
-
 # --------------------------------------------------------------------
