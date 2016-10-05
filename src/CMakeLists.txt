@@ -21,6 +21,5 @@ add_subdirectory(toolkit)
 # --------------------------------------------------------------------
 # Install Step
 # --------------------------------------------------------------------
-include(cmake/programs.cmake)
 include(cmake/demo.cmake)
-include(cmake/explorer.cmake)
+include(cmake/gorgon.cmake)
