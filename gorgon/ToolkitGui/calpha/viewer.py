@@ -9,7 +9,7 @@ from ...toolkit.sse.correspondence.StructurePrediction import StructurePredictio
 # from .choose_chain.model import CAlphaChooseChainModel
 # from calpha_flexible_fitting_form import CAlphaFlexibleFittingForm
 
-from ...Explorer import Vec3
+from explorer import Vec3
 
 from OpenGL.GL import *
 from OpenGL.GLU import *

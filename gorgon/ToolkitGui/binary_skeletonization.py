@@ -1,7 +1,7 @@
 from PyQt4 import QtCore, QtGui
 import sys, os
 
-from ..Explorer import Camera
+from explorer import Camera
 from ..Explorer.volume_viewer import VolumeViewer
 from ..Explorer.skeleton_viewer import SkeletonViewer
 from .skeletonization.binary_form import VolumeBinarySkeletonizationForm

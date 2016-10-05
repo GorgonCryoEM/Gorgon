@@ -3,8 +3,6 @@
 import argparse
 import logging
 
-from toolkit import *
-
 
 def main():
     mode_map = {'filter': {"normalize":"Normalize", "lowpass":"LowPass", "gaussian":"Gaussian"},

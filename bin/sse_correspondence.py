@@ -3,7 +3,7 @@
 import argparse
 import logging
 
-from toolkit.sse import SSEHelixCorrespondence
+from gorgon.Toolkit import SSEHelixCorrespondence
 
 
 def main():

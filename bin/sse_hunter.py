@@ -3,7 +3,7 @@
 import argparse
 import logging
 
-from toolkit.sse import pySSEHunter
+from gorgon.Toolkit import pySSEHunter
 
 
 def main():
