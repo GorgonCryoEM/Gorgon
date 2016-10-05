@@ -3,7 +3,7 @@
 import argparse
 import logging
 
-from Toolkit.sse import SSEHelixCorrespondence
+from toolkit.sse import SSEHelixCorrespondence
 
 
 def main():

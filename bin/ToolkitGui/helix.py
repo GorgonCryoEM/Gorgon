@@ -1,9 +1,9 @@
 from PyQt4 import QtGui, QtCore
-from libpytoolkit import PDBAtom, PDBBond
+from ..toolkit.libpytoolkit import PDBAtom, PDBBond
 
-from Explorer import Vec3
-from Toolkit.sse.seq_model.Helix import Helix
-from Toolkit.sse.seq_model.findHelixCalphas import helixEndpointsToCAlphaPositions
+from ..Explorer import Vec3
+from ..toolkit.sse.seq_model.Helix import Helix
+from ..toolkit.sse.seq_model.findHelixCalphas import helixEndpointsToCAlphaPositions
 
 
 def place_helix(calphaRenderer, currentChainModel, predHelix, coord1, coord2):

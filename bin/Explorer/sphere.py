@@ -1,7 +1,7 @@
 from PyQt4 import QtGui, QtCore, QtOpenGL
 from base_viewer import BaseViewer
-from libpytoolkit import RendererBase
-from libpytoolkit import drawSphere, drawLine, drawCylinder
+from ..toolkit.libpytoolkit import RendererBase
+from ..toolkit.libpytoolkit import drawSphere, drawLine, drawCylinder
 from .libs import Vec3
 
 # from volume_surface_editor_form import VolumeSurfaceEditorForm

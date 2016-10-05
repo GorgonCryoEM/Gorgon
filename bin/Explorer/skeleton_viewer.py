@@ -1,5 +1,5 @@
 from PyQt4 import QtGui, QtCore, QtOpenGL
-from libpytoolkit import SkeletonRenderer
+from ..toolkit.libpytoolkit import SkeletonRenderer
 from base_viewer import BaseViewer
 
 

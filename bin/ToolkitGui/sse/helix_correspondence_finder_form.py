@@ -1,16 +1,16 @@
 from PyQt4 import QtCore, QtGui
 from ui_helix_correspondence_finder import Ui_DialogSSEHelixCorrespondenceFinder
-from libpytoolkit import SSEEngine, SSEResult, IBackEnd#, Vec3F
-from libpytoolkit import setHelixConstraint
-from Toolkit.sse.correspondence.CorrespondenceLibrary import CorrespondenceLibrary
-from Toolkit.sse.correspondence.Correspondence import Correspondence
-from Toolkit.sse.correspondence.Match import Match
-from Toolkit.sse.correspondence.ObservedHelix import ObservedHelix
-# from Toolkit.sse.correspondence.ObservedSheet import ObservedSheet
-from Toolkit.sse.correspondence.StructureObservation import StructureObservation
-from Toolkit.sse.correspondence.StructurePrediction import StructurePrediction
-# from Toolkit.sse.seq_model.Helix import Helix
-# from Explorer import Vec3
+from ...toolkit.libpytoolkit import SSEEngine, SSEResult, IBackEnd#, Vec3F
+from ...toolkit.libpytoolkit import setHelixConstraint
+from ...toolkit.sse.correspondence.CorrespondenceLibrary import CorrespondenceLibrary
+from ...toolkit.sse.correspondence.Correspondence import Correspondence
+from ...toolkit.sse.correspondence.Match import Match
+from ...toolkit.sse.correspondence.ObservedHelix import ObservedHelix
+# from ...toolkit.sse.correspondence.ObservedSheet import ObservedSheet
+from ...toolkit.sse.correspondence.StructureObservation import StructureObservation
+from ...toolkit.sse.correspondence.StructurePrediction import StructurePrediction
+# from ...toolkit.sse.seq_model.Helix import Helix
+# from ...Explorer import Vec3
 import xml.dom.minidom
 
 from OpenGL.GL import *
@@ -19,7 +19,7 @@ from OpenGL.GLUT import *
 
 # import math
 import termcolor
-from ToolkitGui.helix import create_helix
+from ..helix import create_helix
 
 
 class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):

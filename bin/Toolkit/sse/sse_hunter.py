@@ -1,5 +1,5 @@
 import logging
-from libpytoolkit import *
+from ..libpytoolkit import *
 from .sse_math import *
 from termcolor import colored
 

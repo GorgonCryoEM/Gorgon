@@ -1,11 +1,11 @@
 from PyQt4 import QtGui, QtCore
-from libpytoolkit import PDBAtom, PDBBond
+from .....toolkit.libpytoolkit import PDBAtom, PDBBond
 # from calpha_interactive_loop_builder import CAlphaInteractiveLoopBuilder
 # from seq_model.findHelixCalphas import helixEndpointsToCAlphaPositions
 # from seq_model.Helix import Helix
 import math
-from Explorer.libs import *
-from ToolkitGui.helix import create_helix
+from .....Explorer.libs import *
+from ....helix import create_helix
 from .command_atom_placement import CAlphaStructureEditorCommandAtomPlacement
 from .command_change_position import CAlphaStructureEditorCommandChangePosition
 

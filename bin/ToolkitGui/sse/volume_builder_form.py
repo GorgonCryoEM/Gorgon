@@ -1,9 +1,9 @@
 from PyQt4 import QtCore, QtGui
 from ui_volume_builder import Ui_DialogVolumeSSEBuilder
-from Toolkit.sse.sse_hunter import pySSEHunter
+from ...toolkit.sse.sse_hunter import pySSEHunter
 from auto_helix_builder_engine import AutoHelixBuilderEngine
-# from libpytoolkit import SSERenderer
-# from libpytoolkit import CAlphaRenderer
+# from ...toolkit.libpytoolkit import SSERenderer
+# from ...toolkit.libpytoolkit import CAlphaRenderer
 # from calpha_viewer import CAlphaViewer
 # from sse_viewer import SSEViewer
 

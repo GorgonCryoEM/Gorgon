@@ -1,10 +1,10 @@
 from PyQt4 import QtGui, QtCore, QtOpenGL
-from libpytoolkit import SSERenderer, SSEEngine
-from Explorer.base_viewer import BaseViewer
+from ...toolkit.libpytoolkit import SSERenderer, SSEEngine
+from ...Explorer.base_viewer import BaseViewer
 # from sse_sequence_predictor_form import SSESequencePredictorForm
 from .helix_correspondence_finder_form import SSEHelixCorrespondenceFinderForm
 # from .volume_sse_builder_form import VolumeSSEBuilderForm
-from Toolkit import SSEHelixCorrespondence
+from ...toolkit import SSEHelixCorrespondence
 
 from OpenGL.GL import *
 from OpenGL.GLU import *

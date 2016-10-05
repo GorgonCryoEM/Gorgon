@@ -3,8 +3,8 @@
 #                    More info in: seq_model-doc.txt
 
 
-from libpytoolkit import PDBAtom
-from Explorer import Vec3
+from ...libpytoolkit import PDBAtom
+from ....Explorer.libs import Vec3
 
 
 class Residue:

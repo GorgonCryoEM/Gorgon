@@ -4,12 +4,12 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
-from libpytoolkit import *
+from ..toolkit.libpytoolkit import *
 from .libs import Vec3
 from .ui_common import Ui_Common
 from base_dock_widget import BaseDockWidget
 
-from Explorer.display_styles import *
+from .display_styles import *
 
 
 class BaseViewer(BaseDockWidget):

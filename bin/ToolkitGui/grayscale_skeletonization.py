@@ -1,10 +1,10 @@
 from PyQt4 import QtCore, QtGui
 import sys, os
 
-from Explorer import Camera
-from Explorer.volume_viewer import VolumeViewer
-from Explorer.skeleton_viewer import SkeletonViewer
-from ToolkitGui.skeletonization.grayscale_form import VolumeGrayscaleSkeletonizationForm
+from ..Explorer import Camera
+from ..Explorer.volume_viewer import VolumeViewer
+from ..Explorer.skeleton_viewer import SkeletonViewer
+from .skeletonization.grayscale_form import VolumeGrayscaleSkeletonizationForm
 
 
 class GrayscaleSkeletonization(QtGui.QMainWindow):

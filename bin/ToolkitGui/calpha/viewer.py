@@ -1,15 +1,15 @@
 from PyQt4 import QtGui, QtCore, QtOpenGL
-from libpytoolkit import CAlphaRenderer
-from Explorer.base_viewer import BaseViewer
+from ...toolkit.libpytoolkit import CAlphaRenderer
+from ...Explorer.base_viewer import BaseViewer
 # from .atom_placer_form import CAlphaAtomPlacerForm
-from Toolkit.sse.seq_model.Chain import Chain
-from ToolkitGui.calpha.sequence_dock import CAlphaSequenceDock
+from ...toolkit.sse.seq_model.Chain import Chain
+from .sequence_dock import CAlphaSequenceDock
 # from atom_visualization_form import AtomVisualizationForm
-from Toolkit.sse.correspondence.StructurePrediction import StructurePrediction
+from ...toolkit.sse.correspondence.StructurePrediction import StructurePrediction
 # from .choose_chain.model import CAlphaChooseChainModel
 # from calpha_flexible_fitting_form import CAlphaFlexibleFittingForm
 
-from Explorer import Vec3
+from ...Explorer import Vec3
 
 from OpenGL.GL import *
 from OpenGL.GLU import *

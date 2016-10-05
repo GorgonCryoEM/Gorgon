@@ -4,7 +4,7 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
-from libpytoolkit import *
+from ..toolkit.libpytoolkit import *
 from cmath import *
 from .libs import Vec3
 

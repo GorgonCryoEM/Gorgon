@@ -1,8 +1,8 @@
 from PyQt4 import QtGui, QtCore, QtOpenGL
-from Explorer import BaseViewer
-from libpytoolkit import RendererBase
+from . import BaseViewer
+from ..toolkit.libpytoolkit import RendererBase
 from .libs import Vec3
-from libpytoolkit import drawLine
+from ..toolkit.libpytoolkit import drawLine
 
 from OpenGL.GL import *
 from OpenGL.GLU import *

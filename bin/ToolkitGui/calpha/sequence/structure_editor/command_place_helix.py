@@ -2,7 +2,7 @@ from PyQt4 import QtGui
 # from calpha_interactive_loop_builder import CAlphaInteractiveLoopBuilder
 # import math
 # from vector_lib import *
-from ToolkitGui.helix import place_helix
+from ....helix import place_helix
 
 
 class CAlphaStructureEditorCommandPlaceHelix(QtGui.QUndoCommand):

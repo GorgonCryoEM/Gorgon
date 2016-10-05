@@ -1,4 +1,4 @@
-from libpytoolkit import Vec3F
+from ...toolkit.libpytoolkit import Vec3F
 
 
 class Vec3(Vec3F):

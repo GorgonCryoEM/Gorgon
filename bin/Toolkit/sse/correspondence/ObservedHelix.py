@@ -1,5 +1,5 @@
 import math
-from Explorer.libs import Vec3
+from ....Explorer.libs import Vec3
 
 
 class ObservedHelix:
