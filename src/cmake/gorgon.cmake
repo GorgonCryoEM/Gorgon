@@ -3,7 +3,7 @@ add_custom_target_wrapper(TARGET Gorgon
         )
 install_to_destinations(
         DIRECTORY ${CMAKE_SOURCE_DIR}/gorgon/
-        DESTINATIONS ${CMAKE_BINARY_DIR}/bin
+        DESTINATIONS ${CMAKE_BINARY_DIR}/${build_install_dir}
         COMPONENT Gorgon
         )
         

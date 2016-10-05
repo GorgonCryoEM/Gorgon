@@ -88,7 +88,7 @@ function(setup_libpy proj)
     endif()
     
     install_to_destinations(TARGETS ${py_proj}
-            DESTINATIONS ${CMAKE_BINARY_DIR}/bin/${proj_low}
+            DESTINATIONS ${CMAKE_BINARY_DIR}/${build_install_dir}/${proj_low}
             COMPONENT ${${proj_low}_install_component}
             )
             

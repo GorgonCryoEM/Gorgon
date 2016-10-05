@@ -70,6 +70,7 @@ include_directories(${GORGON_INCLUDE_DIRS})
 # --------------------------------------------------------------------
 # Add subdirectories and enable testing
 # --------------------------------------------------------------------
+set(build_install_dir gorgon)
 add_subdirectory(src)
 include(src/cmake/tests.cmake)
 # --------------------------------------------------------------------
