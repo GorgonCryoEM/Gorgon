@@ -66,6 +66,7 @@ function(setup_libpy proj)
     
     if(ENABLE_CMAKE_DEBUG_OUTPUT)
         message("Debug: ${py_proj}")
+        message("Current list file: ${CMAKE_CURRENT_LIST_FILE}")
     
         get_target_property(includes ${py_proj} INCLUDE_DIRECTORIES)
         get_target_property(libs     ${py_proj} LINK_LIBRARIES)
