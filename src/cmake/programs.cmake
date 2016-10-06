@@ -1,11 +1,13 @@
 file(GLOB progs "${CMAKE_SOURCE_DIR}/bin/*.py")
+#set(prog_build_dir ${build_install_dir})
+set(prog_build_dir bin)
 
 add_custom_target_wrapper(TARGET Programs
         DEPENDS Toolkit
         )
 install_to_destinations(
         PROGRAMS ${progs}
-        DESTINATIONS ${CMAKE_BINARY_DIR}/${build_install_dir}
+        DESTINATIONS ${CMAKE_BINARY_DIR}/${prog_build_dir}
         COMPONENT Programs
         )
         
