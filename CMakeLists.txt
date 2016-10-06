@@ -72,10 +72,9 @@ include_directories(${GORGON_INCLUDE_DIRS})
 set(build_install_dir gorgon)
 set(prog_build_dir cli)
 # --------------------------------------------------------------------
-# Add subdirectories
+# Add subdirectory src/ which handles its subdirectories
 # --------------------------------------------------------------------
 add_subdirectory(src)
-include(src/cmake/tests.cmake)
 # --------------------------------------------------------------------
 # C++11 flags
 # --------------------------------------------------------------------
