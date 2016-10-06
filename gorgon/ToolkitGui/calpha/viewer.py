@@ -1,6 +1,6 @@
 from PyQt4 import QtGui, QtCore, QtOpenGL
 from ...toolkit.libpytoolkit import CAlphaRenderer
-from ...Explorer.base_viewer import BaseViewer
+from ...explorer.base_viewer import BaseViewer
 # from .atom_placer_form import CAlphaAtomPlacerForm
 from ...toolkit.sse.seq_model.Chain import Chain
 from .sequence_dock import CAlphaSequenceDock

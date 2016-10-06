@@ -10,8 +10,8 @@ import sys
 import argparse
 
 from libpytoolkit import *
-from gorgon.Explorer import MainWindowForm
-from gorgon.Explorer import Widget3
+from gorgon.explorer import MainWindowForm
+from gorgon.explorer import Widget3
 
 
 class GLWidget(QtOpenGL.QGLWidget):
