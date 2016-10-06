@@ -40,7 +40,7 @@ function(install_dlls trgt)
     rename_target_windows(py${trgt})
     
     install_to_destinations(FILES ${win_dlls}
-            DESTINATIONS ${CMAKE_BINARY_DIR}/cli/${proj_low}
+            DESTINATIONS ${CMAKE_BINARY_DIR}/cli/${proj}
             COMPONENT ${${trgt}_install_component}
             )
 endfunction()
@@ -55,12 +55,12 @@ function(to_title_case in out)
     set(${out} ${word} PARENT_SCOPE)
 endfunction()
 # --------------------------------------------------------------------
-function(set_proj_vars proj)
-    string(TOLOWER ${proj} proj_low)
+function(set_proj_vars Proj)
+    string(TOLOWER ${Proj} proj)
     
-    set( ${proj_low}_trgt_name         ${proj_low} CACHE INTERNAL "")
-    set( ${proj}_trgt_name             ${proj_low} CACHE INTERNAL "")
-    set( ${proj_low}_install_component ${proj}     CACHE INTERNAL "")
-    set( ${proj}_install_component     ${proj}     CACHE INTERNAL "")
+    set( ${proj}_trgt_name         ${proj} CACHE INTERNAL "")
+    set( ${Proj}_trgt_name             ${proj} CACHE INTERNAL "")
+    set( ${proj}_install_component ${Proj}     CACHE INTERNAL "")
+    set( ${Proj}_install_component     ${Proj}     CACHE INTERNAL "")
 endfunction()
 # --------------------------------------------------------------------

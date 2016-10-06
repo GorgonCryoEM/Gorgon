@@ -30,9 +30,9 @@ function(add_custom_target_wrapper)
         )
 endfunction()
 # --------------------------------------------------------------------
-function(setup_libpy proj)
-    set(proj_low ${${proj}_trgt_name})
-    set(py_proj py${proj_low})
+function(setup_libpy Proj)
+    set(proj ${${Proj}_trgt_name})
+    set(py_proj py${proj})
     
     file(GLOB_RECURSE srcs "*.cpp")
     
@@ -85,33 +85,33 @@ function(setup_libpy proj)
     endif()
     
     install_to_destinations(TARGETS ${py_proj}
-            DESTINATIONS ${CMAKE_BINARY_DIR}/${build_install_dir}/${proj_low}
-            COMPONENT ${${proj_low}_install_component}
+            DESTINATIONS ${CMAKE_BINARY_DIR}/${build_install_dir}/${proj}
+            COMPONENT ${${proj}_install_component}
             )
             
     if(WIN32)
-        install_dlls(${proj_low})
+        install_dlls(${proj})
     endif()    
 endfunction()
 # --------------------------------------------------------------------
-function(add_custom_targets_trgt_and_trgt_only proj)
-    add_custom_target(${proj}
-            COMMAND ${CMAKE_COMMAND} -DCOMPONENT=${proj} -P cmake_install.cmake
-            DEPENDS py${${proj}_trgt_name}
+function(add_custom_targets_trgt_and_trgt_only Proj)
+    add_custom_target(${Proj}
+            COMMAND ${CMAKE_COMMAND} -DCOMPONENT=${Proj} -P cmake_install.cmake
+            DEPENDS py${${Proj}_trgt_name}
             )
-    add_custom_target(${proj}-only
-            COMMAND ${CMAKE_COMMAND} -DCOMPONENT=${proj} -P cmake_install.cmake
+    add_custom_target(${Proj}-only
+            COMMAND ${CMAKE_COMMAND} -DCOMPONENT=${Proj} -P cmake_install.cmake
             )
 endfunction()
 # --------------------------------------------------------------------
 function(init)
     set(proj ${CMAKE_CURRENT_SOURCE_DIR})
     string(REGEX REPLACE ".*/" "" proj ${proj})
-    to_title_case(${proj} proj)
-    set_proj_vars(${proj})
-    set(current_trgt_name ${proj} PARENT_SCOPE)
+    to_title_case(${proj} Proj)
+    set_proj_vars(${Proj})
+    set(current_trgt_name ${Proj} PARENT_SCOPE)
     
-    setup_libpy(${proj})
-    add_custom_targets_trgt_and_trgt_only(${proj})
+    setup_libpy(${Proj})
+    add_custom_targets_trgt_and_trgt_only(${Proj})
 endfunction()
 # --------------------------------------------------------------------
