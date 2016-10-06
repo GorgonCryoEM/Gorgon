@@ -1,7 +1,7 @@
 file(GLOB progs "${CMAKE_SOURCE_DIR}/cli/*.py")
 
 add_custom_target_wrapper(TARGET Cli
-        DEPENDS Toolkit
+        DEPENDS Hello Gorgon
         )
 install_to_destinations(
         PROGRAMS ${progs}
