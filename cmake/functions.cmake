@@ -35,13 +35,13 @@ function(rename_target_windows trgt)
                     )
 endfunction()
 # --------------------------------------------------------------------
-function(install_dlls trgt)
-    set(trgt ${${trgt}_trgt_name})
-    rename_target_windows(py${trgt})
+function(install_dlls proj)
+    set(proj ${${proj}_trgt_name})
+    rename_target_windows(py${proj})
     
     install_to_destinations(FILES ${win_dlls}
             DESTINATIONS ${CMAKE_BINARY_DIR}/cli/${proj}
-            COMPONENT ${${trgt}_install_component}
+            COMPONENT ${${proj}_install_component}
             )
 endfunction()
 # --------------------------------------------------------------------
