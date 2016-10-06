@@ -59,8 +59,8 @@ function(set_proj_vars Proj)
     string(TOLOWER ${Proj} proj)
     
     set( ${proj}_trgt_name         ${proj} CACHE INTERNAL "")
-    set( ${Proj}_trgt_name             ${proj} CACHE INTERNAL "")
-    set( ${proj}_install_component ${Proj}     CACHE INTERNAL "")
-    set( ${Proj}_install_component     ${Proj}     CACHE INTERNAL "")
+    set( ${Proj}_trgt_name         ${proj} CACHE INTERNAL "")
+    set( ${proj}_install_component ${Proj} CACHE INTERNAL "")
+    set( ${Proj}_install_component ${Proj} CACHE INTERNAL "")
 endfunction()
 # --------------------------------------------------------------------
