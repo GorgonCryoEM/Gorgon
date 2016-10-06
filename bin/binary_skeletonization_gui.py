@@ -9,7 +9,7 @@ from OpenGL.GLUT import *
 import sys
 import argparse
 
-from ToolkitGui import BinarySkeletonization
+from gorgon.ToolkitGui import BinarySkeletonization
 
 
 def main():

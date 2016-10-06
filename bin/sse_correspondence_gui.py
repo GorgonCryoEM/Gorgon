@@ -9,7 +9,7 @@ from OpenGL.GLUT import *
 import sys
 import argparse
 
-from ToolkitGui import SSECorrespondence
+from gorgon.ToolkitGui import SSECorrespondence
 
 
 def main():

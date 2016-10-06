@@ -9,7 +9,7 @@ from OpenGL.GLUT import *
 import sys
 import argparse
 
-from ToolkitGui import CalphaAtomPlacement
+from gorgon.ToolkitGui import CalphaAtomPlacement
 
 
 def main():
