@@ -62,7 +62,7 @@ endforeach()
 # --------------------------------------------------------------------
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 list(APPEND GORGON_INCLUDE_DIRS
-	${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_SOURCE_DIR}/src
 	${GORGON_EXTERNAL_LIBRARIES_DIR}
 	)
 

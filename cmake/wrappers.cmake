@@ -44,10 +44,8 @@ function(setup_libpy proj)
     add_library(${py_proj} SHARED ${CMAKE_BINARY_DIR}/src/${py_proj}.cpp ${srcs})
 
     list(APPEND pyincludes
-                ${CMAKE_SOURCE_DIR}
-                ${Boost_INCLUDE_DIR}
-                ${PYTHON_INCLUDE_DIR}
-                ${GORGON_EXTERNAL_LIBRARIES_DIR}
+                ${CMAKE_CURRENT_SOURCE_DIR}
+                ${GORGON_INCLUDE_DIRS}
                 )
     list(APPEND pylibs
                 ${Boost_LIBRARIES}
