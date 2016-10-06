@@ -32,16 +32,16 @@ endfunction()
 # --------------------------------------------------------------------
 function(setup_libpy Proj)
     set(proj ${${Proj}_trgt_name})
-    set(py_proj py${proj})
+    set(pyproj py${proj})
     
     file(GLOB_RECURSE srcs "*.cpp")
     
-    set(current_pylib "lib${py_proj}")    
+    set(current_pylib "lib${pyproj}")    
     configure_file(${CMAKE_CURRENT_LIST_DIR}/pylib.cpp.in
-                    ${CMAKE_BINARY_DIR}/src/${py_proj}.cpp
+                    ${CMAKE_BINARY_DIR}/src/${pyproj}.cpp
                    )
 
-    add_library(${py_proj} SHARED ${CMAKE_BINARY_DIR}/src/${py_proj}.cpp ${srcs})
+    add_library(${pyproj} SHARED ${CMAKE_BINARY_DIR}/src/${pyproj}.cpp ${srcs})
 
     list(APPEND pyincludes
                 ${CMAKE_CURRENT_SOURCE_DIR}
@@ -57,19 +57,19 @@ function(setup_libpy Proj)
         set(libsuffix .pyd)
     endif()
 
-    set_target_properties(${py_proj} PROPERTIES
+    set_target_properties(${pyproj} PROPERTIES
                                      PREFIX lib
                                      SUFFIX ${libsuffix}
                                      INCLUDE_DIRECTORIES "${pyincludes}"
                                     )
-    target_link_libraries(${py_proj} ${pylibs})
+    target_link_libraries(${pyproj} ${pylibs})
     
     if(ENABLE_CMAKE_DEBUG_OUTPUT)
-        message("Debug: ${py_proj}")
+        message("Debug: ${pyproj}")
         message("Current list file: ${CMAKE_CURRENT_LIST_FILE}")
     
-        get_target_property(includes ${py_proj} INCLUDE_DIRECTORIES)
-        get_target_property(libs     ${py_proj} LINK_LIBRARIES)
+        get_target_property(includes ${pyproj} INCLUDE_DIRECTORIES)
+        get_target_property(libs     ${pyproj} LINK_LIBRARIES)
     
         message("includes")
         foreach(i ${includes})
@@ -81,10 +81,10 @@ function(setup_libpy Proj)
           message(STATUS "${i}")
         endforeach()
         
-        message("Debug: ${py_proj} END\n")
+        message("Debug: ${pyproj} END\n")
     endif()
     
-    install_to_destinations(TARGETS ${py_proj}
+    install_to_destinations(TARGETS ${pyproj}
             DESTINATIONS ${CMAKE_BINARY_DIR}/${build_install_dir}/${proj}
             COMPONENT ${${proj}_install_component}
             )
