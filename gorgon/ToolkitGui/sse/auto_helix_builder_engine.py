@@ -1,6 +1,6 @@
 from math import *
 from ...toolkit.libpytoolkit import PDBAtom, findBestFitLine, sumDistSqrd
-from explorer import Vec3
+from ...libs import Vec3
 
 
 class AutoHelixBuilderEngine:

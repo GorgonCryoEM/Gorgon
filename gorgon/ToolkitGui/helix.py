@@ -1,7 +1,7 @@
 from PyQt4 import QtGui, QtCore
 from ..toolkit.libpytoolkit import PDBAtom, PDBBond
 
-from explorer import Vec3
+from ..libs import Vec3
 from ..toolkit.sse.seq_model.Helix import Helix
 from ..toolkit.sse.seq_model.findHelixCalphas import helixEndpointsToCAlphaPositions
 
