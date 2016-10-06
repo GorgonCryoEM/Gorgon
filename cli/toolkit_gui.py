@@ -9,11 +9,11 @@ from OpenGL.GLUT import *
 import sys
 import argparse
 
-from gorgon.ToolkitGui import BinarySkeletonization
-from gorgon.ToolkitGui import GrayscaleSkeletonization
-from gorgon.ToolkitGui import SSEIdentification
-from gorgon.ToolkitGui import SSECorrespondence
-from gorgon.ToolkitGui import CalphaAtomPlacement
+from gorgon.gui import BinarySkeletonization
+from gorgon.gui import GrayscaleSkeletonization
+from gorgon.gui import SSEIdentification
+from gorgon.gui import SSECorrespondence
+from gorgon.gui import CalphaAtomPlacement
 
 
 def main():
