@@ -48,8 +48,6 @@ function(setup_libpy proj)
                 ${GORGON_INCLUDE_DIRS}
                 )
     list(APPEND pylibs
-                ${Boost_LIBRARIES}
-                ${PYTHON_LIBRARY}
                 ${GORGON_LIBRARIES}
                 )
                 
