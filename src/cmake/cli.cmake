@@ -5,7 +5,7 @@ add_custom_target_wrapper(TARGET Cli
         )
 install_to_destinations(
         PROGRAMS ${progs}
-        DESTINATIONS ${CMAKE_BINARY_DIR}/${prog_build_dir}
+        DESTINATIONS ${CMAKE_BINARY_DIR}/${cli_install_dir}
         COMPONENT Cli
         )
         

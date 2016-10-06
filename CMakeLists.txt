@@ -69,8 +69,8 @@ include_directories(${GORGON_INCLUDE_DIRS})
 # --------------------------------------------------------------------
 # Set directory vars
 # --------------------------------------------------------------------
-set(build_install_dir gorgon)
-set(prog_build_dir cli)
+set(lib_install_dir gorgon)
+set(cli_install_dir cli)
 # --------------------------------------------------------------------
 # Add subdirectory src/ which handles its subdirectories
 # --------------------------------------------------------------------
