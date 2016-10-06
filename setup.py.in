@@ -1,0 +1,16 @@
+from setuptools import setup
+
+setup(
+    name="gorgon",
+    version="@Gorgon_VERSION@",
+    package_dir={'gorgon':'@lib_install_dir@', 'bin':'@cli_install_dir@'},
+    packages=['gorgon', 'gorgon.gui', 'gorgon.hello', 'gorgon.libs', 'gorgon.toolkit'],
+    package_data={'gorgon.hello':['libpyhello.so', 'libpyhello.pyd'],'gorgon.toolkit':['libpytoolkit.so', 'libpytoolkit.pyd']},
+    entry_points={
+        'console_scripts': [
+            'gorgon-toolkit=bin.toolkit_gui:main',
+        ],
+    },
+    zip_safe = False,
+
+)

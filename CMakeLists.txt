@@ -96,3 +96,7 @@ if(ENABLE_CMAKE_DEBUG_OUTPUT)
       message("LIBS='${dir}'")
     endforeach()
 endif()
+
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/setup.py.in
+        ${CMAKE_BINARY_DIR}/setup.py
+        )
