@@ -1,4 +1,9 @@
 from setuptools import setup
+import glob
+import os
+
+scripts = [name for name in glob.glob(os.path.join('@cli_install_dir@', '*.py'))]
+# scripts = [os.path.join(bindir, 'toolkit_gui.py')]
 
 setup(
     name="gorgon",
@@ -11,6 +16,7 @@ setup(
             'gorgon-toolkit=bin.toolkit_gui:main',
         ],
     },
+    scripts = scripts,
     zip_safe = False,
 
 )
