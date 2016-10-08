@@ -1,5 +1,7 @@
 #!/bin/sh
 
+unset MACOSX_DEPLOYMENT_TARGET
+
 build_dir="${SRC_DIR}/../build_dir"
 
 rm -rf $build_dir
