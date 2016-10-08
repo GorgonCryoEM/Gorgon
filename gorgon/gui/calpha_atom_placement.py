@@ -1,14 +1,14 @@
-from PyQt4 import QtCore, QtGui
-import sys, os
+import os
+import sys
 
-from ..explorer import Camera
-from ..explorer.volume_viewer import VolumeViewer
-from ..explorer.skeleton_viewer import SkeletonViewer
-from .sse.helix_correspondence_finder_form import SSEHelixCorrespondenceFinderForm
-from .sse.viewer import SSEViewer
-from ..toolkit.sse.correspondence.StructurePrediction import StructurePrediction
-from .calpha.viewer import CAlphaViewer
+from PyQt4 import QtGui
+
+from .explorer.skeleton_viewer import SkeletonViewer
 from .calpha.sequence_dock import CAlphaSequenceDock
+from .calpha.viewer import CAlphaViewer
+from .explorer import Camera
+from .explorer.volume_viewer import VolumeViewer
+from ..toolkit.sse.correspondence.StructurePrediction import StructurePrediction
 
 
 class CalphaAtomPlacement(QtGui.QMainWindow):

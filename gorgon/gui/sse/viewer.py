@@ -1,16 +1,8 @@
-from PyQt4 import QtGui, QtCore, QtOpenGL
-from ...toolkit.libpytoolkit import SSERenderer, SSEEngine
-from ...explorer.base_viewer import BaseViewer
-# from sse_sequence_predictor_form import SSESequencePredictorForm
-from .helix_correspondence_finder_form import SSEHelixCorrespondenceFinderForm
-# from .volume_sse_builder_form import VolumeSSEBuilderForm
-from ...toolkit import SSEHelixCorrespondence
-
-from OpenGL.GL import *
-from OpenGL.GLU import *
-from OpenGL.GLUT import *
-
 import termcolor
+from PyQt4 import QtGui, QtCore
+
+from ..explorer import BaseViewer
+from ...toolkit.libpytoolkit import SSERenderer, SSEEngine
 
 
 class SSEViewer(BaseViewer):

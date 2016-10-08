@@ -4,7 +4,7 @@ from OpenGL.GLUT import *
 from PyQt4 import QtOpenGL, QtCore, QtGui
 
 from gorgon.libs import Vec3
-from ..toolkit.libpytoolkit import *
+from ...toolkit.libpytoolkit import *
 
 
 class Camera(QtOpenGL.QGLWidget):

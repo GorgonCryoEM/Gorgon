@@ -1,12 +1,13 @@
-from PyQt4 import QtCore, QtGui
-import sys, os
+import os
+import sys
 
-from ..explorer import Camera
-from ..explorer.volume_viewer import VolumeViewer
-from ..explorer.skeleton_viewer import SkeletonViewer
+from PyQt4 import QtGui
+
+from .explorer.skeleton_viewer import SkeletonViewer
 from .calpha.viewer import CAlphaViewer
 from .sse.helix_correspondence_finder_form import SSEHelixCorrespondenceFinderForm
 from .sse.viewer import SSEViewer
+from .explorer import Camera
 from ..toolkit.sse.correspondence.StructurePrediction import StructurePrediction
 
 

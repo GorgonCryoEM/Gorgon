@@ -1,14 +1,14 @@
-from PyQt4 import QtCore, QtGui
-import sys, os
+import os
+import sys
 
-from ..explorer import Camera
-from ..explorer.volume_viewer import VolumeViewer
-from ..explorer.skeleton_viewer import SkeletonViewer
-from .sse.volume_builder_form import VolumeSSEBuilderForm
+from PyQt4 import QtCore, QtGui
+
+from .explorer.skeleton_viewer import SkeletonViewer
 from .calpha.viewer import CAlphaViewer
 from .sse.viewer import SSEViewer
-from ..explorer import Grid3D
-from ..toolkit.sse.correspondence.StructurePrediction import StructurePrediction
+from .sse.volume_builder_form import VolumeSSEBuilderForm
+from .explorer import Camera
+from .explorer.volume_viewer import VolumeViewer
 
 
 class SSEIdentification(QtGui.QMainWindow):

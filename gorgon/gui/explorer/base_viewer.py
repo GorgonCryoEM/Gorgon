@@ -4,7 +4,7 @@ from base_dock_widget import BaseDockWidget
 from gorgon.libs import Vec3
 from .display_styles import *
 from .ui_common import Ui_Common
-from ..toolkit.libpytoolkit import *
+from ...toolkit.libpytoolkit import *
 
 
 class BaseViewer(BaseDockWidget):

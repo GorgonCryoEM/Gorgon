@@ -3,8 +3,8 @@ from PyQt4 import QtGui
 
 from gorgon.libs import Vec3
 from . import BaseViewer
-from ..toolkit.libpytoolkit import RendererBase
-from ..toolkit.libpytoolkit import drawLine
+from ...toolkit.libpytoolkit import RendererBase
+from ...toolkit.libpytoolkit import drawLine
 
 
 class Grid3D(BaseViewer):

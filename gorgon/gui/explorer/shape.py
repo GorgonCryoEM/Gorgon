@@ -2,7 +2,7 @@ from PyQt4 import QtGui
 
 from base_viewer import BaseViewer
 from gorgon.libs import Vec3
-from ..toolkit.libpytoolkit import RendererBase
+from ...toolkit.libpytoolkit import RendererBase
 
 
 class Shape(BaseViewer):
