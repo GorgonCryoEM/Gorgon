@@ -58,7 +58,7 @@ foreach(proj ${EXTERNAL_PROJECTS})
 endforeach()
 
 # --------------------------------------------------------------------
-# Include and link directories, targets, target link libraries
+# Include directories
 # --------------------------------------------------------------------
 list(APPEND GORGON_INCLUDE_DIRS
     ${CMAKE_SOURCE_DIR}/src
@@ -67,10 +67,13 @@ list(APPEND GORGON_INCLUDE_DIRS
 
 include_directories(${GORGON_INCLUDE_DIRS})
 # --------------------------------------------------------------------
-# Add subdirectories and enable testing
+# Set directory vars
 # --------------------------------------------------------------------
 set(build_install_dir gorgon)
 set(prog_build_dir cli)
+# --------------------------------------------------------------------
+# Add subdirectories
+# --------------------------------------------------------------------
 add_subdirectory(src)
 include(src/cmake/tests.cmake)
 # --------------------------------------------------------------------
