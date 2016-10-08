@@ -89,9 +89,6 @@ function(setup_libpy Proj)
             COMPONENT ${${proj}_install_component}
             )
             
-    if(WIN32)
-        install_dlls(${proj})
-    endif()    
 endfunction()
 # --------------------------------------------------------------------
 function(add_custom_targets_trgt_and_trgt_only Proj)

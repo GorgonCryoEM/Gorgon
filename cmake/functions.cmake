@@ -19,23 +19,6 @@ function(update_libs_includes libs incs)
     set(GORGON_INCLUDE_DIRS ${GORGON_INCLUDE_DIRS} PARENT_SCOPE)
 endfunction()
 # --------------------------------------------------------------------
-function(add_dll lib)
-    get_filename_component(dll_name ${lib} NAME_WE)
-    get_filename_component(dll_dir  ${lib} DIRECTORY)
-    
-    list(APPEND win_dlls ${dll_dir}/${dll_name}.dll)
-    set(win_dlls ${win_dlls} PARENT_SCOPE)
-endfunction()
-# --------------------------------------------------------------------
-function(install_dlls proj)
-    set(proj ${${proj}_trgt_name})
-    
-    install_to_destinations(FILES ${win_dlls}
-            DESTINATIONS ${CMAKE_BINARY_DIR}/cli/${proj}
-            COMPONENT ${${proj}_install_component}
-            )
-endfunction()
-# --------------------------------------------------------------------
 function(to_title_case in out)
     string(LENGTH ${in} len)
     string(SUBSTRING ${in} 0 1 first_letter)
