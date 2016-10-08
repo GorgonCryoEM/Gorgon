@@ -21,11 +21,7 @@ option(ENABLE_CMAKE_DEBUG_OUTPUT "Print output of some variables for debugging p
 
 set(GORGON_EXTERNAL_LIBRARIES_DIR ${CMAKE_SOURCE_DIR}/ExternalLibraries CACHE INTERNAL "External Libraries directory")
 
-if( CMAKE_SIZEOF_VOID_P EQUAL 8 )
-    set( GORGON_TARGET_ARCH 64 CACHE INTERNAL "Target architecture")
-else()
-    set( GORGON_TARGET_ARCH 32 CACHE INTERNAL "Target architecture")
-endif()
+set( GORGON_TARGET_ARCH $ENV{ARCH} CACHE INTERNAL "Target architecture")
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DGORGON_DEBUG")
 
@@ -33,6 +29,13 @@ SET(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib${GORGON_OS_VERSION}/x${GORGON_
 SET(CMAKE_INSTALL_PREFIX ${LIBRARY_OUTPUT_PATH} CACHE PATH "" FORCE)
 if(ENABLE_CMAKE_DEBUG_OUTPUT)
     message("LIBRARY_OUTPUT_PATH= ${LIBRARY_OUTPUT_PATH}")
+endif()
+
+#Conda prefix
+if(NOT WIN32)
+    set(CMAKE_PREFIX_PATH $ENV{PREFIX})
+else()
+    set(CMAKE_PREFIX_PATH $ENV{LIBRARY_PREFIX})
 endif()
 
 # --------------------------------------------------------------------
