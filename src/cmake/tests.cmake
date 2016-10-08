@@ -17,7 +17,7 @@ add_custom_target(test-verbose-quick
         )
 # --------------------------------------------------------------------
 add_custom_target_wrapper(TARGET Tests
-        DEPENDS Hello Programs
+        DEPENDS Hello Cli
         )
 install_to_destinations(
         DIRECTORY ${CMAKE_SOURCE_DIR}/tests

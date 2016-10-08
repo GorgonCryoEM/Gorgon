@@ -1,5 +1,5 @@
 add_custom_target_wrapper(TARGET Explorer
-        DEPENDS Programs
+        DEPENDS Cli
         )
 install_to_destinations(
         PROGRAMS ${CMAKE_SOURCE_DIR}/cli/explorer.py
