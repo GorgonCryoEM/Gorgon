@@ -9,6 +9,6 @@ mkdir -p $build_dir
 cd $build_dir
 
 cmake $SRC_DIR
-cmake --build ${build_dir} --config Release --target install
+cmake --build ${build_dir} --config Release --target install -- -j
 
 $PYTHON setup.py install
