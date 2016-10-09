@@ -58,20 +58,23 @@ foreach(proj ${EXTERNAL_PROJECTS})
 endforeach()
 
 # --------------------------------------------------------------------
-# Include and link directories, targets, target link libraries
+# Include directories
 # --------------------------------------------------------------------
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
 list(APPEND GORGON_INCLUDE_DIRS
-	${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_SOURCE_DIR}/src
 	${GORGON_EXTERNAL_LIBRARIES_DIR}
 	)
 
 include_directories(${GORGON_INCLUDE_DIRS})
 # --------------------------------------------------------------------
-# Add subdirectories and enable testing
+# Set directory vars
+# --------------------------------------------------------------------
+set(lib_install_dir gorgon)
+set(cli_install_dir cli)
+# --------------------------------------------------------------------
+# Add subdirectory src/ which handles its subdirectories
 # --------------------------------------------------------------------
 add_subdirectory(src)
-include(src/cmake/tests.cmake)
 # --------------------------------------------------------------------
 # C++11 flags
 # --------------------------------------------------------------------
@@ -93,3 +96,7 @@ if(ENABLE_CMAKE_DEBUG_OUTPUT)
       message("LIBS='${dir}'")
     endforeach()
 endif()
+
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/setup.py.in
+        ${CMAKE_BINARY_DIR}/setup.py
+        )

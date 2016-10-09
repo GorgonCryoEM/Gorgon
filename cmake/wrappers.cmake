@@ -30,28 +30,24 @@ function(add_custom_target_wrapper)
         )
 endfunction()
 # --------------------------------------------------------------------
-function(setup_libpy proj)
-    set(proj_low ${${proj}_trgt_name})
-    set(py_proj py${proj_low})
+function(setup_libpy Proj)
+    set(proj ${${Proj}_trgt_name})
+    set(pyproj py${proj})
     
     file(GLOB_RECURSE srcs "*.cpp")
     
-    set(current_pylib "lib${py_proj}")    
+    set(current_pylib "lib${pyproj}")    
     configure_file(${CMAKE_CURRENT_LIST_DIR}/pylib.cpp.in
-                    ${CMAKE_BINARY_DIR}/src/${py_proj}.cpp
+                    ${CMAKE_BINARY_DIR}/src/${pyproj}.cpp
                    )
 
-    add_library(${py_proj} SHARED ${CMAKE_BINARY_DIR}/src/${py_proj}.cpp ${srcs})
+    add_library(${pyproj} SHARED ${CMAKE_BINARY_DIR}/src/${pyproj}.cpp ${srcs})
 
     list(APPEND pyincludes
-                ${CMAKE_SOURCE_DIR}
-                ${Boost_INCLUDE_DIR}
-                ${PYTHON_INCLUDE_DIR}
-                ${GORGON_EXTERNAL_LIBRARIES_DIR}
+                ${CMAKE_CURRENT_SOURCE_DIR}
+                ${GORGON_INCLUDE_DIRS}
                 )
     list(APPEND pylibs
-                ${Boost_LIBRARIES}
-                ${PYTHON_LIBRARY}
                 ${GORGON_LIBRARIES}
                 )
                 
@@ -61,18 +57,19 @@ function(setup_libpy proj)
         set(libsuffix .pyd)
     endif()
 
-    set_target_properties(${py_proj} PROPERTIES
+    set_target_properties(${pyproj} PROPERTIES
                                      PREFIX lib
                                      SUFFIX ${libsuffix}
                                      INCLUDE_DIRECTORIES "${pyincludes}"
                                     )
-    target_link_libraries(${py_proj} ${pylibs})
+    target_link_libraries(${pyproj} ${pylibs})
     
     if(ENABLE_CMAKE_DEBUG_OUTPUT)
-        message("Debug: ${py_proj}")
+        message("Debug: ${pyproj}")
+        message("Current list file: ${CMAKE_CURRENT_LIST_FILE}")
     
-        get_target_property(includes ${py_proj} INCLUDE_DIRECTORIES)
-        get_target_property(libs     ${py_proj} LINK_LIBRARIES)
+        get_target_property(includes ${pyproj} INCLUDE_DIRECTORIES)
+        get_target_property(libs     ${pyproj} LINK_LIBRARIES)
     
         message("includes")
         foreach(i ${includes})
@@ -84,37 +81,34 @@ function(setup_libpy proj)
           message(STATUS "${i}")
         endforeach()
         
-        message("Debug: ${py_proj} END\n")
+        message("Debug: ${pyproj} END\n")
     endif()
     
-    install_to_destinations(TARGETS ${py_proj}
-            DESTINATIONS ${CMAKE_BINARY_DIR}/bin/${proj_low}
-            COMPONENT ${${proj_low}_install_component}
+    install_to_destinations(TARGETS ${pyproj}
+            DESTINATIONS ${CMAKE_BINARY_DIR}/${lib_install_dir}/${proj}
+            COMPONENT ${${proj}_install_component}
             )
             
-    if(WIN32)
-        install_dlls(${proj_low})
-    endif()    
 endfunction()
 # --------------------------------------------------------------------
-function(add_custom_targets_trgt_and_trgt_only proj)
-    add_custom_target(${proj}
-            COMMAND ${CMAKE_COMMAND} -DCOMPONENT=${proj} -P cmake_install.cmake
-            DEPENDS py${${proj}_trgt_name}
+function(add_custom_targets_trgt_and_trgt_only Proj)
+    add_custom_target(${Proj}
+            COMMAND ${CMAKE_COMMAND} -DCOMPONENT=${Proj} -P cmake_install.cmake
+            DEPENDS py${${Proj}_trgt_name}
             )
-    add_custom_target(${proj}-only
-            COMMAND ${CMAKE_COMMAND} -DCOMPONENT=${proj} -P cmake_install.cmake
+    add_custom_target(${Proj}-only
+            COMMAND ${CMAKE_COMMAND} -DCOMPONENT=${Proj} -P cmake_install.cmake
             )
 endfunction()
 # --------------------------------------------------------------------
 function(init)
     set(proj ${CMAKE_CURRENT_SOURCE_DIR})
     string(REGEX REPLACE ".*/" "" proj ${proj})
-    to_title_case(${proj} proj)
-    set_proj_vars(${proj})
-    set(current_trgt_name ${proj} PARENT_SCOPE)
+    to_title_case(${proj} Proj)
+    set_proj_vars(${Proj})
+    set(current_trgt_name ${Proj} PARENT_SCOPE)
     
-    setup_libpy(${proj})
-    add_custom_targets_trgt_and_trgt_only(${proj})
+    setup_libpy(${Proj})
+    add_custom_targets_trgt_and_trgt_only(${Proj})
 endfunction()
 # --------------------------------------------------------------------

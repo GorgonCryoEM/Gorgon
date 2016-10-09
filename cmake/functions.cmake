@@ -19,32 +19,6 @@ function(update_libs_includes libs incs)
     set(GORGON_INCLUDE_DIRS ${GORGON_INCLUDE_DIRS} PARENT_SCOPE)
 endfunction()
 # --------------------------------------------------------------------
-function(add_dll lib)
-    get_filename_component(dll_name ${lib} NAME_WE)
-    get_filename_component(dll_dir  ${lib} DIRECTORY)
-    
-    list(APPEND win_dlls ${dll_dir}/${dll_name}.dll)
-    set(win_dlls ${win_dlls} PARENT_SCOPE)
-endfunction()
-# --------------------------------------------------------------------
-function(rename_target_windows trgt)
-    set_target_properties(${trgt}
-                    PROPERTIES
-                    PREFIX lib
-                    SUFFIX .pyd
-                    )
-endfunction()
-# --------------------------------------------------------------------
-function(install_dlls trgt)
-    set(trgt ${${trgt}_trgt_name})
-    rename_target_windows(py${trgt})
-    
-    install_to_destinations(FILES ${win_dlls}
-            DESTINATIONS ${CMAKE_BINARY_DIR}/bin/${proj_low}
-            COMPONENT ${${trgt}_install_component}
-            )
-endfunction()
-# --------------------------------------------------------------------
 function(to_title_case in out)
     string(LENGTH ${in} len)
     string(SUBSTRING ${in} 0 1 first_letter)
@@ -55,12 +29,12 @@ function(to_title_case in out)
     set(${out} ${word} PARENT_SCOPE)
 endfunction()
 # --------------------------------------------------------------------
-function(set_proj_vars proj)
-    string(TOLOWER ${proj} proj_low)
+function(set_proj_vars Proj)
+    string(TOLOWER ${Proj} proj)
     
-    set( ${proj_low}_trgt_name         ${proj_low} CACHE INTERNAL "")
-    set( ${proj}_trgt_name             ${proj_low} CACHE INTERNAL "")
-    set( ${proj_low}_install_component ${proj}     CACHE INTERNAL "")
-    set( ${proj}_install_component     ${proj}     CACHE INTERNAL "")
+    set( ${proj}_trgt_name         ${proj} CACHE INTERNAL "")
+    set( ${Proj}_trgt_name         ${proj} CACHE INTERNAL "")
+    set( ${proj}_install_component ${Proj} CACHE INTERNAL "")
+    set( ${Proj}_install_component ${Proj} CACHE INTERNAL "")
 endfunction()
 # --------------------------------------------------------------------
