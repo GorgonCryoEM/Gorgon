@@ -1,6 +1,6 @@
 package:
     name: gorgon
-    version: 3.0
+    version: 3.0a
 
 build:
     number: 0
