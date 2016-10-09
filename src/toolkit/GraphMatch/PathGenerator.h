@@ -24,11 +24,11 @@ namespace GraphMatch {
         Graph * graph;
     };
 
-    PathGenerator::PathGenerator(Graph * graph) {
+    inline PathGenerator::PathGenerator(Graph * graph) {
         this->graph = graph;
     }
 
-    void PathGenerator::GenerateGraph(GraphNode * node, char * outFileName)  {
+    inline void PathGenerator::GenerateGraph(GraphNode * node, char * outFileName)  {
         Volume * skeletonVol = graph->skeletonVolume;
         Volume newVol(*skeletonVol);
         int startNode = 0;
@@ -61,7 +61,7 @@ namespace GraphMatch {
         newVol.toMRCFile(outFileName);
     }
 
-    void PathGenerator::GenerateGraph(NodeStub * node, char * outFileName)  {
+    inline void PathGenerator::GenerateGraph(NodeStub * node, char * outFileName)  {
         Volume * skeletonVol = graph->skeletonVolume;
         Volume * newVol = new Volume(*skeletonVol);
 
@@ -94,7 +94,7 @@ namespace GraphMatch {
     }
 
 
-    bool PathGenerator::MarkPath(int startHelix, int startCorner, int endHelix,
+    inline bool PathGenerator::MarkPath(int startHelix, int startCorner, int endHelix,
                                  int endCorner, const Volume & skeletonVol,
                                  Volume & newVol)
     {

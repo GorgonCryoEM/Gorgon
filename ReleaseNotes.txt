@@ -1,3 +1,10 @@
+Version 2.3
+  Code history of legacy Gorgon moved to new repository
+  Wiki page cloned and updated
+  Automated build and distribution, thanks to anaconda.org and conda-forge.github.io
+  Updated Wiki with conda instructions
+  Bug fixes
+	
 Version 2.2.0
   Code moved to GitHub
   Issue reporting system on GitHub to report bugs, request features

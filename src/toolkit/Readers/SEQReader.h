@@ -64,7 +64,7 @@ namespace GraphMatch {
     };
 
 
-    Graph * SEQReader::ReadFile(string fileName)
+    inline Graph * SEQReader::ReadFile(string fileName)
     {
         #ifdef GORGON_DEBUG
             cout << "In SEQReader::ReadFile" << endl;
@@ -76,7 +76,7 @@ namespace GraphMatch {
     }
 
 
-    SEQFileData SEQReader::ReadSeqFileData(string fileName)
+    inline SEQFileData SEQReader::ReadSeqFileData(string fileName)
     {
         //Reading the file for start residue # (possibly), sequence, and predicted SSEs
         ifstream fin(fileName.c_str());
@@ -321,7 +321,7 @@ namespace GraphMatch {
     }
 
 
-    Graph * SEQReader::GetGraphFromSeqFileData(SEQFileData seqFData)
+    inline Graph * SEQReader::GetGraphFromSeqFileData(SEQFileData seqFData)
     {
         vector<SecStruct*> * pStructures = seqFData.GetStructuresVectorPointer();
         if (!pStructures) {

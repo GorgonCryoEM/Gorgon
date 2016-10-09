@@ -5,7 +5,7 @@ function(loop_list list dest)
         endif()
 
         set(var ${${var}})
-        list(APPEND ${dest}    ${var}  )
+        list(APPEND ${dest} ${var})
     endforeach()
     
     set(${dest} ${${dest}} PARENT_SCOPE)
@@ -39,8 +39,8 @@ function(install_dlls trgt)
     set(trgt ${${trgt}_trgt_name})
     rename_target_windows(py${trgt})
     
-    install_wrapper(FILES ${win_dlls}
-            DESTINATIONS ${target_installation_locations}
+    install_to_destinations(FILES ${win_dlls}
+            DESTINATIONS ${CMAKE_BINARY_DIR}/bin/${proj_low}
             COMPONENT ${${trgt}_install_component}
             )
 endfunction()
@@ -58,9 +58,9 @@ endfunction()
 function(set_proj_vars proj)
     string(TOLOWER ${proj} proj_low)
     
-    set( ${proj_low}_trgt_name         ${proj_low}                         CACHE INTERNAL "")
-    set( ${proj}_trgt_name             ${proj_low}                         CACHE INTERNAL "")
-    set( ${proj_low}_install_component ${proj}                             CACHE INTERNAL "")
-    set( ${proj}_install_component     ${proj}                             CACHE INTERNAL "")
+    set( ${proj_low}_trgt_name         ${proj_low} CACHE INTERNAL "")
+    set( ${proj}_trgt_name             ${proj_low} CACHE INTERNAL "")
+    set( ${proj_low}_install_component ${proj}     CACHE INTERNAL "")
+    set( ${proj}_install_component     ${proj}     CACHE INTERNAL "")
 endfunction()
 # --------------------------------------------------------------------

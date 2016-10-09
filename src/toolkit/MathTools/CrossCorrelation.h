@@ -26,7 +26,7 @@ namespace MathTools {
     // If you provide a value >= 1 for slowSize, the function performs
     // bounds-checking on your indices.
     // *****************************************************************************
-    std::complex<float>& getComplexDataAt(float* data, int fastIx, int medIx, int slowIx,
+    inline std::complex<float>& getComplexDataAt(float* data, int fastIx, int medIx, int slowIx,
             int fastSize, int medSize, int slowSize=-1);
 
     // *****************************************************************************
@@ -143,7 +143,7 @@ namespace MathTools {
     // *****************************************************************************
     // getComplexDataAt
     // *****************************************************************************
-    std::complex<float>& getComplexDataAt(float* data, int fastIx, int medIx, int slowIx,
+    inline std::complex<float>& getComplexDataAt(float* data, int fastIx, int medIx, int slowIx,
             int fastSize, int medSize, int slowSize) {
         if (fastSize % 2) //Must be even if it is to hold complex numbers
             throw InvalidComplexNumberArray();
@@ -165,7 +165,7 @@ namespace MathTools {
     // ****************************************************************************
     // cftInPlace
     // ****************************************************************************
-    void cftInPlace(float* cx_conj_of_this, const float* as_is, int array_size) {
+    inline void cftInPlace(float* cx_conj_of_this, const float* as_is, int array_size) {
         float re1, im1;
         float re2, im2;
         for (int i=0; i<array_size; i+=2) {
@@ -183,7 +183,7 @@ namespace MathTools {
     // ****************************************************************************
     // cftOutOfPlace
     // ****************************************************************************
-    float* cftOutOfPlace(const float* cx_conj_of_this, const float* as_is, int array_size) {
+    inline float* cftOutOfPlace(const float* cx_conj_of_this, const float* as_is, int array_size) {
         float* cft = (float*) malloc(sizeof(float)*array_size);
         float re1, im1;
         float re2, im2;
@@ -203,7 +203,7 @@ namespace MathTools {
     // ****************************************************************************
     // mftInPlace
     // ****************************************************************************
-    void mftInPlace(float* cx_conj_of_this, const float* as_is, int array_size) {
+    inline void mftInPlace(float* cx_conj_of_this, const float* as_is, int array_size) {
         float re, im;
         float re1, im1;
         float re2, im2;
@@ -231,7 +231,7 @@ namespace MathTools {
     // ****************************************************************************
     // corrInPlace
     // ****************************************************************************
-    void corrInPlace(float* f, float* g, int fastSizeMinusPadding,
+    inline void corrInPlace(float* f, float* g, int fastSizeMinusPadding,
                             int medSize, int slowSize, bool useMCF, bool center) {
 
         fftInPlace(f, fastSizeMinusPadding, medSize, slowSize);
@@ -262,7 +262,7 @@ namespace MathTools {
     // ****************************************************************************
     // corrOutOfPlace
     // ****************************************************************************
-    float* corrOutOfPlace(float* f, float* g, int fastSize,
+    inline float* corrOutOfPlace(float* f, float* g, int fastSize,
                     int medSize, int slowSize, bool useMCF, bool center) {
 
         int fastIxPadding = (fastSize % 2 ? 1 : 2);

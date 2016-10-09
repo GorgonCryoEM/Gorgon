@@ -3,7 +3,6 @@ from libpytoolkit import SSERenderer, SSEEngine
 from Explorer.base_viewer import BaseViewer
 # from sse_sequence_predictor_form import SSESequencePredictorForm
 from .helix_correspondence_finder_form import SSEHelixCorrespondenceFinderForm
-# from libpyGORGON import SSECorrespondenceEngine, SSECorrespondenceResult
 # from .volume_sse_builder_form import VolumeSSEBuilderForm
 from Toolkit import SSEHelixCorrespondence
 

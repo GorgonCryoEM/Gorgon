@@ -1,17 +1,13 @@
-
 file(GLOB progs "${CMAKE_SOURCE_DIR}/bin/*.py")
 
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/bin/Toolkit ${CMAKE_SOURCE_DIR}/bin/Core
-        DESTINATION ${CMAKE_BINARY_DIR}/bin
-        COMPONENT "Programs"
-#        DEPENDS Hello Toolkit
-        )
-
 add_custom_target_wrapper(TARGET Programs
-        PROGRAMS ${progs}
-        DESTINATIONS ${CMAKE_BINARY_DIR}/bin
-        COMPONENT "Programs"
         DEPENDS Hello Toolkit #Core
+        )
+install_to_destinations(
+        PROGRAMS ${progs}
+        DIRECTORY ${CMAKE_SOURCE_DIR}/bin/Toolkit ${CMAKE_SOURCE_DIR}/bin/Core
+        DESTINATIONS ${CMAKE_BINARY_DIR}/bin
+        COMPONENT Programs
         )
         
 add_custom_target(Programs-only
