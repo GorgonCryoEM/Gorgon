@@ -9,9 +9,9 @@ from OpenGL.GLUT import *
 import sys
 import argparse
 
-from libpytoolkit import *
-from gorgon.explorer import MainWindowForm
-from gorgon.explorer import Widget3
+from gorgon.toolkit.libpytoolkit import *
+from gorgon.gui.explorer import MainWindowForm
+from gorgon.gui.explorer import Widget3
 
 
 class GLWidget(QtOpenGL.QGLWidget):
