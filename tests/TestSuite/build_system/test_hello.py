@@ -1,25 +1,25 @@
 import unittest
 
-import libpyhello as gorgon
+import libpyhello as libpy
 
 
 class Hello(unittest.TestCase):
 
 	def test(self):
-			assert gorgon.hello() == 'Hello World!'
+			assert libpy.hello() == 'Hello World!'
 	
 	def hello_print(self):
 	    """ Prints Hello World!
 	
-	    >>> gorgon.hello()
+	    >>> libpy.hello()
 	    'Hello World!'
 	    """
-	    print gorgon.hello()
+	    print libpy.hello()
 	
 	def hello_return(self):
 	    """ Returns Hello World!
 	
-	    >>> gorgon.hello()
+	    >>> libpy.hello()
 	    'Hello World!'
 	    """
-	    return gorgon.hello()
+	    return libpy.hello()
