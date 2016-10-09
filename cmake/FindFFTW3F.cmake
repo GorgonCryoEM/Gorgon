@@ -8,17 +8,13 @@ IF(NOT FFTW3F_FOUND)
 FIND_PATH(
     FFTW3F_INCLUDE_DIRS
     NAMES fftw3.h
-    HINTS $ENV{FFTW3_DIR}/include
-    PATHS /usr/local/include
-          /usr/include
 )
 
+set(FFT_LIB $ENV{LIBRARY_LIB})
 FIND_LIBRARY(
     FFTW3F_LIBRARIES
-    NAMES fftw3f libfftw3f
-    HINTS $ENV{FFTW3_DIR}/lib
-    PATHS /usr/local/lib
-          /usr/lib
+    NAMES fftw3f libfftw3f libfftw3f-3
+    PATHS ${FFT_LIB}
 )
 
 SET(FFTW3F_FOUND "NO")

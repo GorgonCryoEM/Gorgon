@@ -1,10 +1,11 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.4)
 PROJECT(Gorgon
-        VERSION 2.2.3
+        VERSION 3.0
         LANGUAGES CXX
         )
 
 include(cmake/functions.cmake)
+include(cmake/wrappers.cmake)
 include(cmake/Debug.cmake)
 
 include(cmake/MacOSX/init.cmake)
@@ -69,9 +70,8 @@ include_directories(${GORGON_INCLUDE_DIRS})
 # --------------------------------------------------------------------
 # Add subdirectories and enable testing
 # --------------------------------------------------------------------
-enable_testing()
-
 add_subdirectory(src)
+include(src/cmake/tests.cmake)
 # --------------------------------------------------------------------
 # C++11 flags
 # --------------------------------------------------------------------
@@ -93,8 +93,3 @@ if(ENABLE_CMAKE_DEBUG_OUTPUT)
       message("LIBS='${dir}'")
     endforeach()
 endif()
-
-# --------------------------------------------------------------------
-# Install Step
-# --------------------------------------------------------------------
-# --------------------------------------------------------------------
