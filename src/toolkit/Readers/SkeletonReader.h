@@ -10,6 +10,7 @@
 #include <list>
 //#include "Core/GlobalConstants.h"
 #include "GraphMatch/Graph.h"
+#include "Core/Round.h"
 
 using namespace std;
 using namespace SkeletonMaker;
