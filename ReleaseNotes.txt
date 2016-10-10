@@ -1,3 +1,7 @@
+Version 3.0a
+  Command-line toolkit
+  Separated gui
+	
 Version 2.3
   Code history of legacy Gorgon moved to new repository
   Wiki page cloned and updated
