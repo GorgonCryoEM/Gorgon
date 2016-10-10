@@ -28,7 +28,7 @@ namespace GraphMatch {
     const int PRIORITYQUEUESIZE = 50000000;
     const int RESULT_COUNT = 35;
     const int MAX_NODES = 60;
-    const int MAXINT = 2147483647;
+    const int MAXINTT = 2147483647;
     const unsigned int MAXUNSIGNEDINT = 4294967295;
     const double MAXDOUBLE = 1.7E308;
     const int GRAPHEDGE_HELIX = 0;
