@@ -1,6 +1,6 @@
 package:
     name: gorgon
-    version: 3.0
+    version: 3.0a
 
 build:
     number: 0
@@ -17,6 +17,7 @@ requirements:
         - fftw
         - freeglut  # [not osx]
         - setuptools
+        - toolchain  # [not win]
     run:
         - python 2.7.*
         - boost         # [not win]
@@ -30,3 +31,14 @@ requirements:
 
 about:
   summary: Gorgon, an interactive molecular modeling system
+  home:  http://gorgon.wustl.edu
+  license_file: LICENSE.txt
+  description: |
+    Gorgon is an interactive molecular modeling system 
+    specifically geared towards cryo-EM and other low resolution 
+    structures of macromolecular complexes. The long term goal of 
+    the gorgon project is to be able to address to every part of 
+    the molecular modeling pipeline starting from the initial 
+    volumetric reconstruction of the complex all the way to the 
+    final placement of each individual atom.
+  dev_url: https://github.com/GorgonCryoEM/Gorgon

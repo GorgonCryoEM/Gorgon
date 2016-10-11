@@ -11,7 +11,7 @@
 
 #include "Foundation/Pair.h"
 //#include "Structures.h"
-//#include <ctime>
+#include <ctime>
 ////#include <SkeletonMaker/PriorityQueue.h>
 #include "ProteinMorph/SSEResult.h"
 
@@ -336,7 +336,7 @@ namespace GraphMatch {
         double typeCost = 0;
 
         // if no edge exists between j and p
-        if(patternGraph.adjacencyMatrix[j - 1][p - 1][1] == MAXINT)
+        if(patternGraph.adjacencyMatrix[j - 1][p - 1][1] == MAXINTT)
             jpCost = 1000;
         else {
             // if edge exists or if j == p
@@ -344,7 +344,7 @@ namespace GraphMatch {
         }
 
         // if no edge exists between qj and qp
-        if(baseGraph.adjacencyMatrix[qj - 1][qp - 1][1] == MAXINT)
+        if(baseGraph.adjacencyMatrix[qj - 1][qp - 1][1] == MAXINTT)
             qjqpCost = 1000;
         else {
             // if edge exists or if qj == qp
@@ -842,13 +842,13 @@ namespace GraphMatch {
         for(int i = 0; i < baseGraph.nodeCount; i++) {
             for(int j = 0; j < baseGraph.nodeCount; j++) {
                 // base graph
-                if(   baseGraph.adjacencyMatrix[i][j][1] != MAXINT
+                if(   baseGraph.adjacencyMatrix[i][j][1] != MAXINTT
                    && baseGraph.adjacencyMatrix[i][j][0] == GRAPHEDGE_HELIX
                   )
                 {
                     baseGraph.setCost(i+1, j+1, baseGraph.adjacencyMatrix[i][j][1] / HELIX_C_ALPHA_TO_ANGSTROMS);
                 }
-                else if(baseGraph.adjacencyMatrix[i][j][1] != MAXINT)
+                else if(baseGraph.adjacencyMatrix[i][j][1] != MAXINTT)
                     baseGraph.setCost(i + 1, j + 1, baseGraph.adjacencyMatrix[i][j][1] / LOOP_C_ALPHA_TO_ANGSTROMS);
 
                 // euclidean distance matrix
@@ -900,7 +900,7 @@ namespace GraphMatch {
         printf("\tNormalizing the base graph sheets from voxels to scaled voxels\nNormalized Graph:\n");
 #endif
         for(int i = 0; i < baseGraph.nodeCount; i++) {
-            if(baseGraph.adjacencyMatrix[i][i][1] != MAXINT && baseGraph.adjacencyMatrix[i][i][0] == GRAPHNODE_SHEET) {
+            if(baseGraph.adjacencyMatrix[i][i][1] != MAXINTT && baseGraph.adjacencyMatrix[i][i][0] == GRAPHNODE_SHEET) {
                 // scale the sheet weight to the # of amino acids
                 baseGraph.setCost(i + 1, baseGraph.nodeWeights[i] * ratio);
                 // take sqrt for matching algorithm

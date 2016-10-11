@@ -49,13 +49,6 @@ set( EXTERNAL_PROJECTS
         FFTW3F
         )
 
-#Conda prefix
-if(NOT WIN32)
-    set(CMAKE_PREFIX_PATH $ENV{PREFIX})
-else()
-    set(CMAKE_PREFIX_PATH $ENV{LIBRARY_PREFIX})
-endif()
-
 foreach(proj ${EXTERNAL_PROJECTS})
     include(cmake/${proj}.cmake)
 endforeach()
@@ -78,13 +71,6 @@ set(cli_install_dir cli)
 # Add subdirectory src/ which handles its subdirectories
 # --------------------------------------------------------------------
 add_subdirectory(src)
-# --------------------------------------------------------------------
-# C++11 flags
-# --------------------------------------------------------------------
-#set(cxx11_flags "-std=c++0x --stdlib=libc++")
-#list( APPEND CMAKE_CXX_FLAGS           ${cxx11_flags})
-#list( APPEND CMAKE_SHARED_LINKER_FLAGS ${cxx11_flags})
-
 # --------------------------------------------------------------------
 # Some debug output
 # --------------------------------------------------------------------

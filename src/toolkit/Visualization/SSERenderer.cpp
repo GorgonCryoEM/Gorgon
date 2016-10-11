@@ -249,7 +249,7 @@ namespace Visualization {
             }
 
             for(unsigned int j = 0; j < sheets[i]->polygons.size(); j++) {
-                Polygon pp = sheets[i]->polygons[j];
+                GraphMatch::Polygon pp = sheets[i]->polygons[j];
                 Vec3U ppp;
                 ppp[0] = indices[pp.pointIndex1];
                 ppp[1] = indices[pp.pointIndex2];
