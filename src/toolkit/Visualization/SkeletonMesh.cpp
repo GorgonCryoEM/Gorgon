@@ -6,6 +6,9 @@
  */
 
 #include "SkeletonMesh.h"
+#include <vector>
+
+using namespace std;
 
 namespace Core {
 
@@ -24,7 +27,7 @@ namespace Core {
         cout<<"src.getSize(): "<<src.getSize()<<endl;
 //#endif
 
-        int lVertices[src.getSize()];
+        vector<int> lVertices(src.getSize());
 
         fromVolume = true;
         size = src.getSizeObj();
