@@ -49,13 +49,6 @@ set( EXTERNAL_PROJECTS
         FFTW3F
         )
 
-#Conda prefix
-if(NOT WIN32)
-    set(CMAKE_PREFIX_PATH $ENV{PREFIX})
-else()
-    set(CMAKE_PREFIX_PATH $ENV{LIBRARY_PREFIX})
-endif()
-
 foreach(proj ${EXTERNAL_PROJECTS})
     include(cmake/${proj}.cmake)
 endforeach()

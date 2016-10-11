@@ -10,6 +10,7 @@
 #include <list>
 //#include "Core/GlobalConstants.h"
 #include "GraphMatch/Graph.h"
+#include "Core/Round.h"
 
 using namespace std;
 using namespace SkeletonMaker;
@@ -51,7 +52,7 @@ namespace GraphMatch {
     // returns the graph node index for the corner of helix/sheet helixNum nearest to point point.
     inline int getGraphIndex(const vector<Shape*> & helixes, int helixNum, const Point3Pair & point) {
         int node = 1;
-        double minDistance = MAXINT;
+        double minDistance = MAXINTT;
         double dist;
         // find nearest corner to the input point. node = 1 or 2 for a helix.
         for(int i = 0; i < (int)helixes[helixNum]->cornerCells.size(); i++) {
@@ -1003,7 +1004,7 @@ namespace GraphMatch {
         // positions will store the path
         queue<Vec3I> positions;
 
-        int shortestPathLength = MAXINT;
+        int shortestPathLength = MAXINTT;
         vector<Vec3I> shortestPath;
 
         for (unsigned int s = 0; s < nodes[startIx].size(); s++) {
@@ -1095,7 +1096,7 @@ namespace GraphMatch {
                 }
             }
         }
-        if (shortestPathLength < MAXINT) {
+        if (shortestPathLength < MAXINTT) {
             graph->paths[startIx][endIx] = shortestPath;
         }
 

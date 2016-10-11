@@ -6,6 +6,7 @@
  */
 
 #include "SSEHunter.h"
+#include "Core/Round.h"
 
 namespace Protein_Morph {
 

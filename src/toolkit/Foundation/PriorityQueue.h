@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <queue>
+#include <functional>
 
 namespace SkeletonMaker {
 

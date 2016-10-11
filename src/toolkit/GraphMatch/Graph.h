@@ -76,7 +76,7 @@ namespace GraphMatch {
         for(int i = 0; i < nodeCount; i++) {
             for(int j = 0; j < nodeCount; j++) {
                 adjacencyMatrix[i][j][0] = 3;
-                adjacencyMatrix[i][j][1] = MAXINT;
+                adjacencyMatrix[i][j][1] = MAXINTT;
             }
         }
         pdbStructures.clear();
@@ -104,7 +104,7 @@ namespace GraphMatch {
     }
 
     inline bool Graph::edgeExists(int n, int m) {
-        return fabs(adjacencyMatrix[n][m][1] - MAXINT) > 0.01;
+        return fabs(adjacencyMatrix[n][m][1] - MAXINTT) > 0.01;
     }
 
     inline int Graph::getType(int i, int j) {
@@ -112,7 +112,7 @@ namespace GraphMatch {
     }
 
     inline double Graph::getCost(int i, int j) {
-        if(adjacencyMatrix[i-1][j-1][1] == MAXINT) {
+        if(adjacencyMatrix[i-1][j-1][1] == MAXINTT) {
             return 1000;
         } else {
             return adjacencyMatrix[i-1][j-1][1];
@@ -215,7 +215,7 @@ namespace GraphMatch {
                     temp = ' ';
                 }
 
-                if(adjacencyMatrix[i][j][1] == MAXINT) {
+                if(adjacencyMatrix[i][j][1] == MAXINTT) {
 //                    printf(" %c         \t|", temp);
                 } else {
                     //printf(" %c %d\t|", temp, (int)(adjacencyMatrix[i][j][1] + 0.5));
@@ -232,7 +232,7 @@ namespace GraphMatch {
 //            printf("   %d\t", i+1);
 //            for(int j = 0; j < nodeCount; j++) {
 //                temp = 'E';
-//                if(euclideanMatrix[i][j] == MAXINT) {
+//                if(euclideanMatrix[i][j] == MAXINTT) {
 //                    printf(" %c         \t|", temp);
 //                } else {
 //                    printf(" %c %f\t|", temp, euclideanMatrix[i][j]);
@@ -258,7 +258,7 @@ namespace GraphMatch {
                 } else {
                     temp = ' ';
                 }
-                if(nodeWeights[i] == MAXINT) {
+                if(nodeWeights[i] == MAXINTT) {
                     printf(" %c         \t|", temp);
                 } else {
                     printf(" %c %f\t|", temp, nodeWeights[i]);
@@ -365,7 +365,7 @@ namespace GraphMatch {
                 euclideanMatrix[i][j] = minDist;
 
                 // if the distance is less than EUCLIDEAN_DISTANCE_THRESHOLD, store this in the graph as a Euclidian loop edge
-                if((adjacencyMatrix[i][j][1] == MAXINT) && (euclideanMatrix[i][j] <= EUCLIDEAN_DISTANCE_THRESHOLD)) {
+                if((adjacencyMatrix[i][j][1] == MAXINTT) && (euclideanMatrix[i][j] <= EUCLIDEAN_DISTANCE_THRESHOLD)) {
                     adjacencyMatrix[i][j][1] = euclideanMatrix[i][j];
                     adjacencyMatrix[i][j][0] = GRAPHEDGE_LOOP_EUCLIDEAN;
                     adjacencyMatrix[j][i][1] = euclideanMatrix[i][j];
@@ -521,13 +521,13 @@ namespace GraphMatch {
                         // remove last row
                         for (int m = 0; m <= lastRowColumn; m++) {
                             adjacencyMatrix[lastRowColumn][m][0] = 3;
-                            adjacencyMatrix[lastRowColumn][m][1] = MAXINT;
+                            adjacencyMatrix[lastRowColumn][m][1] = MAXINTT;
                             euclideanMatrix[lastRowColumn][m] = 0;
                         }
                         // remove last column
                         for (int m = 0; m <= lastRowColumn; m++) {
                             adjacencyMatrix[m][lastRowColumn][0] = 3;
-                            adjacencyMatrix[m][lastRowColumn][1] = MAXINT;
+                            adjacencyMatrix[m][lastRowColumn][1] = MAXINTT;
                             euclideanMatrix[m][lastRowColumn] = 0;
                         }
 
