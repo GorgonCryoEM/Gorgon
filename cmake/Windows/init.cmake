@@ -1,0 +1,9 @@
+if(WIN32)
+    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
+    set(BUILD_SHARED_LIBS TRUE)
+    
+    
+    if(MSVC AND GORGON_TARGET_ARCH EQUAL 64)
+    	ADD_DEFINITIONS(/bigobj)
+    endif()
+endif()

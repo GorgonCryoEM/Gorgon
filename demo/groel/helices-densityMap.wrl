@@ -1,0 +1,139 @@
+#VRML V2.0 utf8
+Group {
+ children [
+ Transform {
+  translation 12.720000 1.060000 -2.120000
+  rotation 0.000000 -0.000000 1.000000 0.927295
+  children [
+   Shape {
+    appearance 
+     Appearance {
+      material Material {
+       emissiveColor 0 0.5 0
+       }
+     }
+    geometry
+     Cylinder {
+      height 10.600000
+      radius 2.5
+     }
+   }
+  ]
+ }
+ ]
+}
+Group {
+ children [
+ Transform {
+  translation 0.530000 -6.890000 -2.650000
+  rotation 0.645942 0.000000 -0.763386 1.960796
+  children [
+   Shape {
+    appearance 
+     Appearance {
+      material Material {
+       emissiveColor 0 0.5 0
+       }
+     }
+    geometry
+     Cylinder {
+      height 19.516670
+      radius 2.5
+     }
+   }
+  ]
+ }
+ ]
+}
+Group {
+ children [
+ Transform {
+  translation 0.000000 -9.540000 12.190000
+  rotation -1.000000 0.000000 0.000000 0.756835
+  children [
+   Shape {
+    appearance 
+     Appearance {
+      material Material {
+       emissiveColor 0 0.5 0
+       }
+     }
+    geometry
+     Cylinder {
+      height 26.244367
+      radius 2.5
+     }
+   }
+  ]
+ }
+ ]
+}
+Group {
+ children [
+ Transform {
+  translation -12.190000 -9.540000 8.480000
+  rotation 0.678280 0.000000 -0.734803 2.506361
+  children [
+   Shape {
+    appearance 
+     Appearance {
+      material Material {
+       emissiveColor 0 0.5 0
+       }
+     }
+    geometry
+     Cylinder {
+      height 31.605069
+      radius 2.5
+     }
+   }
+  ]
+ }
+ ]
+}
+Group {
+ children [
+ Transform {
+  translation -11.660000 14.840000 -7.950000
+  rotation 0.384615 0.000000 -0.923077 1.272297
+  children [
+   Shape {
+    appearance 
+     Appearance {
+      material Material {
+       emissiveColor 0 0.5 0
+       }
+     }
+    geometry
+     Cylinder {
+      height 14.417559
+      radius 2.5
+     }
+   }
+  ]
+ }
+ ]
+}
+Group {
+ children [
+ Transform {
+  translation -11.660000 15.370000 -16.960000
+  rotation -0.707107 0.000000 0.707107 2.484542
+  children [
+   Shape {
+    appearance 
+     Appearance {
+      material Material {
+       emissiveColor 0 0.5 0
+       }
+     }
+    geometry
+     Cylinder {
+      height 14.725991
+      radius 2.5
+     }
+   }
+  ]
+ }
+ ]
+}

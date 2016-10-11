@@ -1,0 +1,10 @@
+#include <boost/python.hpp>
+#include "hello.h"
+
+using namespace boost::python;
+
+BOOST_PYTHON_MODULE(@current_pylib@)
+{
+    def("hello", hello);
+    def("platform", platform);
+}

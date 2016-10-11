@@ -1,0 +1,662 @@
+#include <boost/python.hpp>
+
+#include "Core/volume.h"
+#include "Visualization/SkeletonRenderer.h"
+#include "ProteinMorph/SSEHunter.h"
+#include <MathTools/Vector3.h>
+#include "ProteinMorph/CAlpha.h"
+#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
+#include "ProteinMorph/SSEEngine.h"
+#include "GraphMatch/IBackEnd.h"
+#include "GraphMatch/PDBBond.h"
+#include "Readers/SEQReader.h"
+#include "Visualization/RendererBase.h"
+#include "Core/MinMax.h"
+#include "Visualization/Shapes.h"
+#include "Visualization/CAlphaRenderer.h"
+#include "Visualization/SSERenderer.h"
+#include "Visualization/VolumeRenderer.h"
+#include "MathTools/LinearSolver.h"
+#include <boost/python/to_python_converter.hpp>
+
+using namespace SkeletonMaker;
+using namespace Protein_Morph;
+using namespace Visualization;
+
+using namespace boost::python;
+namespace python = boost::python;
+
+
+
+template <class T>
+struct vector_from_python {
+    vector_from_python() {
+        python::converter::registry::push_back(&convertible, &construct, python::type_id<vector<T> >());
+    }
+
+    static void* convertible(PyObject* obj_ptr) {
+        if (!(PyList_Check(obj_ptr) || PyTuple_Check(obj_ptr) || PyIter_Check(obj_ptr)  || PyRange_Check(obj_ptr))) {
+            return 0;
+        }
+        return obj_ptr;
+    }
+
+
+    static void construct(PyObject* obj_ptr, python::converter::rvalue_from_python_stage1_data* data) {
+        void* storage = ((python::converter::rvalue_from_python_storage<vector<T> >*)data)->storage.bytes;
+        new (storage) vector<T>();
+        data->convertible = storage;
+        vector<T>& result = *((vector<T>*) storage);
+        python::handle<> obj_iter(PyObject_GetIter(obj_ptr));
+        while(1) {
+            python::handle<> py_elem_hdl(python::allow_null(PyIter_Next(obj_iter.get())));
+            if (PyErr_Occurred()) {
+                python::throw_error_already_set();
+            }
+            if (!py_elem_hdl.get()) {
+                break;
+            }
+
+            python::object py_elem_obj(py_elem_hdl);
+            python::extract<T> elem_proxy(py_elem_obj);
+            result.push_back(elem_proxy());
+        }
+    }
+};
+
+BOOST_PYTHON_MODULE(@current_pylib@)
+{
+//    vector_from_python<float>();
+    class_<std::vector<float> >("std::vector<float>")
+            .def(vector_indexing_suite<std::vector<float> >() );
+    class_<std::vector<std::vector<float> > >("std::vector<std::vector<float> >")
+            .def(vector_indexing_suite<std::vector<std::vector<float> > >() );
+    
+    class_<std::vector<unsigned long long> >("std::vector<unsigned long long>")
+            .def(vector_indexing_suite<std::vector<unsigned long long> >() );
+
+    class_<std::vector<Vec3F> >("std::vector<GraphMatch::Vector3<float> >")
+            .def(vector_indexing_suite<std::vector<Vec3F> >() );
+
+//    class_<std::vector<int> >("std::vector<int>")
+//            .def(vector_indexing_suite<std::vector<int> >() );
+//    class_<std::vector<std::vector<int> > >("std::vector<std::vector<int> >")
+//            .def(vector_indexing_suite<std::vector<std::vector<int> > >() );
+
+//    vector_from_python< std::vector<float> >();
+
+//    vector_from_python<int>();
+//    vector_from_python< std::vector<int> >();
+//
+//    vector_from_python<bool>();
+//    vector_from_python< std::vector<bool> >();
+//
+//    vector_from_python<unsigned long long>();
+
+    vector_from_python<Vec3F>();
+    vector_from_python< std::vector<Vec3F> >();
+//
+//
+////  tuple3_to_python<Vec3I>();
+////  tuple3_to_python<Vec3F>();
+//    tuple3_from_python<Vec3I, int>();
+//    tuple3_from_python<Vec3F, float>();
+//
+
+    void (Volume::*setSpacing)(float, float, float) = &Volume::setSpacing;
+    void (Volume::*setOrigin)(float, float, float) = &Volume::setOrigin;
+  class_<Volume>("Volume", init<>())
+      .def("getOriginX", &Volume::getOriginX)
+      .def("getOriginY", &Volume::getOriginY)
+      .def("getOriginZ", &Volume::getOriginZ)
+      .def("getSizeX", &Volume::getSizeX)
+      .def("getSizeY", &Volume::getSizeY)
+      .def("getSizeZ", &Volume::getSizeZ)
+      .def("getSize", &Volume::getSize)
+      .def("getSize", &Volume::cmp)
+      .def("setSpacing", setSpacing)
+      .def("setOrigin", setOrigin)
+      .def("getSpacingX", &Volume::getSpacingX)
+      .def("getSpacingY", &Volume::getSpacingY)
+      .def("getSpacingZ", &Volume::getSpacingZ)
+//      .def("getMin", &Volume::getMin)
+//      .def("getMax", &Volume::getMax)
+//      .def("getDataAt", getDataAt1)
+      .def("buildHistogram", &Volume::buildHistogram)
+      .def("getHistogramBinValue", &Volume::getHistogramBinValue)
+//
+      .def("normalizeVolume", &Volume::Normalize)
+//        .def("downsampleVolume", &Volume::DownsampleVolume)
+//        .def("cropVolume", &Volume::CropVolume)
+      .def("performBinarySkeletonizationJu2007", &Volume::binarySkeletonization)
+      .def("performGrayscaleSkeletonizationAbeysinghe2008", &Volume::grayscaleSkeletonization)     
+//        .def("performPreservingGrayscaleSkeletonizationAbeysinghe2008", &Volume::PerformPreservingGrayscaleSkeletonizationAbeysinghe2008, return_value_policy<reference_existing_object>())     
+      .def("getMinDensity", &Volume::getMin)
+      .def("getMaxDensity", &Volume::getMax)
+      .def("setVolume", &Volume::setVolume)
+      .def("getVolume", &Volume::getVolume, return_value_policy<reference_existing_object>())      
+//      .def("saveFile", &Volume::SaveFile)
+      .def("loadFile", &Volume::load)
+      .def("saveFile", &Volume::save)
+      .def("__str__", &Volume::str)
+      .def("out", &Volume::print)
+
+  ;
+  
+//  BOOST_PYTHON_FUNCTION_OVERLOADS(cylinder_overloads, drawCylinder, 3, 5)
+    def("drawSphere",   drawSphere<Vec3F>);
+    def("drawSphere",   drawSphere<Vec3D>);
+    def("drawSphere",   drawSphere<Vec3I>);
+    def("drawCylinder", drawCylinder);
+//    def("drawCylinder", drawCylinder, cylinder_overloads());
+    def("drawLine",     drawLine);
+  
+  class_<RendererBase>("RendererBase", init<>())
+       .def("getSpacingX", &RendererBase::getSpacingX)
+       .def("getSpacingY", &RendererBase::getSpacingY)
+       .def("getSpacingZ", &RendererBase::getSpacingZ)
+       .def("getOriginX",  &RendererBase::getOriginX)
+       .def("getOriginY",  &RendererBase::getOriginY)
+       .def("getOriginZ",  &RendererBase::getOriginZ)
+       .def("getMinPos", &RendererBase::getMinPos)
+       .def("getMaxPos", &RendererBase::getMaxPos)
+  ;
+  
+  class_<VolumeRenderer, bases<Volume, RendererBase> >("VolumeRenderer", init<>())
+        .def("draw", &VolumeRenderer::draw)
+//        .def("drawBoundingBox", &VolumeRenderer::drawBoundingBox)
+//        .def("enableDraw", &VolumeRenderer::enableDraw)
+//        .def("loadFile", &VolumeRenderer::load)
+//        .def("loadFileRAW", &VolumeRenderer::LoadFileRAW)
+//        .def("saveFile", &VolumeRenderer::save)
+//        .def("unload", &VolumeRenderer::unload)
+//        .def("selectionRotate", &VolumeRenderer::selectionRotate)
+//        .def("selectionObjectCount", &VolumeRenderer::selectionObjectCount)
+//        .def("selectionCenterOfMass", &VolumeRenderer::selectionCenterOfMass)
+//        .def("selectionMove", &VolumeRenderer::selectionMove)
+//        .def("selectionClear", &VolumeRenderer::selectionClear)     
+//        .def("selectionToggle", &VolumeRenderer::selectionToggle)   
+//        .def("getSupportedLoadFileFormats", &VolumeRenderer::getSupportedLoadFileFormats)
+//        .def("getSupportedSaveFileFormats", &VolumeRenderer::getSupportedSaveFileFormats)
+        .def("getMinPos", &VolumeRenderer::getMinPos)
+        .def("getMaxPos", &VolumeRenderer::getMaxPos)
+//        .def("getVolume", &VolumeRenderer::GetVolume, return_value_policy<reference_existing_object>())     
+//        .def("getSurfaceValue", &VolumeRenderer::getSurfaceValue)
+//        .def("get3DCoordinates", &VolumeRenderer::get3DCoordinates)
+        .def("setSurfaceValue", &VolumeRenderer::setSurfaceValue)       
+        .def("setMaxSurfaceValue", &VolumeRenderer::setMaxSurfaceValue)     
+        .def("setSampleInterval", &VolumeRenderer::setSampleInterval)
+        .def("setDisplayRadius", &VolumeRenderer::setDisplayRadius)
+        .def("setDisplayRadiusOrigin", &VolumeRenderer::setDisplayRadiusOrigin)     
+//        .def("setCuttingPlane", &VolumeRenderer::setCuttingPlane)
+        .def("setViewingType", &VolumeRenderer::setViewingType)
+//        .def("cropVolume", &VolumeRenderer::CropVolume)
+//        .def("performBinarySkeletonizationJu2007", &VolumeRenderer::PerformBinarySkeletonizationJu2007)       
+//        .def("performGrayscaleSkeletonizationAbeysinghe2008", &VolumeRenderer::PerformGrayscaleSkeletonizationAbeysinghe2008)     
+//        .def("performPreservingGrayscaleSkeletonizationAbeysinghe2008", &VolumeRenderer::PerformPreservingGrayscaleSkeletonizationAbeysinghe2008, return_value_policy<reference_existing_object>())     
+        .def("useDisplayRadius", &VolumeRenderer::useDisplayRadius)
+//        .def("performSmoothLaplacian", &VolumeRenderer::performSmoothLaplacian)     
+//        .def("setObjectSpecificColoring", &VolumeRenderer::setObjectSpecificColoring)
+//        .def("updateBoundingBox", &VolumeRenderer::updateBoundingBox)
+//        .def("clearOtherHighlights", &VolumeRenderer::clearOtherHighlights)
+        .def("printVertices", &VolumeRenderer::printVertices)
+    ;
+
+  class_<SkeletonMesh, bases<Volume> >("SkeletonMesh", init<>())
+  ;
+  
+  void (SkeletonRenderer::*load)(string fileName) = &SkeletonRenderer::load;
+  
+  class_< SkeletonRenderer, bases<Volume, RendererBase> >("SkeletonRenderer", init<>())
+      .def("draw", &SkeletonRenderer::draw)
+//      .def("getMinPos", &SkeletonRenderer::getMinPos)
+//      .def("getMaxPos", &SkeletonRenderer::getMaxPos)
+//      .def("drawBoundingBox", &SkeletonRenderer::DrawBoundingBox)
+//      .def("loadFile", load)
+      .def("loadVolume", &SkeletonRenderer::loadVolume)
+//      .def("saveFile", &SkeletonRenderer::SaveFile)
+//      .def("unload", &SkeletonRenderer::Unload)
+//      .def("selectionRotate", &SkeletonRenderer::selectionRotate)
+//      .def("selectionObjectCount", &SkeletonRenderer::selectionObjectCount)
+//      .def("selectionCenterOfMass", &SkeletonRenderer::selectionCenterOfMass)
+//      .def("selectionMove", &SkeletonRenderer::selectionMove)
+//      .def("selectionClear", &SkeletonRenderer::selectionClear)       
+//      .def("selectionToggle", &SkeletonRenderer::selectionToggle) 
+//      .def("performSmoothLaplacian", &SkeletonRenderer::performSmoothLaplacian)
+//      .def("getSupportedLoadFileFormats", &SkeletonRenderer::getSupportedLoadFileFormats)
+//      .def("getSupportedSaveFileFormats", &SkeletonRenderer::getSupportedSaveFileFormats)
+//      .def("getMin", &SkeletonRenderer::getMin)
+//      .def("getMax", &SkeletonRenderer::getMax)
+//      .def("getMin", &RendererBase::getMin)
+//      .def("getMax", &RendererBase::getMax)
+      .def("getMesh", &SkeletonRenderer::getMesh)
+//      .def("get3DCoordinates", &SkeletonRenderer::get3DCoordinates)
+      .def("intersectMeshAndSphere", &SkeletonRenderer::intersectMeshAndSphere)
+      .def("getIntersectionPoint", &SkeletonRenderer::getIntersectionPoint)
+      .def("setLineThickness", &SkeletonRenderer::setLineThickness)
+//      .def("setSpacing", &SkeletonRenderer::setSpacing)
+//      .def("getSpacingX", &SkeletonRenderer::getSpacingX)
+//      .def("getSpacingY", &SkeletonRenderer::getSpacingY)
+//      .def("getSpacingZ", &SkeletonRenderer::getSpacingZ)
+//      .def("setOrigin", &SkeletonRenderer::setOrigin)
+//      .def("getOriginX", &SkeletonRenderer::getOriginX)
+//      .def("getOriginY", &SkeletonRenderer::getOriginY)
+//      .def("getOriginZ", &SkeletonRenderer::getOriginZ)
+//      .def("setDisplayStyle", &SkeletonRenderer::setDisplayStyle)
+//      .def("setObjectSpecificColoring", &SkeletonRenderer::setObjectSpecificColoring)
+//      .def("updateBoundingBox", &SkeletonRenderer::UpdateBoundingBox)
+//      .def("setCuttingPlane", &RendererBase::setCuttingPlane)
+  ;
+  
+  class_< SSERenderer, bases<RendererBase> >("SSERenderer", init<>())
+      .def("draw", &SSERenderer::draw)
+//      .def("drawBoundingBox", &SSERenderer::DrawBoundingBox)
+      .def("loadHelixFile", &SSERenderer::loadHelixFile)
+      .def("loadSheetFile", &SSERenderer::loadSheetFile)
+      .def("saveHelixFile", &SSERenderer::saveHelixFile)
+//      .def("saveSheetFile", &SSERenderer::saveSheetFile)
+//      .def("loadGraphSSE", &SSERenderer::loadGraphSSE)
+      .def("unloadGraphSSEs", &SSERenderer::unloadGraphSSEs)
+      .def("unload", &SSERenderer::unload)
+      .def("selectionRotate", &SSERenderer::selectionRotate)
+      .def("selectionObjectCount", &SSERenderer::selectionObjectCount)
+      .def("selectionCenterOfMass", &SSERenderer::selectionCenterOfMass)
+      .def("selectionMove", &SSERenderer::selectionMove)
+      .def("selectionClear", &SSERenderer::selectionClear)        
+      .def("selectionToggle", &SSERenderer::selectionToggle)  
+      .def("getSupportedHelixLoadFileFormats", &SSERenderer::getSupportedHelixLoadFileFormats)
+      .def("getSupportedHelixSaveFileFormats", &SSERenderer::getSupportedHelixSaveFileFormats)
+      .def("getSupportedSheetLoadFileFormats", &SSERenderer::getSupportedSheetLoadFileFormats)
+      .def("getSupportedSheetSaveFileFormats", &SSERenderer::getSupportedSheetSaveFileFormats)
+//      .def("getMin", &SSERenderer::getMin)
+//      .def("getMax", &SSERenderer::getMax)
+//      .def("get3DCoordinates", &SSERenderer::get3DCoordinates)
+      .def("setHelixColor", &SSERenderer::setHelixColor)      
+      .def("setSheetColor", &SSERenderer::setSheetColor)      
+      .def("setSSEColor", &SSERenderer::setSSEColor)      
+//      .def("setSpacing", &SSERenderer::setSpacing)
+//      .def("getSpacingX", &SSERenderer::getSpacingX)
+//      .def("getSpacingY", &SSERenderer::getSpacingY)
+//      .def("getSpacingZ", &SSERenderer::getSpacingZ)
+//      .def("setOrigin", &SSERenderer::setOrigin)
+//      .def("getOriginX", &SSERenderer::getOriginX)
+//      .def("getOriginY", &SSERenderer::getOriginY)
+//      .def("getOriginZ", &SSERenderer::getOriginZ)
+//      .def("fitSelectedSSEs", &SSERenderer::fitSelectedSSEs)      
+      .def("startNewSSE", &SSERenderer::startNewSSE)
+      .def("addSSEPoint", &SSERenderer::addSSEPoint)
+//      .def("finalizeSheet", &SSERenderer::finalizeSheet)
+      .def("finalizeHelix", &SSERenderer::finalizeHelix)
+      .def("addHelix", &SSERenderer::addHelix)
+//      .def("setObjectSpecificColoring", &SSERenderer::setObjectSpecificColoring)
+      .def("removeSelectedSSEs", &SSERenderer::removeSelectedSSEs)
+      .def("removeHelices", &SSERenderer::removeHelices)
+      .def("getHelixCount", &SSERenderer::getHelixCount)
+      .def("getHelixCorner", &SSERenderer::getHelixCorner)
+//      .def("setDisplayStyle", &SSERenderer::setDisplayStyle)
+//      .def("updateBoundingBox", &SSERenderer::updateBoundingBox)
+      .def("getSelectedHelixIndices", &SSERenderer::getSelectedHelixIndices)
+      .def("setSSEOrientationFlips", &SSERenderer::setSSEOrientationFlips)
+      .def("setHelixCorrs", &SSERenderer::setHelixCorrs)
+      .def("setSelectedPDBHelices", &SSERenderer::setSelectedPDBHelices)
+      .def("clearOtherHighlights", &SSERenderer::clearOtherHighlights)
+  ;
+//
+//
+  class_< CAlpha>("CAlpha", init<>())
+      .def("saveSSEHunterFile", &CAlpha::saveSSEHunterFile)
+      .def("addAtom", &CAlpha::addAtom, return_value_policy<reference_existing_object>())
+  ;
+  
+  class_< CAlphaRenderer, bases<RendererBase> >("CAlphaRenderer", init<>())
+        .def("draw", &CAlphaRenderer::draw)
+//        .def("drawBoundingBox", &CAlphaRenderer::DrawBoundingBox)
+        .def("loadFile", &CAlphaRenderer::loadFile)
+        .def("loadSSEHunterFile", &CAlphaRenderer::loadSSEHunterFile)
+        .def("saveSSEHunterFile", &CAlphaRenderer::saveSSEHunterFile)
+////      .def("getSSEHunterAtoms", &CAlphaRenderer::GetSSEHunterAtoms)
+//        .def("updateTotalScoreSSEHunterAtoms", &CAlphaRenderer::UpdateTotalScoreSSEHunterAtoms)
+        .def("colorSSEHunterAtoms", &CAlphaRenderer::colorSSEHunterAtoms)
+//        .def("saveFile", &CAlphaRenderer::SaveFile)
+//        .def("unload", &CAlphaRenderer::Unload)
+        .def("selectionRotate", &CAlphaRenderer::selectionRotate)
+//        .def("selectionObjectCount", &CAlphaRenderer::SelectionObjectCount)
+        .def("selectionAtomCount", &CAlphaRenderer::selectionAtomCount)
+        .def("selectionCenterOfMass", &CAlphaRenderer::selectionCenterOfMass)
+        .def("selectionMove", &CAlphaRenderer::selectionMove)
+        .def("selectionClear", &CAlphaRenderer::selectionClear)     
+        .def("selectionToggle", &CAlphaRenderer::selectionToggle)   
+        .def("getAtomFromHitStack", &CAlphaRenderer::getAtomFromHitStack, return_value_policy<reference_existing_object>())
+//        .def("getSupportedLoadFileFormats", &CAlphaRenderer::GetSupportedLoadFileFormats)
+//        .def("getSupportedSaveFileFormats", &CAlphaRenderer::GetSupportedSaveFileFormats)
+//        .def("getMin", &CAlphaRenderer::GetMin)
+//        .def("getMax", &CAlphaRenderer::GetMax)
+//        .def("get3DCoordinates", &CAlphaRenderer::Get3DCoordinates)
+        .def("addAtom", &CAlphaRenderer::addAtom, return_value_policy<reference_existing_object>())
+        .def("getAtom", &CAlphaRenderer::getAtom, return_value_policy<reference_existing_object>())
+        .def("getSelectedAtom", &CAlphaRenderer::getSelectedAtom, return_value_policy<reference_existing_object>())
+        .def("getAtomCount", &CAlphaRenderer::getAtomCount)
+        .def("getAtomHashes", &CAlphaRenderer::getAtomHashes)
+        .def("deleteAtom", &CAlphaRenderer::deleteAtom)     
+        .def("deleteAtoms", &CAlphaRenderer::deleteAtoms)
+        .def("addBond", &CAlphaRenderer::addBond)
+        .def("getBond", &CAlphaRenderer::getBond, return_value_policy<reference_existing_object>())
+        .def("getBondIndex", &CAlphaRenderer::getBondIndex)     
+        .def("getBondCount", &CAlphaRenderer::getBondCount)
+        .def("deleteBond", &CAlphaRenderer::deleteBond)     
+//        .def("addSideChainBond", &CAlphaRenderer::AddSideChainBond)
+//        .def("getSideChainBond", &CAlphaRenderer::GetSideChainBond, return_value_policy<reference_existing_object>())
+//        .def("getSideChainBondIndex", &CAlphaRenderer::GetSideChainBondIndex)       
+//        .def("getSideChainBondCount", &CAlphaRenderer::GetSideChainBondCount)
+//        .def("deleteSideChainBond", &CAlphaRenderer::DeleteSideChainBond)       
+//        .def("setSpacing", &CAlphaRenderer::SetSpacing)
+//        .def("getSpacingX", &CAlphaRenderer::GetSpacingX)
+//        .def("getSpacingY", &CAlphaRenderer::GetSpacingY)
+//        .def("getSpacingZ", &CAlphaRenderer::GetSpacingZ)
+//        .def("setOrigin", &CAlphaRenderer::SetOrigin)
+//        .def("getOriginX", &CAlphaRenderer::GetOriginX)
+//        .def("getOriginY", &CAlphaRenderer::GetOriginY)
+//        .def("getOriginZ", &CAlphaRenderer::GetOriginZ)
+//        .def("transformAllAtomLocations", &CAlphaRenderer::TransformAllAtomLocations)       
+//        .def("setDisplayStyle", &CAlphaRenderer::SetDisplayStyle)
+//        .def("setObjectSpecificColoring", &CAlphaRenderer::SetObjectSpecificColoring)
+//        .def("updateBoundingBox", &CAlphaRenderer::UpdateBoundingBox)
+//        .def("startHelix", &CAlphaRenderer::StartHelix)
+        .def("addHelixElement", &CAlphaRenderer::addHelixElement)
+//        .def("startStrand", &CAlphaRenderer::StartStrand)
+//        .def("addStrandElement", &CAlphaRenderer::AddStrandElement)
+//        .def("startLoop", &CAlphaRenderer::StartLoop)
+        .def("addLoopElement", &CAlphaRenderer::addLoopElement)
+//        .def("cleanSecondaryStructures", &CAlphaRenderer::CleanSecondaryStructures)
+//        .def("setNumSegments", &CAlphaRenderer::SetNumSegments)
+//        .def("setNumSlices", &CAlphaRenderer::SetNumSlices)
+//        .def("getSelectedHelixIndices", &CAlphaRenderer::GetSelectedHelixIndices)
+//        .def("setHelixCorrs", &CAlphaRenderer::SetHelixCorrs)
+//        .def("setSelectedSSEHelices", &CAlphaRenderer::SetSelectedSSEHelices)
+//        .def("clearOtherHighlights", &CAlphaRenderer::ClearOtherHighlights)
+//        .def("setFeatureVecs", &CAlphaRenderer::SetFeatureVecs)
+//        .def("setHelixColor", &CAlphaRenderer::SetHelixColor)
+//        .def("startHelix", &CAlphaRenderer::StartHelix)
+//        .def("addHelixElement", &CAlphaRenderer::AddHelixElement)
+//        .def("startStrand", &CAlphaRenderer::StartStrand)
+        .def("addStrandElement", &CAlphaRenderer::addStrandElement)
+//        .def("startLoop", &CAlphaRenderer::StartLoop)
+        .def("addLoopElement", &CAlphaRenderer::addLoopElement)
+//        .def("cleanSecondaryStructures", &CAlphaRenderer::CleanSecondaryStructures)
+//        .def("setNumSegments", &CAlphaRenderer::SetNumSegments)
+//        .def("setNumSlices", &CAlphaRenderer::SetNumSlices)
+//        .def("setHltRValue", &CAlphaRenderer::SetHltRValue)
+//        .def("setHltGValue", &CAlphaRenderer::SetHltGValue)
+//        .def("setHltBValue", &CAlphaRenderer::SetHltBValue)
+//        .def("setHltAValue", &CAlphaRenderer::SetHltAValue)
+    ;
+
+  enum_<RadialProfileType>("RadialProfileType")
+      .value("gaussian", GAUSSIAN)
+      .value("gaussianDip", GAUSSIAN_DIP)
+      .value("polynomial", POLYNOMIAL)
+      .export_values()
+  ;
+  
+  class_<SSEHunter>("SSEHunter")
+      .def("createPseudoAtoms", &SSEHunter::CreatePseudoAtoms)
+      .def("getNumberOfPseudoAtoms", &SSEHunter::GetNumberOfPseudoAtoms)
+      .def("getPseudoAtom", &SSEHunter::GetPseudoAtom, return_value_policy<reference_existing_object>())
+      .def("setCorrelationScores", &SSEHunter::SetCorrelationScores)
+      .def("setSkeletonScores", &SSEHunter::SetSkeletonScores)
+//      .def("setGeometryScores", &SSEHunter::SetGeometryScores)
+      .def("getAtomDistances", &SSEHunter::GetAtomDistances)
+//      .def("getNeighborhoodVoxels", &SSEHunter::GetNeighborhoodVoxels)
+      .def("getLocalDirectionalityScores", &SSEHunter::GetLocalDirectionalityScores)
+  ;
+
+  class_<PDBAtom>("PDBAtom", init<string, char, unsigned int, string>())
+        .def("getPDBId", &PDBAtom::GetPDBId)
+        .def("getSerial", &PDBAtom::GetSerial)
+        .def("getName", &PDBAtom::GetName)
+        .def("getAltLoc", &PDBAtom::GetAltLoc)
+        .def("getResName", &PDBAtom::GetResName)
+        .def("getChainId", &PDBAtom::GetChainId)
+        .def("getResSeq", &PDBAtom::GetResSeq)
+        .def("getICode", &PDBAtom::GetICode)
+        .def("getPosition", &PDBAtom::GetPosition)
+        .def("getOccupancy", &PDBAtom::GetOccupancy)
+        .def("getTempFactor", &PDBAtom::GetTempFactor)
+        .def("getElement", &PDBAtom::GetElement)
+        .def("getCharge", &PDBAtom::GetCharge)
+        .def("getAtomRadius", &PDBAtom::GetAtomRadius)
+        .def("getColorA", &PDBAtom::GetColorA)
+        .def("getColorR", &PDBAtom::GetColorR)
+        .def("getColorG", &PDBAtom::GetColorG)
+        .def("getColorB", &PDBAtom::GetColorB)
+        .def("getSelected", &PDBAtom::GetSelected)
+        .def("getCorrelationScore", &PDBAtom::GetCorrelationScore)
+        .def("getSkeletonScore", &PDBAtom::GetSkeletonScore)
+        .def("getGeometryScore", &PDBAtom::GetGeometryScore)
+        .def("getHashKey", &PDBAtom::GetHashKey)
+        .def("getVisible", &PDBAtom::GetVisible)
+        .def("constructHashKey", &PDBAtom::ConstructHashKey)
+        .def("setSerial", &PDBAtom::SetSerial)
+        .def("setName", &PDBAtom::SetName)
+        .def("setAltLoc", &PDBAtom::SetAltLoc)
+        .def("setResName", &PDBAtom::SetResName)
+        .def("setChainId", &PDBAtom::SetChainId)
+        .def("setResSeq", &PDBAtom::SetResSeq)
+        .def("setICode", &PDBAtom::SetICode)
+        .def("setPosition", &PDBAtom::SetPosition)
+        .def("setOccupancy", &PDBAtom::SetOccupancy)
+        .def("setTempFactor", &PDBAtom::SetTempFactor)
+        .def("setElement", &PDBAtom::SetElement)
+        .def("setCharge", &PDBAtom::SetCharge)
+        .def("setAtomRadius", &PDBAtom::SetAtomRadius)
+        .def("setColor", &PDBAtom::SetColor)
+        .def("setSelected", &PDBAtom::SetSelected)
+        .def("setVisible", &PDBAtom::SetVisible)
+        .def("setCorrelationScore", &PDBAtom::SetCorrelationScore)
+        .def("setSkeletonScore", &PDBAtom::SetSkeletonScore)
+        .def("setGeometryScore", &PDBAtom::SetGeometryScore)
+        .def("transform", &PDBAtom::Transform)
+        .def("interpolateTransform", &PDBAtom::InterpolateTransform)
+        .def("getInterpolateTransformLocation", &PDBAtom::GetInterpolateTransformLocation)
+        .def("setPrevCAHash", &PDBAtom::SetPrevCAHash)
+        .def("setNextCAHash", &PDBAtom::SetNextCAHash)
+    ;
+
+//  bool (Vec3F::*X)() = &Vec3F::X;
+//  float& (Vec3F::*X)() = &Vec3F::X;
+//  const double & (Volume::*get)(int, int, int) const = &Volume::operator();
+//  const float & (Vector3<float>::*X)() const = &Vector3<float>::X;
+  const float & (Vector3<float>::*X)() const = &Vector3<float>::X;
+  const float & (Vector3<float>::*Y)() const = &Vector3<float>::Y;
+  const float & (Vector3<float>::*Z)() const = &Vector3<float>::Z;
+//  void (Vector3<float>::*normalize)() = &Vector3<float>::normalize;
+  Vector3<float> (Vector3<float>::*normalize)() = &Vector3<float>::normalize;
+  
+  const float & (Vector3<float>::*vecgetitem)(int) const = &Vector3<float>::operator[];
+//        float & (Vector3<float>::*vecsetitem)(int)       = &Vector3<float>::operator[];
+
+  class_<Vector3<float> >("Vec3F", init<float, float, float>())
+        .def("x", X, return_value_policy<copy_const_reference>())
+        .def("y", Y, return_value_policy<copy_const_reference>())
+        .def("z", Z, return_value_policy<copy_const_reference>())
+        .def("length", &Vector3<float>::length)
+        .def("Transform", &Vector3<float>::transform)
+        .def("rotate", &Vector3<float>::rotate)
+        .def("normalize", normalize, return_value_policy<return_by_value>())
+        .def("Print", &Vector3<float>::print)
+        .def("__getitem__", vecgetitem, return_value_policy<copy_const_reference>())
+        .def("__setitem__", &Vector3<float>::set)
+//        .def("__getitem__", &Vector3<float>::operator[], boost::python::arg( "index" ),
+//        boost::python::return_internal_reference<>() )
+        .def(self * float())
+        .def(self / float())
+        .def(self + self)
+        .def(self - self)
+        .def(self ^ self)
+        .def(self += self)
+        .def(self -= self)
+        .def(-self)
+        //Vector3DTemplate<T> operator-();
+        //Vector3DTemplate<T>& operator=(const Vector3DTemplate<T>& d);
+
+    ;
+  
+  class_<SSEResult>("SSEResult", init<>())
+//        .def("getNodeString", &SSEResult::GetNodeString)
+        .def("getCost", &SSEResult::getCost)
+        .def("getNodeCount", &SSEResult::getNodeCount)
+        .def("getHelixCount", &SSEResult::getHelixCount)
+//        .def("getSheetCount", &SSEResult::GetSheetCount)
+        .def("getSkeletonNode", &SSEResult::getSkeletonNode)
+        .def("nodeToHelix", &SSEResult::nodeToHelix)      
+    ;
+
+    class_<SecStruct>("SecStruct", init<>())
+        .def("isHelix", &SecStruct::IsHelix)
+        .def("isSheet", &SecStruct::IsSheet)
+        .def("getSerialNumber", &SecStruct::GetSerialNumber)
+        .def("getStartPosition", &SecStruct::GetStartPosition)
+        .def("getEndPosition", &SecStruct::GetEndPosition)
+        .def("getSecondaryStructureID", &SecStruct::getID)
+    ;
+
+    class_<Shape>("Shape", init<>())
+        .def("isHelix", &Shape::isHelix)
+        .def("isSheet", &Shape::isSheet)
+        .def("getCornerCell2", &Shape::getCornerCell2)
+        .def("getCornerCell3", &Shape::getCornerCell3)
+    ;
+
+    bool (IBackEnd::*setConstant1)(string, string)   = &IBackEnd::setConstant;
+    bool (IBackEnd::*setConstant2)(string, double)   = &IBackEnd::setConstant;
+    bool (IBackEnd::*setConstant3)(string, int)      = &IBackEnd::setConstant;
+    bool (IBackEnd::*setConstant4)(string, bool)     = &IBackEnd::setConstant;
+
+    class_<IBackEnd>("IBackEnd", init<>())
+        .def("setConstant", setConstant1)
+        .def("setConstant", setConstant2)
+        .def("setConstant", setConstant3)
+        .def("setConstant", setConstant4)
+        .def("getConstantString",   &IBackEnd::getConstantString)
+        .def("getConstantDouble",   &IBackEnd::getConstantDouble)
+        .def("getConstantInt",      &IBackEnd::getConstantInt)
+        .def("getConstantBool",     &IBackEnd::getConstantBool)
+        .def("clearAllConstraints", &IBackEnd::clearAllConstraints)          
+    ;
+    
+    def("setHelixConstraint", AddHelixConstraint);
+    class_<SSEEngine>("SSEEngine", init<>())
+//        .def("setHelixConstraint", &SSEEngine::SetHelixConstraint)            
+//        .def("getHelixConstraintFwd", &SSEEngine::GetHelixConstraintFwd)          
+//        .def("getHelixConstraintRev", &SSEEngine::GetHelixConstraintRev)          
+//        .def("getHelixConstraintUnk", &SSEEngine::GetHelixConstraintUnk)
+//        .def("getStrandConstraint", &SSEEngine::GetStrandConstraint)          
+//        .def("setNodeConstraint", &SSEEngine::SetNodeConstraint)          
+        .def("setSSEColor", &SSEEngine::setSSEColor)          
+//        .def("setConstantsFromFile", &SSEEngine::SetConstantsFromFile)        
+        .def("saveCorrespondenceToFile", &SSEEngine::save)
+        .def("loadSkeletonGraph", &SSEEngine::loadSkeleton)
+        .def("loadSequenceGraph", &SSEEngine::loadSequence)
+//        .def("loadCorrespondenceFromFile", &SSEEngine::load)
+        .def("executeQuery", &SSEEngine::run)
+//        .def("cleanupMemory", &SSEEngine::cleanupMemory)
+        .def("getResult", &SSEEngine::getResult)
+//        .def("getResultCount", &SSEEngine::GetResultCount)
+//        .def("getSupportedLoadFileFormats", &SSEEngine::getSupportedLoadFileFormats)
+//        .def("getSupportedSaveFileFormats", &SSEEngine::getSupportedSaveFileFormats)
+        .def("getSkeletonSSE", &SSEEngine::getSkeletonSSE, return_value_policy<reference_existing_object>())
+//        .def("getSequenceSSE", &SSEEngine::GetSequenceSSE, return_value_policy<reference_existing_object>())
+        .def("getSkeletonSSECount", &SSEEngine::getSkeletonSSECount)
+//        .def("getSequenceSSECount", &SSEEngine::GetSequenceSSECount)
+        .def("setVisibleCorrespondence", &SSEEngine::setVisibleCorrespondence)
+//        .def("draw", &SSEEngine::draw)
+        .def("drawAllPaths", &SSEEngine::drawAllPaths)
+//        .def("initializePathFinder", &SSEEngine::InitializePathFinder)
+//        .def("initializePathHelix", &SSEEngine::InitializePathHelix)
+//        .def("getPathSpace", &SSEEngine::GetPathSpace)
+//        .def("clearPathSpace", &SSEEngine::ClearPathSpace)
+//        .def("getPathVertexCount", &SSEEngine::GetPathVertexCount)
+//        .def("getPathVertex", &SSEEngine::GetPathVertex)
+//        .def("getPathEdgeCount", &SSEEngine::GetPathEdgeCount)
+//        .def("getEdgeVertexIndex", &SSEEngine::GetEdgeVertexIndex)
+//        .def("clearPathFinder", &SSEEngine::ClearPathFinder)
+    ;
+
+    class_<SEQFileData>("SeqFileData", init<>())
+        .def("getStartResNo", &SEQFileData::GetStartResNo)
+        .def("getSequenceString", &SEQFileData::GetSequenceString)
+        .def("getStructureString", &SEQFileData::GetStructureString)
+        .def("getNumberOfStructures", &SEQFileData::GetNumberOfStructures)
+        .def("getStructure", &SEQFileData::GetStructure, return_value_policy<reference_existing_object>())
+    ;
+    
+    class_<SEQReader>("SeqReader", init<>())
+        .def("loadFile", &SEQReader::ReadSeqFileData)
+        .staticmethod("loadFile")
+    ;
+
+//    class_<FlexibleFittingEngine>("FlexibleFittingEngine")
+//        .def("startPDBHelix", &FlexibleFittingEngine::StartPDBHelix)
+//        .def("addPDBAtomLocation", &FlexibleFittingEngine::AddPDBAtomLocation)
+//        .def("endPDBHelix", &FlexibleFittingEngine::EndPDBHelix)
+//        .def("addSSEHelix", &FlexibleFittingEngine::AddSSEHelix)        
+//        .def("startSearch", &FlexibleFittingEngine::StartSearch)        
+//        .def("getRigidTransform", &FlexibleFittingEngine::GetRigidTransform)        
+//        .def("getHelixFlexibleTransform", &FlexibleFittingEngine::GetHelixFlexibleTransform)        
+//        .def("getCorrespondenceCount", &FlexibleFittingEngine::GetCorrespondenceCount)      
+//        .def("getClusterCount", &FlexibleFittingEngine::GetClusterCount)        
+//        .def("getHelixCount", &FlexibleFittingEngine::GetHelixCount)        
+//        .def("getCorrespondenceNode", &FlexibleFittingEngine::GetCorrespondenceNode)
+//        .def("resetEngine", &FlexibleFittingEngine::ResetEngine)
+//        .def("Deform", &FlexibleFittingEngine::Deform)
+//        .def("addAtomLocation", &FlexibleFittingEngine::addAtomLocation)
+//        .def("addHardHandleLocation", &FlexibleFittingEngine::addHardHandleLocation)
+//        .def("addSoftHandleLocation", &FlexibleFittingEngine::addSoftHandleLocation)
+//        .def("returnFlattenedLocations", &FlexibleFittingEngine::returnFlattenedLocations)
+//        .def("prepareDeform", &FlexibleFittingEngine::prepareDeform)
+//        .def("setLaplacainW", &FlexibleFittingEngine::setLaplacainW)
+//        .def("setHardHandleW", &FlexibleFittingEngine::setHardHandleW)
+//        .def("setSoftHandleW", &FlexibleFittingEngine::setSoftHandleW)
+//        .def("addCorrespondence", &FlexibleFittingEngine::AddCorrespondence)
+//        .def("getCorrespondenceFlips", &FlexibleFittingEngine::GetCorrespondenceFlips)
+//        .def("getAllCorrespondencesFlat", &FlexibleFittingEngine::GetAllCorrespondencesFlat)
+//        .def("flipCorrespondencePair", &FlexibleFittingEngine::FlipCorrespondencePair)
+//        .def("saveCorrs", &FlexibleFittingEngine::SaveCorrs)
+//        .def("loadSavedCorrs", &FlexibleFittingEngine::LoadSavedCorrs)
+//        .def("getRigidTransform2", &FlexibleFittingEngine::GetRigidTransform2)
+//        .def("mergeClusters", &FlexibleFittingEngine::MergeClusters)
+//        .def("getAllCAlphaFeatureVecsFlat", &FlexibleFittingEngine::GetAllCAlphaFeatureVecsFlat)    
+//        .def("getIsForward", &FlexibleFittingEngine::GetIsForward)  
+//        .def("getPairRigidTransform", &FlexibleFittingEngine::GetPairRigidTransform)
+//        .def("getSideChainTransform", &FlexibleFittingEngine::GetSideChainTransform)
+//    ;
+//
+//
+//
+//
+//    class_<SSECorrespondenceNode>("SSECorrespondenceNode")
+//        .def("getPIndex", &SSECorrespondenceNode::GetPIndex)
+//        .def("getQIndex", &SSECorrespondenceNode::GetQIndex)
+//        .def("isForward", &SSECorrespondenceNode::IsForward)
+//    ;
+
+    class_<PDBBond>("PDBBond", init<>())
+        .def("getAtom0Ix", &PDBBond::GetAtom0Ix)
+        .def("getAtom1Ix", &PDBBond::GetAtom1Ix)
+        .def("getSelected", &PDBBond::GetSelected)
+        .def("setAtom0Ix", &PDBBond::SetAtom0Ix)
+        .def("setAtom1Ix", &PDBBond::SetAtom1Ix)
+        .def("setSelected", &PDBBond::SetSelected)
+    ;
+
+    class_<MinMax>("MinMax", init<>())
+        .def("getMin", &MinMax::getMin)
+        .def("getMax", &MinMax::getMax)
+        .def("setMin", &MinMax::setMin)
+        .def("setMax", &MinMax::setMax)
+    ;
+
+    
+        def("findBestFitLine", &LinearSolver::FindBestFitLine);
+        def("sumDistSqrd", &LinearSolver::SumDistSqrd);
+}

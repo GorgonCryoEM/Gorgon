@@ -1,0 +1,4 @@
+PyOpenGL>=3.1.0
+docutils>=0.12
+nose>=1.3.1
+termcolor
