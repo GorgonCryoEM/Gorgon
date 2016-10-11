@@ -7,8 +7,9 @@
 //#include <MathTools/MathLib.h>
 #include "Core/GlobalConstants.h"
 #include "GraphMatch/Constants.h"
+#include <algorithm>
 
-//using namespace std;
+using namespace std;
 using namespace MathTools;
 
 namespace GraphMatch {
