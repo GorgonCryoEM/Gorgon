@@ -18,7 +18,7 @@ class ToolkitTestCases(unittest.TestCase):
 			'''Return list of inputs for the test'''
 			return
 
-		def __init__(self, out_extension, topdir=path.curdir, prog_name='gorgon.py', prog_option=None):
+		def __init__(self, out_extension, topdir=path.curdir, prog_name='gorgon_cli.py', prog_option=None):
 			self.prog_name     = prog_name
 			self.prog_option   = prog_option
 			self.out_extension = '.' + out_extension
