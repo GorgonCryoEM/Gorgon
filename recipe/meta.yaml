@@ -29,6 +29,16 @@ requirements:
         - pyopengl
         - vs2015_runtime  # [win]
 
+test:
+  source_files:
+    - tests
+    - demo/groel
+  requires:
+    - nose
+    - docutils
+  commands:
+    - nosetests --with-doctest --doctest-tests -s -vv -a \!long
+
 about:
   summary: Gorgon, an interactive molecular modeling system
   home:  http://gorgon.wustl.edu
