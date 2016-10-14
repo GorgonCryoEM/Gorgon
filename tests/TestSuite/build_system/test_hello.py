@@ -1,6 +1,6 @@
 import unittest
 
-import libpyhello as libpy
+import gorgon.hello.libpyhello as libpy
 
 
 class Hello(unittest.TestCase):
