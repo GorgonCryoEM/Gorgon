@@ -1,6 +1,6 @@
 #!/bin/sh
 
-build_dir="${SRC_DIR}/../build_dir"
+build_dir="${SRC_DIR}/../../build_dir"
 
 rm -f $build_dir/CMakeCache.txt
 mkdir -p $build_dir
