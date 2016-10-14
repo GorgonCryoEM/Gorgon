@@ -1,6 +1,7 @@
 enable_testing()
 
 add_custom_target(test-verbose
+        COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_BINARY_DIR}/gorgon ${CMAKE_BINARY_DIR}/cli/gorgon
         COMMAND ${CMAKE_CTEST_COMMAND} -V -C Release
         DEPENDS Tests
         )
@@ -11,6 +12,7 @@ add_test(NAME test-all
         )
 # --------------------------------------------------------------------
 add_custom_target(test-verbose-quick
+        COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_BINARY_DIR}/gorgon ${CMAKE_BINARY_DIR}/cli/gorgon
         COMMAND nosetests --with-doctest --doctest-tests -s -vv -a \!long
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
         DEPENDS Tests
