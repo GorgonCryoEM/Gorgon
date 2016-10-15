@@ -9,6 +9,8 @@ from subprocess import check_call
 from filecmp import cmp
 import termcolor
 
+from . import EXE_PATH
+
 
 class ToolkitTestCases(unittest.TestCase):
 
@@ -28,7 +30,6 @@ class ToolkitTestCases(unittest.TestCase):
 			testsdir           = join(topdir, 'tests')
 
 			self.indir         = join(topdir,   'demo/groel')
-			self.bindir        = join(topdir,     'cli')
 			self.outdir        = join(testsdir,   'outputs')
 			self.refdir        = join(self.indir, 'refs')
 
@@ -38,7 +39,7 @@ class ToolkitTestCases(unittest.TestCase):
 			self.helix_lengths = join(self.indir, 'helix-lengths.sse')
 			self.helices       = join(self.indir, 'helices-densityMap.wrl')
 			
-			self.exe          = join(self.bindir, self.prog_name)
+			self.exe          = join(EXE_PATH, self.prog_name)
 			
 			if self.prog_option:
 				self.outprefix    = self.prog_option + '_'
