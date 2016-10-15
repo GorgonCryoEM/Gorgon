@@ -7,6 +7,7 @@ import abc
 
 from subprocess import check_call
 from filecmp import cmp
+import termcolor
 
 
 class ToolkitTestCases(unittest.TestCase):
@@ -64,6 +65,8 @@ class ToolkitTestCases(unittest.TestCase):
 			return cmd
 
 		def run(self, option=''):
+			print termcolor.colored("\n+ %s" % self._cmd(option), "green")
+			
 			# remove output file in case left from previous test runs
 			if path.isfile(self.output):
 				os.remove(self.output)
