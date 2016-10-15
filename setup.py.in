@@ -3,7 +3,6 @@ import glob
 import os
 
 scripts = [name for name in glob.glob(os.path.join('@cli_install_dir@', '*.py'))]
-# scripts = [os.path.join(bindir, 'toolkit_gui.py')]
 
 setup(
     name="gorgon",

@@ -18,15 +18,14 @@ class ToolkitTestCases(unittest.TestCase):
 			'''Return list of inputs for the test'''
 			return
 
-		def __init__(self, out_extension, topdir=path.curdir, prog_name='gorgon.py', prog_option=None):
+		def __init__(self, out_extension, topdir=path.curdir, prog_name='gorgon_cli.py', prog_option=None):
 			self.prog_name     = prog_name
 			self.prog_option   = prog_option
 			self.out_extension = '.' + out_extension
 			
 			testsdir           = join(topdir, 'tests')
 
-			self.bindir        = join(topdir,     'bin')
-			self.indir         = join(testsdir,   'groel')
+			self.indir         = join(topdir,   'demo/groel')
 			self.outdir        = join(testsdir,   'outputs')
 			self.refdir        = join(self.indir, 'refs')
 
@@ -35,8 +34,6 @@ class ToolkitTestCases(unittest.TestCase):
 			self.segment       = join(self.indir, 'groel-segment.seq')
 			self.helix_lengths = join(self.indir, 'helix-lengths.sse')
 			self.helices       = join(self.indir, 'helices-densityMap.wrl')
-			
-			self.exe          = join(self.bindir, self.prog_name)
 			
 			if self.prog_option:
 				self.outprefix    = self.prog_option + '_'
@@ -58,7 +55,7 @@ class ToolkitTestCases(unittest.TestCase):
 			else:
 				cmd_option = ''
 			
-			cmd = '%s %s %s %s' % (self.exe, inputs, self.output, cmd_option)
+			cmd = '%s %s %s %s' % (self.prog_name, inputs, self.output, cmd_option)
 			
 			return cmd
 
