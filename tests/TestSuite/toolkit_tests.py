@@ -1,3 +1,4 @@
+import os
 from os      import path, mkdir
 from os.path import join
 
@@ -63,5 +64,8 @@ class ToolkitTestCases(unittest.TestCase):
 			return cmd
 
 		def run(self, option=''):
+			# remove output file in case left from previous test runs
+			if path.isfile(self.output):
+				os.remove(self.output)
 			check_call([self._cmd(option)], shell=True)
 			assert cmp(self.output, self.ref), "\nFiles differ:\n   1: %s\n   2: %s" % (self.output, self.ref)
