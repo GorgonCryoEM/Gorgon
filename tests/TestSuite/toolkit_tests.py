@@ -26,6 +26,7 @@ class ToolkitTestCases(unittest.TestCase):
 			testsdir           = join(topdir, 'tests')
 
 			self.indir         = join(topdir,   'demo/groel')
+			self.bindir        = join(topdir,     'cli')
 			self.outdir        = join(testsdir,   'outputs')
 			self.refdir        = join(self.indir, 'refs')
 
@@ -34,6 +35,8 @@ class ToolkitTestCases(unittest.TestCase):
 			self.segment       = join(self.indir, 'groel-segment.seq')
 			self.helix_lengths = join(self.indir, 'helix-lengths.sse')
 			self.helices       = join(self.indir, 'helices-densityMap.wrl')
+			
+			self.exe          = join(self.bindir, self.prog_name)
 			
 			if self.prog_option:
 				self.outprefix    = self.prog_option + '_'
@@ -55,7 +58,7 @@ class ToolkitTestCases(unittest.TestCase):
 			else:
 				cmd_option = ''
 			
-			cmd = '%s %s %s %s' % (self.prog_name, inputs, self.output, cmd_option)
+			cmd = '%s %s %s %s' % (self.exe, inputs, self.output, cmd_option)
 			
 			return cmd
 
