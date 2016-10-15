@@ -1,5 +1,8 @@
-import sys
 import os
-from os.path import abspath, dirname, join
 
-sys.path.append(abspath(join(dirname(__file__), os.pardir, os.pardir, 'bin')))
+if os.getenv('CONDA_BUILD_STATE') != 'TEST':
+    EXE_PATH = 'cli'
+else:
+    EXE_PATH = None
+
+print "EXE_PATH: %s" % EXE_PATH

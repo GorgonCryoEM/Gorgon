@@ -1,3 +1,4 @@
+import os
 from os      import path, mkdir
 from os.path import join
 
@@ -6,6 +7,9 @@ import abc
 
 from subprocess import check_call
 from filecmp import cmp
+import termcolor
+
+from . import EXE_PATH
 
 
 class ToolkitTestCases(unittest.TestCase):
@@ -35,6 +39,11 @@ class ToolkitTestCases(unittest.TestCase):
 			self.helix_lengths = join(self.indir, 'helix-lengths.sse')
 			self.helices       = join(self.indir, 'helices-densityMap.wrl')
 			
+			if EXE_PATH:
+				self.exe          = join(EXE_PATH, self.prog_name)
+			else:
+				self.exe          = self.prog_name
+			
 			if self.prog_option:
 				self.outprefix    = self.prog_option + '_'
 			else:
@@ -55,10 +64,15 @@ class ToolkitTestCases(unittest.TestCase):
 			else:
 				cmd_option = ''
 			
-			cmd = '%s %s %s %s' % (self.prog_name, inputs, self.output, cmd_option)
+			cmd = '%s %s %s %s' % (self.exe, inputs, self.output, cmd_option)
 			
 			return cmd
 
 		def run(self, option=''):
+			print termcolor.colored("\n+ %s" % self._cmd(option), "green")
+			
+			# remove output file in case left from previous test runs
+			if path.isfile(self.output):
+				os.remove(self.output)
 			check_call([self._cmd(option)], shell=True)
 			assert cmp(self.output, self.ref), "\nFiles differ:\n   1: %s\n   2: %s" % (self.output, self.ref)
