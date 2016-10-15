@@ -39,7 +39,10 @@ class ToolkitTestCases(unittest.TestCase):
 			self.helix_lengths = join(self.indir, 'helix-lengths.sse')
 			self.helices       = join(self.indir, 'helices-densityMap.wrl')
 			
-			self.exe          = join(EXE_PATH, self.prog_name)
+			if EXE_PATH:
+				self.exe          = join(EXE_PATH, self.prog_name)
+			else:
+				self.exe          = self.prog_name
 			
 			if self.prog_option:
 				self.outprefix    = self.prog_option + '_'
