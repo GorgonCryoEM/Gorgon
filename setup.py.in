@@ -16,7 +16,7 @@ setup(
     #         'gorgon=@cli_install_dir@.gorgon_cli:main',
     #     ],
     # },
-    scripts = scripts,
+    # scripts = scripts,
     zip_safe = False,
 
 )
