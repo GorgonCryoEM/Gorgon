@@ -13,7 +13,7 @@ setup(
     package_data={'gorgon.hello':['libpyhello.so', 'libpyhello.pyd'],'gorgon.toolkit':['libpytoolkit.so', 'libpytoolkit.pyd']},
     # entry_points={
     #     'console_scripts': [
-    #         'gorgon-toolkit=bin.toolkit_gui:main',
+    #         'gorgon=@cli_install_dir@.gorgon_cli:main',
     #     ],
     # },
     scripts = scripts,
