@@ -23,6 +23,8 @@ class ToolkitTestCases(unittest.TestCase):
 			return
 
 		def __init__(self, out_extension, topdir=path.curdir, prog_name='gorgon_cli.py', prog_option=None):
+			if prog_name == 'gorgon_cli.py' and os.getenv('CONDA_BUILD_STATE') == 'TEST':
+				prog_name = 'gorgon'
 			self.prog_name     = prog_name
 			self.prog_option   = prog_option
 			self.out_extension = '.' + out_extension
