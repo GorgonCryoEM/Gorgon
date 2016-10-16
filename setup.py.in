@@ -1,6 +1,4 @@
 from setuptools import setup, find_packages
-import glob
-import os
 
 setup(
     name="gorgon",
@@ -16,5 +14,4 @@ setup(
         ],
     },
     zip_safe = False,
-
 )
