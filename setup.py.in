@@ -11,6 +11,7 @@ setup(
             'gorgon=@cli_install_dir@.gorgon_cli:main',
             'gorgon-sse-hunter=@cli_install_dir@.gorgon_sse_hunter:main',
             'gorgon-sse-correspondence=@cli_install_dir@.gorgon_sse_correspondence:main',
+            'gorgon-gui=@cli_install_dir@.toolkit_gui:main',
         ],
     },
     zip_safe = False,
