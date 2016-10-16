@@ -2,13 +2,10 @@ from setuptools import setup, find_packages
 import glob
 import os
 
-scripts = [name for name in glob.glob(os.path.join('@cli_install_dir@', '*.py'))]
-
 setup(
     name="gorgon",
     version="@Gorgon_VERSION@",
     package_dir={'gorgon':'@lib_install_dir@', 'bin':'@cli_install_dir@'},
-    # package_dir={'gorgon':'@lib_install_dir@'},
     packages=find_packages(),
     package_data={'gorgon.hello':['libpyhello.so', 'libpyhello.pyd'],'gorgon.toolkit':['libpytoolkit.so', 'libpytoolkit.pyd']},
     entry_points={
@@ -18,7 +15,6 @@ setup(
             'gorgon-sse-correspondence=@cli_install_dir@.gorgon_sse_correspondence:main',
         ],
     },
-    # scripts = scripts,
     zip_safe = False,
 
 )
