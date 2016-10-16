@@ -11,11 +11,11 @@ setup(
     # package_dir={'gorgon':'@lib_install_dir@'},
     packages=find_packages(),
     package_data={'gorgon.hello':['libpyhello.so', 'libpyhello.pyd'],'gorgon.toolkit':['libpytoolkit.so', 'libpytoolkit.pyd']},
-    # entry_points={
-    #     'console_scripts': [
-    #         'gorgon=@cli_install_dir@.gorgon_cli:main',
-    #     ],
-    # },
+    entry_points={
+        'console_scripts': [
+            'gorgon=@cli_install_dir@.gorgon_cli:main',
+        ],
+    },
     # scripts = scripts,
     zip_safe = False,
 
