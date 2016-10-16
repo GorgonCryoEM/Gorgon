@@ -14,6 +14,8 @@ setup(
     entry_points={
         'console_scripts': [
             'gorgon=@cli_install_dir@.gorgon_cli:main',
+            'gorgon-sse-hunter=@cli_install_dir@.gorgon_sse_hunter:main',
+            'gorgon-sse-correspondence=@cli_install_dir@.gorgon_sse_correspondence:main',
         ],
     },
     # scripts = scripts,
