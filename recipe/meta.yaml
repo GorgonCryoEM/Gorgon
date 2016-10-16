@@ -12,22 +12,19 @@ requirements:
     build:
         - cmake >=3.4
         - python 2.7.*
-        - boost         # [not win]
-        - boost-gorgon  # [win]
+        - boost
         - fftw
         - freeglut  # [not osx]
         - setuptools
         - toolchain  # [not win]
     run:
         - python 2.7.*
-        - boost         # [not win]
-        - boost-gorgon  # [win]
+        - boost
         - fftw
         - freeglut  # [not osx]
         - termcolor
         - pyqt
         - pyopengl
-        - vs2015_runtime  # [win]
 
 test:
   source_files:
