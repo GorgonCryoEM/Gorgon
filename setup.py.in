@@ -3,9 +3,8 @@ from setuptools import setup, find_packages
 setup(
     name="gorgon",
     version="@Gorgon_VERSION@",
-    package_dir={'gorgon':'@lib_install_dir@', 'bin':'@cli_install_dir@'},
     packages=find_packages(),
-    package_data={'gorgon.hello':['libpyhello.so', 'libpyhello.pyd'],'gorgon.toolkit':['libpytoolkit.so', 'libpytoolkit.pyd']},
+    package_data={'@lib_install_dir@.hello':['libpyhello.so', 'libpyhello.pyd'],'@lib_install_dir@.toolkit':['libpytoolkit.so', 'libpytoolkit.pyd']},
     entry_points={
         'console_scripts': [
             'gorgon=@cli_install_dir@.gorgon_cli:main',
