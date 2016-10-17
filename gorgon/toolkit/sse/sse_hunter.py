@@ -6,7 +6,7 @@ from termcolor import colored
 
 class pySSEHunter(object):
 
-    def __init__(self, volume, skeleton, output, autorun=True):
+    def __init__(self, args, autorun=True):
         self.logger = logging.getLogger(__name__)
         
         '''

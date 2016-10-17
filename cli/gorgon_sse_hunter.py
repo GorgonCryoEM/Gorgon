@@ -39,7 +39,7 @@ def main():
     
     logger = logging.getLogger(__name__)
 
-    sseh = pySSEHunter(args.volume, args.skeleton, args.output)
+    sseh = pySSEHunter(args)
 
 if __name__ == "__main__":
     main()
