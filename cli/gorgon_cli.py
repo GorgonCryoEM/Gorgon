@@ -11,8 +11,6 @@ def main():
                 }
     
     parser = argparse.ArgumentParser(description='Gorgon Toolkit')
-    parser.add_argument('input', action="store")
-    parser.add_argument('output', action="store")
     parser.add_argument('--log', action="store",
                         dest='loglevel',
                         choices=['info', 'debug'],
@@ -30,6 +28,8 @@ def main():
             mode = globals()[mode_map[k][opt]]
             cmds[mode_map[k][opt]] = mode(subparser)
 
+    parser.add_argument('input', action="store")
+    parser.add_argument('output', action="store")
     args = parser.parse_args()
     cmd = cmds[mode_map[args.cmd][args.operation_type]]
     
