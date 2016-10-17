@@ -7,6 +7,11 @@ class Skeletonizer(Operation):
     def __init__(self, parser):
         super(Skeletonizer, self).__init__(parser)
 
+    def _add_parser_arguments(self):
+        self.parser.add_argument("--thresh", type=float)
+        self.parser.add_argument("--min_curve_length", default=4)
+        self.parser.add_argument("--min_surface_size", default=4)
+
     def _run(self, args):
         self.thresh = float(args.thresh) if args.thresh else self.defaultDensity()
         print "THRESHOLD: %f" % self.thresh
@@ -42,6 +47,9 @@ class GrayScale(Skeletonizer):
 
     def __init__(self, parser):
         super(GrayScale, self).__init__(parser)
+
+    def _add_parser_arguments(self):
+        self.parser.add_argument("--step_count", type=int, default=250)
         self.parser.add_argument("--curve_radius", default=2)
         self.parser.add_argument("--surface_radius", default=2)
         self.parser.add_argument("--skeleton_radius", default=4)
