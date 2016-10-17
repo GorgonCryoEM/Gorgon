@@ -45,6 +45,13 @@ class GrayScale(Skeletonizer):
 
     def __init__(self, input, output, args=None):
         super(GrayScale, self).__init__(input, output)
+        self.parser.add_argument("--thresh")
+        self.parser.add_argument("--min_curve_length", default=4)
+        self.parser.add_argument("--min_surface_size", default=4)
+        self.parser.add_argument("--step_count", default=250)
+        self.parser.add_argument("--curve_radius", default=2)
+        self.parser.add_argument("--surface_radius", default=2)
+        self.parser.add_argument("--skeleton_radius", default=4)
 
     def _run(self):
         self.skeleton = self.renderer.performGrayscaleSkeletonizationAbeysinghe2008(self.defaultDensity(), 250, 4, 4, 2, 2, 4)
