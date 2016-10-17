@@ -62,11 +62,11 @@ class ToolkitTestCases(unittest.TestCase):
 			
 			inputs = ' '.join(self.get_inputs())
 			if self.prog_option:
-				cmd_option = '--%s %s' % (self.prog_option, option)
+				cmd_option = '%s %s' % (self.prog_option, option)
 			else:
 				cmd_option = ''
 			
-			cmd = '%s %s %s %s' % (self.exe, inputs, self.output, cmd_option)
+			cmd = '%s %s %s %s' % (self.exe, cmd_option, inputs, self.output)
 			
 			return cmd
 
