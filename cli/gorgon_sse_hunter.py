@@ -12,6 +12,12 @@ def main():
     parser.add_argument('volume', action="store")
     parser.add_argument('skeleton', action="store")
     parser.add_argument('output', action="store")
+    parser.add_argument('--resolution', default=8.0)
+    parser.add_argument('--threshold', default=0.38)
+    parser.add_argument('--correlationWeight', default=1.0)
+    parser.add_argument('--skeletonWeight', default=1.0)
+    parser.add_argument('--geometryWeight', default=1.0)
+
     parser.add_argument('--log', action="store",
                     dest='loglevel',
                     choices=['info', 'debug'],
