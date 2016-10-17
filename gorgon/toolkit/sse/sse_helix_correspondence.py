@@ -4,12 +4,12 @@ from sse_defaults import SSEDefaults
 
 class SSEHelixCorrespondence(object):
 
-    def __init__(self, skeleton, sequence, helix, output, auto=True):
+    def __init__(self, args, auto=True):
         self.defaults = SSEDefaults()
-        self.skeleton = skeleton
-        self.sequence = sequence
-        self.helix    = helix
-        self.output   = output
+        self.skeleton = args.skeleton
+        self.sequence = args.sequence
+        self.helix    = args.helix
+        self.output   = args.output
                 
         '''
         SSEViewer

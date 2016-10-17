@@ -34,7 +34,7 @@ def main():
     
     logger = logging.getLogger(__name__)
 
-    sse_finder = SSEHelixCorrespondence(args.skeleton, args.sequence, args.helix, args.output)
+    sse_finder = SSEHelixCorrespondence(args)
 
 if __name__ == "__main__":
     main()
