@@ -25,9 +25,9 @@ def main():
                         help="log level"
                         )
     
-    subparsers = parser.add_subparsers(dest='cmd')
+    subparsers = parser.add_subparsers(dest='operation')
     
-    cmds = {}
+    cmd_objects = {}
     
 #     Update parser with list of available options
     for k in mode_map:
@@ -35,12 +35,12 @@ def main():
         subparser.add_argument('operation_type', choices=(mode_map[k]))
         for opt in mode_map[k]:
             mode = globals()[mode_map[k][opt]]
-            cmds[mode_map[k][opt]] = mode(subparser)
+            cmd_objects[mode_map[k][opt]] = mode(subparser)
 
     parser.add_argument('input', action="store")
     parser.add_argument('output', action="store")
     args = parser.parse_args()
-    cmd = cmds[mode_map[args.cmd][args.operation_type]]
+    cmd = cmd_objects[mode_map[args.operation][args.operation_type]]
     
     cmd.run(args)
     
