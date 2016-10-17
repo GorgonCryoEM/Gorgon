@@ -20,6 +20,8 @@ def main():
     
     subparsers = parser.add_subparsers(dest='cmd')
     
+    cmds = {}
+    
 #     Update parser with list of available options
     for k in mode_map:
         subparser = subparsers.add_parser(k)
@@ -32,6 +34,8 @@ def main():
     parser.add_argument('output', action="store")
     args = parser.parse_args()
     cmd = cmds[mode_map[args.cmd][args.operation_type]]
+    
+    cmd.run(args)
     
 # 	Logging setup
     loglevel = getattr(logging, args.loglevel.upper())

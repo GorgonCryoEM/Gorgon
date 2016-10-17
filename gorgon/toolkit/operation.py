@@ -6,32 +6,32 @@ from libpytoolkit import *
 
 class Operation(object):
 
-    def __init__(self, input, output):
-        self.input = input
-        self.output = output
-        self.logger = logging.getLogger(__name__)
+    def __init__(self, parser):
         
-        self.renderer = Volume()
-            
-        self._loadVolume()
-        self.run()
+        self.parser = parser
+        self._add_parser_arguments()
 
-    def _loadVolume(self):
+        self.logger = logging.getLogger(__name__)
+
+        self.renderer = Volume()
+
+    def _loadVolume(self, input):
         self.logger.debug(__file__)
         self.logger.debug("Operation._loadVolume")
         self.logger.debug(self.renderer)
-        self.renderer.loadFile(self.input)
+        self.renderer.loadFile(input)
         self.logger.debug(self.renderer)
         self.logger.debug(self.renderer.getSize())
         
-    def _saveVolume(self):
-        self.renderer.saveFile(self.output)
+    def _saveVolume(self, output):
+        self.renderer.saveFile(output)
         
-    def run(self):
+    def run(self, args):
+        self._loadVolume(args.input)
         self.logger.debug("Operation.run")
         self.logger.debug(self.renderer)
         self.logger.debug(self.renderer.getSize())
-        self._run()
+        self._run(args)
         self.logger.debug("Operation.run")
         self.logger.debug(self.renderer.getSize())
-        self._saveVolume()
+        self._saveVolume(args.output)
