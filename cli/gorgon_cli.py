@@ -1,16 +1,23 @@
 #!/usr/bin/env python
 
+"""Main command-line program for Gorgon Toolkit."""
+
 import argparse
 import logging
 from gorgon.toolkit import *
 
-
 def main():
+    """Program flow.
+    
+    1. Initialize objects by passing subparsers to be setup to their __init__ methods
+    2. Parse args and pick the object according to the subcommand chosen on command-line
+    3. Call object's run method and pass it the parsed args
+    """
     mode_map = {'filter': {"normalize":"Normalize", "lowpass":"LowPass", "gaussian":"Gaussian"},
                 'skeletonize': {"binary":"Binary", "grayscale":"GrayScale"}
                 }
     
-    parser = argparse.ArgumentParser(description='Gorgon Toolkit')
+    parser = argparse.ArgumentParser(description='Gorgon Toolkit' + '\n\n' + __doc__)
     parser.add_argument('--log', action="store",
                         dest='loglevel',
                         choices=['info', 'debug'],
