@@ -13,7 +13,7 @@ class pySSEHunter(object):
         Volume
         '''
         self.volume = Volume()
-        self.volume.loadFile(volume)
+        self.volume.loadFile(args.volume)
         self.logger.debug("%s before getVolume" % self.volume)
         self.logger.debug("self.volume.getSize(): %d" % self.volume.getSize())
 #         self.volume = self.volume.getVolume()
@@ -30,7 +30,7 @@ class pySSEHunter(object):
         self.logger.debug(self.skeleton)
 #         self.logger.debug("after SkeletonRenderer(): self.skeleton.getSize(): %d" % self.skeleton.getSize())
         
-        self.skeleton.loadFile(skeleton)
+        self.skeleton.loadFile(args.skeleton)
         self.logger.debug(self.skeleton)
 #         self.logger.debug(colored("after loadFile(skeleton): self.skeleton.getSize(): %d" % self.skeleton.getSize(), "yellow"))
 
@@ -41,14 +41,18 @@ class pySSEHunter(object):
         '''
         Output, CAlpha
         '''
-        self.output = output
+        self.output = args.output
         self.calpha = CAlpha()
         
         '''
         SSEHunterEngine
         '''
-        self.resolution = 8.0
-        self.threshold = 0.38
+        self.resolution = args.resolution
+        self.threshold  = args.threshold
+
+        self.correlationWeight = args.correlationWeight 
+        self.skeletonWeight    = args.skeletonWeight    
+        self.geometryWeight    = args.geometryWeight    
         
         self.sseh = SSEHunter()
         
@@ -65,14 +69,11 @@ class pySSEHunter(object):
         self.logger.debug(self.skeleton)
         self.logger.debug("self.skeleton.getSize(): %d" % self.skeleton.getSize())
 
-        correlationWeight = 1.0
-        skeletonWeight = 1.0
-        geometryWeight = 1.0
 
         #self.calphaViewer.run( threshold, resolution, correlationWeight, skeletonWeight, geometryWeight )
         self.logger.debug(self.volume)
         self.logger.debug("self.volume.getSize(): %d" % self.volume.getSize())
-        patoms = self.getScoredAtoms(correlationWeight, skeletonWeight, geometryWeight)
+        patoms = self.getScoredAtoms(self.correlationWeight, self.skeletonWeight, self.geometryWeight)
         
         for pseudoatom in patoms:
             self.calpha.addAtom(pseudoatom)
