@@ -20,21 +20,19 @@ def main():
                         help="log level"
                         )
     
-    group = parser.add_mutually_exclusive_group(required=True)
+    subparsers = parser.add_subparsers(dest='cmd')
     
 #     Update parser with list of available options
     for k in mode_map:
-        group.add_argument('--'+k, choices=(mode_map[k]))
-
-    args, args_extra = parser.parse_known_args()
-    
-#     Initialize object requested in the parser
-    for k in mode_map:
-        opt = getattr(args, k)
-        if opt:
+        subparser = subparsers.add_parser(k)
+        subparser.add_argument('operation_type', choices=(mode_map[k]))
+        for opt in mode_map[k]:
             mode = globals()[mode_map[k][opt]]
-            mode(args.input, args.output, args_extra)
-            
+            cmds[mode_map[k][opt]] = mode(subparser)
+
+    args = parser.parse_args()
+    cmd = cmds[mode_map[args.cmd][args.operation_type]]
+    
 # 	Logging setup
     loglevel = getattr(logging, args.loglevel.upper())
     logging.basicConfig(level=loglevel)
