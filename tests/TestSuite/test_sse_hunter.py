@@ -1,10 +1,16 @@
+import os
 from .toolkit_tests import ToolkitTestCases
 
 
 class TestSSEHunter(ToolkitTestCases.ToolkitTests):
 
 	def __init__(self):
-		ToolkitTestCases.ToolkitTests.__init__(self, 'pdb', prog_name='sse_hunter.py')
+		if os.getenv('CONDA_BUILD_STATE') == 'TEST':
+			prog_name = 'gorgon-sse-hunter'
+		else:
+			prog_name = 'gorgon_sse_hunter.py'
+		
+		ToolkitTestCases.ToolkitTests.__init__(self, 'pdb', prog_name=prog_name)
 
 	def get_inputs(self):
 		return [self.volume, self.skeleton]

@@ -1,18 +1,23 @@
 #!/usr/bin/env python
 
+"""Main command-line program for Gorgon Toolkit."""
+
 import argparse
 import logging
 from gorgon.toolkit import *
 
-
 def main():
+    """Program flow.
+    
+    1. Initialize objects by passing subparsers to be setup to their __init__ methods
+    2. Parse args and pick the object according to the subcommand chosen on command-line
+    3. Call object's run method and pass it the parsed args
+    """
     mode_map = {'filter': {"normalize":"Normalize", "lowpass":"LowPass", "gaussian":"Gaussian"},
                 'skeletonize': {"binary":"Binary", "grayscale":"GrayScale"}
                 }
     
-    parser = argparse.ArgumentParser(description='Gorgon Toolkit')
-    parser.add_argument('input', action="store")
-    parser.add_argument('output', action="store")
+    parser = argparse.ArgumentParser(description='Gorgon Toolkit' + '\n\n' + __doc__)
     parser.add_argument('--log', action="store",
                         dest='loglevel',
                         choices=['info', 'debug'],
@@ -20,21 +25,28 @@ def main():
                         help="log level"
                         )
     
-    group = parser.add_mutually_exclusive_group(required=True)
+    subparsers = parser.add_subparsers(dest='operation')
     
-#     Update parser with list of available options
-    for k in mode_map:
-        group.add_argument('--'+k, choices=(mode_map[k]))
-
-    args, args_extra = parser.parse_known_args()
+    cmd_objects = {}
     
-#     Initialize object requested in the parser
+#     Update subparsers by initializing the objects listed in mode_map
     for k in mode_map:
-        opt = getattr(args, k)
-        if opt:
+        subparser = subparsers.add_parser(k)
+        subparser.add_argument('operation_type', choices=(mode_map[k]))
+        for opt in mode_map[k]:
             mode = globals()[mode_map[k][opt]]
-            mode(args.input, args.output, args_extra)
-            
+            # initialization
+            cmd_objects[mode_map[k][opt]] = mode(subparser)
+
+    parser.add_argument('input', action="store")
+    parser.add_argument('output', action="store")
+    
+    args = parser.parse_args()
+    
+    # get selected object
+    cmd = cmd_objects[mode_map[args.operation][args.operation_type]]    
+    cmd.run(args)
+    
 # 	Logging setup
     loglevel = getattr(logging, args.loglevel.upper())
     logging.basicConfig(level=loglevel)

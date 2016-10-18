@@ -1,3 +1,4 @@
+import os
 from os      import path, mkdir
 from os.path import join
 
@@ -6,6 +7,9 @@ import abc
 
 from subprocess import check_call
 from filecmp import cmp
+import termcolor
+
+from . import EXE_PATH
 
 
 class ToolkitTestCases(unittest.TestCase):
@@ -18,15 +22,16 @@ class ToolkitTestCases(unittest.TestCase):
 			'''Return list of inputs for the test'''
 			return
 
-		def __init__(self, out_extension, topdir=path.curdir, prog_name='gorgon.py', prog_option=None):
+		def __init__(self, out_extension, topdir=path.curdir, prog_name='gorgon_cli.py', prog_option=None):
+			if prog_name == 'gorgon_cli.py' and os.getenv('CONDA_BUILD_STATE') == 'TEST':
+				prog_name = 'gorgon'
 			self.prog_name     = prog_name
 			self.prog_option   = prog_option
 			self.out_extension = '.' + out_extension
 			
 			testsdir           = join(topdir, 'tests')
 
-			self.bindir        = join(topdir,     'bin')
-			self.indir         = join(testsdir,   'groel')
+			self.indir         = join(topdir,   'demo/groel')
 			self.outdir        = join(testsdir,   'outputs')
 			self.refdir        = join(self.indir, 'refs')
 
@@ -36,7 +41,10 @@ class ToolkitTestCases(unittest.TestCase):
 			self.helix_lengths = join(self.indir, 'helix-lengths.sse')
 			self.helices       = join(self.indir, 'helices-densityMap.wrl')
 			
-			self.exe          = join(self.bindir, self.prog_name)
+			if EXE_PATH:
+				self.exe          = join(EXE_PATH, self.prog_name)
+			else:
+				self.exe          = self.prog_name
 			
 			if self.prog_option:
 				self.outprefix    = self.prog_option + '_'
@@ -54,14 +62,19 @@ class ToolkitTestCases(unittest.TestCase):
 			
 			inputs = ' '.join(self.get_inputs())
 			if self.prog_option:
-				cmd_option = '--%s %s' % (self.prog_option, option)
+				cmd_option = '%s %s' % (self.prog_option, option)
 			else:
 				cmd_option = ''
 			
-			cmd = '%s %s %s %s' % (self.exe, inputs, self.output, cmd_option)
+			cmd = '%s %s %s %s' % (self.exe, cmd_option, inputs, self.output)
 			
 			return cmd
 
 		def run(self, option=''):
+			print termcolor.colored("\n+ %s" % self._cmd(option), "green")
+			
+			# remove output file in case left from previous test runs
+			if path.isfile(self.output):
+				os.remove(self.output)
 			check_call([self._cmd(option)], shell=True)
 			assert cmp(self.output, self.ref), "\nFiles differ:\n   1: %s\n   2: %s" % (self.output, self.ref)
