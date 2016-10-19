@@ -17,7 +17,7 @@ from gorgon.gui import CalphaAtomPlacement
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Gorgon Toolkit Gui')
+    parser = argparse.ArgumentParser(description='Gorgon GUI')
     
     parser.add_argument('volume')
     parser.add_argument('skeleton')
