@@ -17,6 +17,13 @@ from gorgon.gui import CalphaAtomPlacement
 
 
 def main():
+    guis = { 'binary-skeletonization': BinarySkeletonization,
+             'grayscale-skeletonization': GrayscaleSkeletonization,
+             'sse-identification': SSEIdentification,
+             'sse-correspondence': SSECorrespondence,
+             'calpha-placement': CalphaAtomPlacement,
+             }
+    
     parser = argparse.ArgumentParser(description='Gorgon GUI')
     
     parser.add_argument('volume')
