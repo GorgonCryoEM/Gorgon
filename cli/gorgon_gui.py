@@ -25,13 +25,14 @@ def main():
              }
     
     parser = argparse.ArgumentParser(description='Gorgon GUI')
+
+    subparsers = parser.add_subparsers()
     
-    parser.add_argument('volume')
-    parser.add_argument('skeleton')
-    parser.add_argument('sequence')
-    parser.add_argument('helix')
-    parser.add_argument('calpha')
-    parser.add_argument('output')
+    for key,val in guis.iteritems():
+        subparser = subparsers.add_parser(key)
+        val.set_parser(subparser)
+        subparser.set_defaults(func=val)
+    
     args = parser.parse_args()
 
     app = QtGui.QApplication(sys.argv)
