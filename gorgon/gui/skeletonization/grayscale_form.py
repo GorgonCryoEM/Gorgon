@@ -5,6 +5,7 @@ from ui_grayscale import Ui_DialogVolumeGrayscaleSkeletonization
 class VolumeGrayscaleSkeletonizationForm(Form):
 
     def __init__(self, parent):
+        self.citationHtml = "Segmentation-free skeletonization of grayscale volumes for shape understanding", "Sasakthi Abeysinghe, Matthew Baker, Wah Chiu and Tao Ju", "IEEE International Conference on Shape Modeling and Applications, 2008 (Accepted)"
         super(VolumeGrayscaleSkeletonizationForm, self).__init__(parent, Ui_DialogVolumeGrayscaleSkeletonization, "Grayscale")
 
     def getStepCount(self):
@@ -35,9 +36,3 @@ class VolumeGrayscaleSkeletonizationForm(Form):
     
     def loadAndShow(self):
         self.ui.checkBoxPreserveSkeleton.setEnabled(self.parent.viewers["skeleton"].loaded)
-        
-    def methodChanged(self, id):
-        if(id == 0):
-            self.ui.textCitation.setHtml(self.getCitationHtml("Segmentation-free skeletonization of grayscale volumes for shape understanding", "Sasakthi Abeysinghe, Matthew Baker, Wah Chiu and Tao Ju", "IEEE International Conference on Shape Modeling and Applications, 2008 (Accepted)"))
-        else:
-            self.ui.textCitation.setHtml("")

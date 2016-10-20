@@ -74,11 +74,11 @@ class Form(QtGui.QDialog):
     def loadSelf(self):
         self.ui.horizontalSliderIsoLevel.setValue(int(self.volume.getIsoValue() * 100))
         
-    def getCitationHtml(self, title, author, journal):
-        return "<b>" + title + "</b><br>" + author + "<br><i>" + journal + "</i>"
+    def getCitationHtml(self, citationHtml):
+        return "<b>" + citationHtml[0] + "</b><br>" + citationHtml[1] + "<br><i>" + citationHtml[2] + "</i>"
                   
     def methodChanged(self, id):
         if(id == 0):
-            self.ui.textCitation.setHtml(self.getCitationHtml("Computing a family of skeletons of volumetric models for shape description", "Tao Ju, Matthew Baker and Wah Chiu", "Computer Aided Design 39(5) 2007"))
+            self.ui.textCitation.setHtml(self.getCitationHtml(self.citationHtml))
         else:
             self.ui.textCitation.setHtml("")
