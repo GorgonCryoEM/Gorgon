@@ -27,7 +27,7 @@ class SSECorrespondence(Window):
         self.sseViewer    = SSEViewer(self)
         self.calphaViewer = CAlphaViewer(self)
 #         self.viewers['volume'] = self.volumeViewer
-        self.viewers['skeleton'] = self.skeletonViewer
+        self.viewers['skeleton'] = self.skeleton
         self.viewers['sse'] = self.sseViewer
         self.viewers['calpha'] = self.calphaViewer
 
@@ -38,7 +38,7 @@ class SSECorrespondence(Window):
 #         self.form.show()
 #
 #         self.volumeViewer.load(self.args.volume)
-        self.skeletonViewer.load(self.args.skeleton)
+        self.skeleton.load(self.args.skeleton)
         self.sseViewer.loadHelixDataFromFile(self.args.helix)
         # self.calphaViewer.loadSeq(self.args.sequence)
 

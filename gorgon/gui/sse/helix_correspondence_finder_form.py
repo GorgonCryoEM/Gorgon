@@ -75,7 +75,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
 #         self.connect(self.ui.checkBoxIncludeSheets, QtCore.SIGNAL("toggled (bool)"), self.sheetIncludeChanged)
 #         self.connect(self.ui.checkBoxMissingSheets, QtCore.SIGNAL("toggled (bool)"), self.missingSheetChanged)
 #         self.connect(self.ui.checkBoxMissingHelices, QtCore.SIGNAL("toggled (bool)"), self.missingHelixChanged)
-#         self.connect(self.app.skeletonViewer, QtCore.SIGNAL("modelDrawing()"), self.drawOverlay)
+#         self.connect(self.app.skeleton, QtCore.SIGNAL("modelDrawing()"), self.drawOverlay)
 #         self.app.volumeViewer.visualizationUpdated.connect(self.drawOverlay)
 #         self.ui.tableWidgetCorrespondenceList.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
 #         self.connect(self.ui.tableWidgetCorrespondenceList, QtCore.SIGNAL("customContextMenuRequested (const QPoint&)"), self.customMenuRequested)
@@ -89,7 +89,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
 #         self.ui.lineEditHelixLengthFile.setText("")
 #         self.ui.lineEditHelixLocationFile.setText(self.sseViewer.helixFileName)
 #         self.ui.lineEditSheetLocationFile.setText(self.sseViewer.sheetFileName)
-#         self.ui.lineEditSkeletonFile.setText(self.app.skeletonViewer.fileName)
+#         self.ui.lineEditSkeletonFile.setText(self.app.skeleton.fileName)
 #         self.ui.lineEditSequenceFile.setText(self.app.calphaViewer.fileName)
 #         self.ui.lineEditSettingsFile.setText("")
 #         self.loadDefaultParams()
@@ -163,8 +163,8 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
 # #         self.bringToFront()
 #
 #     def getSkeletonFile(self):
-#         self.app.skeletonViewer.loadData()
-#         self.ui.lineEditSkeletonFile.setText(self.app.skeletonViewer.fileName)
+#         self.app.skeleton.loadData()
+#         self.ui.lineEditSkeletonFile.setText(self.app.skeleton.fileName)
 #         self.checkOk()
 # #         self.bringToFront()
 #
@@ -298,7 +298,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
 #             self.ui.lineEditSheetLocationFile.setText(sheetFilePath)
 #
 #             # load skeleton file and store the filename
-#             self.app.skeletonViewer.loadDataFromFile(skeletonFilePath)
+#             self.app.skeleton.loadDataFromFile(skeletonFilePath)
 #             self.ui.lineEditSkeletonFile.setText(skeletonFilePath)
 #
 #             # store helix length filename
