@@ -1,4 +1,4 @@
-from .window import Window
+from ..window import Window
 from ..skeletonization.grayscale_form import VolumeGrayscaleSkeletonizationForm
 
 

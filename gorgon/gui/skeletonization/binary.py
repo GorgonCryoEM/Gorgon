@@ -1,4 +1,4 @@
-from .window import Window
+from ..window import Window
 from ..skeletonization.binary_form import VolumeBinarySkeletonizationForm
 
 

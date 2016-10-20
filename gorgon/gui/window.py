@@ -3,9 +3,9 @@ import sys
 
 from PyQt4 import QtGui
 
-from ..explorer.volume_viewer import VolumeViewer
-from ..explorer.skeleton_viewer import SkeletonViewer
-from ..explorer import Camera
+from .explorer.volume_viewer import VolumeViewer
+from .explorer.skeleton_viewer import SkeletonViewer
+from .explorer import Camera
 
 
 class Window(QtGui.QMainWindow):
