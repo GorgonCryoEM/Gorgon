@@ -3,10 +3,10 @@ import sys
 
 from PyQt4 import QtGui
 
-from .explorer.skeleton_viewer import SkeletonViewer
-from .skeletonization.binary_form import VolumeBinarySkeletonizationForm
-from .explorer import Camera
-from .explorer.volume_viewer import VolumeViewer
+from ..explorer.skeleton_viewer import SkeletonViewer
+from ..skeletonization.binary_form import VolumeBinarySkeletonizationForm
+from ..explorer import Camera
+from ..explorer.volume_viewer import VolumeViewer
 
 
 class BinarySkeletonization(QtGui.QMainWindow):
