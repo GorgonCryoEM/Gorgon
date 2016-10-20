@@ -26,10 +26,20 @@ class VolumeGrayscaleSkeletonizationForm(Form):
             method = self.getSkeletonizationMethod()
             if(method == 0):
                 self.modelLoaded()
-                skeleton = self.volume.renderer.performGrayscaleSkeletonizationAbeysinghe2008(self.getDensityThreshold(), self.getStepCount(), self.getMinCurveLength(), self.getMinSurfaceSize(), self.getCurveRadius(), self.getSurfaceRadius(), self.getSkeletonRadius())
+                skeleton = self.skeletonize()
                 self.skeleton.loadVolume(skeleton)
             self.setCursor(QtCore.Qt.ArrowCursor)
             self.close()
         else:
             QtGui.QMessageBox.critical(None, "Source volume unloaded", "A volume must be loaded to perform skeletonization", QtGui.QMessageBox.Ok, QtGui.QMessageBox.NoButton)
 #         BaseDialogWidget.accept(self)
+
+    def skeletonize(self):
+        skeleton = self.volume.renderer.performGrayscaleSkeletonizationAbeysinghe2008(self.getDensityThreshold(),
+                                                                                      self.getStepCount(),
+                                                                                      self.getMinCurveLength(),
+                                                                                      self.getMinSurfaceSize(),
+                                                                                      self.getCurveRadius(),
+                                                                                      self.getSurfaceRadius(),
+                                                                                      self.getSkeletonRadius())
+        return skeleton

@@ -59,7 +59,7 @@ class Form(QtGui.QDialog):
             if(method == 0):
                 self.modelLoaded()
                 print "       Values:", self.getDensityThreshold(), self.getMinCurveLength(), self.getMinSurfaceSize()
-                skeleton = self.volume.renderer.performBinarySkeletonizationJu2007(self.getDensityThreshold(), self.getMinCurveLength(), self.getMinSurfaceSize())
+                skeleton = self.skeletonize()
                 print "Skeleton after skeletonization: ", skeleton.getSize()
                 print "   Origin: ", [skeleton.getOriginX(), skeleton.getOriginY(), skeleton.getOriginZ()]
                 self.skeleton.loadVolume(skeleton)
