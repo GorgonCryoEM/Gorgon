@@ -4,7 +4,7 @@ from ui_binary import Ui_DialogVolumeBinarySkeletonization
 
 class VolumeBinarySkeletonizationForm(QtGui.QDialog):
 
-    def __init__(self, main, volumeViewer, parent=None):
+    def __init__(self, main, volumeViewer):
         super(VolumeBinarySkeletonizationForm, self).__init__(volumeViewer)
         self.app = main
         self.viewer = volumeViewer

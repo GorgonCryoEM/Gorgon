@@ -12,7 +12,7 @@ class SkeletonViewer(BaseViewer):
 
     def __init__(self, main, parent=None):
         self.title = "Skeleton"
-        super(SkeletonViewer, self).__init__(SkeletonRenderer(), main, parent)
+        super(SkeletonViewer, self).__init__(SkeletonRenderer(), main)
         self.shortTitle = "SKE"
         
         self.color = QtGui.QColor(200, 50, 50, 150)

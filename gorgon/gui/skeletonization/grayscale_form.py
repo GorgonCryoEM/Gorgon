@@ -5,7 +5,7 @@ import threading
 
 class VolumeGrayscaleSkeletonizationForm(QtGui.QDialog):
 
-    def __init__(self, main, volumeViewer, parent=None):
+    def __init__(self, main, volumeViewer):
         super(VolumeGrayscaleSkeletonizationForm, self).__init__(volumeViewer)
         self.app = main
         self.viewer = volumeViewer

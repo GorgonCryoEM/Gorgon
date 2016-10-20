@@ -29,7 +29,7 @@ class GrayscaleSkeletonization(QtGui.QMainWindow):
         self.mainCamera = Camera(self.scene, self)
         self.setCentralWidget(self.mainCamera)
         
-        self.form = VolumeGrayscaleSkeletonizationForm(self, self.volume, self)
+        self.form = VolumeGrayscaleSkeletonizationForm(self, self.volume)
         self.form.show()
         
         self.setWindowTitle(self.tr("Gorgon Toolkit - v" + version))

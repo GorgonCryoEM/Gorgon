@@ -10,7 +10,7 @@ class SSEViewer(BaseViewer):
     def __init__(self, main, parent=None):
         self.title = "Secondary Structure Element"
         self.app = main
-        super(SSEViewer, self).__init__(SSERenderer(), main, parent)
+        super(SSEViewer, self).__init__(SSERenderer(), main)
         self.shortTitle = "SSE"
 #         self.app.themes.addDefaultRGB("Secondary Structure Element:Model:0", 0, 180, 0, 255)
 #         self.app.themes.addDefaultRGB("Secondary Structure Element:Model:1", 120, 185, 255, 255)
