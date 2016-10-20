@@ -7,9 +7,6 @@ class VolumeGrayscaleSkeletonizationForm(Form):
     def __init__(self, parent):
         super(VolumeGrayscaleSkeletonizationForm, self).__init__(parent, Ui_DialogVolumeGrayscaleSkeletonization, "Grayscale")
 
-    def isoValueChanged(self, newLevel):
-        self.ui.labelStartingDensityDisplay.setNum(newLevel/100.0)
-
     def getStartingDensity(self):
         return self.ui.horizontalSliderIsoLevel.value() / 100.0
 
