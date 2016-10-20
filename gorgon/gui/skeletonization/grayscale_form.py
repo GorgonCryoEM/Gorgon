@@ -25,9 +25,6 @@ class VolumeGrayscaleSkeletonizationForm(QtGui.QDialog):
         self.connect(self.ui.comboBoxMethod, QtCore.SIGNAL("currentIndexChanged (int)"), self.methodChanged)
         self.methodChanged(0)
         
-    def createMenus(self):
-        self.parent.menus.addAction("actions-volume-skeletonization-grayscale", self.parent.actions.getAction("perform_VolumeGrayscaleSkeletonization"), "actions-volume-skeletonization")
-
     def modelLoaded(self):
         maxDensity = self.volume.renderer.getMaxDensity()
         minDensity = self.volume.renderer.getMinDensity()
