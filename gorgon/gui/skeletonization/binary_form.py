@@ -6,14 +6,15 @@ class VolumeBinarySkeletonizationForm(QtGui.QDialog):
 
     def __init__(self, parent):
         self.parent = parent
-        self.viewer = self.parent.volume
+        self.volume = self.parent.volume
+        self.skeleton = self.parent.skeleton
         super(VolumeBinarySkeletonizationForm, self).__init__()
-        dock = QtGui.QDockWidget("Binary", self.viewer)
+        dock = QtGui.QDockWidget("Binary", self.volume)
         dock.setWidget(self)
         dock.setAllowedAreas(QtCore.Qt.AllDockWidgetAreas)
         self.parent.addDockWidget(QtCore.Qt.LeftDockWidgetArea, dock)
-        self.connect(self.viewer, QtCore.SIGNAL("modelLoaded()"), self.modelLoaded)
-        self.connect(self.viewer, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)
+        self.connect(self.volume, QtCore.SIGNAL("modelLoaded()"), self.modelLoaded)
+        self.connect(self.volume, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)
         self.createUI()
 
     def createUI(self):
@@ -24,8 +25,8 @@ class VolumeBinarySkeletonizationForm(QtGui.QDialog):
         self.methodChanged(0)
         
     def modelLoaded(self):
-        maxDensity = self.viewer.renderer.getMaxDensity()
-        minDensity = self.viewer.renderer.getMinDensity()
+        maxDensity = self.volume.renderer.getMaxDensity()
+        minDensity = self.volume.renderer.getMinDensity()
         self.ui.horizontalSliderIsoLevel.setMinimum(int(minDensity*100))
         self.ui.horizontalSliderIsoLevel.setMaximum(int(maxDensity*100))
         defaultDensity = (int(minDensity*100) + int(maxDensity*100.0)) / 2
@@ -51,20 +52,20 @@ class VolumeBinarySkeletonizationForm(QtGui.QDialog):
           
     def accept(self):
         print "binary.... accept"
-        print self.viewer.loaded
-        if(self.viewer.loaded):
+        print self.volume.loaded
+        if(self.volume.loaded):
             self.setCursor(QtCore.Qt.BusyCursor)
             method = self.getSkeletonizationMethod()
             print method
             if(method == 0):
                 self.modelLoaded()
                 print "       Values:", self.getDensityThreshold(), self.getMinCurveLength(), self.getMinSurfaceSize()
-                skeleton = self.viewer.renderer.performBinarySkeletonizationJu2007(self.getDensityThreshold(), self.getMinCurveLength(), self.getMinSurfaceSize())
+                skeleton = self.volume.renderer.performBinarySkeletonizationJu2007(self.getDensityThreshold(), self.getMinCurveLength(), self.getMinSurfaceSize())
                 print "Skeleton after skeletonization: ", skeleton.getSize()
                 print "   Origin: ", [skeleton.getOriginX(), skeleton.getOriginY(), skeleton.getOriginZ()]
-                self.parent.skeleton.loadVolume(skeleton)
+                self.skeleton.loadVolume(skeleton)
                 print "After loadVolume()"
-                print "   Origin: ", [self.parent.skeleton.renderer.getOriginX(), self.parent.skeleton.renderer.getOriginY(), self.parent.skeleton.renderer.getOriginZ()]
+                print "   Origin: ", [self.skeleton.renderer.getOriginX(), self.skeleton.renderer.getOriginY(), self.skeleton.renderer.getOriginZ()]
             self.setCursor(QtCore.Qt.ArrowCursor)
             self.close()
         else:
@@ -72,7 +73,7 @@ class VolumeBinarySkeletonizationForm(QtGui.QDialog):
         super(VolumeBinarySkeletonizationForm, self).accept()
 
     def loadSelf(self):
-        self.ui.horizontalSliderIsoLevel.setValue(int(self.viewer.getIsoValue()*100))
+        self.ui.horizontalSliderIsoLevel.setValue(int(self.volume.getIsoValue() * 100))
         
     def getCitationHtml(self, title, author, journal):
         return "<b>" + title + "</b><br>" + author + "<br><i>" + journal + "</i>"

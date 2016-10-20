@@ -7,14 +7,15 @@ class VolumeGrayscaleSkeletonizationForm(QtGui.QDialog):
 
     def __init__(self, parent):
         self.parent = parent
-        self.viewer = self.parent.volume
+        self.volume = self.parent.volume
+        self.skeleton = self.parent.skeleton
         super(VolumeGrayscaleSkeletonizationForm, self).__init__()
-        dock = QtGui.QDockWidget("Grayscale", self.viewer)
+        dock = QtGui.QDockWidget("Grayscale", self.volume)
         dock.setWidget(self)
         dock.setAllowedAreas(QtCore.Qt.AllDockWidgetAreas)
         self.parent.addDockWidget(QtCore.Qt.LeftDockWidgetArea, dock)
-        self.connect(self.viewer, QtCore.SIGNAL("modelLoaded()"), self.modelLoaded)
-        self.connect(self.viewer, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)
+        self.connect(self.volume, QtCore.SIGNAL("modelLoaded()"), self.modelLoaded)
+        self.connect(self.volume, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)
         self.createUI()
 
     def createUI(self):
@@ -28,8 +29,8 @@ class VolumeGrayscaleSkeletonizationForm(QtGui.QDialog):
         self.parent.menus.addAction("actions-volume-skeletonization-grayscale", self.parent.actions.getAction("perform_VolumeGrayscaleSkeletonization"), "actions-volume-skeletonization")
 
     def modelLoaded(self):
-        maxDensity = self.viewer.renderer.getMaxDensity()
-        minDensity = self.viewer.renderer.getMinDensity()
+        maxDensity = self.volume.renderer.getMaxDensity()
+        minDensity = self.volume.renderer.getMinDensity()
         self.ui.horizontalSliderStartingDensity.setMinimum(int(minDensity*100))
         self.ui.horizontalSliderStartingDensity.setMaximum(int(maxDensity*100))
         defaultDensity = (int(minDensity*100) + int(maxDensity*100.0)) / 2
@@ -66,14 +67,13 @@ class VolumeGrayscaleSkeletonizationForm(QtGui.QDialog):
         return self.ui.spinBoxSkeletonRadius.value()
     
     def accept(self):
-        if(self.viewer.loaded):
+        if(self.volume.loaded):
             self.setCursor(QtCore.Qt.BusyCursor)
             method = self.getSkeletonizationMethod()
             if(method == 0):
                 self.modelLoaded()
-                skeletonRenderer = self.parent.skeleton
-                skeleton = self.viewer.renderer.performGrayscaleSkeletonizationAbeysinghe2008(self.getStartingDensity(), self.getStepCount(), self.getMinCurveLength(), self.getMinSurfaceSize(), self.getCurveRadius(), self.getSurfaceRadius(), self.getSkeletonRadius())
-                self.parent.skeleton.loadVolume(skeleton)
+                skeleton = self.volume.renderer.performGrayscaleSkeletonizationAbeysinghe2008(self.getStartingDensity(), self.getStepCount(), self.getMinCurveLength(), self.getMinSurfaceSize(), self.getCurveRadius(), self.getSurfaceRadius(), self.getSkeletonRadius())
+                self.skeleton.loadVolume(skeleton)
             self.setCursor(QtCore.Qt.ArrowCursor)
             self.close()
         else:
