@@ -7,7 +7,7 @@ class VolumeBinarySkeletonizationForm(QtGui.QDialog):
     def __init__(self, parent):
         self.parent = parent
         self.viewer = self.parent.volume
-        super(VolumeBinarySkeletonizationForm, self).__init__(self.viewer)
+        super(VolumeBinarySkeletonizationForm, self).__init__()
         dock = QtGui.QDockWidget("Binary", self.viewer)
         dock.setWidget(self)
         dock.setAllowedAreas(QtCore.Qt.AllDockWidgetAreas)

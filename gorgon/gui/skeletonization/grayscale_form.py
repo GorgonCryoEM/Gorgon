@@ -8,7 +8,7 @@ class VolumeGrayscaleSkeletonizationForm(QtGui.QDialog):
     def __init__(self, parent):
         self.parent = parent
         self.viewer = self.parent.volume
-        super(VolumeGrayscaleSkeletonizationForm, self).__init__(self.viewer)
+        super(VolumeGrayscaleSkeletonizationForm, self).__init__()
         dock = QtGui.QDockWidget("Grayscale", self.viewer)
         dock.setWidget(self)
         dock.setAllowedAreas(QtCore.Qt.AllDockWidgetAreas)
