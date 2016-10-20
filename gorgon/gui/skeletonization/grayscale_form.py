@@ -33,6 +33,3 @@ class VolumeGrayscaleSkeletonizationForm(Form):
         else:
             QtGui.QMessageBox.critical(None, "Source volume unloaded", "A volume must be loaded to perform skeletonization", QtGui.QMessageBox.Ok, QtGui.QMessageBox.NoButton)
 #         BaseDialogWidget.accept(self)
-    
-    def loadAndShow(self):
-        self.ui.checkBoxPreserveSkeleton.setEnabled(self.parent.viewers["skeleton"].loaded)
