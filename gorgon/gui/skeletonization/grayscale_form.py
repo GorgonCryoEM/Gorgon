@@ -7,9 +7,6 @@ class VolumeGrayscaleSkeletonizationForm(Form):
     def __init__(self, parent):
         super(VolumeGrayscaleSkeletonizationForm, self).__init__(parent, Ui_DialogVolumeGrayscaleSkeletonization, "Grayscale")
 
-    def getStartingDensity(self):
-        return self.ui.horizontalSliderIsoLevel.value() / 100.0
-
     def getStepCount(self):
         return self.ui.horizontalSliderStepCount.value()
     
@@ -28,7 +25,7 @@ class VolumeGrayscaleSkeletonizationForm(Form):
             method = self.getSkeletonizationMethod()
             if(method == 0):
                 self.modelLoaded()
-                skeleton = self.volume.renderer.performGrayscaleSkeletonizationAbeysinghe2008(self.getStartingDensity(), self.getStepCount(), self.getMinCurveLength(), self.getMinSurfaceSize(), self.getCurveRadius(), self.getSurfaceRadius(), self.getSkeletonRadius())
+                skeleton = self.volume.renderer.performGrayscaleSkeletonizationAbeysinghe2008(self.getDensityThreshold(), self.getStepCount(), self.getMinCurveLength(), self.getMinSurfaceSize(), self.getCurveRadius(), self.getSurfaceRadius(), self.getSkeletonRadius())
                 self.skeleton.loadVolume(skeleton)
             self.setCursor(QtCore.Qt.ArrowCursor)
             self.close()
