@@ -10,23 +10,23 @@ class VolumeGrayscaleSkeletonizationForm(Form):
     def createUI(self):
         self.ui = Ui_DialogVolumeGrayscaleSkeletonization()
         self.ui.setupUi(self)
-        self.connect(self.ui.horizontalSliderStartingDensity,QtCore.SIGNAL("valueChanged(int)"),self.startingDensityChanged)
+        self.connect(self.ui.horizontalSliderIsoLevel, QtCore.SIGNAL("valueChanged(int)"), self.startingDensityChanged)
         self.connect(self.ui.comboBoxMethod, QtCore.SIGNAL("currentIndexChanged (int)"), self.methodChanged)
         self.methodChanged(0)
         
     def modelLoaded(self):
         maxDensity = self.volume.renderer.getMaxDensity()
         minDensity = self.volume.renderer.getMinDensity()
-        self.ui.horizontalSliderStartingDensity.setMinimum(int(minDensity*100))
-        self.ui.horizontalSliderStartingDensity.setMaximum(int(maxDensity*100))
+        self.ui.horizontalSliderIsoLevel.setMinimum(int(minDensity * 100))
+        self.ui.horizontalSliderIsoLevel.setMaximum(int(maxDensity * 100))
         defaultDensity = (int(minDensity*100) + int(maxDensity*100.0)) / 2
-        self.ui.horizontalSliderStartingDensity.setValue(defaultDensity)
+        self.ui.horizontalSliderIsoLevel.setValue(defaultDensity)
         
     def startingDensityChanged(self, newLevel):
         self.ui.labelStartingDensityDisplay.setNum(newLevel/100.0)
 
     def getStartingDensity(self):
-        return self.ui.horizontalSliderStartingDensity.value()/100.0
+        return self.ui.horizontalSliderIsoLevel.value() / 100.0
 
     def getStepCount(self):
         return self.ui.horizontalSliderStepCount.value()
