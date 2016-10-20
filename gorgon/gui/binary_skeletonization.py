@@ -29,7 +29,7 @@ class BinarySkeletonization(QtGui.QMainWindow):
         self.mainCamera = Camera(self.scene, self)
         self.setCentralWidget(self.mainCamera)
         
-        self.form = VolumeBinarySkeletonizationForm(self, self.volume)
+        self.form = VolumeBinarySkeletonizationForm(self)
         self.form.show()
         
         self.setWindowTitle(self.tr("Gorgon Toolkit - v" + version))

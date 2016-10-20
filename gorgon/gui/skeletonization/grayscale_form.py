@@ -5,14 +5,14 @@ import threading
 
 class VolumeGrayscaleSkeletonizationForm(QtGui.QDialog):
 
-    def __init__(self, main, volumeViewer):
-        super(VolumeGrayscaleSkeletonizationForm, self).__init__(volumeViewer)
-        self.app = main
-        self.viewer = volumeViewer
-        dock = QtGui.QDockWidget("Grayscale", volumeViewer)
+    def __init__(self, parent):
+        self.parent = parent
+        self.viewer = self.parent.volume
+        super(VolumeGrayscaleSkeletonizationForm, self).__init__(self.viewer)
+        dock = QtGui.QDockWidget("Grayscale", self.viewer)
         dock.setWidget(self)
         dock.setAllowedAreas(QtCore.Qt.AllDockWidgetAreas)
-        self.app.addDockWidget(QtCore.Qt.LeftDockWidgetArea, dock)
+        self.parent.addDockWidget(QtCore.Qt.LeftDockWidgetArea, dock)
         self.connect(self.viewer, QtCore.SIGNAL("modelLoaded()"), self.modelLoaded)
         self.connect(self.viewer, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)
         self.createUI()
@@ -25,7 +25,7 @@ class VolumeGrayscaleSkeletonizationForm(QtGui.QDialog):
         self.methodChanged(0)
         
     def createMenus(self):
-        self.app.menus.addAction("actions-volume-skeletonization-grayscale", self.app.actions.getAction("perform_VolumeGrayscaleSkeletonization"), "actions-volume-skeletonization")
+        self.parent.menus.addAction("actions-volume-skeletonization-grayscale", self.parent.actions.getAction("perform_VolumeGrayscaleSkeletonization"), "actions-volume-skeletonization")
 
     def modelLoaded(self):
         maxDensity = self.viewer.renderer.getMaxDensity()
@@ -71,9 +71,9 @@ class VolumeGrayscaleSkeletonizationForm(QtGui.QDialog):
             method = self.getSkeletonizationMethod()
             if(method == 0):
                 self.modelLoaded()
-                skeletonRenderer = self.app.skeleton
+                skeletonRenderer = self.parent.skeleton
                 skeleton = self.viewer.renderer.performGrayscaleSkeletonizationAbeysinghe2008(self.getStartingDensity(), self.getStepCount(), self.getMinCurveLength(), self.getMinSurfaceSize(), self.getCurveRadius(), self.getSurfaceRadius(), self.getSkeletonRadius())
-                self.app.skeleton.loadVolume(skeleton)
+                self.parent.skeleton.loadVolume(skeleton)
             self.setCursor(QtCore.Qt.ArrowCursor)
             self.close()
         else:
@@ -84,7 +84,7 @@ class VolumeGrayscaleSkeletonizationForm(QtGui.QDialog):
         return "<b>" + title + "</b><br>" + author + "<br><i>" + journal + "</i>"
                   
     def loadAndShow(self):
-        self.ui.checkBoxPreserveSkeleton.setEnabled(self.app.viewers["skeleton"].loaded)
+        self.ui.checkBoxPreserveSkeleton.setEnabled(self.parent.viewers["skeleton"].loaded)
         
     def methodChanged(self, id):
         if(id == 0):

@@ -4,14 +4,14 @@ from ui_binary import Ui_DialogVolumeBinarySkeletonization
 
 class VolumeBinarySkeletonizationForm(QtGui.QDialog):
 
-    def __init__(self, main, volumeViewer):
-        super(VolumeBinarySkeletonizationForm, self).__init__(volumeViewer)
-        self.app = main
-        self.viewer = volumeViewer
-        dock = QtGui.QDockWidget("Binary", volumeViewer)
+    def __init__(self, parent):
+        self.parent = parent
+        self.viewer = self.parent.volume
+        super(VolumeBinarySkeletonizationForm, self).__init__(self.viewer)
+        dock = QtGui.QDockWidget("Binary", self.viewer)
         dock.setWidget(self)
         dock.setAllowedAreas(QtCore.Qt.AllDockWidgetAreas)
-        self.app.addDockWidget(QtCore.Qt.LeftDockWidgetArea, dock)
+        self.parent.addDockWidget(QtCore.Qt.LeftDockWidgetArea, dock)
         self.connect(self.viewer, QtCore.SIGNAL("modelLoaded()"), self.modelLoaded)
         self.connect(self.viewer, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)
         self.createUI()
@@ -62,9 +62,9 @@ class VolumeBinarySkeletonizationForm(QtGui.QDialog):
                 skeleton = self.viewer.renderer.performBinarySkeletonizationJu2007(self.getDensityThreshold(), self.getMinCurveLength(), self.getMinSurfaceSize())
                 print "Skeleton after skeletonization: ", skeleton.getSize()
                 print "   Origin: ", [skeleton.getOriginX(), skeleton.getOriginY(), skeleton.getOriginZ()]
-                self.app.skeleton.loadVolume(skeleton)
+                self.parent.skeleton.loadVolume(skeleton)
                 print "After loadVolume()"
-                print "   Origin: ", [self.app.skeleton.renderer.getOriginX(), self.app.skeleton.renderer.getOriginY(), self.app.skeleton.renderer.getOriginZ()]
+                print "   Origin: ", [self.parent.skeleton.renderer.getOriginX(), self.parent.skeleton.renderer.getOriginY(), self.parent.skeleton.renderer.getOriginZ()]
             self.setCursor(QtCore.Qt.ArrowCursor)
             self.close()
         else:
