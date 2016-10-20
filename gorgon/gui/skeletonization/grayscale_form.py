@@ -1,22 +1,11 @@
-from PyQt4 import QtCore, QtGui
+from form import Form
 from ui_grayscale import Ui_DialogVolumeGrayscaleSkeletonization
-import threading
 
 
-class VolumeGrayscaleSkeletonizationForm(QtGui.QDialog):
+class VolumeGrayscaleSkeletonizationForm(Form):
 
     def __init__(self, parent):
-        self.parent = parent
-        self.volume = self.parent.volume
-        self.skeleton = self.parent.skeleton
-        super(VolumeGrayscaleSkeletonizationForm, self).__init__()
-        dock = QtGui.QDockWidget("Grayscale", self.volume)
-        dock.setWidget(self)
-        dock.setAllowedAreas(QtCore.Qt.AllDockWidgetAreas)
-        self.parent.addDockWidget(QtCore.Qt.LeftDockWidgetArea, dock)
-        self.connect(self.volume, QtCore.SIGNAL("modelLoaded()"), self.modelLoaded)
-        self.connect(self.volume, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)
-        self.createUI()
+        super(VolumeGrayscaleSkeletonizationForm, self).__init__(parent, Ui_DialogVolumeGrayscaleSkeletonization, "Grayscale")
 
     def createUI(self):
         self.ui = Ui_DialogVolumeGrayscaleSkeletonization()
@@ -33,9 +22,6 @@ class VolumeGrayscaleSkeletonizationForm(QtGui.QDialog):
         defaultDensity = (int(minDensity*100) + int(maxDensity*100.0)) / 2
         self.ui.horizontalSliderStartingDensity.setValue(defaultDensity)
         
-    def modelUnloaded(self):
-        self.close()
-
     def startingDensityChanged(self, newLevel):
         self.ui.labelStartingDensityDisplay.setNum(newLevel/100.0)
 
@@ -44,15 +30,6 @@ class VolumeGrayscaleSkeletonizationForm(QtGui.QDialog):
 
     def getStepCount(self):
         return self.ui.horizontalSliderStepCount.value()
-    
-    def getSkeletonizationMethod(self):
-        return self.ui.comboBoxMethod.currentIndex()
-    
-    def getMinCurveLength(self):
-        return self.ui.spinBoxMinCurve.value()
-
-    def getMinSurfaceSize(self):
-        return self.ui.spinBoxMinSurface.value()
     
     def getCurveRadius(self):
         return self.ui.spinBoxCurveRadius.value()
@@ -77,9 +54,6 @@ class VolumeGrayscaleSkeletonizationForm(QtGui.QDialog):
             QtGui.QMessageBox.critical(None, "Source volume unloaded", "A volume must be loaded to perform skeletonization", QtGui.QMessageBox.Ok, QtGui.QMessageBox.NoButton)
 #         BaseDialogWidget.accept(self)
     
-    def getCitationHtml(self, title, author, journal):
-        return "<b>" + title + "</b><br>" + author + "<br><i>" + journal + "</i>"
-                  
     def loadAndShow(self):
         self.ui.checkBoxPreserveSkeleton.setEnabled(self.parent.viewers["skeleton"].loaded)
         
