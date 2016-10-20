@@ -7,22 +7,7 @@ class VolumeGrayscaleSkeletonizationForm(Form):
     def __init__(self, parent):
         super(VolumeGrayscaleSkeletonizationForm, self).__init__(parent, Ui_DialogVolumeGrayscaleSkeletonization, "Grayscale")
 
-    def createUI(self):
-        self.ui = Ui_DialogVolumeGrayscaleSkeletonization()
-        self.ui.setupUi(self)
-        self.connect(self.ui.horizontalSliderIsoLevel, QtCore.SIGNAL("valueChanged(int)"), self.startingDensityChanged)
-        self.connect(self.ui.comboBoxMethod, QtCore.SIGNAL("currentIndexChanged (int)"), self.methodChanged)
-        self.methodChanged(0)
-        
-    def modelLoaded(self):
-        maxDensity = self.volume.renderer.getMaxDensity()
-        minDensity = self.volume.renderer.getMinDensity()
-        self.ui.horizontalSliderIsoLevel.setMinimum(int(minDensity * 100))
-        self.ui.horizontalSliderIsoLevel.setMaximum(int(maxDensity * 100))
-        defaultDensity = (int(minDensity*100) + int(maxDensity*100.0)) / 2
-        self.ui.horizontalSliderIsoLevel.setValue(defaultDensity)
-        
-    def startingDensityChanged(self, newLevel):
+    def isoValueChanged(self, newLevel):
         self.ui.labelStartingDensityDisplay.setNum(newLevel/100.0)
 
     def getStartingDensity(self):
