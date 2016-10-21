@@ -1,8 +1,3 @@
-import os
-import sys
-
-from PyQt4 import QtCore, QtGui
-
 from .explorer.skeleton_viewer import SkeletonViewer
 from .calpha.viewer import CAlphaViewer
 from .sse.viewer import SSEViewer

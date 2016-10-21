@@ -1,8 +1,3 @@
-import os
-import sys
-
-from PyQt4 import QtGui
-
 from .explorer.skeleton_viewer import SkeletonViewer
 from .calpha.viewer import CAlphaViewer
 from .sse.helix_correspondence_finder_form import SSEHelixCorrespondenceFinderForm
