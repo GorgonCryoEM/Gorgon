@@ -25,7 +25,7 @@ class SSEViewer(BaseViewer):
         self.sheetLoaded = False
         self.correspondenceEngine = SSEEngine()
         self.selectEnabled = True
-        self.app.viewers["sse"] = self
+        self.app.sse = self
         self.model2Visible = True
         self.model3Visible = False
 #         self.initVisualizationOptions(ModelVisualizationForm(self.app, self))

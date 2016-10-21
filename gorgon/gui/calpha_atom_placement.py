@@ -25,13 +25,9 @@ class CalphaAtomPlacement(QtGui.QMainWindow):
         self.structPred = StructurePrediction.load(self.args.calpha, self)
         # exit()
         
-        self.viewers = {}
-        
         self.volume = VolumeViewer(self)
         self.skeleton = SkeletonViewer(self)
         self.calpha = CAlphaViewer(self)
-        self.viewers['skeleton'] = self.skeleton
-        self.viewers['calpha'] = self.calpha
         
         self.scene = []
         self.scene.append(self.volume)
