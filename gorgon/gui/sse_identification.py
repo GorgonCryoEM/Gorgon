@@ -9,31 +9,23 @@ from .sse.viewer import SSEViewer
 from .sse.volume_builder_form import VolumeSSEBuilderForm
 from .explorer import Camera
 from .explorer.volume_viewer import VolumeViewer
+from .window import Window
 
 
-class SSEIdentification(QtGui.QMainWindow):
+class SSEIdentification(Window):
 
     def __init__(self, version, args):
-        super(SSEIdentification, self).__init__()
+        super(SSEIdentification, self).__init__(version, VolumeSSEBuilderForm, args)
         
-        self.args = args
-        self.menubar = self.menuBar()
-        self.docksMenu = self.menubar.addMenu('&Docks')
-        self.docks = []
         self.hasSemiAtomicPlacementForm = False
         
         self.structPred = None
 
         self.viewers = {}
         
-        self.volume = VolumeViewer(self)
-        self.skeleton = SkeletonViewer(self)
         self.calpha = CAlphaViewer(self)
         self.sse = SSEViewer(self)
         
-        self.scene = []
-        self.scene.append(self.volume)
-        self.scene.append(self.skeleton)
         self.scene.append(self.calpha)
         self.scene.append(self.sse)
         
@@ -43,21 +35,11 @@ class SSEIdentification(QtGui.QMainWindow):
 #         for i in xrange(-100, 101, 50):
 #             self.scene.append(Grid3D(self, (-100, i, -100), (100, i, 100)))
         
-        self.mainCamera = Camera(self.scene, self)
-        self.setCentralWidget(self.mainCamera)
-        
-        self.form = VolumeSSEBuilderForm(self)
-        self.form.show()
-        
-        self.setWindowTitle(self.tr("Gorgon Toolkit - v" + version))
-        pathname = os.path.abspath(os.path.dirname(sys.argv[0]))
-        self.setWindowIcon(QtGui.QIcon(pathname + '/gorgon.ico'))
-        
     def load(self):
-        self.volume.load(self.args.volume)
+        super(SSEIdentification, self).load()
+        
         self.skeleton.load(self.args.skeleton)
         # self.calpha.loadSSEHunterData('pseudoatoms_thr_20.pdb')
-        self.form.modelLoaded()
 #         self.volume.renderer.printVertices()
         minDensity = self.volume.renderer.getMinDensity()
         maxDensity = self.volume.renderer.getMaxDensity()
@@ -69,6 +51,3 @@ class SSEIdentification(QtGui.QMainWindow):
         self.form.lineEditMean.valueChanged.connect(self.volume.modelChanged)
         self.form.lineEditMin.setReadOnly(True)
         self.form.lineEditMax.setReadOnly(True)
-        
-    def exitApplication(self):
-        QtGui.qApp.closeAllWindows()
