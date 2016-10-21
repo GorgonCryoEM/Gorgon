@@ -9,38 +9,21 @@ from .calpha.viewer import CAlphaViewer
 from .explorer import Camera
 from .explorer.volume_viewer import VolumeViewer
 from ..toolkit.sse.correspondence.StructurePrediction import StructurePrediction
+from .window import Window
 
 
-class CalphaAtomPlacement(QtGui.QMainWindow):
+class CalphaAtomPlacement(Window):
 
     def __init__(self, version, args):
-        super(CalphaAtomPlacement, self).__init__()
+        super(CalphaAtomPlacement, self).__init__(version, StructurePrediction.load, args)
         
-        self.args = args
-        self.menubar = self.menuBar()
-        self.docksMenu = self.menubar.addMenu('&Docks')
-        self.docks = []
         self.hasSemiAtomicPlacementForm = True
 
-        self.structPred = StructurePrediction.load(self)
-        # exit()
+        self.structPred = self.form
         
-        self.volume = VolumeViewer(self)
-        self.skeleton = SkeletonViewer(self)
         self.calpha = CAlphaViewer(self)
         
-        self.scene = []
-        self.scene.append(self.volume)
-        self.scene.append(self.skeleton)
         self.scene.append(self.calpha)
-        
-        self.mainCamera = Camera(self.scene, self)
-        self.setCentralWidget(self.mainCamera)
-        
-        self.setWindowTitle(self.tr("Gorgon Toolkit - v" + version))
-        pathname = os.path.abspath(os.path.dirname(sys.argv[0]))
-        self.setWindowIcon(QtGui.QIcon(pathname + '/gorgon.ico'))
-#         exit()
         
     def load(self):
         self.volume.load(self.args.volume)
@@ -50,6 +33,3 @@ class CalphaAtomPlacement(QtGui.QMainWindow):
         print "self.structPred.chain\n", self.structPred.chain
         self.structPred.chain = self.calpha.main_chain 
         CAlphaSequenceDock.changeDockVisibility(self, self.calpha, self.structPred, self.structPred.chain)
-
-    def exitApplication(self):
-        QtGui.qApp.closeAllWindows()
