@@ -26,6 +26,13 @@ class SSECorrespondence(Window):
         
         self.form.createUI()
 
+    @classmethod
+    def set_parser(cls, parser):
+        parser.description = "Gorgon SSE Correspondence Gui"
+        parser.add_argument('skeleton')
+        parser.add_argument('sequence')
+        parser.add_argument('helix')
+
     def load(self):
         self.skeleton.load(self.args.skeleton)
         self.sse.loadHelixDataFromFile(self.args.helix)

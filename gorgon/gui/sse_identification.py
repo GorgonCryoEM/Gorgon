@@ -31,6 +31,12 @@ class SSEIdentification(Window):
 #
 #         for i in xrange(-100, 101, 50):
 #             self.scene.append(Grid3D(self, (-100, i, -100), (100, i, 100)))
+
+    @classmethod
+    def set_parser(cls, parser):
+        parser.description = "Gorgon SSE Identification Gui"
+        parser.add_argument('volume')
+        parser.add_argument('skeleton')
         
     def load(self):
         super(SSEIdentification, self).load()

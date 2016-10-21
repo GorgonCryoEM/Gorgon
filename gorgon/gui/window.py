@@ -37,6 +37,10 @@ class Window(QtGui.QMainWindow):
         pathname = os.path.abspath(os.path.dirname(sys.argv[0]))
         self.setWindowIcon(QtGui.QIcon(pathname + '/gorgon.ico'))
         
+    @classmethod
+    def set_parser(cls, parser):
+        pass
+
     def load(self):
         self.volume.load(self.args.volume)
         self.form.modelLoaded()

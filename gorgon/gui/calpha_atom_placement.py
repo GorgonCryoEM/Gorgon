@@ -20,6 +20,13 @@ class CalphaAtomPlacement(Window):
         
         self.scene.append(self.calpha)
         
+    @classmethod
+    def set_parser(cls, parser):
+        parser.description = "Gorgon Calpha Atom Placement Gui"
+        parser.add_argument('volume')
+        parser.add_argument('skeleton')
+        parser.add_argument('calpha')
+
     def load(self):
         self.volume.load(self.args.volume)
         self.skeleton.load(self.args.skeleton)
