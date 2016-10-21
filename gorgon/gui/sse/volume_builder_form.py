@@ -30,8 +30,6 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
         self.connect(self.calpha, QtCore.SIGNAL("atomSelectionUpdated(PyQt_PyObject)"), self.atomSelectionChanged)
 
         self.createUI()
-        
-        self.enableDisableSSEHunter()
 
     def createUI(self):
         self.setupUi(self)
@@ -49,10 +47,6 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
         self.connect(self.doubleSpinBoxCorrelation,   QtCore.SIGNAL("valueChanged(double)"), self.updateTotalScoreSSEHunterAtoms)
         self.connect(self.doubleSpinBoxSkeleton,      QtCore.SIGNAL("valueChanged(double)"), self.updateTotalScoreSSEHunterAtoms)
         self.connect(self.doubleSpinBoxGeometry,      QtCore.SIGNAL("valueChanged(double)"), self.updateTotalScoreSSEHunterAtoms)
-        self.connect(self.volume,           QtCore.SIGNAL("modelLoaded()"),        self.enableDisableSSEHunter)
-        self.connect(self.skeleton,         QtCore.SIGNAL("modelLoaded()"),        self.enableDisableSSEHunter)
-        self.connect(self.volume,           QtCore.SIGNAL("modelUnloaded()"),      self.enableDisableSSEHunter)
-        self.connect(self.skeleton,         QtCore.SIGNAL("modelUnloaded()"),      self.enableDisableSSEHunter)
         
         self.pushButtonSaveHelices.clicked.connect(self.sse.saveHelixData)
         
@@ -246,20 +240,3 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
             self.sse.emitModelLoadedPreDraw()
             self.sse.emitModelLoaded()
         self.bringToFront()
-        
-    def enableDisableSSEHunter(self):
-#         enabled = (volume.loaded and skeleton.loaded)
-        enabled = True
-        self.labelThreshold.setEnabled(enabled)
-        self.labelVolumeResolution.setEnabled(enabled)
-        self.labelSkeletonScore.setEnabled(enabled)
-        self.labelCrossCorrelationScore.setEnabled(enabled)
-        self.labelGeometricScore.setEnabled(enabled)
-        self.doubleSpinBoxThreshold.setEnabled(enabled)
-        self.doubleSpinBoxResolution.setEnabled(enabled)
-        self.doubleSpinBoxSkeleton.setEnabled(enabled)
-        self.doubleSpinBoxCorrelation.setEnabled(enabled)
-        self.doubleSpinBoxGeometry.setEnabled(enabled)
-        self.pushButtonSSEHunter.setEnabled(enabled)
-        self.pushButtonLoadVolume.setVisible(not self.volume.loaded)
-        self.pushButtonLoadSkeleton.setVisible(not self.skeleton.loaded)
