@@ -22,7 +22,7 @@ class CalphaAtomPlacement(QtGui.QMainWindow):
         self.docks = []
         self.hasSemiAtomicPlacementForm = True
 
-        self.structPred = StructurePrediction.load(self.args.calpha, self)
+        self.structPred = StructurePrediction.load(self)
         # exit()
         
         self.volume = VolumeViewer(self)

@@ -19,7 +19,7 @@ class SSECorrespondence(Window):
         
         self.hasSemiAtomicPlacementForm = False
 
-        self.structPred = StructurePrediction.load(self.args.sequence, self)
+        self.structPred = StructurePrediction.load(self)
         
         self.viewers = {}
         
@@ -37,7 +37,7 @@ class SSECorrespondence(Window):
 #         self.form.show()
 #
 #         self.volumeViewer.load(self.args.volume)
-        self.skeleton.load(self.args.skeleton)
+        self.skeleton.load(self)
         self.sse.loadHelixDataFromFile(self.args.helix)
         # self.calpha.loadSeq(self.args.sequence)
 

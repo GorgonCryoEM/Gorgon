@@ -51,7 +51,7 @@ class StructurePrediction(baseClass):  # results of secondary-structure predicti
         return
 
     @classmethod
-    def load(cls, filename, qparent=None, withStrands=0):
+    def load(cls, qparent, withStrands=0):
         '''
         Sequence files are a file type we defined. The first line gives the 
         one-letter abbreviations for the sequence. The line below it shows the 
@@ -72,6 +72,7 @@ class StructurePrediction(baseClass):  # results of secondary-structure predicti
         structure predictions. The actual file reading and interpreting is 
         handled in C++.
         '''
+        filename = qparent.args.calpha
         print "StructurePrediction.load called. cls = " + str(cls) + ", filename = " + str(
             filename) + " qparent = " + str(qparent)
 
