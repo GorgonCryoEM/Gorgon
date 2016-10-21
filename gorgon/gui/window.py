@@ -33,7 +33,7 @@ class Window(QtGui.QMainWindow):
             if(hasattr(self.form, 'show')):
                 self.form.show()
         
-        self.setWindowTitle(self.tr("Gorgon Toolkit - v" + version))
+        self.setWindowTitle(self.tr("Gorgon GUI"))
         pathname = os.path.abspath(os.path.dirname(sys.argv[0]))
         self.setWindowIcon(QtGui.QIcon(pathname + '/gorgon.ico'))
         
