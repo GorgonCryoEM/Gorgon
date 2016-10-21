@@ -10,7 +10,7 @@ from .window import Window
 class SSECorrespondence(Window):
 
     def __init__(self, args):
-        super(SSECorrespondence, self).__init__(SSEHelixCorrespondenceFinderForm, args)
+        super(SSECorrespondence, self).__init__(args, SSEHelixCorrespondenceFinderForm)
         
         self.hasSemiAtomicPlacementForm = False
 

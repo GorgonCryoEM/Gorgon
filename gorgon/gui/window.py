@@ -10,7 +10,7 @@ from .explorer import Camera
 
 class Window(QtGui.QMainWindow):
 
-    def __init__(self, form, args):
+    def __init__(self, args, form):
         super(Window, self).__init__()
         
         self.args = args
