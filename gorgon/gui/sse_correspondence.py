@@ -31,6 +31,8 @@ class SSECorrespondence(Window):
         self.scene.append(self.sse)
         self.scene.append(self.calpha)
         
+        self.form.createUI()
+
     def load(self):
 #         self.form.show()
 #

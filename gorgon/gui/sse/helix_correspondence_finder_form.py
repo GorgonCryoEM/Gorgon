@@ -26,7 +26,6 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
 
     def __init__(self, parent):
         self.parent = parent
-        self.sse = self.parent.sse
         self.correspondenceLibrary = CorrespondenceLibrary()
 
         QtGui.QDialog.__init__(self, self.parent)
@@ -36,8 +35,6 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
         dock.setWidget(self)
         dock.setAllowedAreas(QtCore.Qt.AllDockWidgetAreas)
         self.parent.addDockWidget(QtCore.Qt.LeftDockWidgetArea, dock)
-        
-        self.createUI()
         
         self.executed = False
         self.colors = {}
@@ -52,6 +49,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
 #         exit()
 
     def createUI(self):
+        self.sse = self.parent.sse
         self.ui = Ui_DialogSSEHelixCorrespondenceFinder()
         self.ui.setupUi(self)
 #         self.connect(self.ui.pushButtonGetHelixLengthFile, QtCore.SIGNAL("pressed ()"), self.getHelixLengthFile)
