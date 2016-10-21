@@ -39,7 +39,14 @@ def main():
     
     logger = logging.getLogger(__name__)
 
-    sseh = pySSEHunter(args)
+    sseh = pySSEHunter(args.volume,
+                       args.skeleton,
+                       args.output,
+                       args.resolution,
+                       args.threshold,
+                       args.correlationWeight,
+                       args.skeletonWeight,
+                       args.geometryWeight)
 
 if __name__ == "__main__":
     main()

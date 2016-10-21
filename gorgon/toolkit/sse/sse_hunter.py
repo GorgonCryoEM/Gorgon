@@ -6,14 +6,22 @@ from termcolor import colored
 
 class pySSEHunter(object):
 
-    def __init__(self, args, autorun=True):
+    def __init__(self, volume, skeleton, output, resolution, threshold, correlationWeight, skeletonWeight,
+                 geometryWeight, autorun=True):
         self.logger = logging.getLogger(__name__)
+        
+        self.output            = output
+        self.resolution        = resolution
+        self.threshold         = threshold
+        self.correlationWeight = correlationWeight
+        self.skeletonWeight    = skeletonWeight
+        self.geometryWeight    = geometryWeight
         
         '''
         Volume
         '''
         self.volume = Volume()
-        self.volume.loadFile(args.volume)
+        self.volume.loadFile(volume)
         self.logger.debug("%s before getVolume" % self.volume)
         self.logger.debug("self.volume.getSize(): %d" % self.volume.getSize())
 #         self.volume = self.volume.getVolume()
@@ -30,7 +38,7 @@ class pySSEHunter(object):
         self.logger.debug(self.skeleton)
 #         self.logger.debug("after SkeletonRenderer(): self.skeleton.getSize(): %d" % self.skeleton.getSize())
         
-        self.skeleton.loadFile(args.skeleton)
+        self.skeleton.loadFile(skeleton)
         self.logger.debug(self.skeleton)
 #         self.logger.debug(colored("after loadFile(skeleton): self.skeleton.getSize(): %d" % self.skeleton.getSize(), "yellow"))
 
@@ -41,18 +49,11 @@ class pySSEHunter(object):
         '''
         Output, CAlpha
         '''
-        self.output = args.output
         self.calpha = CAlpha()
         
         '''
         SSEHunterEngine
         '''
-        self.resolution = args.resolution
-        self.threshold  = args.threshold
-
-        self.correlationWeight = args.correlationWeight 
-        self.skeletonWeight    = args.skeletonWeight    
-        self.geometryWeight    = args.geometryWeight    
         
         self.sseh = SSEHunter()
         
