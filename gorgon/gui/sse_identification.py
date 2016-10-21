@@ -46,7 +46,7 @@ class SSEIdentification(QtGui.QMainWindow):
         self.mainCamera = Camera(self.scene, self)
         self.setCentralWidget(self.mainCamera)
         
-        self.form = VolumeSSEBuilderForm(self, QtCore.Qt.LeftDockWidgetArea)
+        self.form = VolumeSSEBuilderForm(self)
         self.form.show()
         
         self.setWindowTitle(self.tr("Gorgon Toolkit - v" + version))
