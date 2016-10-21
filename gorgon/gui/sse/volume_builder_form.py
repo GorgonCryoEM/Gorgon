@@ -10,12 +10,12 @@ from auto_helix_builder_engine import AutoHelixBuilderEngine
 
 class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
         
-    def __init__(self, parent, args, dockArea=QtCore.Qt.RightDockWidgetArea):
+    def __init__(self, parent, dockArea=QtCore.Qt.RightDockWidgetArea):
         QtGui.QDialog.__init__(self, parent)
         self.parent = parent
         self.volume = self.parent.volume
         self.skeleton = self.parent.skeleton
-        self.args = args
+        self.args = self.parent.args
         self.calpha = self.parent.calpha
         self.sse = self.parent.sse
         self.viewer = self.sse
