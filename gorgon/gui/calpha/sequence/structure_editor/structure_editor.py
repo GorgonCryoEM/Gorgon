@@ -18,7 +18,7 @@ class CAlphaStructureEditor(QtGui.QWidget):
             self.app = self.parentWidget().parentWidget().app
 
         self.currentChainModel = currentChainModel
-        self.app.calphaViewer.currentMatch = None
+        self.app.calpha.currentMatch = None
         self.builder = False
         self.atomJustAdded = None
         self.possibleAtomsList = []
@@ -46,7 +46,7 @@ class CAlphaStructureEditor(QtGui.QWidget):
         # self.connect(self.helixAcceptButton,            QtCore.SIGNAL('clicked()'), self.helixCreateCAhelix)
         if self.parentWidget().parentWidget().app:
             self.updateCurrentMatch() #In case an observed helix is already selected
-            self.CAlphaViewer = self.app.calphaViewer
+            self.CAlphaViewer = self.app.calpha
             # self.connect(self.app.sseViewer,        QtCore.SIGNAL("SSE selected"), self.updateCurrentMatch)
             # self.connect(self.app.sseViewer,        QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.posUpdateValues)
             self.connect(self.posMoveDict['x'],     QtCore.SIGNAL('valueChanged(double)'), self.posMoveCM_x)
@@ -56,8 +56,8 @@ class CAlphaStructureEditor(QtGui.QWidget):
             self.connect(self.posMoveDict['pitch'], QtCore.SIGNAL('valueChanged(int)'), self.posRotateCM_pitch)
             self.connect(self.posMoveDict['yaw'],   QtCore.SIGNAL('valueChanged(int)'), self.posRotateCM_yaw)
             self.connect(self.removeButton,         QtCore.SIGNAL('clicked()'), self.removeSelectedAtoms)
-#             self.connect(self.app.volumeViewer, QtCore.SIGNAL("modelLoaded()"), self.updateLoopEditorEnables)
-#             self.connect(self.app.volumeViewer, QtCore.SIGNAL("modelUnloaded()"), self.updateLoopEditorEnables)
+#             self.connect(self.app.volume, QtCore.SIGNAL("modelLoaded()"), self.updateLoopEditorEnables)
+#             self.connect(self.app.volume, QtCore.SIGNAL("modelUnloaded()"), self.updateLoopEditorEnables)
 
     def setupUi(self):
         #These go on the left hand side
@@ -256,13 +256,13 @@ class CAlphaStructureEditor(QtGui.QWidget):
         #print "The mock side-chains should be cleared, but not yet drawn to the screen."
 
     def helixCreateCAhelix(self):
-        create_helix(self.app.calphaViewer.renderer, self.currentChainModel, self.app.sseViewer.currentMatch)
+        create_helix(self.app.calpha.renderer, self.currentChainModel, self.app.sseViewer.currentMatch)
 
-        if not self.app.calphaViewer.loaded:
-            self.app.calphaViewer.loaded = True
+        if not self.app.calpha.loaded:
+            self.app.calpha.loaded = True
 
         self.loaded = True
-        self.app.calphaViewer.modelChanged()
+        self.app.calpha.modelChanged()
         self.app.mainCamera.updateGL()
         self.bringToFront()
 
@@ -417,7 +417,7 @@ class CAlphaStructureEditor(QtGui.QWidget):
         stop indices for the current secel.  It uses this to set the Nterm and
         Cterm spin boxes in the helix editor.
         """
-        viewer = self.app.calphaViewer
+        viewer = self.app.calpha
         if not viewer.currentMatch:
             return
         startIx = viewer.currentMatch.predicted.startIndex
@@ -856,7 +856,7 @@ class CAlphaStructureEditor(QtGui.QWidget):
             translateVector = Vec3(moveX, 0, 0)
             command = CAlphaStructureEditorCommandChangePosition(self.CAlphaViewer, self, True, translateVector, False, None, None, oldX, newX, 'x')
             self.undoStack.push(command)
-        self.app.calphaViewer.modelChanged()
+        self.app.calpha.modelChanged()
         self.app.mainCamera.updateGL()
 
     def posMoveCM_y(self):
@@ -871,7 +871,7 @@ class CAlphaStructureEditor(QtGui.QWidget):
             translateVector = Vec3(0, moveY, 0)
             command = CAlphaStructureEditorCommandChangePosition(self.CAlphaViewer, self, True, translateVector, False, None, None, oldY, newY, 'y')
             self.undoStack.push(command)
-        self.app.calphaViewer.modelChanged()
+        self.app.calpha.modelChanged()
         self.app.mainCamera.updateGL()
 
     def posMoveCM_z(self):
@@ -886,7 +886,7 @@ class CAlphaStructureEditor(QtGui.QWidget):
             translateVector = Vec3(0, 0, moveZ)
             command = CAlphaStructureEditorCommandChangePosition(self.CAlphaViewer, self, True, translateVector, False, None, None, oldZ, newZ, 'z')
             self.undoStack.push(command)
-        self.app.calphaViewer.modelChanged()
+        self.app.calpha.modelChanged()
         self.app.mainCamera.updateGL()
 
     def posRotateCM_roll(self, angle):
@@ -906,7 +906,7 @@ class CAlphaStructureEditor(QtGui.QWidget):
 
             command = CAlphaStructureEditorCommandChangePosition(self.CAlphaViewer, self, False, None, True, cm, axis, oldAngle, angle, 'roll')
             self.undoStack.push(command)
-        self.app.calphaViewer.modelChanged()
+        self.app.calpha.modelChanged()
         self.app.mainCamera.updateGL()
 
     def posRotateCM_pitch(self, angle):
@@ -926,7 +926,7 @@ class CAlphaStructureEditor(QtGui.QWidget):
 
             command = CAlphaStructureEditorCommandChangePosition(self.CAlphaViewer, self, False, None, True, cm, axis, oldAngle, angle, 'pitch')
             self.undoStack.push(command)
-        self.app.calphaViewer.modelChanged()
+        self.app.calpha.modelChanged()
         self.app.mainCamera.updateGL()
 
     def posRotateCM_yaw(self, angle):
@@ -945,7 +945,7 @@ class CAlphaStructureEditor(QtGui.QWidget):
             newAngle = math.pi*angle/180
             command = CAlphaStructureEditorCommandChangePosition(self.CAlphaViewer, self, False, None, True, cm, axis, oldAngle, angle, 'yaw')
             self.undoStack.push(command)
-        self.app.calphaViewer.modelChanged()
+        self.app.calpha.modelChanged()
         self.app.mainCamera.updateGL()
 
     def posUpdateValues(self):
@@ -953,7 +953,7 @@ class CAlphaStructureEditor(QtGui.QWidget):
         This updates the spin boxes to show the C-alpha coordinates of the
         selection's geometric center.
         """
-        cAlphaRenderer = self.app.calphaViewer.renderer
+        cAlphaRenderer = self.app.calpha.renderer
         cm = cAlphaRenderer.selectionCenterOfMass()
         self.x = cm.x()
         self.y = cm.y()

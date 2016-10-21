@@ -27,16 +27,16 @@ class CalphaAtomPlacement(QtGui.QMainWindow):
         
         self.viewers = {}
         
-        self.volumeViewer = VolumeViewer(self)
-        self.skeletonViewer = SkeletonViewer(self)
-        self.calphaViewer = CAlphaViewer(self)
-        self.viewers['skeleton'] = self.skeletonViewer
-        self.viewers['calpha'] = self.calphaViewer
+        self.volume = VolumeViewer(self)
+        self.skeleton = SkeletonViewer(self)
+        self.calpha = CAlphaViewer(self)
+        self.viewers['skeleton'] = self.skeleton
+        self.viewers['calpha'] = self.calpha
         
         self.scene = []
-        self.scene.append(self.volumeViewer)
-        self.scene.append(self.skeletonViewer)
-        self.scene.append(self.calphaViewer)
+        self.scene.append(self.volume)
+        self.scene.append(self.skeleton)
+        self.scene.append(self.calpha)
         
         self.mainCamera = Camera(self.scene, self)
         self.setCentralWidget(self.mainCamera)
@@ -47,13 +47,13 @@ class CalphaAtomPlacement(QtGui.QMainWindow):
 #         exit()
         
     def load(self):
-        self.volumeViewer.load(self.args.volume)
-        self.skeletonViewer.load(self.args.skeleton)
-        self.calphaViewer.loadData(self.args.calpha)
-        print "self.calphaViewer.main_chain:\n", self.calphaViewer.main_chain
+        self.volume.load(self.args.volume)
+        self.skeleton.load(self.args.skeleton)
+        self.calpha.loadData(self.args.calpha)
+        print "self.calpha.main_chain:\n", self.calpha.main_chain
         print "self.structPred.chain\n", self.structPred.chain
-        self.structPred.chain = self.calphaViewer.main_chain 
-        CAlphaSequenceDock.changeDockVisibility(self, self.calphaViewer, self.structPred, self.structPred.chain)
+        self.structPred.chain = self.calpha.main_chain 
+        CAlphaSequenceDock.changeDockVisibility(self, self.calpha, self.structPred, self.structPred.chain)
 
     def exitApplication(self):
         QtGui.qApp.closeAllWindows()
