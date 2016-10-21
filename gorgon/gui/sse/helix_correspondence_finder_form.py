@@ -24,18 +24,18 @@ from ..helix import create_helix
 
 class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
 
-    def __init__(self, main):
-        self.app = main
-        self.sseViewer = self.app.sseViewer
+    def __init__(self, parent):
+        self.parent = parent
+        self.sseViewer = self.parent.sseViewer
         self.correspondenceLibrary = CorrespondenceLibrary()
 
-        QtGui.QDialog.__init__(self, main)
+        QtGui.QDialog.__init__(self, self.parent)
         self.constants = IBackEnd()
         
-        dock = QtGui.QDockWidget("SSEHelixCorrespondenceFinder", self.app)
+        dock = QtGui.QDockWidget("SSEHelixCorrespondenceFinder", self.parent)
         dock.setWidget(self)
         dock.setAllowedAreas(QtCore.Qt.AllDockWidgetAreas)
-        self.app.addDockWidget(QtCore.Qt.LeftDockWidgetArea, dock)
+        self.parent.addDockWidget(QtCore.Qt.LeftDockWidgetArea, dock)
         
         self.createUI()
         
@@ -75,8 +75,8 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
 #         self.connect(self.ui.checkBoxIncludeSheets, QtCore.SIGNAL("toggled (bool)"), self.sheetIncludeChanged)
 #         self.connect(self.ui.checkBoxMissingSheets, QtCore.SIGNAL("toggled (bool)"), self.missingSheetChanged)
 #         self.connect(self.ui.checkBoxMissingHelices, QtCore.SIGNAL("toggled (bool)"), self.missingHelixChanged)
-#         self.connect(self.app.skeleton, QtCore.SIGNAL("modelDrawing()"), self.drawOverlay)
-#         self.app.volumeViewer.visualizationUpdated.connect(self.drawOverlay)
+#         self.connect(self.parent.skeleton, QtCore.SIGNAL("modelDrawing()"), self.drawOverlay)
+#         self.parent.volumeViewer.visualizationUpdated.connect(self.drawOverlay)
 #         self.ui.tableWidgetCorrespondenceList.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
 #         self.connect(self.ui.tableWidgetCorrespondenceList, QtCore.SIGNAL("customContextMenuRequested (const QPoint&)"), self.customMenuRequested)
         self.connect(self.sseViewer, QtCore.SIGNAL("elementClicked (int, int, int, int, int, int, QMouseEvent)"), self.sseClicked)
@@ -89,8 +89,8 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
 #         self.ui.lineEditHelixLengthFile.setText("")
 #         self.ui.lineEditHelixLocationFile.setText(self.sseViewer.helixFileName)
 #         self.ui.lineEditSheetLocationFile.setText(self.sseViewer.sheetFileName)
-#         self.ui.lineEditSkeletonFile.setText(self.app.skeleton.fileName)
-#         self.ui.lineEditSequenceFile.setText(self.app.calphaViewer.fileName)
+#         self.ui.lineEditSkeletonFile.setText(self.parent.skeleton.fileName)
+#         self.ui.lineEditSequenceFile.setText(self.parent.calphaViewer.fileName)
 #         self.ui.lineEditSettingsFile.setText("")
 #         self.loadDefaultParams()
 
@@ -104,7 +104,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
         #max sheet distance
         #sheet self-loop length
 
-        self.ui.checkBoxShowSkeleton.setChecked(self.app.viewers['skeleton'].visualizationOptions.ui.checkBoxModelVisible.isChecked())
+        self.ui.checkBoxShowSkeleton.setChecked(self.parent.viewers['skeleton'].visualizationOptions.ui.checkBoxModelVisible.isChecked())
         self.ui.checkBoxShowHelices.setChecked(self.sseViewer.visualizationOptions.ui.checkBoxModelVisible.isChecked())
         self.ui.checkBoxShowHelixCorners.setChecked(False)
         self.ui.checkBoxShowSheets.setChecked(self.sseViewer.visualizationOptions.ui.checkBoxModel2Visible.isChecked())
@@ -163,8 +163,8 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
 # #         self.bringToFront()
 #
 #     def getSkeletonFile(self):
-#         self.app.skeleton.loadData()
-#         self.ui.lineEditSkeletonFile.setText(self.app.skeleton.fileName)
+#         self.parent.skeleton.loadData()
+#         self.ui.lineEditSkeletonFile.setText(self.parent.skeleton.fileName)
 #         self.checkOk()
 # #         self.bringToFront()
 #
@@ -212,12 +212,12 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
             self.correspondenceLibrary.correspondenceList = self.populateEmptyResults(self.correspondenceLibrary)
             print "correspondenceList has length " + str(len(self.correspondenceLibrary.correspondenceList))
             self.populateComboBox(self.correspondenceLibrary)
-            self.sseViewer.makeSheetSurfaces(self.app.viewers['skeleton'].renderer.getOriginX(),
-                                             self.app.viewers['skeleton'].renderer.getOriginY(),
-                                             self.app.viewers['skeleton'].renderer.getOriginZ(),
-                                             self.app.viewers['skeleton'].renderer.getSpacingX(),
-                                             self.app.viewers['skeleton'].renderer.getSpacingY(),
-                                             self.app.viewers['skeleton'].renderer.getSpacingZ())
+            self.sseViewer.makeSheetSurfaces(self.parent.viewers['skeleton'].renderer.getOriginX(),
+                                             self.parent.viewers['skeleton'].renderer.getOriginY(),
+                                             self.parent.viewers['skeleton'].renderer.getOriginZ(),
+                                             self.parent.viewers['skeleton'].renderer.getSpacingX(),
+                                             self.parent.viewers['skeleton'].renderer.getSpacingY(),
+                                             self.parent.viewers['skeleton'].renderer.getSpacingZ())
             if(allLoaded):
                 self.ui.tabWidget.setCurrentIndex(1)
         else:
@@ -298,7 +298,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
 #             self.ui.lineEditSheetLocationFile.setText(sheetFilePath)
 #
 #             # load skeleton file and store the filename
-#             self.app.skeleton.loadDataFromFile(skeletonFilePath)
+#             self.parent.skeleton.loadDataFromFile(skeletonFilePath)
 #             self.ui.lineEditSkeletonFile.setText(skeletonFilePath)
 #
 #             # store helix length filename
@@ -647,9 +647,9 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
         self.sseViewer.correspondenceEngine.loadSequenceGraph()
         print "before calling StructurePrediction.load"
         print "sequenceFileName is " + str(self.sequenceFileName)
-        print "app is " + str(self.app)
+        print "app is " + str(self.parent)
         includeStrands = self.constants.getConstantInt("INCLUDE_STRANDS")
-        structPred = StructurePrediction.load(self.sequenceFileName, self.app, includeStrands)
+        structPred = StructurePrediction.load(self.sequenceFileName, self.parent, includeStrands)
         print "after calling StructurePrediction.load"
 
         #Loading Observed SSEs
@@ -690,11 +690,11 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
                 print match
                 print match.predicted.startIndex
                 print match.predicted.stopIndex
-                create_helix(self.app.calphaViewer.renderer, self.app.structPred.chain, match)
+                create_helix(self.parent.calphaViewer.renderer, self.parent.structPred.chain, match)
 
-        self.app.calphaViewer.loaded = True
-        self.app.calphaViewer.modelChanged()
-        self.app.mainCamera.updateGL()
+        self.parent.calphaViewer.loaded = True
+        self.parent.calphaViewer.modelChanged()
+        self.parent.mainCamera.updateGL()
         
     def accept(self):
         print "beginning search"
@@ -995,7 +995,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
                 for matchItem in matchKeys:
                     self.ui.tableWidgetCorrespondenceList.setRangeSelected(QtGui.QTableWidgetSelectionRange(matchItem*2, 0, matchItem*2, 2),True)
 
-            if(self.app.mainCamera.mouseRightPressed):
+            if(self.parent.mainCamera.mouseRightPressed):
                 predictedHelices = self.correspondenceLibrary.structurePrediction.helixDict
                 predictedStrands = self.correspondenceLibrary.structurePrediction.strandDict
                 predictedSSEs = self.correspondenceLibrary.structurePrediction.secelDict
@@ -1047,5 +1047,5 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
                         menu.addAction(constrainAction)
                         i_s += 1
 
-                menu.exec_(self.app.mainCamera.mapToGlobal(self.app.mainCamera.mouseDownPoint))
-                self.app.mainCamera.updateGL()
+                menu.exec_(self.parent.mainCamera.mapToGlobal(self.parent.mainCamera.mouseDownPoint))
+                self.parent.mainCamera.updateGL()
