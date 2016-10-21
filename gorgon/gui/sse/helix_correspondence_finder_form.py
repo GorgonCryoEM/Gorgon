@@ -26,6 +26,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
 
     def __init__(self, parent):
         self.parent = parent
+        self.args = self.parent.args
         self.correspondenceLibrary = CorrespondenceLibrary()
 
         QtGui.QDialog.__init__(self, self.parent)
