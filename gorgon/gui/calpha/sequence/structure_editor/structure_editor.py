@@ -128,7 +128,7 @@ class CAlphaStructureEditor(QtGui.QWidget):
         self.atomEnableTabElements(False)
         self.possibleAtomsList = []
         #self.parentWidget()=>CAlphaSequenceWidget, self.parentWidget().parentWidget() => CAlphaSequenceDock
-        skeletonViewer = self.parentWidget().parentWidget().app.skeletonViewer
+        skeletonViewer = self.parentWidget().parentWidget().app.skeleton
         meshRenderer = skeletonViewer.renderer
         radius = float( self.atomicCAdoubleSpinBox.value() )
         resNum = int( str(self.atomicResNumbers[0].text()) )

@@ -13,7 +13,7 @@ class CAlphaSequenceDock(QtGui.QDockWidget):
         self.structurePrediction = structurePrediction
         self.app = main
         self.viewer=viewer
-        self.skeletonViewer = self.app.skeleton
+        self.skeleton = self.app.skeleton
         # self.sseViewer = self.parent.sseViewer
         self.seqWidget = CAlphaSequenceWidget( structurePrediction, currentChainModel, self, self)
         self.setWidget(self.seqWidget)
