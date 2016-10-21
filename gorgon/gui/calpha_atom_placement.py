@@ -9,8 +9,8 @@ from .window import Window
 
 class CalphaAtomPlacement(Window):
 
-    def __init__(self, version, args):
-        super(CalphaAtomPlacement, self).__init__(version, StructurePrediction.load, args)
+    def __init__(self, args):
+        super(CalphaAtomPlacement, self).__init__(StructurePrediction.load, args)
         
         self.hasSemiAtomicPlacementForm = True
 

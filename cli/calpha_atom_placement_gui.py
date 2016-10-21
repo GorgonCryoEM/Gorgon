@@ -22,7 +22,7 @@ def main():
 
     app = QtGui.QApplication(sys.argv)
 
-    window = CalphaAtomPlacement('2.3', args)
+    window = CalphaAtomPlacement(args)
 
     window.resize(800, 600)
     #     window.showMaximized()

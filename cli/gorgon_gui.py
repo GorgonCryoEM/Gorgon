@@ -30,11 +30,11 @@ def main():
     app = QtGui.QApplication(sys.argv)
 
     windows = []
-    windows.append(BinarySkeletonization('2.2.2', args))
-    windows.append(GrayscaleSkeletonization('2.2.3', args))
-    windows.append(SSEIdentification('2.2.4', args))
-    windows.append(SSECorrespondence('2.2.5', args))
-    windows.append(CalphaAtomPlacement('2.2.6', args))
+    windows.append(BinarySkeletonization(args))
+    windows.append(GrayscaleSkeletonization(args))
+    windows.append(SSEIdentification(args))
+    windows.append(SSECorrespondence(args))
+    windows.append(CalphaAtomPlacement(args))
 #     exit()
     
     for window in windows:

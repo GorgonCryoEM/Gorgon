@@ -21,7 +21,7 @@ def main():
 
     app = QtGui.QApplication(sys.argv)
 
-    window = SSEIdentification('2.3', args)
+    window = SSEIdentification(args)
 
     window.resize(800, 600)
     #     window.showMaximized()

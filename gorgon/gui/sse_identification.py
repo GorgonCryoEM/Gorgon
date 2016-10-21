@@ -9,8 +9,8 @@ from .window import Window
 
 class SSEIdentification(Window):
 
-    def __init__(self, version, args):
-        super(SSEIdentification, self).__init__(version, VolumeSSEBuilderForm, args)
+    def __init__(self, args):
+        super(SSEIdentification, self).__init__(VolumeSSEBuilderForm, args)
         
         self.hasSemiAtomicPlacementForm = False
         

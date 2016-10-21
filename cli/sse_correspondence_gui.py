@@ -22,7 +22,7 @@ def main():
 
     app = QtGui.QApplication(sys.argv)
 
-    window = SSECorrespondence('2.3', args)
+    window = SSECorrespondence(args)
 
     window.resize(800, 600)
     #     window.showMaximized()

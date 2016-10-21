@@ -20,7 +20,7 @@ def main():
 
     app = QtGui.QApplication(sys.argv)
 
-    window = BinarySkeletonization('2.3', args)
+    window = BinarySkeletonization(args)
     
     window.resize(800, 600)
 #     window.showMaximized()
