@@ -36,8 +36,7 @@ class SSEIdentification(Window):
         super(SSEIdentification, self).load()
         
         self.skeleton.load(self.args.skeleton)
-        # self.calpha.loadSSEHunterData('pseudoatoms_thr_20.pdb')
-#         self.volume.renderer.printVertices()
+        
         minDensity = self.volume.renderer.getMinDensity()
         maxDensity = self.volume.renderer.getMaxDensity()
         defaultDensity = (minDensity + maxDensity) / 2
