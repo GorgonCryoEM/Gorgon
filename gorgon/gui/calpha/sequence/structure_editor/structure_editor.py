@@ -47,8 +47,8 @@ class CAlphaStructureEditor(QtGui.QWidget):
         if self.parentWidget().parentWidget().app:
             self.updateCurrentMatch() #In case an observed helix is already selected
             self.CAlphaViewer = self.app.calpha
-            # self.connect(self.app.sseViewer,        QtCore.SIGNAL("SSE selected"), self.updateCurrentMatch)
-            # self.connect(self.app.sseViewer,        QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.posUpdateValues)
+            # self.connect(self.parent.sseViewer,        QtCore.SIGNAL("SSE selected"), self.updateCurrentMatch)
+            # self.connect(self.parent.sseViewer,        QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.posUpdateValues)
             self.connect(self.posMoveDict['x'],     QtCore.SIGNAL('valueChanged(double)'), self.posMoveCM_x)
             self.connect(self.posMoveDict['y'],     QtCore.SIGNAL('valueChanged(double)'), self.posMoveCM_y)
             self.connect(self.posMoveDict['z'],     QtCore.SIGNAL('valueChanged(double)'), self.posMoveCM_z)
@@ -56,8 +56,8 @@ class CAlphaStructureEditor(QtGui.QWidget):
             self.connect(self.posMoveDict['pitch'], QtCore.SIGNAL('valueChanged(int)'), self.posRotateCM_pitch)
             self.connect(self.posMoveDict['yaw'],   QtCore.SIGNAL('valueChanged(int)'), self.posRotateCM_yaw)
             self.connect(self.removeButton,         QtCore.SIGNAL('clicked()'), self.removeSelectedAtoms)
-#             self.connect(self.app.volume, QtCore.SIGNAL("modelLoaded()"), self.updateLoopEditorEnables)
-#             self.connect(self.app.volume, QtCore.SIGNAL("modelUnloaded()"), self.updateLoopEditorEnables)
+#             self.connect(self.parent.volume, QtCore.SIGNAL("modelLoaded()"), self.updateLoopEditorEnables)
+#             self.connect(self.parent.volume, QtCore.SIGNAL("modelUnloaded()"), self.updateLoopEditorEnables)
 
     def setupUi(self):
         #These go on the left hand side
