@@ -28,14 +28,14 @@ class SSEIdentification(QtGui.QMainWindow):
         
         self.volume = VolumeViewer(self)
         self.skeleton = SkeletonViewer(self)
-        self.calphaViewer = CAlphaViewer(self)
-        self.sseViewer = SSEViewer(self)
+        self.calpha = CAlphaViewer(self)
+        self.sse = SSEViewer(self)
         
         self.scene = []
         self.scene.append(self.volume)
         self.scene.append(self.skeleton)
-        self.scene.append(self.calphaViewer)
-        self.scene.append(self.sseViewer)
+        self.scene.append(self.calpha)
+        self.scene.append(self.sse)
         
 #         for i in xrange(-100, 101, 50):
 #             self.scene.append(Grid3D(self, (i, -100, i), (i, 100, i)))
@@ -56,7 +56,7 @@ class SSEIdentification(QtGui.QMainWindow):
     def load(self):
         self.volume.load(self.args.volume)
         self.skeleton.load(self.args.skeleton)
-        # self.calphaViewer.loadSSEHunterData('pseudoatoms_thr_20.pdb')
+        # self.calpha.loadSSEHunterData('pseudoatoms_thr_20.pdb')
         self.form.modelLoaded()
 #         self.volume.renderer.printVertices()
         minDensity = self.volume.renderer.getMinDensity()
