@@ -24,23 +24,20 @@ class SSECorrespondence(Window):
         self.viewers = {}
         
 #         self.volumeViewer = VolumeViewer(self)
-        self.sseViewer    = SSEViewer(self)
-        self.calphaViewer = CAlphaViewer(self)
+        self.sse    = SSEViewer(self)
+        self.calpha = CAlphaViewer(self)
 #         self.viewers['volume'] = self.volumeViewer
-        self.viewers['skeleton'] = self.skeleton
-        self.viewers['sse'] = self.sseViewer
-        self.viewers['calpha'] = self.calphaViewer
 
-        self.scene.append(self.sseViewer)
-        self.scene.append(self.calphaViewer)
+        self.scene.append(self.sse)
+        self.scene.append(self.calpha)
         
     def load(self):
 #         self.form.show()
 #
 #         self.volumeViewer.load(self.args.volume)
         self.skeleton.load(self.args.skeleton)
-        self.sseViewer.loadHelixDataFromFile(self.args.helix)
-        # self.calphaViewer.loadSeq(self.args.sequence)
+        self.sse.loadHelixDataFromFile(self.args.helix)
+        # self.calpha.loadSeq(self.args.sequence)
 
         self.form.ui.lineEditSkeletonFile.setText(self.args.skeleton)
         self.form.ui.lineEditSequenceFile.setText(self.args.sequence)

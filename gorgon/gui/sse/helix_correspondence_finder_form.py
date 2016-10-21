@@ -26,7 +26,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
 
     def __init__(self, parent):
         self.parent = parent
-        self.sseViewer = self.parent.sseViewer
+        self.sse = self.parent.sse
         self.correspondenceLibrary = CorrespondenceLibrary()
 
         QtGui.QDialog.__init__(self, self.parent)
@@ -79,7 +79,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
 #         self.parent.volumeViewer.visualizationUpdated.connect(self.drawOverlay)
 #         self.ui.tableWidgetCorrespondenceList.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
 #         self.connect(self.ui.tableWidgetCorrespondenceList, QtCore.SIGNAL("customContextMenuRequested (const QPoint&)"), self.customMenuRequested)
-        self.connect(self.sseViewer, QtCore.SIGNAL("elementClicked (int, int, int, int, int, int, QMouseEvent)"), self.sseClicked)
+        self.connect(self.sse, QtCore.SIGNAL("elementClicked (int, int, int, int, int, int, QMouseEvent)"), self.sseClicked)
         self.ui.label.setVisible(False)
         self.ui.lineEditHelixLengthFile.setVisible(False)
         self.ui.pushButtonGetHelixLengthFile.setVisible(False)
@@ -87,10 +87,10 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
 #     # populate parameter boxes with default values for correspondence search
 #     def loadDefaults(self):
 #         self.ui.lineEditHelixLengthFile.setText("")
-#         self.ui.lineEditHelixLocationFile.setText(self.sseViewer.helixFileName)
-#         self.ui.lineEditSheetLocationFile.setText(self.sseViewer.sheetFileName)
+#         self.ui.lineEditHelixLocationFile.setText(self.sse.helixFileName)
+#         self.ui.lineEditSheetLocationFile.setText(self.sse.sheetFileName)
 #         self.ui.lineEditSkeletonFile.setText(self.parent.skeleton.fileName)
-#         self.ui.lineEditSequenceFile.setText(self.parent.calphaViewer.fileName)
+#         self.ui.lineEditSequenceFile.setText(self.parent.calpha.fileName)
 #         self.ui.lineEditSettingsFile.setText("")
 #         self.loadDefaultParams()
 
@@ -104,11 +104,11 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
         #max sheet distance
         #sheet self-loop length
 
-        self.ui.checkBoxShowSkeleton.setChecked(self.parent.viewers['skeleton'].visualizationOptions.ui.checkBoxModelVisible.isChecked())
-        self.ui.checkBoxShowHelices.setChecked(self.sseViewer.visualizationOptions.ui.checkBoxModelVisible.isChecked())
+        self.ui.checkBoxShowSkeleton.setChecked(self.parent.skeleton.visualizationOptions.ui.checkBoxModelVisible.isChecked())
+        self.ui.checkBoxShowHelices.setChecked(self.sse.visualizationOptions.ui.checkBoxModelVisible.isChecked())
         self.ui.checkBoxShowHelixCorners.setChecked(False)
-        self.ui.checkBoxShowSheets.setChecked(self.sseViewer.visualizationOptions.ui.checkBoxModel2Visible.isChecked())
-        self.ui.checkBoxShowSheetColors.setChecked(self.sseViewer.visualizationOptions.ui.checkBoxModel3Visible.isChecked())
+        self.ui.checkBoxShowSheets.setChecked(self.sse.visualizationOptions.ui.checkBoxModel2Visible.isChecked())
+        self.ui.checkBoxShowSheetColors.setChecked(self.sse.visualizationOptions.ui.checkBoxModel3Visible.isChecked())
         self.ui.checkBoxShowSheetCorners.setChecked(False)
         self.ui.checkBoxShowAllPaths.setChecked(False)
 
@@ -151,14 +151,14 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
 # #         self.bringToFront()
 #
 #     def getHelixLocationFile(self):
-#         self.sseViewer.loadHelixData()
-#         self.ui.lineEditHelixLocationFile.setText(self.sseViewer.helixFileName)
+#         self.sse.loadHelixData()
+#         self.ui.lineEditHelixLocationFile.setText(self.sse.helixFileName)
 #         self.checkOk()
 # #         self.bringToFront()
 #
 #     def getSheetLocationFile(self):
-#         self.sseViewer.loadSheetData()
-#         self.ui.lineEditSheetLocationFile.setText(self.sseViewer.sheetFileName)
+#         self.sse.loadSheetData()
+#         self.ui.lineEditSheetLocationFile.setText(self.sse.sheetFileName)
 #         self.checkOk()
 # #         self.bringToFront()
 #
@@ -212,12 +212,12 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
             self.correspondenceLibrary.correspondenceList = self.populateEmptyResults(self.correspondenceLibrary)
             print "correspondenceList has length " + str(len(self.correspondenceLibrary.correspondenceList))
             self.populateComboBox(self.correspondenceLibrary)
-            self.sseViewer.makeSheetSurfaces(self.parent.viewers['skeleton'].renderer.getOriginX(),
-                                             self.parent.viewers['skeleton'].renderer.getOriginY(),
-                                             self.parent.viewers['skeleton'].renderer.getOriginZ(),
-                                             self.parent.viewers['skeleton'].renderer.getSpacingX(),
-                                             self.parent.viewers['skeleton'].renderer.getSpacingY(),
-                                             self.parent.viewers['skeleton'].renderer.getSpacingZ())
+            self.sse.makeSheetSurfaces(self.parent.skeleton.renderer.getOriginX(),
+                                       self.parent.skeleton.renderer.getOriginY(),
+                                       self.parent.skeleton.renderer.getOriginZ(),
+                                       self.parent.skeleton.renderer.getSpacingX(),
+                                       self.parent.skeleton.renderer.getSpacingY(),
+                                       self.parent.skeleton.renderer.getSpacingZ())
             if(allLoaded):
                 self.ui.tabWidget.setCurrentIndex(1)
         else:
@@ -290,11 +290,11 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
 #             self.ui.lineEditSequenceFile.setText(seqFilePath)
 #
 #             # load helix file and store the filename
-#             self.sseViewer.loadHelixDataFromFile(helixFilePath)
+#             self.sse.loadHelixDataFromFile(helixFilePath)
 #             self.ui.lineEditHelixLocationFile.setText(helixFilePath)
 #
 #             # load sheet file and store the filename
-#             self.sseViewer.loadSheetDataFromFile(sheetFilePath)
+#             self.sse.loadSheetDataFromFile(sheetFilePath)
 #             self.ui.lineEditSheetLocationFile.setText(sheetFilePath)
 #
 #             # load skeleton file and store the filename
@@ -370,7 +370,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
 
         #Tab 4 User Constraints
         # comment out the constraint clearing so that constraints can be loaded from settings files
-        #self.sseViewer.correspondenceEngine.clearAllConstraints()
+        #self.sse.correspondenceEngine.clearAllConstraints()
         correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
         if(correspondenceIndex >= 0):
             corr = self.correspondenceLibrary.correspondenceList[correspondenceIndex]
@@ -389,12 +389,12 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
                     if(not self.ui.checkBoxIncludeSheets.isChecked()):
                         self.userConstraints[i]=False # clear all strand constraints
                         match.constrained = False     # clear all strand constraints
-                        self.sseViewer.correspondenceEngine.setNodeConstraint(predictedGraphNode, -1)
+                        self.sse.correspondenceEngine.setNodeConstraint(predictedGraphNode, -1)
                     elif(match.constrained):
                         if(match.observed):
-                            self.sseViewer.correspondenceEngine.setNodeConstraint(predictedGraphNode, match.observed.label + nObservedHelices + 1)
+                            self.sse.correspondenceEngine.setNodeConstraint(predictedGraphNode, match.observed.label + nObservedHelices + 1)
                         else:
-                            self.sseViewer.correspondenceEngine.setNodeConstraint(predictedGraphNode, -1)
+                            self.sse.correspondenceEngine.setNodeConstraint(predictedGraphNode, -1)
                 if (match.predicted.type) == 'strand':
                     predictedGraphNode += 1
                 if (match.predicted.type) == 'helix':
@@ -429,8 +429,8 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
             self.ui.radioButtonNormalizedDifference.setChecked(False)
             self.ui.radioButtonQuadraticError.setChecked(True)
 
-        self.ui.doubleSpinBoxLoopImportance.setValue(self.sseViewer.correspondenceEngine.getConstantDouble("LOOP_WEIGHT_COEFFICIENT"))
-        self.ui.doubleSpinBoxEuclideanLoopUsedPenalty.setValue(self.sseViewer.correspondenceEngine.getConstantDouble("EUCLIDEAN_LOOP_PENALTY"))
+        self.ui.doubleSpinBoxLoopImportance.setValue(self.sse.correspondenceEngine.getConstantDouble("LOOP_WEIGHT_COEFFICIENT"))
+        self.ui.doubleSpinBoxEuclideanLoopUsedPenalty.setValue(self.sse.correspondenceEngine.getConstantDouble("EUCLIDEAN_LOOP_PENALTY"))
 
         self.ui.doubleSpinBoxHelixImportance.setValue(self.constants.getConstantDouble("HELIX_WEIGHT_COEFFICIENT"))
         if (self.constants.getConstantInt("MISSING_HELIX_COUNT") == -1):
@@ -444,7 +444,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
         
         self.ui.checkBoxIncludeSheets.setChecked(True)
         self.ui.doubleSpinBoxSheetImportance.setEnabled(True)
-        self.ui.doubleSpinBoxSheetImportance.setValue(self.sseViewer.correspondenceEngine.getConstantDouble("SHEET_WEIGHT_COEFFICIENT"))
+        self.ui.doubleSpinBoxSheetImportance.setValue(self.sse.correspondenceEngine.getConstantDouble("SHEET_WEIGHT_COEFFICIENT"))
         self.ui.checkBoxMissingSheets.setEnabled(True)
         if (self.constants.getConstantInt("MISSING_SHEET_COUNT") == -1):
             self.ui.checkBoxMissingSheets.setChecked(False)
@@ -452,9 +452,9 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
             self.ui.checkBoxMissingSheets.setChecked(True)
             self.ui.spinBoxMissingSheetCount.setValue(self.constants.getConstantInt("MISSING_SHEET_COUNT"))
         self.ui.doubleSpinBoxSheetMissingPenalty.setEnabled(True)
-        self.ui.doubleSpinBoxSheetMissingPenalty.setValue(self.sseViewer.correspondenceEngine.getConstantDouble("MISSING_SHEET_PENALTY"))
+        self.ui.doubleSpinBoxSheetMissingPenalty.setValue(self.sse.correspondenceEngine.getConstantDouble("MISSING_SHEET_PENALTY"))
         self.ui.doubleSpinBoxSheetMissingPenaltyScaled.setEnabled(True)
-        self.ui.doubleSpinBoxSheetMissingPenaltyScaled.setValue(self.sseViewer.correspondenceEngine.getConstantDouble("MISSING_SHEET_PENALTY_SCALED"))
+        self.ui.doubleSpinBoxSheetMissingPenaltyScaled.setValue(self.sse.correspondenceEngine.getConstantDouble("MISSING_SHEET_PENALTY_SCALED"))
 
     def getConstraints(self):
         print "Reading constraints from c++ layer to python layer"
@@ -472,7 +472,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
             if match.predicted is not None:
                 if match.predicted.type == 'strand':
                     #print "reading constraints for strand " + str(sIx) + " (graph node " + str(graphIx) + ")"
-                    obsSheet = self.sseViewer.correspondenceEngine.getStrandConstraint(graphIx,0)
+                    obsSheet = self.sse.correspondenceEngine.getStrandConstraint(graphIx, 0)
                     constrained = (obsSheet != 0)
                     if (obsSheet == -1):
                         sheetNum = -1
@@ -485,9 +485,9 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
                     graphIx += 1
                 elif match.predicted.type == 'helix':
                     #print "reading constraints for helix " + str(hIx) + " (graph node " + str(graphIx) + ")"
-                    obsHelixFwd = self.sseViewer.correspondenceEngine.getHelixConstraintFwd(graphIx)
-                    obsHelixRev = self.sseViewer.correspondenceEngine.getHelixConstraintRev(graphIx)
-                    obsHelixUnk = self.sseViewer.correspondenceEngine.getHelixConstraintUnk(graphIx)
+                    obsHelixFwd = self.sse.correspondenceEngine.getHelixConstraintFwd(graphIx)
+                    obsHelixRev = self.sse.correspondenceEngine.getHelixConstraintRev(graphIx)
+                    obsHelixUnk = self.sse.correspondenceEngine.getHelixConstraintUnk(graphIx)
                     #print "  fwd constraint = " + str(obsHelixFwd)
                     #print "  rev constraint = " + str(obsHelixRev)
                     #print "  unk constraint = " + str(obsHelixUnk)
@@ -515,7 +515,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
                     hIx += 1
                     graphIx += 2
         # now that constraints are stored, clear from c++ class
-        self.sseViewer.correspondenceEngine.clearAllConstraints()
+        self.sse.correspondenceEngine.clearAllConstraints()
 
     def populateEmptyResults(self, library):
         """ add empty result before correspondence search is started """
@@ -550,7 +550,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
         for i in range(self.resultCount):
             # create a Correspondence object and add it to the list
             # start from correspondenceEngine result
-            result = self.sseViewer.correspondenceEngine.getResult(i+1)
+            result = self.sse.correspondenceEngine.getResult(i + 1)
             matchList = [] # matchList holds the matches
             
             # iterate over all nodes in the matching from correspondenceEngine
@@ -644,7 +644,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
         #Loading Predicted SSEs
         print "loading predicted SSEs"
 
-        self.sseViewer.correspondenceEngine.loadSequenceGraph()
+        self.sse.correspondenceEngine.loadSequenceGraph()
         print "before calling StructurePrediction.load"
         print "sequenceFileName is " + str(self.sequenceFileName)
         print "app is " + str(self.parent)
@@ -654,16 +654,16 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
 
         #Loading Observed SSEs
         print "loading observed SSEs"
-        self.sseViewer.correspondenceEngine.loadSkeletonGraph()
+        self.sse.correspondenceEngine.loadSkeletonGraph()
         observedHelices = []
         observedSheets = []
-        sseCount = self.sseViewer.correspondenceEngine.getSkeletonSSECount()
+        sseCount = self.sse.correspondenceEngine.getSkeletonSSECount()
 
         print "adding helices to list of observed helices"
         for sseIx in range(sseCount):
             # call to c++ method QueryEngine::getSkeletonSSE(), which returns a c++ GeometricShape object
 
-            cppSse = self.sseViewer.correspondenceEngine.getSkeletonSSE(sseIx)
+            cppSse = self.sse.correspondenceEngine.getSkeletonSSE(sseIx)
             # create list of observed helices for this correspondence result
             if cppSse.isHelix():
                 q1 = cppSse.getCornerCell3(1)
@@ -708,7 +708,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
         self.createBasicCorrespondence()
                 
         # execute correspondence query and do cleanup
-        self.resultCount = self.sseViewer.correspondenceEngine.executeQuery()
+        self.resultCount = self.sse.correspondenceEngine.executeQuery()
 
         print "found " + str(self.resultCount) + " results. cleaning up memory."
 
@@ -726,7 +726,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
             self.correspondenceLibrary.correspondenceList.append(self.lastCorrespondence)
 
         self.populateComboBox(self.correspondenceLibrary)
-        self.sseViewer.modelChanged()
+        self.sse.modelChanged()
         self.ui.tabWidget.setCurrentIndex(4)
         print "done with search"
                 
@@ -862,12 +862,12 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
                     self.ui.tableWidgetCorrespondenceList.setItem(sseRow, 1, cellItemObserved)
                     if match.observed.sseType == 'helix':
                         # color is stored in two places: the renderer and the correspondence engine. update both.
-                        self.sseViewer.renderer.setHelixColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
-                        self.sseViewer.correspondenceEngine.setSSEColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
+                        self.sse.renderer.setHelixColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
+                        self.sse.correspondenceEngine.setSSEColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
 
                     if match.observed.sseType == 'sheet':
-                        self.sseViewer.renderer.setSSEColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
-                        self.sseViewer.correspondenceEngine.setSSEColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
+                        self.sse.renderer.setSSEColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
+                        self.sse.correspondenceEngine.setSSEColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
 
                     notMissing[match.observed.label] = True
             
@@ -901,11 +901,11 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
             observedHelices = self.correspondenceLibrary.structureObservation.helixDict
             for i in range(len(observedHelices)):
                 if(not notMissing.has_key(i)):
-                    self.sseViewer.renderer.setHelixColor(i, 0.5, 0.5, 0.5, 1.0)
+                    self.sse.renderer.setHelixColor(i, 0.5, 0.5, 0.5, 1.0)
 
-        self.sseViewer.correspondenceEngine.setVisibleCorrespondence(correspondenceIndex)
+        self.sse.correspondenceEngine.setVisibleCorrespondence(correspondenceIndex)
         self.correspondenceLibrary.setCurrentCorrespondenceIndex(correspondenceIndex)
-        self.sseViewer.modelChanged()
+        self.sse.modelChanged()
         self.loadingCorrespondance = False
 #         self.drawOverlay()
         
@@ -913,21 +913,21 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
         print termcolor.colored("...........In drawOverlay", 'red')
         if True:
             glPushAttrib(GL_LIGHTING_BIT)
-#             self.sseViewer.setMaterials(self.colors["CorrespondenceFinder:BackboneTrace"])
-#             self.sseViewer.setMaterials()
+#             self.sse.setMaterials(self.colors["CorrespondenceFinder:BackboneTrace"])
+#             self.sse.setMaterials()
             # calls Draw method of c++ SSECorrespondenceEngine object
-            self.sseViewer.correspondenceEngine.draw(0)
+            self.sse.correspondenceEngine.draw(0)
             glPopAttrib()
         if True:
             # TODO: Move this color changing code somewhere else
             # set colors of all SSEs
             # Probably should use the setColor calls in previous sections.
-            for i in range(self.sseViewer.correspondenceEngine.getSkeletonSSECount()):
-                color = self.getIndexedHelixColor(i, self.sseViewer.correspondenceEngine.getSkeletonSSECount())
+            for i in range(self.sse.correspondenceEngine.getSkeletonSSECount()):
+                color = self.getIndexedHelixColor(i, self.sse.correspondenceEngine.getSkeletonSSECount())
             glPushAttrib(GL_LIGHTING_BIT)
-#             self.sseViewer.setMaterials(self.colors["CorrespondenceFinder:BackboneTrace"])
-#             self.sseViewer.setMaterials()
-            self.sseViewer.correspondenceEngine.drawAllPaths(0,True,True,True,False)
+#             self.sse.setMaterials(self.colors["CorrespondenceFinder:BackboneTrace"])
+#             self.sse.setMaterials()
+            self.sse.correspondenceEngine.drawAllPaths(0, True, True, True, False)
             glPopAttrib()
 
     def constrainPredictedHelix(self, predicted, observed, constrain):
