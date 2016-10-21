@@ -29,6 +29,8 @@ class SSEIdentification(Window):
         self.scene.append(self.calpha)
         self.scene.append(self.sse)
         
+        self.form.init_again()
+        
 #         for i in xrange(-100, 101, 50):
 #             self.scene.append(Grid3D(self, (i, -100, i), (i, 100, i)))
 #

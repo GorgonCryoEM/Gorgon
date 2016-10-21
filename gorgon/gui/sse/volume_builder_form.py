@@ -13,6 +13,9 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
     def __init__(self, parent, dockArea=QtCore.Qt.LeftDockWidgetArea):
         QtGui.QDialog.__init__(self, parent)
         self.parent = parent
+        self.dockArea = dockArea
+    
+    def init_again(self):
         self.volume = self.parent.volume
         self.skeleton = self.parent.skeleton
         self.args = self.parent.args
@@ -23,7 +26,7 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
         dock = QtGui.QDockWidget("SSEBuilder", self.volume)
         dock.setWidget(self)
         dock.setAllowedAreas(QtCore.Qt.AllDockWidgetAreas)
-        self.parent.addDockWidget(dockArea, dock)
+        self.parent.addDockWidget(self.dockArea, dock)
 
         self.connect(self.volume, QtCore.SIGNAL("modelLoaded()"), self.modelLoaded)
         self.connect(self.volume, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)
