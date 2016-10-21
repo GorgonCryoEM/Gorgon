@@ -148,8 +148,8 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
 
         #self.calphaViewer.runSSEHunter( threshold, resolution, correlationWeight, skeletonWeight, geometryWeight )
 
-#         vol  = self.parent.volumeViewer.renderer.getVolume()
-#         skel = self.parent.skeletonViewer.renderer.getMesh()
+#         vol  = self.parent.volume.renderer.getVolume()
+#         skel = self.parent.skeleton.renderer.getMesh()
 #         sseh = SSEHunter(vol, skel, resolution, threshold)
 #         patoms = self.calphaViewer.loadSSEHunterData('pseudoatoms.pdb')
 #         self.calphaViewer.loadData()
@@ -243,7 +243,7 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
     def enableDisableSSEHunter(self):
         volumeViewer   = self.parent.volumeViewer
         skeletonViewer = self.parent.skeletonViewer
-#         enabled = (volumeViewer.loaded and skeletonViewer.loaded)
+#         enabled = (volume.loaded and skeleton.loaded)
         enabled = True
         self.labelThreshold.setEnabled(enabled)
         self.labelVolumeResolution.setEnabled(enabled)

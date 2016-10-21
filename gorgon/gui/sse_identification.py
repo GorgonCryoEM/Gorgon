@@ -26,14 +26,14 @@ class SSEIdentification(QtGui.QMainWindow):
 
         self.viewers = {}
         
-        self.volumeViewer = VolumeViewer(self)
-        self.skeletonViewer = SkeletonViewer(self)
+        self.volume = VolumeViewer(self)
+        self.skeleton = SkeletonViewer(self)
         self.calphaViewer = CAlphaViewer(self)
         self.sseViewer = SSEViewer(self)
         
         self.scene = []
-        self.scene.append(self.volumeViewer)
-        self.scene.append(self.skeletonViewer)
+        self.scene.append(self.volume)
+        self.scene.append(self.skeleton)
         self.scene.append(self.calphaViewer)
         self.scene.append(self.sseViewer)
         
@@ -54,19 +54,19 @@ class SSEIdentification(QtGui.QMainWindow):
         self.setWindowIcon(QtGui.QIcon(pathname + '/gorgon.ico'))
         
     def load(self):
-        self.volumeViewer.load(self.args.volume)
-        self.skeletonViewer.load(self.args.skeleton)
+        self.volume.load(self.args.volume)
+        self.skeleton.load(self.args.skeleton)
         # self.calphaViewer.loadSSEHunterData('pseudoatoms_thr_20.pdb')
         self.form.modelLoaded()
-#         self.volumeViewer.renderer.printVertices()
-        minDensity = self.volumeViewer.renderer.getMinDensity()
-        maxDensity = self.volumeViewer.renderer.getMaxDensity()
+#         self.volume.renderer.printVertices()
+        minDensity = self.volume.renderer.getMinDensity()
+        maxDensity = self.volume.renderer.getMaxDensity()
         defaultDensity = (minDensity + maxDensity) / 2
         self.form.lineEditMin.setText("%.2f" % minDensity)
         self.form.lineEditMax.setText("%.2f" % maxDensity)
         self.form.lineEditMean.setValue(defaultDensity)
-        self.form.lineEditMean.valueChanged.connect(self.volumeViewer.renderer.setSurfaceValue)
-        self.form.lineEditMean.valueChanged.connect(self.volumeViewer.modelChanged)
+        self.form.lineEditMean.valueChanged.connect(self.volume.renderer.setSurfaceValue)
+        self.form.lineEditMean.valueChanged.connect(self.volume.modelChanged)
         self.form.lineEditMin.setReadOnly(True)
         self.form.lineEditMax.setReadOnly(True)
         
