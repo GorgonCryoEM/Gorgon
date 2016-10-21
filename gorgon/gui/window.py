@@ -28,8 +28,10 @@ class Window(QtGui.QMainWindow):
         self.mainCamera = Camera(self.scene, self)
         self.setCentralWidget(self.mainCamera)
         
-        self.form = form(self)
-        self.form.show()
+        if form:
+            self.form = form(self)
+            if(hasattr(self.form, 'show')):
+                self.form.show()
         
         self.setWindowTitle(self.tr("Gorgon Toolkit - v" + version))
         pathname = os.path.abspath(os.path.dirname(sys.argv[0]))
