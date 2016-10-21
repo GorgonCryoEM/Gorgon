@@ -13,20 +13,20 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
     def __init__(self, parent, args, dockArea=QtCore.Qt.RightDockWidgetArea):
         QtGui.QDialog.__init__(self, parent)
         self.parent = parent
-        self.volumeViewer = self.parent.volumeViewer
-        self.skeletonViewer = self.parent.skeletonViewer
+        self.volume = self.parent.volume
+        self.skeleton = self.parent.skeleton
         self.args = args
         self.calphaViewer = self.parent.calphaViewer
         self.sseViewer = self.parent.sseViewer
         self.viewer = self.sseViewer
         
-        dock = QtGui.QDockWidget("SSEBuilder", volume)
+        dock = QtGui.QDockWidget("SSEBuilder", self.volume)
         dock.setWidget(self)
         dock.setAllowedAreas(QtCore.Qt.AllDockWidgetAreas)
         self.parent.addDockWidget(dockArea, dock)
 
-        self.connect(self.volumeViewer, QtCore.SIGNAL("modelLoaded()"),   self.modelLoaded)
-        self.connect(self.volumeViewer, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)
+        self.connect(self.volume, QtCore.SIGNAL("modelLoaded()"), self.modelLoaded)
+        self.connect(self.volume, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)
         self.connect(self.calphaViewer, QtCore.SIGNAL("atomSelectionUpdated(PyQt_PyObject)"), self.atomSelectionChanged)
 
         self.createUI()
@@ -49,10 +49,10 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
         self.connect(self.doubleSpinBoxCorrelation,   QtCore.SIGNAL("valueChanged(double)"), self.updateTotalScoreSSEHunterAtoms)
         self.connect(self.doubleSpinBoxSkeleton,      QtCore.SIGNAL("valueChanged(double)"), self.updateTotalScoreSSEHunterAtoms)
         self.connect(self.doubleSpinBoxGeometry,      QtCore.SIGNAL("valueChanged(double)"), self.updateTotalScoreSSEHunterAtoms)
-        self.connect(self.parent.volumeViewer,           QtCore.SIGNAL("modelLoaded()"),        self.enableDisableSSEHunter)
-        self.connect(self.parent.skeletonViewer,         QtCore.SIGNAL("modelLoaded()"),        self.enableDisableSSEHunter)
-        self.connect(self.parent.volumeViewer,           QtCore.SIGNAL("modelUnloaded()"),      self.enableDisableSSEHunter)
-        self.connect(self.parent.skeletonViewer,         QtCore.SIGNAL("modelUnloaded()"),      self.enableDisableSSEHunter)
+        self.connect(self.volume,           QtCore.SIGNAL("modelLoaded()"),        self.enableDisableSSEHunter)
+        self.connect(self.skeleton,         QtCore.SIGNAL("modelLoaded()"),        self.enableDisableSSEHunter)
+        self.connect(self.volume,           QtCore.SIGNAL("modelUnloaded()"),      self.enableDisableSSEHunter)
+        self.connect(self.skeleton,         QtCore.SIGNAL("modelUnloaded()"),      self.enableDisableSSEHunter)
         
         self.pushButtonSaveHelices.clicked.connect(self.parent.sseViewer.saveHelixData)
         
@@ -92,8 +92,8 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
                                                                                                                                         
     def modelLoaded(self):
         #self.detectSSEAct.setEnabled(True)
-        maxDensity = self.volumeViewer.renderer.getMaxDensity()
-        minDensity = self.volumeViewer.renderer.getMinDensity()
+        maxDensity = self.volume.renderer.getMaxDensity()
+        minDensity = self.volume.renderer.getMinDensity()
         defaultDensity = (minDensity + maxDensity) / 2
 
         self.doubleSpinBoxThreshold.setValue(defaultDensity)
@@ -241,8 +241,6 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
         self.bringToFront()
         
     def enableDisableSSEHunter(self):
-        volumeViewer   = self.parent.volumeViewer
-        skeletonViewer = self.parent.skeletonViewer
 #         enabled = (volume.loaded and skeleton.loaded)
         enabled = True
         self.labelThreshold.setEnabled(enabled)
@@ -256,5 +254,5 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
         self.doubleSpinBoxCorrelation.setEnabled(enabled)
         self.doubleSpinBoxGeometry.setEnabled(enabled)
         self.pushButtonSSEHunter.setEnabled(enabled)
-        self.pushButtonLoadVolume.setVisible(not volumeViewer.loaded)
-        self.pushButtonLoadSkeleton.setVisible(not skeletonViewer.loaded)
+        self.pushButtonLoadVolume.setVisible(not self.volume.loaded)
+        self.pushButtonLoadSkeleton.setVisible(not self.skeleton.loaded)
