@@ -37,22 +37,16 @@ def main():
 
     app = QtGui.QApplication(sys.argv)
 
-    windows = []
-    windows.append(BinarySkeletonization(args))
-    windows.append(GrayscaleSkeletonization(args))
-    windows.append(SSEIdentification(args))
-    windows.append(SSECorrespondence(args))
-    windows.append(CalphaAtomPlacement(args))
-#     exit()
     
-    for window in windows:
-        window.resize(800, 600)
-#         window.showMaximized()
-    #     window.move(300,50)
-        window.show()
-        window.raise_()
-        
-        window.load()
+    window = args.func(args)
+    
+    window.resize(800, 600)
+    # window.showMaximized()
+    # window.move(300,50)
+    window.show()
+    window.raise_()
+    
+    window.load()
    
     sys.exit(app.exec_())
 
