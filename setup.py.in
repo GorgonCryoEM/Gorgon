@@ -5,6 +5,8 @@ setup(
     version="@Gorgon_VERSION@",
     packages=find_packages(),
     package_data={'@lib_install_dir@.hello':['libpyhello.so', 'libpyhello.pyd'],'@lib_install_dir@.toolkit':['libpytoolkit.so', 'libpytoolkit.pyd']},
+    data_files=[('design', ['design/gorgon.ico']),
+                ],
     entry_points={
         'console_scripts': [
             'gorgon=@cli_install_dir@.gorgon_cli:main',

@@ -34,8 +34,11 @@ class Window(QtGui.QMainWindow):
                 self.form.show()
         
         self.setWindowTitle(self.tr("Gorgon GUI"))
-        pathname = os.path.abspath(os.path.dirname(sys.argv[0]))
-        self.setWindowIcon(QtGui.QIcon(pathname + '/gorgon.ico'))
+        pathname = os.path.join(sys.modules[__name__.split('.')[0]].__path__[0],
+                                os.pardir,
+                                'design',
+                                'gorgon.ico')
+        self.setWindowIcon(QtGui.QIcon(pathname))
         
     @classmethod
     def set_parser(cls, parser):
