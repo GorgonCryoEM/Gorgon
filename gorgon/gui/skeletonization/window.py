@@ -3,16 +3,15 @@ import sys
 
 from PyQt4 import QtGui
 
-from .explorer.skeleton_viewer import SkeletonViewer
-from .skeletonization.binary_form import VolumeBinarySkeletonizationForm
-from .explorer import Camera
-from .explorer.volume_viewer import VolumeViewer
+from ..explorer.volume_viewer import VolumeViewer
+from ..explorer.skeleton_viewer import SkeletonViewer
+from ..explorer import Camera
 
 
-class BinarySkeletonization(QtGui.QMainWindow):
+class Window(QtGui.QMainWindow):
 
-    def __init__(self, version, args):
-        super(BinarySkeletonization, self).__init__()
+    def __init__(self, version, form, args):
+        super(Window, self).__init__()
         
         self.args = args
         self.menubar = self.menuBar()
@@ -29,7 +28,7 @@ class BinarySkeletonization(QtGui.QMainWindow):
         self.mainCamera = Camera(self.scene, self)
         self.setCentralWidget(self.mainCamera)
         
-        self.form = VolumeBinarySkeletonizationForm(self, self.volume, self)
+        self.form = form(self)
         self.form.show()
         
         self.setWindowTitle(self.tr("Gorgon Toolkit - v" + version))

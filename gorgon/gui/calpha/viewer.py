@@ -16,7 +16,7 @@ class CAlphaViewer(BaseViewer):
     
     def __init__(self, main, parent=None):
         self.title = "C-Alpha"
-        super(CAlphaViewer, self).__init__(CAlphaRenderer(), main, parent)
+        super(CAlphaViewer, self).__init__(CAlphaRenderer(), main)
         self.shortTitle = "CAL"
         self.app = main
         self.colors = {}
