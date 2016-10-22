@@ -36,16 +36,12 @@ def main():
     args = parser.parse_args()
 
     app = QtGui.QApplication(sys.argv)
-
     
     window = args.func(args)
-    
     window.resize(800, 600)
     # window.showMaximized()
-    # window.move(300,50)
     window.show()
     window.raise_()
-    
     window.load()
    
     sys.exit(app.exec_())
