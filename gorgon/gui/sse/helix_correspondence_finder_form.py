@@ -647,7 +647,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
         print "sequenceFileName is " + str(self.sequenceFileName)
         print "app is " + str(self.parent)
         includeStrands = self.constants.getConstantInt("INCLUDE_STRANDS")
-        structPred = StructurePrediction.load(self.sequenceFileName, self.parent, includeStrands)
+        structPred = StructurePrediction.load(self, includeStrands)
         print "after calling StructurePrediction.load"
 
         #Loading Observed SSEs
