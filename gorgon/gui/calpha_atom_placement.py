@@ -10,11 +10,11 @@ from .window import Window
 class CalphaAtomPlacement(Window):
 
     def __init__(self, args):
-        super(CalphaAtomPlacement, self).__init__(args, StructurePrediction.load)
+        super(CalphaAtomPlacement, self).__init__(args, None)
         
         self.hasSemiAtomicPlacementForm = True
 
-        self.structPred = self.form
+        self.structPred = StructurePrediction.load(self.args.calpha, self)
         
         self.calpha = CAlphaViewer(self)
         

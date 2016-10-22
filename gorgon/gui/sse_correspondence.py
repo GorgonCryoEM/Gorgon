@@ -14,7 +14,7 @@ class SSECorrespondence(Window):
         
         self.hasSemiAtomicPlacementForm = False
 
-        self.structPred = StructurePrediction.load(self)
+        self.structPred = StructurePrediction.load(self.args.sequence, self)
         
         self.viewers = {}
         
@@ -27,7 +27,7 @@ class SSECorrespondence(Window):
         self.form.createUI()
 
     def load(self):
-        self.skeleton.load(self)
+        self.skeleton.load(self.args.skeleton)
         self.sse.loadHelixDataFromFile(self.args.helix)
 
         self.form.ui.lineEditSkeletonFile.setText(self.args.skeleton)
