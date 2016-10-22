@@ -9,6 +9,12 @@ install_to_destinations(
         COMPONENT Cli
         )
         
+install_to_destinations(
+        DIRECTORY ${CMAKE_SOURCE_DIR}/design
+        DESTINATIONS ${CMAKE_BINARY_DIR}
+        COMPONENT Cli
+)
+
 add_custom_target(Cli-only
         COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Cli -P cmake_install.cmake
         )
