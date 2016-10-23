@@ -31,7 +31,7 @@ class ToolkitTestCases(unittest.TestCase):
 			
 			testsdir           = join(topdir, 'tests')
 
-			self.indir         = join(topdir,   'demo/groel')
+			self.indir         = join(topdir,     'demo', 'groel')
 			self.outdir        = join(testsdir,   'outputs')
 			self.refdir        = join(self.indir, 'refs')
 
