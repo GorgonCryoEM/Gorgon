@@ -3,16 +3,15 @@ import sys
 
 from PyQt4 import QtGui
 
-from .explorer.skeleton_viewer import SkeletonViewer
-from .skeletonization.binary_form import VolumeBinarySkeletonizationForm
-from .explorer import Camera
 from .explorer.volume_viewer import VolumeViewer
+from .explorer.skeleton_viewer import SkeletonViewer
+from .explorer import Camera
 
 
-class BinarySkeletonization(QtGui.QMainWindow):
+class Window(QtGui.QMainWindow):
 
-    def __init__(self, version, args):
-        super(BinarySkeletonization, self).__init__()
+    def __init__(self, args, form):
+        super(Window, self).__init__()
         
         self.args = args
         self.menubar = self.menuBar()
@@ -29,13 +28,22 @@ class BinarySkeletonization(QtGui.QMainWindow):
         self.mainCamera = Camera(self.scene, self)
         self.setCentralWidget(self.mainCamera)
         
-        self.form = VolumeBinarySkeletonizationForm(self, self.volume, self)
-        self.form.show()
+        if form:
+            self.form = form(self)
+            if(hasattr(self.form, 'show')):
+                self.form.show()
         
-        self.setWindowTitle(self.tr("Gorgon Toolkit - v" + version))
-        pathname = os.path.abspath(os.path.dirname(sys.argv[0]))
-        self.setWindowIcon(QtGui.QIcon(pathname + '/gorgon.ico'))
+        self.setWindowTitle(self.tr("Gorgon GUI"))
+        pathname = os.path.join(sys.modules[__name__.split('.')[0]].__path__[0],
+                                os.pardir,
+                                'design',
+                                'gorgon.ico')
+        self.setWindowIcon(QtGui.QIcon(pathname))
         
+    @classmethod
+    def set_parser(cls, parser):
+        pass
+
     def load(self):
         self.volume.load(self.args.volume)
         self.form.modelLoaded()

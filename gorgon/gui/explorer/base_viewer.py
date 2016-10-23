@@ -16,7 +16,7 @@ class BaseViewer(BaseDockWidget):
     
     display_styles = [wireframe, flat, smooth]
     
-    def __init__(self, renderer, main, parent=None):
+    def __init__(self, renderer, main):
         super(BaseViewer, self).__init__(
                                 main,
                                 self,

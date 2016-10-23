@@ -13,8 +13,8 @@ class CAlphaSequenceDock(QtGui.QDockWidget):
         self.structurePrediction = structurePrediction
         self.app = main
         self.viewer=viewer
-        self.skeletonViewer = self.app.skeletonViewer
-        # self.sseViewer = self.app.sseViewer
+        self.skeleton = self.app.skeleton
+        # self.sseViewer = self.parent.sseViewer
         self.seqWidget = CAlphaSequenceWidget( structurePrediction, currentChainModel, self, self)
         self.setWidget(self.seqWidget)
         # self.createActions()
@@ -22,8 +22,8 @@ class CAlphaSequenceDock(QtGui.QDockWidget):
         self.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea)
         self.connect(self.seqWidget.structureEditor.mockSidechainsCheckBox,  QtCore.SIGNAL('stateChanged(int)'),  self.toggleMockSideChains)
         if main:
-            self.connect(self.app.calphaViewer, QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.updateFromViewerSelection)
-            # self.connect(self.app.sseViewer, QtCore.SIGNAL("SSE selected"), self.updateFromSSESelection)
+            self.connect(self.app.calpha, QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.updateFromViewerSelection)
+            # self.connect(self.parent.sseViewer, QtCore.SIGNAL("SSE selected"), self.updateFromSSESelection)
     
     @classmethod
     def changeDockVisibility(cls, main, viewer, structurePrediction, currentChainModel):
@@ -70,7 +70,7 @@ class CAlphaSequenceDock(QtGui.QDockWidget):
                 dock.raise_()
             else:
                 if not main:
-                    print 'Sequence Dock Error: no main app'
+                    print 'Sequence Dock Error: no main parent'
                 if not viewer:
                     print 'Sequence Dock Error: no viewer'
                 if not currentChainModel:
@@ -117,7 +117,7 @@ class CAlphaSequenceDock(QtGui.QDockWidget):
     #     seqDockAct.setCheckable(True)
     #     seqDockAct.setChecked(False)
     #     self.connect(seqDockAct, QtCore.SIGNAL("triggered()"), CAlphaSequenceDock.changeDockVisibility)
-    #     self.app.docksMenu.addAction(seqDockAct)
+    #     self.parent.docksMenu.addAction(seqDockAct)
     
     def changeCurrentChainModel(self, currentChainModel):
         '''

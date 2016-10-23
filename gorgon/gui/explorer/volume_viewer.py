@@ -12,7 +12,7 @@ class VolumeViewer(BaseViewer):
 
     def __init__(self, main, parent=None):
         self.title = "Volume"
-        super(VolumeViewer, self).__init__(VolumeRenderer(), main, parent)
+        super(VolumeViewer, self).__init__(VolumeRenderer(), main)
         self.shortTitle = "VOL"
         
         self.loaded = False

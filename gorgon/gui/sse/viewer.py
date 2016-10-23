@@ -10,7 +10,7 @@ class SSEViewer(BaseViewer):
     def __init__(self, main, parent=None):
         self.title = "Secondary Structure Element"
         self.app = main
-        super(SSEViewer, self).__init__(SSERenderer(), main, parent)
+        super(SSEViewer, self).__init__(SSERenderer(), main)
         self.shortTitle = "SSE"
 #         self.app.themes.addDefaultRGB("Secondary Structure Element:Model:0", 0, 180, 0, 255)
 #         self.app.themes.addDefaultRGB("Secondary Structure Element:Model:1", 120, 185, 255, 255)
@@ -25,7 +25,7 @@ class SSEViewer(BaseViewer):
         self.sheetLoaded = False
         self.correspondenceEngine = SSEEngine()
         self.selectEnabled = True
-        self.app.viewers["sse"] = self
+        self.app.sse = self
         self.model2Visible = True
         self.model3Visible = False
 #         self.initVisualizationOptions(ModelVisualizationForm(self.app, self))

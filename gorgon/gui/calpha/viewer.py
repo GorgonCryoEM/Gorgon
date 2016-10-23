@@ -14,11 +14,11 @@ class CAlphaViewer(BaseViewer):
     DisplayStyleRibbon = 4
     DisplayStyleSideChain = 5
     
-    def __init__(self, main, parent=None):
+    def __init__(self, parent):
         self.title = "C-Alpha"
-        super(CAlphaViewer, self).__init__(CAlphaRenderer(), main, parent)
+        super(CAlphaViewer, self).__init__(CAlphaRenderer(), parent)
         self.shortTitle = "CAL"
-        self.app = main
+        self.parent = parent
         self.colors = {}
         self.colors["C-Alpha:Atom"       ] = QtGui.QColor( 170, 170, 0, 255)
         self.colors["C-Alpha:Bond"       ] = QtGui.QColor( 120, 120, 170, 255)
@@ -34,13 +34,13 @@ class CAlphaViewer(BaseViewer):
         self.selectEnabled = True
         self.displayStyle = self.DisplayStyleBackbone
 #         self.renderer.setDisplayStyle(self.displayStyle)
-        self.structPred = self.app.structPred
+        self.structPred = self.parent.structPred
         try:
             self.main_chain = self.structPred.chain
         except:
             self.main_chain = None
 #         self.createUI()
-#         self.app.viewers["calpha"] = self;
+#         self.parent.viewers["calpha"] = self;
         self.atomsVisible = True
         self.bondsVisible = True
         self.helicesVisible = True
@@ -48,7 +48,7 @@ class CAlphaViewer(BaseViewer):
         self.loopsVisible = True
         #self.interpSegments = 10 # the number of segments interpolated per calpha atom when rendering ribbon diagrams
         #self.ribbonSlices = 10 # the number of slices used to render each segment of a ribbon diagram
-#         self.initVisualizationOptions(AtomVisualizationForm(self.app, self))
+#         self.initVisualizationOptions(AtomVisualizationForm(self.parent, self))
         self.loadedChains = []
         self.ribbonMouseMapping = {}
         self.ribbonMouseMapping[0] = {}
@@ -59,14 +59,14 @@ class CAlphaViewer(BaseViewer):
         self.connect(self, QtCore.SIGNAL("modelChanged"), self.modelChanged)
         # self.emit(QtCore.SIGNAL('modelChanged'))
         self.ui.pushButtonSave.clicked.connect(self.saveData)
-        if self.app.hasSemiAtomicPlacementForm:
+        if self.parent.hasSemiAtomicPlacementForm:
             self.createActions()
       
     def createActions(self):
         seqDockAct = QtGui.QAction(self.tr("Semi-&automatic Atom Placement: calpha-viewer"), self)
         seqDockAct.setCheckable(True)
         seqDockAct.setChecked(True)
-        self.app.docksMenu.addAction(seqDockAct)
+        self.parent.docksMenu.addAction(seqDockAct)
 
         def showDock():
             loaded = True
@@ -75,10 +75,10 @@ class CAlphaViewer(BaseViewer):
             if self.structPred:
                 self.main_chain = self.structPred.chain
             if True:
-                CAlphaSequenceDock.changeDockVisibility(self.app, self, self.structPred, self.main_chain)
+                CAlphaSequenceDock.changeDockVisibility(self.parent, self, self.structPred, self.main_chain)
 
         self.connect(seqDockAct, QtCore.SIGNAL("triggered()"), showDock)
-    #         self.app.actions.addAction("seqDock", seqDockAct)
+    #         self.parent.actions.addAction("seqDock", seqDockAct)
 
     def updateCurrentMatch(self, sseType, sseIndex):
         # When an element is selected in this viewer, if that item is a helix,
@@ -144,7 +144,7 @@ class CAlphaViewer(BaseViewer):
             x = pos.x() * self.renderer.getSpacingX() + self.renderer.getOriginX()
             y = pos.y() * self.renderer.getSpacingY() + self.renderer.getOriginY()
             z = pos.z() * self.renderer.getSpacingZ() + self.renderer.getOriginZ()
-            self.app.mainCamera.setCenter(Vec3(x, y, z))
+            self.parent.mainCamera.setCenter(Vec3(x, y, z))
             self.modelChanged()
 
     def clearSelection(self):
@@ -158,8 +158,8 @@ class CAlphaViewer(BaseViewer):
             self.unloadData()
         self.fileName = fileName
         self.renderer.loadSSEHunterFile(str(fileName))
-        volumeViewer = self.app.volumeViewer
-        skeletonViewer = self.app.skeletonViewer
+        volumeViewer = self.parent.volumeViewer
+        skeletonViewer = self.parent.skeletonViewer
         
         self.dirty = False
         self.loaded = True
@@ -198,11 +198,11 @@ class CAlphaViewer(BaseViewer):
                 self.fileName = fileNameTemp
                 
                 if self.whichChainID == 'ALL':
-                    mychainKeys = Chain.loadAllChains(str(self.fileName), qparent=self.app)
+                    mychainKeys = Chain.loadAllChains(str(self.fileName), qparent=self.parent)
                     for chainKey in mychainKeys:
                         setupChain(Chain.getChain(chainKey))
                 else:
-                    mychain = Chain.load(str(self.fileName), qparent=self.app, whichChainID=self.whichChainID)
+                    mychain = Chain.load(str(self.fileName), qparent=self.parent, whichChainID=self.whichChainID)
                     setupChain(mychain)
     
 #                     if not self.loaded:
@@ -310,21 +310,21 @@ class CAlphaViewer(BaseViewer):
                         print "....else"
                         self.main_chain.setSelection(addOne=atom.getResSeq())
                 else:
-                    self.app.form.atomSelectionChanged(atom.getResSeq())
+                    self.parent.form.atomSelectionChanged(atom.getResSeq())
             else:
                 atom = CAlphaRenderer.getAtomFromHitStack(self.renderer, hits[0], True, *hits[1:])
                 print 'Residue #:', atom.getResSeq()
                 if self.main_chain:
                     self.main_chain.setSelection([atom.getResSeq()])
                 else:
-                    self.app.form.atomSelectionChanged(atom.getResSeq())
+                    self.parent.form.atomSelectionChanged(atom.getResSeq())
             if self.main_chain:
                 print self.main_chain.getSelection()
                 self.emitAtomSelectionUpdated(self.main_chain.getSelection())
             # try:
-            #     self.app.form.atomSelectionChanged(self.main_chain.getSelection())
+            #     self.parent.form.atomSelectionChanged(self.main_chain.getSelection())
             # except:
-            #     print "Exception: self.app.form.atomSelectionChanged"
+            #     print "Exception: self.parent.form.atomSelectionChanged"
 
         if event.button() == QtCore.Qt.RightButton:
             self.centerOnSelectedAtoms(argv[0], argv[1], argv[2], argv[3], argv[4], argv[5], argv[6])
