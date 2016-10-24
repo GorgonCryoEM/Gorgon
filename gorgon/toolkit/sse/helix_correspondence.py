@@ -1,5 +1,5 @@
 from ..libpytoolkit import SSEEngine, IBackEnd
-from sse_defaults import SSEDefaults
+from .defaults import SSEDefaults
 
 
 class SSEHelixCorrespondence(object):
