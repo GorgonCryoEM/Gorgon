@@ -2,6 +2,7 @@
 
 import argparse
 import logging
+import json
 
 from gorgon.toolkit import SSEHelixCorrespondence
 

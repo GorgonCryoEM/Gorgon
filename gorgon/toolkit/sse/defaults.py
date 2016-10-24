@@ -1,3 +1,6 @@
+import json
+
+
 class ComboBox(object):
 
     def __init__(self):
@@ -18,25 +21,28 @@ class ComboBox(object):
 class SSEDefaults(object):
 
     def __init__(self):
-        self.HelixImportance           = 1.0
-        self.HelixMissingPenalty       = 5.0
-        self.HelixMissingPenaltyScaled = 0.0
-        self.EndHelixMissingPenalty    = 8.0
-        self.SheetImportance           = 1.0
-        self.SheetMissingPenalty       = 5.0
-        self.SheetMissingPenaltyScaled = 0.0
-        self.BorderMarginThreshold           = 3
-        self.EuclideanDistance         = 0.0
-        self.MinSheetSize                    = 10
-        self.MaxSheetDistance          = 5.0
-        self.SheetSelfLoopLength       = 5.0
-        self.SheetMergeThreshold       = 3.0
-        self.EuclideanToPDBRatio       = 10.0
-        self.AbsoluteDifference          = True
-        self.LoopImportance            = 0.2
-        self.EuclideanLoopUsedPenalty  = 5.0
+        with open('sse_defaults.json') as data_file:
+            json_data = json.load(data_file)
         
-        self.MissingHelices = bool()
-        self.MissingSheets = bool()
+        self.HelixImportance           = json_data["HelixImportance"]          
+        self.HelixMissingPenalty       = json_data["HelixMissingPenalty"]      
+        self.HelixMissingPenaltyScaled = json_data["HelixMissingPenaltyScaled"]
+        self.EndHelixMissingPenalty    = json_data["EndHelixMissingPenalty"]   
+        self.SheetImportance           = json_data["SheetImportance"]          
+        self.SheetMissingPenalty       = json_data["SheetMissingPenalty"]      
+        self.SheetMissingPenaltyScaled = json_data["SheetMissingPenaltyScaled"]
+        self.BorderMarginThreshold     = json_data["BorderMarginThreshold"]    
+        self.EuclideanDistance         = json_data["EuclideanDistance"]        
+        self.MinSheetSize              = json_data["MinSheetSize"]             
+        self.MaxSheetDistance          = json_data["MaxSheetDistance"]         
+        self.SheetSelfLoopLength       = json_data["SheetSelfLoopLength"]      
+        self.SheetMergeThreshold       = json_data["SheetMergeThreshold"]      
+        self.EuclideanToPDBRatio       = json_data["EuclideanToPDBRatio"]      
+        self.AbsoluteDifference        = json_data["AbsoluteDifference"]       
+        self.LoopImportance            = json_data["LoopImportance"]           
+        self.EuclideanLoopUsedPenalty  = json_data["EuclideanLoopUsedPenalty"] 
+        
+        self.MissingHelices = json_data["MissingHelices"]
+        self.MissingSheets  = json_data["MissingSheets"]
         
         self.correspondences = ComboBox()
