@@ -22,8 +22,8 @@ class Window(QtGui.QMainWindow):
         self.skeleton = SkeletonViewer(self)
         
         self.scene = []
-        self.scene.append(self.volume)
         self.scene.append(self.skeleton)
+        self.scene.append(self.volume)
         
         self.mainCamera = Camera(self.scene, self)
         self.setCentralWidget(self.mainCamera)
