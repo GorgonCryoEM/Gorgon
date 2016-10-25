@@ -1,4 +1,5 @@
 import json
+from pkg_resources import resource_string
 
 
 class ComboBox(object):
@@ -21,8 +22,8 @@ class ComboBox(object):
 class SSEDefaults(object):
 
     def __init__(self):
-        with open('sse_defaults.json') as data_file:
-            json_data = json.load(data_file)
+        data_file = resource_string(__name__, 'sse_defaults.json')
+        json_data = json.loads(data_file)
         
         self.HelixImportance           = json_data["HelixImportance"]          
         self.HelixMissingPenalty       = json_data["HelixMissingPenalty"]      
