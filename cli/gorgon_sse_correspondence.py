@@ -2,6 +2,7 @@
 
 import argparse
 import logging
+import json
 
 from gorgon.toolkit import SSEHelixCorrespondence
 
@@ -13,6 +14,7 @@ def main():
     parser.add_argument('sequence', action="store")
     parser.add_argument('helix', action="store")
     parser.add_argument('output', action="store")
+    parser.add_argument('--json', help='JSON file that contains settings')
     parser.add_argument('--log', action="store",
                     dest='loglevel',
                     choices=['info', 'debug'],
