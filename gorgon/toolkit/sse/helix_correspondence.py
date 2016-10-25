@@ -1,11 +1,18 @@
 from ..libpytoolkit import SSEEngine, IBackEnd
 from .defaults import SSEDefaults
+import json
 
 
 class SSEHelixCorrespondence(object):
 
     def __init__(self, args, auto=True):
         self.defaults = SSEDefaults()
+        if args.json:
+            with open(args.json) as data_file:
+                json_data = json.load(data_file)
+            for key, val in json_data.iteritems():
+                setattr(self.defaults, key, val)
+        
         self.skeleton = args.skeleton
         self.sequence = args.sequence
         self.helix    = args.helix
