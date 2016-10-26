@@ -5,7 +5,6 @@ from .slider_widget import HistogramSliderWidget
 
 
 class VolumeSurfaceEditorForm(QtGui.QWidget):
-    ViewingTypeIsoSurface, ViewingTypeCrossSection, ViewingTypeSolid = range(3)
     
     def __init__(self, app):
     
@@ -40,42 +39,10 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
         self.connect(self.ui.histogram, QtCore.SIGNAL("widgetResized()"), self.histogramResized)
         
         self.connect(self.ui.comboBoxSamplingInterval, QtCore.SIGNAL("currentIndexChanged(int)"), self.samplingChanged)
-        self.connect(self.ui.radioButtonIsoSurface, QtCore.SIGNAL("toggled(bool)"), self.setViewingType)
-        self.connect(self.ui.radioButtonCrossSection, QtCore.SIGNAL("toggled(bool)"), self.setViewingType)
-        self.connect(self.ui.radioButtonSolid, QtCore.SIGNAL("toggled(bool)"), self.setViewingType)
         self.connect(self.ui.doubleSpinBoxDensity, QtCore.SIGNAL("editingFinished ()"), self.manualValueChanged)
         self.connect(self.ui.doubleSpinBoxDensityMax, QtCore.SIGNAL("editingFinished ()"), self.manualValueMaxChanged)
         self.connect(self.ui.checkBoxUseRadius, QtCore.SIGNAL("toggled(bool)"), self.displayRadiusEnabled)
         
-    def setViewingType(self, toggled):
-        if(toggled):
-            if(self.ui.radioButtonIsoSurface.isChecked()):
-                self.ui.labelIsoLevel.setText("Density Threshold:");
-                self.viewer.renderer.setViewingType(self.ViewingTypeIsoSurface)
-                self.viewer.visualizationOptions.ui.radioButtonFlat.setEnabled(True)
-                self.viewer.visualizationOptions.ui.radioButtonWireframe.setEnabled(True)
-                self.ui.histogram.setSliderType(HistogramSliderWidget.HistogramSliderTypeValue)
-
-            elif self.ui.radioButtonCrossSection.isChecked():
-                self.ui.labelIsoLevel.setText("Minimum Density:");
-                self.viewer.renderer.setViewingType(self.ViewingTypeCrossSection)
-                self.viewer.visualizationOptions.ui.radioButtonFlat.setEnabled(False)
-                self.viewer.visualizationOptions.ui.radioButtonWireframe.setEnabled(False)
-                self.viewer.visualizationOptions.ui.radioButtonSmooth.setChecked(True)
-                self.ui.histogram.setSliderType(HistogramSliderWidget.HistogramSliderTypeRange)
-
-            elif self.ui.radioButtonSolid.isChecked():
-                self.ui.labelIsoLevel.setText("Minimum Density:");
-                self.viewer.renderer.setViewingType(self.ViewingTypeSolid)
-                
-                self.viewer.visualizationOptions.ui.radioButtonFlat.setEnabled(False)
-                self.viewer.visualizationOptions.ui.radioButtonWireframe.setEnabled(False)
-                self.viewer.visualizationOptions.ui.radioButtonSmooth.setChecked(True)
-                self.ui.histogram.setSliderType(HistogramSliderWidget.HistogramSliderTypeRange)
-                
-            print "setViewingType", QtCore.QThread.currentThreadId()
-            self.viewer.emitModelChanged()
-    
     def modelLoadedPreDraw(self):
         self.viewer.renderer.enableDraw(False)
         maxDensity = self.viewer.renderer.getMaxDensity()
