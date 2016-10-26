@@ -26,3 +26,4 @@ class VolumeViewer(BaseViewer):
         self.renderer.setDisplayRadius(maxRadius)
         
         self.form.setViewer(self)
+        self.form.modelLoadedPreDraw()
