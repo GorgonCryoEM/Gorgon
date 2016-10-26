@@ -23,6 +23,9 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
         self.createUI()
         self.createActions()
 
+    def toggleViewAction(self):
+        return self.dock.toggleViewAction()
+
     def createUI(self):
         self.ui = Ui_DialogVolumeSurfaceEditor()
         self.ui.setupUi(self)
