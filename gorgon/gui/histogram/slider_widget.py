@@ -33,6 +33,9 @@ class HistogramSliderWidget(HistogramWidget):
 
         for i in range(2):
             if (drawObjects[i]):
+                if self.maxValue - self.minValue == 0:
+                    self.maxValue = 1 
+                    self.minValue = 0
                 valLoc = (self.width() - 2 * self.verticalBorderSize) * (self.values[i] - self.minValue) / (self.maxValue - self.minValue)
                 painter.fillRect(valLoc + self.sliderRadius, 0, 2 * self.sliderRadius + 1, self.height() - 1,self.sliderBrush)
                 painter.setPen(QtGui.QColor.fromRgb(100, 100, 100))
