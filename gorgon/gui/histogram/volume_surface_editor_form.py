@@ -1,24 +1,21 @@
 from PyQt4 import QtCore, QtGui
 from ui_dialog_volume_surface_editor import Ui_DialogVolumeSurfaceEditor
-from base_dock_widget import BaseDockWidget
 from .slider_widget import HistogramSliderWidget
 # import threading
 
 
-class VolumeSurfaceEditorForm(BaseDockWidget):
+class VolumeSurfaceEditorForm(QtGui.QWidget):
     ViewingTypeIsoSurface, ViewingTypeCrossSection, ViewingTypeSolid = range(3)
     
-    def __init__(self, main, volumeViewer, parent=None):
-        BaseDockWidget.__init__(self,
-                                main,
-                                "&Volume - Surface Editor",
-                                "Modify the volume surface",
-                                "show_VolumeSurfaceEditor",
-                                "window-VolumeSurfaceEditor",
-                                "window",
-                                QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea,
-                                QtCore.Qt.BottomDockWidgetArea,
-                                parent)
+    def __init__(self, app):
+    
+        QtGui.QWidget.__init__(self, app)
+        
+        dock = QtGui.QDockWidget("Volume Surface Editor", app)
+        dock.setWidget(self)
+        dock.setAllowedAreas(QtCore.Qt.AllDockWidgetAreas)
+        app.addDockWidget(QtCore.Qt.BottomDockWidgetArea, dock)
+        
         self.app = main
         self.viewer = volumeViewer
         self.connect(self.viewer, QtCore.SIGNAL("modelLoadedPreDraw()"), self.modelLoadedPreDraw)
