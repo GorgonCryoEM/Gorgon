@@ -1,11 +1,5 @@
-from PyQt4 import QtGui, QtCore, QtOpenGL
 from base_viewer import BaseViewer
 from ...toolkit.libpytoolkit import VolumeRenderer
-from string import split, upper
-
-from OpenGL.GL import *
-from OpenGL.GLU import *
-from OpenGL.GLUT import *
 from ..histogram.volume_surface_editor_form import VolumeSurfaceEditorForm
 
 
