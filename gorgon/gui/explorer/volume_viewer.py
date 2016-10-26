@@ -24,3 +24,5 @@ class VolumeViewer(BaseViewer):
         self.renderer.setSampleInterval(1)
         self.renderer.setSurfaceValue(defaultDensity)
         self.renderer.setDisplayRadius(maxRadius)
+        
+        self.form.setViewer(self)

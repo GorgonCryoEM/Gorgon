@@ -16,11 +16,12 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
         dock.setAllowedAreas(QtCore.Qt.AllDockWidgetAreas)
         app.addDockWidget(QtCore.Qt.BottomDockWidgetArea, dock)
         
-        self.viewer = app.volume
+        self.createUI()
         
+    def setViewer(self, viewer):
+        self.viewer = viewer
         self.connect(self.viewer, QtCore.SIGNAL("modelLoadedPreDraw()"), self.modelLoadedPreDraw)
         self.connect(self.viewer, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)
-        self.createUI()
         self.createActions()
 
     def toggleViewAction(self):
