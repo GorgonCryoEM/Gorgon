@@ -32,7 +32,6 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
         self.ui.histogram.setSliderType(HistogramSliderWidget.HistogramSliderTypeValue)
         
         self.connect(self.ui.histogram,QtCore.SIGNAL("lowerValueChanged(float)"),self.isoValueIndicatorChanged)
-        self.connect(self.ui.histogram,QtCore.SIGNAL("higherValueChanged(float)"),self.isoValueMaxIndicatorChanged)
         self.connect(self.ui.histogram, QtCore.SIGNAL("widgetResized()"), self.histogramResized)
         
         self.connect(self.ui.comboBoxSamplingInterval, QtCore.SIGNAL("currentIndexChanged(int)"), self.samplingChanged)
@@ -79,11 +78,6 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
     def isoValueIndicatorChanged(self, newValue):
         self.ui.doubleSpinBoxDensity.setValue(float(newValue))
         
-    def isoValueMaxIndicatorChanged(self, newValue):
-        minValue = float(min(newValue, self.ui.doubleSpinBoxDensity.value()));
-        if(self.ui.doubleSpinBoxDensity.value() != minValue):
-            self.ui.doubleSpinBoxDensity.setValue(minValue)
-                            
     def manualValueChanged(self):
         newValue = self.ui.doubleSpinBoxDensity.value()
         self.ui.histogram.setLowerValue(newValue)
@@ -92,22 +86,12 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
         #threading.Thread(target = self.updateIsoValue, args=(newLevel,)).start()
         self.updateIsoValue(newLevel)
 
-    def isoValueMaxChanged(self, newLevel):
-        #threading.Thread(target = self.updateIsoValue, args=(newLevel,)).start()
-        self.updateIsoValueMax(newLevel)
-        
     def updateIsoValue(self, newLevel):
         self.setCursor(QtCore.Qt.BusyCursor)
         self.viewer.renderer.setSurfaceValue(newLevel)
         self.setCursor(QtCore.Qt.ArrowCursor)
         self.viewer.modelChanged()
         
-    def updateIsoValueMax(self, newLevel):
-        self.setCursor(QtCore.Qt.BusyCursor)
-        self.viewer.renderer.setMaxSurfaceValue(newLevel)
-        self.setCursor(QtCore.Qt.ArrowCursor)
-        self.viewer.modelChanged()
-    
     def getSamplingValue(self):
         return int(self.ui.comboBoxSamplingInterval.itemText(self.ui.comboBoxSamplingInterval.currentIndex()))
     
