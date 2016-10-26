@@ -1,8 +1,8 @@
+from .explorer.volume_viewer import VolumeViewer
 from .explorer.skeleton_viewer import SkeletonViewer
 from .calpha.sequence_dock import CAlphaSequenceDock
 from .calpha.viewer import CAlphaViewer
 from .explorer import Camera
-from .explorer.volume_viewer import VolumeViewer
 from ..toolkit.sse.correspondence.StructurePrediction import StructurePrediction
 from .window import Window
 
@@ -11,6 +11,9 @@ class CalphaAtomPlacement(Window):
 
     def __init__(self, args):
         super(CalphaAtomPlacement, self).__init__(args, None)
+
+        self.volume = VolumeViewer(self)
+        self.skeleton = SkeletonViewer(self)
         
         self.hasSemiAtomicPlacementForm = True
 
@@ -18,7 +21,7 @@ class CalphaAtomPlacement(Window):
         
         self.calpha = CAlphaViewer(self)
         
-        self.mainCamera.append_scene(self.calpha)
+        self.mainCamera.append_scenes([self.volume, self.skeleton, self.calpha])
         
     @classmethod
     def set_parser(cls, parser):

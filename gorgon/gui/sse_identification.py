@@ -1,9 +1,9 @@
+from .explorer.volume_viewer import VolumeViewer
 from .explorer.skeleton_viewer import SkeletonViewer
 from .calpha.viewer import CAlphaViewer
 from .sse.viewer import SSEViewer
 from .sse.volume_builder_form import VolumeSSEBuilderForm
 from .explorer import Camera
-from .explorer.volume_viewer import VolumeViewer
 from .window import Window
 
 
@@ -16,10 +16,13 @@ class SSEIdentification(Window):
         
         self.structPred = None
 
+        self.volume = VolumeViewer(self)
+        self.skeleton = SkeletonViewer(self)
         self.calpha = CAlphaViewer(self)
         self.sse = SSEViewer(self)
         
-        self.mainCamera.append_scenes([self.calpha, self.sse])
+        self.mainCamera.append_scenes([self.calpha, self.sse, self.skeleton, self.volume])
+        self.scene.append(self.volume)
         
         self.form.init_again()
         

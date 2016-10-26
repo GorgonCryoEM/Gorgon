@@ -1,4 +1,6 @@
 from ..window import Window
+from .volume_viewer import VolumeViewer
+from .skeleton_viewer import SkeletonViewer
 from ..sse.viewer import SSEViewer
 from ..calpha.viewer import CAlphaViewer
 from ...toolkit.sse.correspondence.StructurePrediction import StructurePrediction
@@ -9,13 +11,15 @@ class MainWindowForm(Window):
     def __init__(self, args):
         super(MainWindowForm, self).__init__(args, None)
 
+        self.volume = VolumeViewer(self)
+        self.skeleton = SkeletonViewer(self)
         self.sse    = SSEViewer(self)
         
         self.hasSemiAtomicPlacementForm = False
         self.structPred = StructurePrediction.load(self.args.calpha, self)
         self.calpha = CAlphaViewer(self)
 
-        self.mainCamera.append_scenes([self.sse, self.calpha])
+        self.mainCamera.append_scenes([self.skeleton, self.volume, self.sse, self.calpha])
 
     @classmethod
     def set_parser(cls, parser):
