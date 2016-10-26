@@ -38,3 +38,5 @@ class CalphaAtomPlacement(Window):
         print "self.structPred.chain\n", self.structPred.chain
         self.structPred.chain = self.calpha.main_chain 
         CAlphaSequenceDock.changeDockVisibility(self, self.calpha, self.structPred, self.structPred.chain)
+
+        super(CalphaAtomPlacement, self).load()

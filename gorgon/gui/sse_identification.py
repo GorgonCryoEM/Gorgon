@@ -39,8 +39,7 @@ class SSEIdentification(Window):
         parser.add_argument('skeleton')
         
     def load(self):
-        super(SSEIdentification, self).load()
-        
+        self.volume.load(self.args.volume)
         self.skeleton.load(self.args.skeleton)
         
         minDensity = self.volume.renderer.getMinDensity()
@@ -53,3 +52,5 @@ class SSEIdentification(Window):
         self.form.lineEditMean.valueChanged.connect(self.volume.modelChanged)
         self.form.lineEditMin.setReadOnly(True)
         self.form.lineEditMax.setReadOnly(True)
+
+        super(SSEIdentification, self).load()

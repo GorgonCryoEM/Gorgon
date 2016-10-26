@@ -18,3 +18,8 @@ class BinarySkeletonization(Window):
     def set_parser(cls, parser):
         parser.description = "Gorgon Binary Skeletonization Gui"
         parser.add_argument('volume')
+
+    def load(self):
+        self.volume.load(self.args.volume)
+        
+        super(BinarySkeletonization, self).load()

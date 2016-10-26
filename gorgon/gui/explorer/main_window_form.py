@@ -33,6 +33,7 @@ class MainWindowForm(Window):
     def load(self):
         super(MainWindowForm, self).load()
 
+        self.volume.load(self.args.volume)
         self.skeleton.load(self.args.skeleton)
         self.sse.loadHelixDataFromFile(self.args.helix)
         self.calpha.loadData(self.args.calpha)

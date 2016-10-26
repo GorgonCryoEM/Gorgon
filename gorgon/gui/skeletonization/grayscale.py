@@ -18,3 +18,8 @@ class GrayscaleSkeletonization(Window):
     def set_parser(cls, parser):
         parser.description = "Gorgon GrayScale Skeletonization Gui"
         parser.add_argument('volume')
+
+    def load(self):
+        self.volume.load(self.args.volume)
+        
+        super(GrayscaleSkeletonization, self).load()
