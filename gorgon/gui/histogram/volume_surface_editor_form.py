@@ -22,7 +22,6 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
         self.viewer = viewer
         self.connect(self.viewer, QtCore.SIGNAL("modelLoadedPreDraw()"), self.modelLoadedPreDraw)
         self.connect(self.viewer, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)
-        self.createActions()
 
     def toggleViewAction(self):
         return self.dock.toggleViewAction()
@@ -124,9 +123,6 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
         self.showWidget(False)
         self.ui.histogram.clearData()
         
-    def createActions(self):
-        self.displayAct.setEnabled(False)
-    
     def isoValueIndicatorChanged(self, newValue):
         self.ui.doubleSpinBoxDensity.setValue(float(newValue))
         
