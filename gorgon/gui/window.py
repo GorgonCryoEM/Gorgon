@@ -3,8 +3,6 @@ import sys
 
 from PyQt4 import QtGui
 
-from .explorer.volume_viewer import VolumeViewer
-from .explorer.skeleton_viewer import SkeletonViewer
 from .explorer import Camera
 
 
@@ -18,14 +16,10 @@ class Window(QtGui.QMainWindow):
         self.docksMenu = self.menubar.addMenu('&Docks')
         self.docks = []
         
-        self.volume = VolumeViewer(self)
-        self.skeleton = SkeletonViewer(self)
-        
         self.scene = []
         
         self.toolbar = self.addToolBar("Toolbar")
         self.mainCamera = Camera(self.scene, self)
-        self.mainCamera.append_scenes([self.skeleton, self.volume])
         
         self.setCentralWidget(self.mainCamera)
         
@@ -46,7 +40,6 @@ class Window(QtGui.QMainWindow):
         pass
 
     def load(self):
-        self.volume.load(self.args.volume)
         if hasattr(self, 'form'):
             self.form.modelLoaded()
         
