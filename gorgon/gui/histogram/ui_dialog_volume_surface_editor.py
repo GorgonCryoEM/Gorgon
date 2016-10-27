@@ -54,11 +54,6 @@ class Ui_DialogVolumeSurfaceEditor(object):
         self.labelIsoLevelMax = QtGui.QLabel(DialogVolumeSurfaceEditor)
         self.labelIsoLevelMax.setObjectName(_fromUtf8("labelIsoLevelMax"))
         self.horizontalLayout.addWidget(self.labelIsoLevelMax)
-        self.doubleSpinBoxDensityMax = QtGui.QDoubleSpinBox(DialogVolumeSurfaceEditor)
-        self.doubleSpinBoxDensityMax.setDecimals(3)
-        self.doubleSpinBoxDensityMax.setMaximum(25500.0)
-        self.doubleSpinBoxDensityMax.setObjectName(_fromUtf8("doubleSpinBoxDensityMax"))
-        self.horizontalLayout.addWidget(self.doubleSpinBoxDensityMax)
         self.labelSamplingInterval = QtGui.QLabel(DialogVolumeSurfaceEditor)
         self.labelSamplingInterval.setObjectName(_fromUtf8("labelSamplingInterval"))
         self.horizontalLayout.addWidget(self.labelSamplingInterval)
@@ -82,7 +77,6 @@ class Ui_DialogVolumeSurfaceEditor(object):
         self.retranslateUi(DialogVolumeSurfaceEditor)
         QtCore.QObject.connect(self.checkBoxUseRadius, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.spinBoxDisplayRadius.setEnabled)
         QtCore.QMetaObject.connectSlotsByName(DialogVolumeSurfaceEditor)
-        DialogVolumeSurfaceEditor.setTabOrder(self.doubleSpinBoxDensity, self.doubleSpinBoxDensityMax)
 
     def retranslateUi(self, DialogVolumeSurfaceEditor):
         DialogVolumeSurfaceEditor.setWindowTitle(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "Volume - Surface Editor", None, QtGui.QApplication.UnicodeUTF8))
@@ -95,8 +89,6 @@ class Ui_DialogVolumeSurfaceEditor(object):
         self.doubleSpinBoxDensity.setWhatsThis(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "The currently selected density of the volume", None, QtGui.QApplication.UnicodeUTF8))
         self.labelIsoLevelMax.setWhatsThis(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "Maximum density to be shown in solid rendering mode", None, QtGui.QApplication.UnicodeUTF8))
         self.labelIsoLevelMax.setText(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "Maximum Density:", None, QtGui.QApplication.UnicodeUTF8))
-        self.doubleSpinBoxDensityMax.setToolTip(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "Maximum density to be shown in solid rendering mode", None, QtGui.QApplication.UnicodeUTF8))
-        self.doubleSpinBoxDensityMax.setWhatsThis(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "Maximum density to be shown in solid rendering mode", None, QtGui.QApplication.UnicodeUTF8))
         self.labelSamplingInterval.setToolTip(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", " Sampling rate of the density.", None, QtGui.QApplication.UnicodeUTF8))
         self.labelSamplingInterval.setWhatsThis(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "Sampling rate of the density.", None, QtGui.QApplication.UnicodeUTF8))
         self.labelSamplingInterval.setText(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "Sampling Interval:", None, QtGui.QApplication.UnicodeUTF8))

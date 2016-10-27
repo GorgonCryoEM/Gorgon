@@ -30,7 +30,6 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
         self.ui.setupUi(self)
  
         self.ui.labelIsoLevelMax.setVisible(False)
-        self.ui.doubleSpinBoxDensityMax.setVisible(False)
         
         self.ui.histogram.setSliderType(HistogramSliderWidget.HistogramSliderTypeValue)
         
@@ -40,7 +39,6 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
         
         self.connect(self.ui.comboBoxSamplingInterval, QtCore.SIGNAL("currentIndexChanged(int)"), self.samplingChanged)
         self.connect(self.ui.doubleSpinBoxDensity, QtCore.SIGNAL("editingFinished ()"), self.manualValueChanged)
-        self.connect(self.ui.doubleSpinBoxDensityMax, QtCore.SIGNAL("editingFinished ()"), self.manualValueMaxChanged)
         self.connect(self.ui.checkBoxUseRadius, QtCore.SIGNAL("toggled(bool)"), self.displayRadiusEnabled)
         
     def modelLoadedPreDraw(self):
@@ -49,8 +47,6 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
         self.populateHistogram()
         self.ui.doubleSpinBoxDensity.setMinimum(minDensity)
         self.ui.doubleSpinBoxDensity.setMaximum(maxDensity)
-        self.ui.doubleSpinBoxDensityMax.setMinimum(minDensity)
-        self.ui.doubleSpinBoxDensityMax.setMaximum(maxDensity)
         defaultDensity = (minDensity + maxDensity) / 2
         self.ui.histogram.setLowerValue(defaultDensity)
         self.ui.histogram.setHigherValue(maxDensity)
@@ -85,13 +81,7 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
     def isoValueIndicatorChanged(self, newValue):
         self.ui.doubleSpinBoxDensity.setValue(float(newValue))
         
-        maxValue = float(max(newValue, self.ui.doubleSpinBoxDensityMax.value()));
-        if(self.ui.doubleSpinBoxDensityMax.value() != maxValue):
-            self.ui.doubleSpinBoxDensityMax.setValue(maxValue)
-        
     def isoValueMaxIndicatorChanged(self, newValue):
-        self.ui.doubleSpinBoxDensityMax.setValue(float(newValue))
-        
         minValue = float(min(newValue, self.ui.doubleSpinBoxDensity.value()));
         if(self.ui.doubleSpinBoxDensity.value() != minValue):
             self.ui.doubleSpinBoxDensity.setValue(minValue)
@@ -100,10 +90,6 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
         newValue = self.ui.doubleSpinBoxDensity.value()
         self.ui.histogram.setLowerValue(newValue)
         
-    def manualValueMaxChanged(self):
-        newValue = self.ui.doubleSpinBoxDensityMax.value()
-        self.ui.histogram.setHigherValue(newValue)
-                    
     def isoValueChanged(self, newLevel):
         #threading.Thread(target = self.updateIsoValue, args=(newLevel,)).start()
         self.updateIsoValue(newLevel)
