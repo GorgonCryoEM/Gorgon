@@ -12,6 +12,7 @@ class VolumeViewer(BaseViewer):
         
         self.loaded = False
         
+        self.form = VolumeSurfaceEditorForm(main)
         # self.setColor(QtGui.QColor(50, 200, 50, 150))
 
     def modelLoadedPreDraw(self):
