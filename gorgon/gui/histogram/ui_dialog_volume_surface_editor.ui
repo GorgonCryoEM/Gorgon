@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DialogVolumeSurfaceEditor</class>
+ <widget class="QWidget" name="DialogVolumeSurfaceEditor">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>625</width>
+    <height>305</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>230</width>
+    <height>124</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Volume - Surface Editor</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <widget class="QRadioButton" name="radioButtonIsoSurface">
+       <property name="toolTip">
+        <string>Display volume as an Iso Contour</string>
+       </property>
+       <property name="whatsThis">
+        <string>Display volume as an Iso Contour</string>
+       </property>
+       <property name="text">
+        <string>Iso-surface view</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="radioButtonCrossSection">
+       <property name="toolTip">
+        <string>Display the volume as a cross-section</string>
+       </property>
+       <property name="whatsThis">
+        <string>Display the volume as a cross-section</string>
+       </property>
+       <property name="text">
+        <string>Cross-Section view</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="radioButtonSolid">
+       <property name="toolTip">
+        <string>Display volume as a solid volumetric rendering</string>
+       </property>
+       <property name="whatsThis">
+        <string>Display volume as a solid volumetric rendering</string>
+       </property>
+       <property name="text">
+        <string>Solid view</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="HistogramSliderWidget" name="histogram" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>1</horstretch>
+       <verstretch>1</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="statusTip">
+      <string>Volume density histogram</string>
+     </property>
+     <property name="whatsThis">
+      <string>A histogram showing the distribution of density values in the volume.</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLabel" name="labelIsoLevel">
+       <property name="toolTip">
+        <string>The currently selected density of the volume</string>
+       </property>
+       <property name="whatsThis">
+        <string>The currently selected density of the volume</string>
+       </property>
+       <property name="text">
+        <string>Density:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QDoubleSpinBox" name="doubleSpinBoxDensity">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="toolTip">
+        <string>The currently selected density of the volume</string>
+       </property>
+       <property name="whatsThis">
+        <string>The currently selected density of the volume</string>
+       </property>
+       <property name="decimals">
+        <number>3</number>
+       </property>
+       <property name="maximum">
+        <double>25500.000000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="labelIsoLevelMax">
+       <property name="whatsThis">
+        <string>Maximum density to be shown in solid rendering mode</string>
+       </property>
+       <property name="text">
+        <string>Maximum Density:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QDoubleSpinBox" name="doubleSpinBoxDensityMax">
+       <property name="toolTip">
+        <string>Maximum density to be shown in solid rendering mode</string>
+       </property>
+       <property name="whatsThis">
+        <string>Maximum density to be shown in solid rendering mode</string>
+       </property>
+       <property name="decimals">
+        <number>3</number>
+       </property>
+       <property name="maximum">
+        <double>25500.000000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="labelSamplingInterval">
+       <property name="toolTip">
+        <string> Sampling rate of the density.</string>
+       </property>
+       <property name="whatsThis">
+        <string>Sampling rate of the density.</string>
+       </property>
+       <property name="text">
+        <string>Sampling Interval:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="comboBoxSamplingInterval">
+       <property name="toolTip">
+        <string> Sampling rate of the density.</string>
+       </property>
+       <property name="whatsThis">
+        <string>Sampling rate of the density.</string>
+       </property>
+       <item>
+        <property name="text">
+         <string>1</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>2</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>4</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>8</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>16</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="checkBoxUseRadius">
+       <property name="toolTip">
+        <string>The volume will be displayed for this radius around the selected point</string>
+       </property>
+       <property name="whatsThis">
+        <string>The volume will be displayed for this radius around the selected point</string>
+       </property>
+       <property name="text">
+        <string>Display Radius:</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="spinBoxDisplayRadius"/>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>HistogramSliderWidget</class>
+   <extends>QWidget</extends>
+   <header>histogram_slider_widget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>radioButtonIsoSurface</tabstop>
+  <tabstop>radioButtonCrossSection</tabstop>
+  <tabstop>radioButtonSolid</tabstop>
+  <tabstop>doubleSpinBoxDensity</tabstop>
+  <tabstop>doubleSpinBoxDensityMax</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>radioButtonIsoSurface</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>labelSamplingInterval</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>80</x>
+     <y>27</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>521</x>
+     <y>33</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButtonIsoSurface</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>labelIsoLevelMax</receiver>
+   <slot>setHidden(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>27</x>
+     <y>21</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>312</x>
+     <y>419</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButtonIsoSurface</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>doubleSpinBoxDensityMax</receiver>
+   <slot>setHidden(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>29</x>
+     <y>23</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>419</x>
+     <y>419</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButtonIsoSurface</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>checkBoxUseRadius</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>34</x>
+     <y>17</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>538</x>
+     <y>415</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButtonIsoSurface</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>comboBoxSamplingInterval</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>83</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>620</x>
+     <y>37</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxUseRadius</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>spinBoxDisplayRadius</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>551</x>
+     <y>417</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>598</x>
+     <y>419</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButtonIsoSurface</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>spinBoxDisplayRadius</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>124</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>592</x>
+     <y>403</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
