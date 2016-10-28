@@ -1,11 +1,6 @@
-from PyQt4 import QtGui, QtCore, QtOpenGL
 from base_viewer import BaseViewer
 from ...toolkit.libpytoolkit import VolumeRenderer
-from string import split, upper
-
-from OpenGL.GL import *
-from OpenGL.GLU import *
-from OpenGL.GLUT import *
+from ..histogram.volume_surface_editor_form import VolumeSurfaceEditorForm
 
 
 class VolumeViewer(BaseViewer):
@@ -17,6 +12,7 @@ class VolumeViewer(BaseViewer):
         
         self.loaded = False
         
+        self.form = VolumeSurfaceEditorForm(main)
         # self.setColor(QtGui.QColor(50, 200, 50, 150))
 
     def modelLoadedPreDraw(self):
@@ -28,3 +24,6 @@ class VolumeViewer(BaseViewer):
         self.renderer.setSampleInterval(1)
         self.renderer.setSurfaceValue(defaultDensity)
         self.renderer.setDisplayRadius(maxRadius)
+        
+        self.form.setViewer(self)
+        self.form.modelLoadedPreDraw()
