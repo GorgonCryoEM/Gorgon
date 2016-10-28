@@ -29,8 +29,6 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
         self.ui = Ui_DialogVolumeSurfaceEditor()
         self.ui.setupUi(self)
  
-        self.ui.labelIsoLevelMax.setVisible(False)
-        
         self.ui.histogram.setSliderType(HistogramSliderWidget.HistogramSliderTypeValue)
         
         self.connect(self.ui.histogram,QtCore.SIGNAL("lowerValueChanged(float)"),self.isoValueIndicatorChanged)
