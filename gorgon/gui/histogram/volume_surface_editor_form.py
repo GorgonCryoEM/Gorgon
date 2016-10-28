@@ -44,7 +44,6 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
         self.connect(self.ui.checkBoxUseRadius, QtCore.SIGNAL("toggled(bool)"), self.displayRadiusEnabled)
         
     def modelLoadedPreDraw(self):
-        self.viewer.renderer.enableDraw(False)
         maxDensity = self.viewer.renderer.getMaxDensity()
         minDensity = self.viewer.renderer.getMinDensity()
         self.populateHistogram()
@@ -52,10 +51,7 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
         self.ui.doubleSpinBoxDensity.setMaximum(maxDensity)
         self.ui.doubleSpinBoxDensityMax.setMinimum(minDensity)
         self.ui.doubleSpinBoxDensityMax.setMaximum(maxDensity)
-        if(self.ui.radioButtonIsoSurface.isChecked()):
-            defaultDensity = (minDensity + maxDensity) / 2
-        else:
-            defaultDensity = minDensity
+        defaultDensity = (minDensity + maxDensity) / 2
         self.ui.histogram.setLowerValue(defaultDensity)
         self.ui.histogram.setHigherValue(maxDensity)
         maxRadius = int(max(self.viewer.renderer.getMaxPos(0)/2, self.viewer.renderer.getMaxPos(1)/2, self.viewer.renderer.getMaxPos(2)/2));
@@ -64,10 +60,6 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
         self.viewer.renderer.setSampleInterval(self.getSamplingValue())
         self.viewer.renderer.setSurfaceValue(defaultDensity)
         self.viewer.renderer.setDisplayRadius(maxRadius)
-        self.displayAct.setChecked(True)
-        self.displayAct.setEnabled(True)
-        self.showWidget(True)
-        self.viewer.renderer.enableDraw(True)
         
     def populateHistogram(self):
         binCount = self.ui.histogram.width() - 2*self.ui.histogram.verticalBorderSize
