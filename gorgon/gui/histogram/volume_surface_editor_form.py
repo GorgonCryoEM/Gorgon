@@ -37,6 +37,7 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
         self.connect(self.ui.comboBoxSamplingInterval, QtCore.SIGNAL("currentIndexChanged(int)"), self.samplingChanged)
         self.connect(self.ui.doubleSpinBoxDensity, QtCore.SIGNAL("editingFinished ()"), self.manualValueChanged)
         self.connect(self.ui.checkBoxUseRadius, QtCore.SIGNAL("toggled(bool)"), self.displayRadiusEnabled)
+        self.connect(self.ui.histogram, QtCore.SIGNAL("valueChanged(float)") , self.updateIsoValue)
         
     def modelLoadedPreDraw(self):
         maxDensity = self.viewer.renderer.getMaxDensity()
