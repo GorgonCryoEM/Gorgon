@@ -82,10 +82,6 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
         newValue = self.ui.doubleSpinBoxDensity.value()
         self.ui.histogram.setLowerValue(newValue)
         
-    def isoValueChanged(self, newLevel):
-        #threading.Thread(target = self.updateIsoValue, args=(newLevel,)).start()
-        self.updateIsoValue(newLevel)
-
     def updateIsoValue(self, newLevel):
         self.setCursor(QtCore.Qt.BusyCursor)
         self.viewer.renderer.setSurfaceValue(newLevel)
