@@ -59,13 +59,14 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
         binCount = self.ui.histogram.width() - 2*self.ui.histogram.verticalBorderSize
         self.ui.histogram.setBinCount(binCount)
         self.ui.histogram.setUseLogScale(True)
-        volume = self.viewer.renderer.getVolume()
-        volume.buildHistogram(binCount)
-        histogramData = []
-        self.ui.histogram.clearData()
-        for i in range(binCount):
-            histogramData.append(volume.getHistogramBinValue(i))
-        self.ui.histogram.setHistogram(histogramData, volume.getMinDensity(), volume.getMaxDensity())
+        if hasattr(self, 'viewer'):
+            volume = self.viewer.renderer.getVolume()
+            volume.buildHistogram(binCount)
+            histogramData = []
+            self.ui.histogram.clearData()
+            for i in range(binCount):
+                histogramData.append(volume.getHistogramBinValue(i))
+            self.ui.histogram.setHistogram(histogramData, volume.getMinDensity(), volume.getMaxDensity())
         
     def histogramResized(self):
         self.populateHistogram()
