@@ -1,7 +1,7 @@
 from PyQt4 import QtCore, QtGui
 from camera import Camera
+from gorgon.gui.explorer.common.widget3 import Widget3
 from scene import Scene
-from .widget3 import Widget3
 
 import sys, os
 
