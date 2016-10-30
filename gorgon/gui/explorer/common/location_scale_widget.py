@@ -1,9 +1,13 @@
 from PyQt4.QtGui import *
+from PyQt4.QtCore import pyqtSignal
 from .spinbox3 import SpinBox3
 from .labels_xyz import LabelsXYZ
 
 
 class LocationScaleWidget(QFrame):
+    
+    locChanged = pyqtSignal(float, float, float)
+    scaleChanged = pyqtSignal(float, float, float)
 
     def __init__(self, parent=None):
         super(LocationScaleWidget, self).__init__(parent)
@@ -23,9 +27,6 @@ class LocationScaleWidget(QFrame):
         
         self.setLayout(vbox)
         
-        self.loc.valueChanged.connect(self.valueChanged)
-        self.scale.valueChanged.connect(self.valueChanged)
+        self.loc.valueChanged.connect(self.locChanged)
+        self.scale.valueChanged.connect(self.scaleChanged)
         
-    def valueChanged(self):
-        self.loc.locationChanged()
-        self.scale.locationChanged()

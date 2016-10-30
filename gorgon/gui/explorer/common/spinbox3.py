@@ -4,7 +4,7 @@ from PyQt4.QtCore import pyqtSignal
 
 class SpinBox3(QFrame):
     
-    valueChanged = pyqtSignal()
+    valueChanged = pyqtSignal(float, float, float)
 
     def __init__(self, lbl, parent=None):
         super(SpinBox3, self).__init__(parent)
@@ -27,4 +27,7 @@ class SpinBox3(QFrame):
         
     def setupSignals(self):
         for w in self.widgets:
-            w.valueChanged.connect(self.valueChanged)
+            w.valueChanged.connect(self.emitValueChanged)
+    
+    def emitValueChanged(self):
+        self.valueChanged.emit(self.widgets[0].value(), self.widgets[1].value(), self.widgets[2].value())
