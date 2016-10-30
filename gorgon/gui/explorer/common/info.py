@@ -1,6 +1,6 @@
 from PyQt4.QtGui import *
 from .widget3 import Widget3
-from .info_size import InfoSize
+from .labels_xyz import LabelsXYZ
 
 
 class Info(QFrame):
@@ -14,7 +14,7 @@ class Info(QFrame):
         self.scale = Widget3("Scale")
         
         vbox = QVBoxLayout()
-        vbox.addWidget(InfoSize())
+        vbox.addWidget(LabelsXYZ())
         vbox.addWidget(self.loc)
         vbox.addWidget(self.scale)
         
