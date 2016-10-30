@@ -1,9 +1,9 @@
 from PyQt4 import QtGui, QtCore
 
 from base_dock_widget import BaseDockWidget
+from gorgon.gui.explorer.common.ui_common import Ui_Common
 from gorgon.libs import Vec3
 from .display_styles import *
-from .ui_common import Ui_Common
 from ...toolkit.libpytoolkit import *
 
 

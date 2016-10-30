@@ -193,5 +193,5 @@ class Ui_Common(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), _translate("Common", "Properties", None))
         self.pushButtonSave.setText(_translate("Common", "Save", None))
 
-from colored_push_button import ColoredPushButton
-from info import Info
+from gorgon.gui.explorer.common.colored_push_button import ColoredPushButton
+from gorgon.gui.explorer.common.info import Info
