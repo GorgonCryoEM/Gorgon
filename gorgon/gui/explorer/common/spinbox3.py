@@ -2,12 +2,12 @@ from PyQt4.QtGui import *
 from PyQt4.QtCore import pyqtSignal
 
 
-class Widget3(QFrame):
+class SpinBox3(QFrame):
     
     valueChanged = pyqtSignal()
 
     def __init__(self, lbl, parent=None):
-        super(Widget3, self).__init__(parent)
+        super(SpinBox3, self).__init__(parent)
         
         self.lbl = QLabel(lbl)
         self.widgets = [QDoubleSpinBox() for i in range(3)]

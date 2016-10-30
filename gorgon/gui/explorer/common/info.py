@@ -1,5 +1,5 @@
 from PyQt4.QtGui import *
-from .widget3 import Widget3
+from .spinbox3 import SpinBox3
 from .labels_xyz import LabelsXYZ
 
 
@@ -10,8 +10,8 @@ class Info(QFrame):
         
         self.setFrameShape(QFrame.Box)
         
-        self.loc = Widget3("Location")
-        self.scale = Widget3("Scale")
+        self.loc = SpinBox3("Location")
+        self.scale = SpinBox3("Scale")
         
         vbox = QVBoxLayout()
         vbox.addWidget(LabelsXYZ())
