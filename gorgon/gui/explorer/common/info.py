@@ -28,6 +28,5 @@ class Info(QFrame):
         self.scale.valueChanged.connect(self.valueChanged)
         
     def valueChanged(self):
-#         print val
         self.loc.locationChanged()
         self.scale.locationChanged()
