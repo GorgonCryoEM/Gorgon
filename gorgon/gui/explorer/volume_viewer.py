@@ -14,8 +14,6 @@ class VolumeViewer(BaseViewer):
         
         self.form = VolumeSurfaceEditorForm(main)
         # self.setColor(QtGui.QColor(50, 200, 50, 150))
-        
-        self.ui.pushButtonSave.clicked.connect(self.saveData)
 
     def modelLoadedPreDraw(self):
         maxDensity = self.renderer.getMaxDensity()
@@ -29,11 +27,3 @@ class VolumeViewer(BaseViewer):
         
         self.form.setViewer(self)
         self.form.modelLoadedPreDraw()
-        
-    def saveData(self):
-        self.fileName = QtGui.QFileDialog.getSaveFileName(self, self.tr("Save Data"), "")
-        if not self.fileName.isEmpty():
-            self.setCursor(QtCore.Qt.WaitCursor)
-            self.renderer.saveFile(str(self.fileName))
-            self.dirty = False
-            self.setCursor(QtCore.Qt.ArrowCursor)
