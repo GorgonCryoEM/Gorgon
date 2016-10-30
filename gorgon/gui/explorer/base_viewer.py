@@ -62,11 +62,20 @@ class BaseViewer(BaseDockWidget):
         self.bg.buttonClicked[int].connect(self.visualizationUpdated)
         self.colorChanged.connect(self.ui.pushButtonModelColor.setColor)
         self.ui.pushButtonCenter.clicked.connect(self.on_center_clicked)
+        self.ui.pushButtonSave.clicked.connect(self.saveData)
 #         self.ui.pushButtonClose.clicked.connect(self.viewer.unload)
 #         self.ui.doubleSpinBoxSizeX.editingFinished.connect(self.scaleChanged)
 #         self.ui.doubleSpinBoxSizeY.editingFinished.connect(self.scaleChanged)
 #         self.ui.doubleSpinBoxSizeZ.editingFinished.connect(self.scaleChanged)
 #         self.ui.spinBoxThickness.valueChanged.connect(self.setThickness)
+
+    def saveData(self):
+        self.fileName = QtGui.QFileDialog.getSaveFileName(self, self.tr("Save Data"), "")
+        if not self.fileName.isEmpty():
+            self.setCursor(QtCore.Qt.WaitCursor)
+            self.renderer.saveFile(str(self.fileName))
+            self.dirty = False
+            self.setCursor(QtCore.Qt.ArrowCursor)
 
     def initializeGL(self):
         self.setupGlList()
