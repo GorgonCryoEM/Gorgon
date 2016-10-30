@@ -16,6 +16,7 @@ class SpinBox3(QFrame):
         hbox.addWidget(self.lbl)
         for w in self.widgets:
             w.setMaximum(1000)
+            w.setMinimum(-1000)
             hbox.addWidget(w)
 
         hbox.setSpacing(0)
