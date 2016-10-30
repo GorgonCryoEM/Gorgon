@@ -25,7 +25,7 @@ except AttributeError:
 class Ui_Common(object):
     def setupUi(self, Common):
         Common.setObjectName(_fromUtf8("Common"))
-        Common.resize(416, 339)
+        Common.resize(304, 339)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -76,9 +76,6 @@ class Ui_Common(object):
         self.checkBoxModelVisible.setChecked(True)
         self.checkBoxModelVisible.setObjectName(_fromUtf8("checkBoxModelVisible"))
         self.gridLayout.addWidget(self.checkBoxModelVisible, 1, 0, 1, 2)
-        self.spinbox3d = Info(self.tab)
-        self.spinbox3d.setObjectName(_fromUtf8("spinbox3d"))
-        self.gridLayout.addWidget(self.spinbox3d, 3, 1, 1, 1)
         self.groupBoxDisplayStyle = QtGui.QGroupBox(self.tab)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(0)
@@ -104,6 +101,9 @@ class Ui_Common(object):
         self.buttonGroup.addButton(self.radioButtonSmooth)
         self.gridlayout2.addWidget(self.radioButtonSmooth, 0, 2, 1, 1)
         self.gridLayout.addWidget(self.groupBoxDisplayStyle, 0, 0, 1, 3)
+        self.spinbox3d = Info(self.tab)
+        self.spinbox3d.setObjectName(_fromUtf8("spinbox3d"))
+        self.gridLayout.addWidget(self.spinbox3d, 3, 0, 1, 3)
         self.tabWidget.addTab(self.tab, _fromUtf8(""))
         self.tab_3 = QtGui.QWidget()
         self.tab_3.setObjectName(_fromUtf8("tab_3"))
