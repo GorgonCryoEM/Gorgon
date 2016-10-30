@@ -3,10 +3,10 @@ from .spinbox3 import SpinBox3
 from .labels_xyz import LabelsXYZ
 
 
-class Info(QFrame):
+class LocationScaleWidget(QFrame):
 
     def __init__(self, parent=None):
-        super(Info, self).__init__(parent)
+        super(LocationScaleWidget, self).__init__(parent)
         
         self.setFrameShape(QFrame.Box)
         
