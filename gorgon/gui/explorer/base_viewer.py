@@ -1,9 +1,9 @@
 from PyQt4 import QtGui, QtCore
 
 from base_dock_widget import BaseDockWidget
+from gorgon.gui.explorer.common.ui_common import Ui_Common
 from gorgon.libs import Vec3
 from .display_styles import *
-from .ui_common import Ui_Common
 from ...toolkit.libpytoolkit import *
 
 
@@ -62,11 +62,28 @@ class BaseViewer(BaseDockWidget):
         self.bg.buttonClicked[int].connect(self.visualizationUpdated)
         self.colorChanged.connect(self.ui.pushButtonModelColor.setColor)
         self.ui.pushButtonCenter.clicked.connect(self.on_center_clicked)
+        self.ui.pushButtonSave.clicked.connect(self.saveData)
+        self.ui.labelModelSize.setText("{" +
+                                       str(round(self.renderer.getMaxPos(0) - self.renderer.getMinPos(0) ,2)) + ", " +
+                                       str(round(self.renderer.getMaxPos(1) - self.renderer.getMinPos(1) ,2)) + ", " +
+                                       str(round(self.renderer.getMaxPos(2) - self.renderer.getMinPos(2) ,2)) + "}")
+        
+        self.ui.loc_scale_xyz.locChanged.connect(self.setLocation)
+        self.ui.loc_scale_xyz.scaleChanged.connect(self.setScale)
+
 #         self.ui.pushButtonClose.clicked.connect(self.viewer.unload)
 #         self.ui.doubleSpinBoxSizeX.editingFinished.connect(self.scaleChanged)
 #         self.ui.doubleSpinBoxSizeY.editingFinished.connect(self.scaleChanged)
 #         self.ui.doubleSpinBoxSizeZ.editingFinished.connect(self.scaleChanged)
 #         self.ui.spinBoxThickness.valueChanged.connect(self.setThickness)
+
+    def saveData(self):
+        self.fileName = QtGui.QFileDialog.getSaveFileName(self, self.tr("Save Data"), "")
+        if not self.fileName.isEmpty():
+            self.setCursor(QtCore.Qt.WaitCursor)
+            self.renderer.saveFile(str(self.fileName))
+            self.dirty = False
+            self.setCursor(QtCore.Qt.ArrowCursor)
 
     def initializeGL(self):
         self.setupGlList()
@@ -242,6 +259,7 @@ class BaseViewer(BaseDockWidget):
             QtGui.QMessageBox.critical(self, "Unable to load data file", "The file might be corrupt, or the format may not be supported.", "Ok")
 
             self.loaded = False
+        self.ui.labelModelName.setText(fileName)
 
     def modelLoadedPreDraw(self):
         pass

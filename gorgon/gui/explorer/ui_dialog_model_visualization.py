@@ -303,4 +303,4 @@ class Ui_DialogModelVisualization(object):
         self.pushButtonCenter.setText(QtGui.QApplication.translate("DialogModelVisualization", "Center", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButtonClose.setText(QtGui.QApplication.translate("DialogModelVisualization", "Unload Model", None, QtGui.QApplication.UnicodeUTF8))
 
-from colored_push_button import ColoredPushButton
+from gorgon.gui.explorer.common.colored_push_button import ColoredPushButton

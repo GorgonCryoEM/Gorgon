@@ -1,10 +1,10 @@
 from PyQt4.QtGui import *
 
 
-class InfoSize(QFrame):
+class LabelsXYZ(QFrame):
 
     def __init__(self, parent=None):
-        super(InfoSize, self).__init__(parent)
+        super(LabelsXYZ, self).__init__(parent)
         
         self.setFrameShape(QFrame.Box)
         
