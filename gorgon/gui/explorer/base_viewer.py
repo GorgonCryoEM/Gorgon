@@ -14,6 +14,7 @@ class BaseViewer(BaseDockWidget):
     visualizationUpdated = QtCore.pyqtSignal()
     centerRequested = QtCore.pyqtSignal(float, float, float, float)
     centerAllRequested = QtCore.pyqtSignal()
+    centerChanged = QtCore.pyqtSignal(float, float, float)
     
     display_styles = [wireframe, flat, smooth]
     
@@ -65,6 +66,8 @@ class BaseViewer(BaseDockWidget):
     #     self.ui.loc_scale_xyz.locChanged.connect(self.setLocation)
     #     self.ui.loc_scale_xyz.scaleChanged.connect(self.setScale)
     #     self.visualizationUpdated.connect(self.modelChanged)
+        
+        self.centerChanged.connect(self.ui.loc_scale_xyz.setLoc)
 
 #         self.ui.pushButtonClose.clicked.connect(self.viewer.unload)
 #         self.ui.doubleSpinBoxSizeX.editingFinished.connect(self.scaleChanged)
@@ -225,6 +228,7 @@ class BaseViewer(BaseDockWidget):
         # self.renderer.setOrigin(x, y, z)
         # self.app.mainCamera.setCenter(Vec3(x, y, z))
         self.visualizationUpdated.emit()
+        self.centerChanged.emit(x, y, z)
 
     def getCenter(self):
         min, max = self.getMinMax()
