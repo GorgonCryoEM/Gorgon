@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>416</width>
+    <width>304</width>
     <height>339</height>
    </rect>
   </property>
@@ -70,7 +70,7 @@
        <string>Visualization</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
-       <item row="3" column="1">
+       <item row="2" column="1">
         <spacer>
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -83,8 +83,34 @@
          </property>
         </spacer>
        </item>
-       <item row="4" column="1">
-        <widget class="Info" name="spinbox3d"/>
+       <item row="1" column="2">
+        <widget class="ColoredPushButton" name="pushButtonModelColor">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0" colspan="2">
+        <widget class="QCheckBox" name="checkBoxModelVisible">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Show model colored:</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
        <item row="0" column="0" colspan="3">
         <widget class="QGroupBox" name="groupBoxDisplayStyle">
@@ -134,63 +160,8 @@
          </layout>
         </widget>
        </item>
-       <item row="1" column="0" colspan="2">
-        <widget class="QCheckBox" name="checkBoxBoundingBox">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text">
-          <string>Show outline box colored:</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="2">
-        <widget class="ColoredPushButton" name="pushButtonBoundingBoxColor">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="2">
-        <widget class="ColoredPushButton" name="pushButtonModelColor">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0" colspan="2">
-        <widget class="QCheckBox" name="checkBoxModelVisible">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text">
-          <string>Show model colored:</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
+       <item row="3" column="0" colspan="3">
+        <widget class="Info" name="spinbox3d"/>
        </item>
       </layout>
      </widget>
@@ -294,8 +265,6 @@
   <tabstop>radioButtonWireframe</tabstop>
   <tabstop>radioButtonFlat</tabstop>
   <tabstop>radioButtonSmooth</tabstop>
-  <tabstop>checkBoxBoundingBox</tabstop>
-  <tabstop>pushButtonBoundingBoxColor</tabstop>
   <tabstop>checkBoxModelVisible</tabstop>
   <tabstop>pushButtonModelColor</tabstop>
  </tabstops>
