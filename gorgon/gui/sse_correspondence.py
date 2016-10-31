@@ -16,8 +16,6 @@ class SSECorrespondence(Window):
 
         self.structPred = StructurePrediction.load(self.args.sequence, self)
         
-        self.viewers = {}
-        
         self.sse    = SSEViewer(self)
         self.calpha = CAlphaViewer(self)
 
