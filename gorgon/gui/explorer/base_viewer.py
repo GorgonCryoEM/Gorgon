@@ -63,6 +63,10 @@ class BaseViewer(BaseDockWidget):
         self.colorChanged.connect(self.ui.pushButtonModelColor.setColor)
         self.ui.pushButtonCenter.clicked.connect(self.on_center_clicked)
         self.ui.pushButtonSave.clicked.connect(self.saveData)
+        self.ui.labelModelSize.setText("{" +
+                                       str(round(self.renderer.getMaxPos(0) - self.renderer.getMinPos(0) ,2)) + ", " +
+                                       str(round(self.renderer.getMaxPos(1) - self.renderer.getMinPos(1) ,2)) + ", " +
+                                       str(round(self.renderer.getMaxPos(2) - self.renderer.getMinPos(2) ,2)) + "}")
 #         self.ui.pushButtonClose.clicked.connect(self.viewer.unload)
 #         self.ui.doubleSpinBoxSizeX.editingFinished.connect(self.scaleChanged)
 #         self.ui.doubleSpinBoxSizeY.editingFinished.connect(self.scaleChanged)
@@ -251,6 +255,7 @@ class BaseViewer(BaseDockWidget):
             QtGui.QMessageBox.critical(self, "Unable to load data file", "The file might be corrupt, or the format may not be supported.", "Ok")
 
             self.loaded = False
+        self.ui.labelModelName.setText(fileName)
 
     def modelLoadedPreDraw(self):
         pass
