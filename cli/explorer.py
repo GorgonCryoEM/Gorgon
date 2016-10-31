@@ -11,7 +11,7 @@ import argparse
 
 from gorgon.toolkit.libpytoolkit import *
 from gorgon.gui.explorer import MainWindowForm
-from gorgon.gui.explorer import Widget3
+from gorgon.gui.explorer import SpinBox3
 
 
 class GLWidget(QtOpenGL.QGLWidget):
@@ -60,7 +60,7 @@ def main():
 #     window.form.raise_()
 #     window1.raise_()
     
-#     form = Widget3()
+#     form = SpinBox3()
 #     form.show()
 #     form.raise_()
             

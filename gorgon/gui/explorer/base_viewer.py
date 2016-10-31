@@ -67,6 +67,10 @@ class BaseViewer(BaseDockWidget):
                                        str(round(self.renderer.getMaxPos(0) - self.renderer.getMinPos(0) ,2)) + ", " +
                                        str(round(self.renderer.getMaxPos(1) - self.renderer.getMinPos(1) ,2)) + ", " +
                                        str(round(self.renderer.getMaxPos(2) - self.renderer.getMinPos(2) ,2)) + "}")
+        
+        self.ui.loc_scale_xyz.locChanged.connect(self.setLocation)
+        self.ui.loc_scale_xyz.scaleChanged.connect(self.setScale)
+
 #         self.ui.pushButtonClose.clicked.connect(self.viewer.unload)
 #         self.ui.doubleSpinBoxSizeX.editingFinished.connect(self.scaleChanged)
 #         self.ui.doubleSpinBoxSizeY.editingFinished.connect(self.scaleChanged)

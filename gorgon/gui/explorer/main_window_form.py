@@ -1,6 +1,6 @@
 from PyQt4 import QtCore, QtGui
 from camera import Camera
-from gorgon.gui.explorer.common.widget3 import Widget3
+from gorgon.gui.explorer.common.spinbox3 import SpinBox3
 from scene import Scene
 
 import sys, os
@@ -11,7 +11,7 @@ class MainWindowForm(QtGui.QMainWindow):
     def __init__(self, version):
         super(MainWindowForm, self).__init__()
         
-        self.form = Widget3(self)
+        self.form = SpinBox3(self)
         self.form.show()
         
         self.menubar = self.menuBar()

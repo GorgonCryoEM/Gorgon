@@ -101,9 +101,9 @@ class Ui_Common(object):
         self.buttonGroup.addButton(self.radioButtonSmooth)
         self.gridlayout2.addWidget(self.radioButtonSmooth, 0, 2, 1, 1)
         self.gridLayout.addWidget(self.groupBoxDisplayStyle, 0, 0, 1, 3)
-        self.spinbox3d = Info(self.tab)
-        self.spinbox3d.setObjectName(_fromUtf8("spinbox3d"))
-        self.gridLayout.addWidget(self.spinbox3d, 3, 0, 1, 3)
+        self.loc_scale_xyz = LocationScaleWidget(self.tab)
+        self.loc_scale_xyz.setObjectName(_fromUtf8("loc_scale_xyz"))
+        self.gridLayout.addWidget(self.loc_scale_xyz, 3, 0, 1, 3)
         self.tabWidget.addTab(self.tab, _fromUtf8(""))
         self.tab_3 = QtGui.QWidget()
         self.tab_3.setObjectName(_fromUtf8("tab_3"))
@@ -170,4 +170,4 @@ class Ui_Common(object):
         self.pushButtonSave.setText(_translate("Common", "Save", None))
 
 from colored_push_button import ColoredPushButton
-from info import Info
+from location_scale_widget import LocationScaleWidget
