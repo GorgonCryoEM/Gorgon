@@ -4,7 +4,7 @@ import argparse
 import logging
 import json
 
-from gorgon.toolkit import SSEHelixCorrespondence
+from gorgon.toolkit import HelixCorrespondence
 
 
 def main():
@@ -36,7 +36,7 @@ def main():
     
     logger = logging.getLogger(__name__)
 
-    sse_finder = SSEHelixCorrespondence(args)
+    sse_finder = HelixCorrespondence(args)
     sse_finder.accept()
     sse_finder.correspondenceEngine.saveCorrespondenceToFile(args.output)
 

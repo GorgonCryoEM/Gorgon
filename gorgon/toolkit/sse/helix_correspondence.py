@@ -3,7 +3,7 @@ from .defaults import SSEDefaults
 import json
 
 
-class SSEHelixCorrespondence(object):
+class HelixCorrespondence(object):
 
     def __init__(self, args):
         self.defaults = SSEDefaults()

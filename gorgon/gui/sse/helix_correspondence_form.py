@@ -22,7 +22,7 @@ import termcolor
 from ..helix import create_helix
 
 
-class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
+class SSEHelixCorrespondenceForm(QtGui.QDialog):
 
     def __init__(self, parent):
         self.parent = parent
@@ -689,10 +689,10 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
                 print match
                 print match.predicted.startIndex
                 print match.predicted.stopIndex
-                create_helix(self.parent.calphaViewer.renderer, self.parent.structPred.chain, match)
+                create_helix(self.parent.calpha.renderer, self.parent.structPred.chain, match)
 
-        self.parent.calphaViewer.loaded = True
-        self.parent.calphaViewer.modelChanged()
+        self.parent.calpha.loaded = True
+        self.parent.calpha.modelChanged()
         self.parent.mainCamera.updateGL()
         
     def accept(self):
