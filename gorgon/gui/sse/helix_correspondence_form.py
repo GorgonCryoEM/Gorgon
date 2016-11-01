@@ -22,7 +22,7 @@ import termcolor
 from ..helix import create_helix
 
 
-class SSEHelixCorrespondenceFinderForm(QtGui.QDialog):
+class SSEHelixCorrespondenceForm(QtGui.QDialog):
 
     def __init__(self, parent):
         self.parent = parent
