@@ -15,7 +15,7 @@ namespace Visualization {
 
          const vector<Shape *> &helixes = skeleton.skeletonHelixes;
          // draw paths
-         if (true) {
+         if (showPaths) {
             glPushAttrib(GL_LIGHTING_BIT | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT);
             glDisable(GL_LIGHTING);
             glLineWidth(5);
@@ -90,7 +90,7 @@ namespace Visualization {
         }
 
         // draw corner nodes (helices)
-        if (true) {
+        if (showHelixCorners) {
             glPushAttrib(GL_LIGHTING_BIT | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT);
             for(int i = 0; i < (int) helixes.size(); i++) {
                 Shape * vv = helixes[i];
@@ -139,14 +139,14 @@ namespace Visualization {
         }
 
         // draw corner nodes (sheets)
-        if (0) {
+        if (showSheetCorners) {
             glPushAttrib(GL_LIGHTING_BIT | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT);
             int lastHelix = 0;
             for(int i = 0; i < (int) helixes.size(); i++) {
-                if (true) {
+                if (helixes[i]->type == GRAPHEDGE_HELIX) {
                     lastHelix=i;
                 }
-                if (true) {
+                if (helixes[i]->type == GRAPHEDGE_SHEET) {
                     for(int j = 0; j < (int) helixes[i]->cornerCells.size(); j++) {
                         glColor3f(.2, .3, .6);
 
