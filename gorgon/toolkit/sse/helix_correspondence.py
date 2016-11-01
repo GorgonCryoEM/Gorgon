@@ -5,7 +5,7 @@ import json
 
 class SSEHelixCorrespondence(object):
 
-    def __init__(self, args, auto=True):
+    def __init__(self, args):
         self.defaults = SSEDefaults()
         if args.json:
             with open(args.json) as data_file:
@@ -23,10 +23,6 @@ class SSEHelixCorrespondence(object):
         '''
         self.correspondenceEngine = SSEEngine()
         self.constants = IBackEnd()
-        
-        if auto:
-            self.accept()
-            self.correspondenceEngine.saveCorrespondenceToFile(self.output)
         
     def setConstants(self):
         #Data Sources tab

@@ -37,6 +37,9 @@ def main():
     logger = logging.getLogger(__name__)
 
     sse_finder = SSEHelixCorrespondence(args)
+    sse_finder.accept()
+    sse_finder.correspondenceEngine.saveCorrespondenceToFile(args.output)
+
 
 if __name__ == "__main__":
     main()
