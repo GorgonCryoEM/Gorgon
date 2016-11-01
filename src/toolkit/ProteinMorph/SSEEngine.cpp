@@ -114,11 +114,11 @@ namespace Visualization {
 //                        Vec3D apix((loc[0]-1)*spacing[0], (loc[1]-1)*spacing[1], (loc[2]-1)*spacing[2]);
                         loc = org + apix;
 
-                        double sphereRadius = 1.;
+                        double sphereRadius = .25;
                         drawSphere(loc, sphereRadius);
 
                         // Label the points with their graph node numbers
-                        glColor3f(0.0, 0.0, 1.0);
+                        glColor3f(1.0, 1.0, 1.0);
 
                         glRasterPos3d(loc[0], loc[1], loc[2]);
                         int cornerNum = cornerCells.node; // 0 or 1
@@ -148,13 +148,13 @@ namespace Visualization {
                 }
                 if (helixes[i]->type == GRAPHEDGE_SHEET) {
                     for(int j = 0; j < (int) helixes[i]->cornerCells.size(); j++) {
-                        glColor3f(.2, .3, .6);
+                        glColor3f(1.0, 1.0, 1.0);
 
                         Shape * vv = helixes[j];
                         Vec3D org = vv->getOrigin();
                         Vec3D loc(helixes[i]->cornerCells[j].x, helixes[i]->cornerCells[j].y, helixes[i]->cornerCells[j].z);
                         loc += org;
-                        drawSphere(loc, 2);
+                        drawSphere(loc, .25);
 
                         // Label the points with their graph node numbers
                         glRasterPos3d(loc[0], loc[1], loc[2]);
