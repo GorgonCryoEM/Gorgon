@@ -28,6 +28,8 @@ class SSEViewer(BaseViewer):
         self.app.sse = self
         self.model2Visible = True
         self.model3Visible = False
+
+        self.isSetMaterial = False
 #         self.initVisualizationOptions(ModelVisualizationForm(self.app, self))
 #         self.visualizationOptions.ui.checkBoxModelVisible.setText("Show helices colored:")
 #         self.visualizationOptions.ui.checkBoxModel2Visible.setText("Show sheets colored:")
