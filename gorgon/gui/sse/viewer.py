@@ -48,16 +48,16 @@ class SSEViewer(BaseViewer):
         self.selectedObjects = []
         self.correspondences = []
         
-    def drawGL(self):
-#         BaseViewer.drawGL(self)
-        try:
-            print termcolor.colored('renderer.draw', 'yellow')
-            for kk in range(3):
-                self.renderer.draw(kk, True)
-        except:
-            print "Problem in sseViewer::drawGL: renderer.draw"
-        else:
-            self.extraDrawingRoutines()
+#     def drawGL(self):
+# #         BaseViewer.drawGL(self)
+#         try:
+#             print termcolor.colored('renderer.draw', 'yellow')
+#             for kk in range(3):
+#                 self.renderer.draw(kk, True)
+#         except:
+#             print "Problem in sseViewer::drawGL: renderer.draw"
+#         else:
+#             self.extraDrawingRoutines()
 
     def extraDrawingRoutines(self):
         try:
