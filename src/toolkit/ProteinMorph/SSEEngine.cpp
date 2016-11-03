@@ -224,7 +224,7 @@ namespace Visualization {
                     // Label the points with their graph node numbers
                     glColor3f(1.0, 1.0, 1.0);
 
-                    glRasterPos3d(path[pathSize-1].X(), path[pathSize-1].Y(), path[pathSize-1].Z());
+                    glRasterPos3d(pathx, pathy, pathz);
                     //int labelInt = seqNumber + 1;
                     int labelInt = seqIndex;
                     //int labelInt = sse2;
