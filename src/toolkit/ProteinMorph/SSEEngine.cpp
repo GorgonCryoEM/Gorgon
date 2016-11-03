@@ -10,7 +10,7 @@
 namespace Visualization {
 
     void SSEEngine::draw(int sceneIndex) {
-        //std::cout << "SSECorrespondenceEngine::Draw called" << std::endl;
+        std::cout << "SSECorrespondenceEngine::Draw called" << std::endl;
         int n1, n2, sse1, sse2;
         vector<Vector3DInt> path;
         if(correspondenceIndex >= 0) {
