@@ -85,7 +85,7 @@ namespace Visualization {
                 // color code
 
                 // get colors of beginning and ending SSEs
-                int numHelices = skeleton.GetHelixCount();
+                int numHelices = skeleton.getHelixCount();
 
                 // start SSE color
                 int startSSENumber;
@@ -95,7 +95,7 @@ namespace Visualization {
                 } else {
                     startSSENumber = n1/2;
                 }
-                skeleton.skeletonHelixes[startSSENumber]->GetColor(startColorR, startColorG, startColorB, startColorA);
+                skeleton.skeletonHelixes[startSSENumber]->getColor(startColorR, startColorG, startColorB, startColorA);
 
                 // end SSE color
                 int endSSENumber;
@@ -105,7 +105,7 @@ namespace Visualization {
                 } else {
                     endSSENumber = n2/2;
                 }
-                skeleton.skeletonHelixes[endSSENumber]->GetColor(endColorR, endColorG, endColorB, endColorA);
+                skeleton.skeletonHelixes[endSSENumber]->getColor(endColorR, endColorG, endColorB, endColorA);
 
                 if(startSSENumber == endSSENumber && startSSENumber < numHelices){
                     seqNumber += 0; // internal helix loop
