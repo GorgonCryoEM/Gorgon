@@ -48,7 +48,7 @@ namespace Visualization {
                     sse1 = result.nodeToHelix(n1);
                     i++;
                     // update the seqIndex 
-                    if (sequence->adjacencyMatrix[i][i][0] == GRAPHNODE_SHEET) {
+                    if (sequence.adjacencyMatrix[i][i][0] == GRAPHNODE_SHEET) {
                         strandsPassed ++;
                     }
                 }
@@ -59,7 +59,7 @@ namespace Visualization {
                     sse2 = result.nodeToHelix(n2);
                     i++;
                     // update the seqIndex 
-                    if (sequence->adjacencyMatrix[i][i][0] == GRAPHNODE_SHEET) {
+                    if (sequence.adjacencyMatrix[i][i][0] == GRAPHNODE_SHEET) {
                         strandsPassed ++;
                     }
                     if (i >= result.getNodeCount()) {
@@ -67,7 +67,7 @@ namespace Visualization {
                         break;
                     }
                 }
-                if (sequence->adjacencyMatrix[i][i][0] == GRAPHNODE_SHEET) {
+                if (sequence.adjacencyMatrix[i][i][0] == GRAPHNODE_SHEET) {
                     strandsPassed --;
                 }
                 i--;
