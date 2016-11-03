@@ -13,8 +13,8 @@ namespace Visualization {
         //std::cout << "SSECorrespondenceEngine::Draw called" << std::endl;
         int n1, n2, sse1, sse2;
         vector<Vec3I> path;
-        if(curInd >= 0) {
-            SSEResult result = getResult(curInd + 1);
+        if(curInd >= 0 && solutions.size() > 0) {
+            SSEResult result = solutions[curInd];
 
             glPushAttrib(GL_LIGHTING_BIT | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT);
             glDisable(GL_LIGHTING);
