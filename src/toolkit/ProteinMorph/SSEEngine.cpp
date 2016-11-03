@@ -73,10 +73,10 @@ namespace Visualization {
                 i--;
                 seqIndex = (i + strandsPassed + 1)/2 + 1;
 
-                path = skeleton->paths[n1][n2];
-                //cout << "path sizes. fwd:" << skeleton->paths[n1][n2].size() << ", rev:" << skeleton->paths[n2][n1].size() << endl;
+                path = skeleton.paths[n1][n2];
+                //cout << "path sizes. fwd:" << skeleton.paths[n1][n2].size() << ", rev:" << skeleton.paths[n2][n1].size() << endl;
                 if(path.size() == 0) {
-                    path = skeleton->paths[n2][n1];
+                    path = skeleton.paths[n2][n1];
                     int n1old = n1;
                     n1 = n2;
                     n2 = n1old;
@@ -85,27 +85,27 @@ namespace Visualization {
                 // color code
 
                 // get colors of beginning and ending SSEs
-                int numHelices = skeleton->GetHelixCount();
+                int numHelices = skeleton.GetHelixCount();
 
                 // start SSE color
                 int startSSENumber;
                 float startColorR, startColorG, startColorB, startColorA;
-                if(skeleton->adjacencyMatrix[n1][n1][0] == GRAPHNODE_SHEET){
+                if(skeleton.adjacencyMatrix[n1][n1][0] == GRAPHNODE_SHEET){
                     startSSENumber = n1 - numHelices;
                 } else {
                     startSSENumber = n1/2;
                 }
-                skeleton->skeletonHelixes[startSSENumber]->GetColor(startColorR, startColorG, startColorB, startColorA);
+                skeleton.skeletonHelixes[startSSENumber]->GetColor(startColorR, startColorG, startColorB, startColorA);
 
                 // end SSE color
                 int endSSENumber;
                 float endColorR, endColorG, endColorB, endColorA;
-                if(skeleton->adjacencyMatrix[n2][n2][0] == GRAPHNODE_SHEET){
+                if(skeleton.adjacencyMatrix[n2][n2][0] == GRAPHNODE_SHEET){
                     endSSENumber = n2 - numHelices;
                 } else {
                     endSSENumber = n2/2;
                 }
-                skeleton->skeletonHelixes[endSSENumber]->GetColor(endColorR, endColorG, endColorB, endColorA);
+                skeleton.skeletonHelixes[endSSENumber]->GetColor(endColorR, endColorG, endColorB, endColorA);
 
                 if(startSSENumber == endSSENumber && startSSENumber < numHelices){
                     seqNumber += 0; // internal helix loop
