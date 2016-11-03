@@ -13,6 +13,8 @@ namespace Visualization {
         //std::cout << "SSECorrespondenceEngine::Draw called" << std::endl;
         int n1, n2, sse1, sse2;
         vector<Vec3I> path;
+        const vector<Shape *> &helixes = skeleton.skeletonHelixes;
+        
         if(curInd >= 0 && solutions.size() > 0) {
             SSEResult result = solutions[curInd];
 
@@ -119,8 +121,20 @@ namespace Visualization {
                     // draw labeled sphere at beginning of path
                     //GLfloat col = 1.0;
                     glColor3f(startColorR, startColorG, startColorB);
+                    
+                    Shape * vv = helixes[0];
+                    const Vec3D &center = vv->getCenter();
+                    const Vec3D &org = vv->getOrigin();
+                    const Vec3D &spacing = vv->getSpacing();
+                    const Point3Pair &cornerCells = vv->cornerCells[0];
+
+                    Vec3D loc(cornerCells.x, cornerCells.y, cornerCells.z);
+                    Vec3D apix(loc[0]*spacing[0], loc[1]*spacing[1], loc[2]*spacing[2]);
+//                        Vec3D apix((loc[0]-1)*spacing[0], (loc[1]-1)*spacing[1], (loc[2]-1)*spacing[2]);
+                    loc = org + apix;
+
                     double sphereRadius = 0.5;
-                    drawSphere(Vec3F(path[0].X(), path[0].Y(), path[0].Z()), sphereRadius);
+                    drawSphere(loc, sphereRadius);
                     /*
                     // Label the points with their graph node numbers
                     glColor3f(1.0, 1.0, 1.0);
