@@ -203,8 +203,23 @@ namespace Visualization {
                     // draw labeled sphere at end of path
                     //GLfloat col = 1.0;
                     //glColor3f(col, col, col);
+                    Shape * vv = helixes[0];
+//                    const Vec3D &center = vv->getCenter();
+                    const Vec3D &org = vv->getOrigin();
+                    const Vec3D &spacing = vv->getSpacing();
+                    const Point3Pair &cornerCells = vv->cornerCells[0];
+
+                    Vec3D loc(cornerCells.x, cornerCells.y, cornerCells.z);
+                    Vec3D apix(loc[0]*spacing[0], loc[1]*spacing[1], loc[2]*spacing[2]);
+//                        Vec3D apix((loc[0]-1)*spacing[0], (loc[1]-1)*spacing[1], (loc[2]-1)*spacing[2]);
+                    loc = org + apix;
+
+                    pathx=path[pathSize-1].X()*spacing.X()+org.X();
+                    pathy=path[pathSize-1].Y()*spacing.Y()+org.Y();
+                    pathz=path[pathSize-1].Z()*spacing.Z()+org.Z();
+
                     double sphereRadius = 0.5;
-                    drawSphere(Vec3F(path[pathSize-1].X(), path[pathSize-1].Y(), path[pathSize-1].Z()), sphereRadius);
+                    drawSphere(Vec3F(pathx, pathy, pathz), sphereRadius);
 
                     // Label the points with their graph node numbers
                     glColor3f(1.0, 1.0, 1.0);
