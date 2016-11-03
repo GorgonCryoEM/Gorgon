@@ -161,7 +161,14 @@ namespace Visualization {
                 float stepColorR = (endColorR - startColorR) / (pathSize-1);
                 float stepColorG = (endColorG - startColorG) / (pathSize-1);
                 float stepColorB = (endColorB - startColorB) / (pathSize-1);
+
+                Shape * vv = helixes[0];
+//                const Vec3D &center = vv->getCenter();
+                const Vec3D &org = vv->getOrigin();
+                const Vec3D &spacing = vv->getSpacing();
+
                 for(int j = 0; j < pathSize; j++) {
+                    const Point3Pair &cornerCells = vv->cornerCells[j];
                     //cout << "adding path from " << n1 << " to " << n2 << ", point " << path[j].X() << "," << path[j].Y() << "," << path[j].Z() << endl;
                     glColor3f(startColorR + stepColorR * j, startColorG + stepColorG * j, startColorB + stepColorB * j);
                     /* UNCOMMENT THIS BLOCK TO DRAW STRAIGHT LINE PATHS ACROSS SSES
@@ -169,9 +176,18 @@ namespace Visualization {
                         glVertex3d(prevx, prevy, prevz);
                     } */
                     double offset = 0.8*(-0.5 + (double)i / (double)numNodes );
-                    pathx=path[j].X()+offset;
-                    pathy=path[j].Y()+offset;
-                    pathz=path[j].Z()+offset;
+
+//                    Vec3D loc(cornerCells.x, cornerCells.y, cornerCells.z);
+//                    Vec3D apix(loc[0]*spacing[0], loc[1]*spacing[1], loc[2]*spacing[2]);
+////                        Vec3D apix((loc[0]-1)*spacing[0], (loc[1]-1)*spacing[1], (loc[2]-1)*spacing[2]);
+//                    loc = org + apix;
+
+                    pathx=path[j].X()*spacing.X()+org.X()+offset;
+                    pathy=path[j].Y()*spacing.Y()+org.Y()+offset;
+                    pathz=path[j].Z()*spacing.Z()+org.Z()+offset;
+//                    pathx=loc.X()+offset;
+//                    pathy=loc.Y()+offset;
+//                    pathz=loc.Z()+offset;
                     glVertex3d(pathx, pathy, pathz);
                     //glVertex3d(path[j].X()+offset, path[j].Y()+offset, path[j].Z()+offset);
                 }
