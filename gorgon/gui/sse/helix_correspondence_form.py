@@ -906,28 +906,6 @@ class SSEHelixCorrespondenceForm(QtGui.QDialog):
         self.correspondenceLibrary.setCurrentCorrespondenceIndex(correspondenceIndex)
         self.sse.modelChanged()
         self.loadingCorrespondance = False
-#         self.drawOverlay()
-        
-    def drawOverlay(self):
-        print termcolor.colored("...........In drawOverlay", 'red')
-        if True:
-            glPushAttrib(GL_LIGHTING_BIT)
-#             self.sse.setMaterials(self.colors["CorrespondenceFinder:BackboneTrace"])
-#             self.sse.setMaterials()
-            # calls Draw method of c++ SSECorrespondenceEngine object
-            self.sse.correspondenceEngine.draw(0)
-            glPopAttrib()
-        if True:
-            # TODO: Move this color changing code somewhere else
-            # set colors of all SSEs
-            # Probably should use the setColor calls in previous sections.
-            for i in range(self.sse.correspondenceEngine.getSkeletonSSECount()):
-                color = self.getIndexedHelixColor(i, self.sse.correspondenceEngine.getSkeletonSSECount())
-            glPushAttrib(GL_LIGHTING_BIT)
-#             self.sse.setMaterials(self.colors["CorrespondenceFinder:BackboneTrace"])
-#             self.sse.setMaterials()
-            self.sse.correspondenceEngine.drawAllPaths(0, True, True, True, False)
-            glPopAttrib()
 
     def constrainPredictedHelix(self, predicted, observed, constrain):
         def constrainPredictedHelix_po():

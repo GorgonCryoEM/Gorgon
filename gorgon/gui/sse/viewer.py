@@ -64,7 +64,6 @@ class SSEViewer(BaseViewer):
     def extraDrawingRoutines(self):
         try:
             print termcolor.colored('correspondenceEngine.draw', 'yellow')
-            # self.drawOverlay()
             self.correspondenceEngine.draw(0)
             self.correspondenceEngine.drawAllPaths(0,True,True,True,False)
         except:
