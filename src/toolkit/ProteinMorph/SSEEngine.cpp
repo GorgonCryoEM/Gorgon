@@ -12,9 +12,9 @@ namespace Visualization {
     void SSEEngine::draw(int sceneIndex) {
         //std::cout << "SSECorrespondenceEngine::Draw called" << std::endl;
         int n1, n2, sse1, sse2;
-        vector<Vector3DInt> path;
-        if(correspondenceIndex >= 0) {
-            SSECorrespondenceResult result = GetResult(correspondenceIndex + 1);
+        vector<Vec3I> path;
+        if(curInd >= 0) {
+            SSEResult result = getResult(curInd + 1);
 
             glPushAttrib(GL_LIGHTING_BIT | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT);
             glDisable(GL_LIGHTING);
@@ -39,13 +39,13 @@ namespace Visualization {
 
             // the following code iterates over the correspondence, finding a valid edge at each iteration.
             // start at node 0 of this result, continue until i is at last node
-            int numNodes = result.GetNodeCount();
-            for(int i = 0; i < result.GetNodeCount()-1; ) {
+            int numNodes = result.getNodeCount();
+            for(int i = 0; i < result.getNodeCount()-1; ) {
 
                 // set n1 to be the ith result. if the result is -1, increment i and repeat.
                 for(n1 = -1; n1 < 0; ) {
-                    n1 = result.GetSkeletonNode(i);
-                    sse1 = result.NodeToHelix(n1);
+                    n1 = result.getSkeletonNode(i);
+                    sse1 = result.nodeToHelix(n1);
                     i++;
                     // update the seqIndex 
                     if (sequence->adjacencyMatrix[i][i][0] == GRAPHNODE_SHEET) {
@@ -55,14 +55,14 @@ namespace Visualization {
                 // set n2 to be the ith result. if the result is -1, increment i and repeat
                 //for(n2 = -1; n2 < 0l; ) {
                 for(n2 = -1; n2 < 0; ) {
-                    n2 = result.GetSkeletonNode(i);
-                    sse2 = result.NodeToHelix(n2);
+                    n2 = result.getSkeletonNode(i);
+                    sse2 = result.nodeToHelix(n2);
                     i++;
                     // update the seqIndex 
                     if (sequence->adjacencyMatrix[i][i][0] == GRAPHNODE_SHEET) {
                         strandsPassed ++;
                     }
-                    if (i >= result.GetNodeCount()) {
+                    if (i >= result.getNodeCount()) {
                         //cout << "found skip edge at end of correspondence. breaking out of loop." << endl;
                         break;
                     }
@@ -120,7 +120,7 @@ namespace Visualization {
                     //GLfloat col = 1.0;
                     glColor3f(startColorR, startColorG, startColorB);
                     double sphereRadius = 0.5;
-                    Renderer::DrawSphere(Vector3DFloat(path[0].X(), path[0].Y(), path[0].Z()), sphereRadius);
+                    drawSphere(Vec3F(path[0].X(), path[0].Y(), path[0].Z()), sphereRadius);
                     /*
                     // Label the points with their graph node numbers
                     glColor3f(1.0, 1.0, 1.0);
@@ -174,7 +174,7 @@ namespace Visualization {
                     //GLfloat col = 1.0;
                     //glColor3f(col, col, col);
                     double sphereRadius = 0.5;
-                    Renderer::DrawSphere(Vector3DFloat(path[pathSize-1].X(), path[pathSize-1].Y(), path[pathSize-1].Z()), sphereRadius);
+                    drawSphere(Vec3F(path[pathSize-1].X(), path[pathSize-1].Y(), path[pathSize-1].Z()), sphereRadius);
 
                     // Label the points with their graph node numbers
                     glColor3f(1.0, 1.0, 1.0);
