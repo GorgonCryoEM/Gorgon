@@ -28,6 +28,8 @@ class SSEViewer(BaseViewer):
         self.app.sse = self
         self.model2Visible = True
         self.model3Visible = False
+
+        self.isSetMaterial = False
 #         self.initVisualizationOptions(ModelVisualizationForm(self.app, self))
         self.ui.ui.checkBoxModelVisible.setText("Show helices colored:")
         # self.ui.ui.checkBoxModel2Visible.setText("Show sheets colored:")
@@ -62,6 +64,8 @@ class SSEViewer(BaseViewer):
     def extraDrawingRoutines(self):
         try:
             print termcolor.colored('correspondenceEngine.draw', 'yellow')
+            # self.drawOverlay()
+            self.correspondenceEngine.draw(0)
             self.correspondenceEngine.drawAllPaths(0,True,True,True,False)
         except:
             print "Problem in sseViewer::drawGL: correspondenceEngine.draw"
