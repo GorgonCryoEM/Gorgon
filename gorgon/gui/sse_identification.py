@@ -16,8 +16,6 @@ class SSEIdentification(Window):
         
         self.structPred = None
 
-        self.viewers = {}
-        
         self.calpha = CAlphaViewer(self)
         self.sse = SSEViewer(self)
         
