@@ -1,5 +1,7 @@
 from ..window import Window
 from ..sse.viewer import SSEViewer
+from ..calpha.viewer import CAlphaViewer
+from ...toolkit.sse.correspondence.StructurePrediction import StructurePrediction
 
 
 class MainWindowForm(Window):
@@ -8,8 +10,13 @@ class MainWindowForm(Window):
         super(MainWindowForm, self).__init__(args, None)
 
         self.sse    = SSEViewer(self)
+        
+        self.hasSemiAtomicPlacementForm = False
+        self.structPred = StructurePrediction.load(self.args.calpha, self)
+        self.calpha = CAlphaViewer(self)
 
         self.scene.append(self.sse)
+        self.scene.append(self.calpha)
 
     @classmethod
     def set_parser(cls, parser):
@@ -25,3 +32,4 @@ class MainWindowForm(Window):
 
         self.skeleton.load(self.args.skeleton)
         self.sse.loadHelixDataFromFile(self.args.helix)
+        self.calpha.loadData(self.args.calpha)
