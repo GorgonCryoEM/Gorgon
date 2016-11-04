@@ -14,3 +14,8 @@ class MainWindowForm(Window):
         parser.add_argument('sequence')
         parser.add_argument('helix')
         parser.add_argument('calpha')
+
+    def load(self):
+        super(MainWindowForm, self).load()
+
+        self.skeleton.load(self.args.skeleton)
