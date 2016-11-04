@@ -1,10 +1,15 @@
 from ..window import Window
+from ..sse.viewer import SSEViewer
 
 
 class MainWindowForm(Window):
 
     def __init__(self, args):
         super(MainWindowForm, self).__init__(args, None)
+
+        self.sse    = SSEViewer(self)
+
+        self.scene.append(self.sse)
 
     @classmethod
     def set_parser(cls, parser):
@@ -19,3 +24,4 @@ class MainWindowForm(Window):
         super(MainWindowForm, self).load()
 
         self.skeleton.load(self.args.skeleton)
+        self.sse.loadHelixDataFromFile(self.args.helix)
