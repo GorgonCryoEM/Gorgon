@@ -9,6 +9,243 @@
 
 namespace Visualization {
 
+    void SSEEngine::draw(int sceneIndex) {
+        std::cout << "SSECorrespondenceEngine::Draw called" << std::endl;
+        int n1, n2, sse1, sse2;
+        vector<Vec3I> path;
+        const vector<Shape *> &helixes = skeleton.skeletonHelixes;
+        
+        if(curInd >= 0 && solutions.size() > 0) {
+            SSEResult result = solutions[curInd];
+
+            glPushAttrib(GL_LIGHTING_BIT | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT);
+            glDisable(GL_LIGHTING);
+            glLineWidth(5);
+            glEnable(GL_LINE_SMOOTH);
+            glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+            glBegin(GL_LINE_STRIP); // test!!! 
+
+            n1 = -1;
+            n2 = -1;
+            sse1 = -1;
+            sse2 = -1;
+
+            int seqNumber = 0;
+            int seqIndex = 0;
+            int strandsPassed = 0;
+
+
+            double pathx, pathy, pathz;
+            double prevx, prevy, prevz;
+            bool pastFirstStructure = false;
+
+            // the following code iterates over the correspondence, finding a valid edge at each iteration.
+            // start at node 0 of this result, continue until i is at last node
+            int numNodes = result.getNodeCount();
+            for(int i = 0; i < result.getNodeCount()-1; ) {
+
+                // set n1 to be the ith result. if the result is -1, increment i and repeat.
+                for(n1 = -1; n1 < 0; ) {
+                    n1 = result.getSkeletonNode(i);
+                    sse1 = result.nodeToHelix(n1);
+                    i++;
+                    // update the seqIndex 
+                    if (sequence.adjacencyMatrix[i][i][0] == GRAPHNODE_SHEET) {
+                        strandsPassed ++;
+                    }
+                }
+                // set n2 to be the ith result. if the result is -1, increment i and repeat
+                //for(n2 = -1; n2 < 0l; ) {
+                for(n2 = -1; n2 < 0; ) {
+                    n2 = result.getSkeletonNode(i);
+                    sse2 = result.nodeToHelix(n2);
+                    i++;
+                    // update the seqIndex 
+                    if (sequence.adjacencyMatrix[i][i][0] == GRAPHNODE_SHEET) {
+                        strandsPassed ++;
+                    }
+                    if (i >= result.getNodeCount()) {
+                        //cout << "found skip edge at end of correspondence. breaking out of loop." << endl;
+                        break;
+                    }
+                }
+                if (sequence.adjacencyMatrix[i][i][0] == GRAPHNODE_SHEET) {
+                    strandsPassed --;
+                }
+                i--;
+                seqIndex = (i + strandsPassed + 1)/2 + 1;
+
+                path = skeleton.paths[n1][n2];
+                //cout << "path sizes. fwd:" << skeleton.paths[n1][n2].size() << ", rev:" << skeleton.paths[n2][n1].size() << endl;
+                if(path.size() == 0) {
+                    path = skeleton.paths[n2][n1];
+                    int n1old = n1;
+                    n1 = n2;
+                    n2 = n1old;
+                }
+
+                // color code
+
+                // get colors of beginning and ending SSEs
+                int numHelices = skeleton.getHelixCount();
+
+                // start SSE color
+                int startSSENumber;
+                float startColorR, startColorG, startColorB, startColorA;
+                if(skeleton.adjacencyMatrix[n1][n1][0] == GRAPHNODE_SHEET){
+                    startSSENumber = n1 - numHelices;
+                } else {
+                    startSSENumber = n1/2;
+                }
+                skeleton.skeletonHelixes[startSSENumber]->getColor(startColorR, startColorG, startColorB, startColorA);
+
+                // end SSE color
+                int endSSENumber;
+                float endColorR, endColorG, endColorB, endColorA;
+                if(skeleton.adjacencyMatrix[n2][n2][0] == GRAPHNODE_SHEET){
+                    endSSENumber = n2 - numHelices;
+                } else {
+                    endSSENumber = n2/2;
+                }
+                skeleton.skeletonHelixes[endSSENumber]->getColor(endColorR, endColorG, endColorB, endColorA);
+
+                if(startSSENumber == endSSENumber && startSSENumber < numHelices){
+                    seqNumber += 0; // internal helix loop
+                } else {
+                    seqNumber += 1;
+                }
+
+
+                if (path.size() != 0) {
+                    glEnd(); // test!!! 
+                    // draw labeled sphere at beginning of path
+                    //GLfloat col = 1.0;
+                    glColor3f(startColorR, startColorG, startColorB);
+                    
+                    Shape * vv = helixes[0];
+                    const Vec3D &center = vv->getCenter();
+                    const Vec3D &org = vv->getOrigin();
+                    const Vec3D &spacing = vv->getSpacing();
+                    const Point3Pair &cornerCells = vv->cornerCells[0];
+
+                    Vec3D loc(cornerCells.x, cornerCells.y, cornerCells.z);
+                    Vec3D apix(loc[0]*spacing[0], loc[1]*spacing[1], loc[2]*spacing[2]);
+//                        Vec3D apix((loc[0]-1)*spacing[0], (loc[1]-1)*spacing[1], (loc[2]-1)*spacing[2]);
+                    loc = org + apix;
+
+                    double sphereRadius = 0.5;
+                    drawSphere(loc, sphereRadius);
+                    /*
+                    // Label the points with their graph node numbers
+                    glColor3f(1.0, 1.0, 1.0);
+
+                    glRasterPos3d(path[0].X(), path[0].Y(), path[0].Z());
+                    //int labelInt = seqNumber;
+                    int labelInt = seqIndex;
+                    //int labelInt = sse1;
+                    std::ostringstream tmpStream;
+                    tmpStream << labelInt;
+                    string labelStr = tmpStream.str();
+                    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, ' ');
+                    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, ' ');
+                    for (int i = 0; i < labelStr.length(); i++) {
+                        //glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, labelStr[i]);
+                        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, labelStr[i]);
+                    }
+                    */
+                    // labeled sphere code
+                    glBegin(GL_LINE_STRIP);
+                }
+
+                int pathSize = path.size(); // for color
+                float stepColorR = (endColorR - startColorR) / (pathSize-1);
+                float stepColorG = (endColorG - startColorG) / (pathSize-1);
+                float stepColorB = (endColorB - startColorB) / (pathSize-1);
+
+                Shape * vv = helixes[0];
+//                const Vec3D &center = vv->getCenter();
+                const Vec3D &org = vv->getOrigin();
+                const Vec3D &spacing = vv->getSpacing();
+
+                for(int j = 0; j < pathSize; j++) {
+                    const Point3Pair &cornerCells = vv->cornerCells[j];
+                    //cout << "adding path from " << n1 << " to " << n2 << ", point " << path[j].X() << "," << path[j].Y() << "," << path[j].Z() << endl;
+                    glColor3f(startColorR + stepColorR * j, startColorG + stepColorG * j, startColorB + stepColorB * j);
+                    /* UNCOMMENT THIS BLOCK TO DRAW STRAIGHT LINE PATHS ACROSS SSES
+                    if (j==0 && pastFirstStructure) {
+                        glVertex3d(prevx, prevy, prevz);
+                    } */
+                    double offset = 0.8*(-0.5 + (double)i / (double)numNodes );
+
+//                    Vec3D loc(cornerCells.x, cornerCells.y, cornerCells.z);
+//                    Vec3D apix(loc[0]*spacing[0], loc[1]*spacing[1], loc[2]*spacing[2]);
+////                        Vec3D apix((loc[0]-1)*spacing[0], (loc[1]-1)*spacing[1], (loc[2]-1)*spacing[2]);
+//                    loc = org + apix;
+
+                    pathx=path[j].X()*spacing.X()+org.X()+offset;
+                    pathy=path[j].Y()*spacing.Y()+org.Y()+offset;
+                    pathz=path[j].Z()*spacing.Z()+org.Z()+offset;
+//                    pathx=loc.X()+offset;
+//                    pathy=loc.Y()+offset;
+//                    pathz=loc.Z()+offset;
+                    glVertex3d(pathx, pathy, pathz);
+                    //glVertex3d(path[j].X()+offset, path[j].Y()+offset, path[j].Z()+offset);
+                }
+
+                // to draw paths across sheets
+                pastFirstStructure=true;
+                prevx=pathx;
+                prevy=pathy;
+                prevz=pathz;
+
+                if (path.size() != 0) {
+                    glEnd();
+                    // draw labeled sphere at end of path
+                    //GLfloat col = 1.0;
+                    //glColor3f(col, col, col);
+                    Shape * vv = helixes[0];
+//                    const Vec3D &center = vv->getCenter();
+                    const Vec3D &org = vv->getOrigin();
+                    const Vec3D &spacing = vv->getSpacing();
+                    const Point3Pair &cornerCells = vv->cornerCells[0];
+
+                    Vec3D loc(cornerCells.x, cornerCells.y, cornerCells.z);
+                    Vec3D apix(loc[0]*spacing[0], loc[1]*spacing[1], loc[2]*spacing[2]);
+//                        Vec3D apix((loc[0]-1)*spacing[0], (loc[1]-1)*spacing[1], (loc[2]-1)*spacing[2]);
+                    loc = org + apix;
+
+                    pathx=path[pathSize-1].X()*spacing.X()+org.X();
+                    pathy=path[pathSize-1].Y()*spacing.Y()+org.Y();
+                    pathz=path[pathSize-1].Z()*spacing.Z()+org.Z();
+
+                    double sphereRadius = 0.5;
+                    drawSphere(Vec3F(pathx, pathy, pathz), sphereRadius);
+
+                    // Label the points with their graph node numbers
+                    glColor3f(1.0, 1.0, 1.0);
+
+                    glRasterPos3d(pathx, pathy, pathz);
+                    //int labelInt = seqNumber + 1;
+                    int labelInt = seqIndex;
+                    //int labelInt = sse2;
+                    std::ostringstream tmpStream;
+                    tmpStream << labelInt;
+                    string labelStr = tmpStream.str();
+                    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, ' ');
+                    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, ' ');
+                    for (unsigned int i = 0; i < labelStr.length(); i++) {
+                        //glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, labelStr[i]);
+                        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, labelStr[i]);
+                    }
+                    // labeled sphere code
+                    glBegin(GL_LINE_STRIP);
+                }
+            }
+            glEnd();
+            glPopAttrib();
+        }
+    }
+
     void SSEEngine::drawAllPaths(int sceneIndex, bool showPaths, bool showHelixCorners, bool showSheetCorners, bool showSheetColors) {
          std::cout << "SSECorrespondenceEngine::DrawAllPaths called" << std::endl;
 
