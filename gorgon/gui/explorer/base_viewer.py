@@ -37,6 +37,7 @@ class BaseViewer(BaseDockWidget):
 
         self.glList =  GLuint()
         self.twoWayLighting = False
+        self.isSetMaterial = True
         
         self.multipleSelection = True
         self.color = QtGui.QColor(180, 180, 180, 150)
@@ -70,6 +71,7 @@ class BaseViewer(BaseDockWidget):
         
         self.ui.loc_scale_xyz.locChanged.connect(self.setLocation)
         self.ui.loc_scale_xyz.scaleChanged.connect(self.setScale)
+        self.visualizationUpdated.connect(self.modelChanged)
 
 #         self.ui.pushButtonClose.clicked.connect(self.viewer.unload)
 #         self.ui.doubleSpinBoxSizeX.editingFinished.connect(self.scaleChanged)
@@ -139,7 +141,8 @@ class BaseViewer(BaseDockWidget):
         glDepthMask(GL_TRUE);
         
         if(self.loaded and self.modelVisible):
-            self.setMaterials()
+            if self.isSetMaterial:
+                self.setMaterials()
             self.initializeGLDisplayType()
             
 #             print "self.glList: %s: %d" %(self.title, self.glList)
