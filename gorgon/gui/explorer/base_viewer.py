@@ -70,6 +70,7 @@ class BaseViewer(BaseDockWidget):
         
         self.ui.loc_scale_xyz.locChanged.connect(self.setLocation)
         self.ui.loc_scale_xyz.scaleChanged.connect(self.setScale)
+        self.visualizationUpdated.connect(self.modelChanged)
 
 #         self.ui.pushButtonClose.clicked.connect(self.viewer.unload)
 #         self.ui.doubleSpinBoxSizeX.editingFinished.connect(self.scaleChanged)
