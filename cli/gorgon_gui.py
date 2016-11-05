@@ -14,6 +14,7 @@ from gorgon.gui import GrayscaleSkeletonization
 from gorgon.gui import SSEIdentification
 from gorgon.gui import SSECorrespondence
 from gorgon.gui import CalphaAtomPlacement
+from gorgon.gui.explorer.main_window_form import MainWindowForm
 
 
 def main():
@@ -22,6 +23,7 @@ def main():
              'sse-identification': SSEIdentification,
              'sse-correspondence': SSECorrespondence,
              'calpha-placement': CalphaAtomPlacement,
+             'explorer': MainWindowForm,
              }
     
     parser = argparse.ArgumentParser(description='Gorgon GUI')

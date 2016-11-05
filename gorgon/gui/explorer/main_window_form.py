@@ -1,60 +1,35 @@
-from PyQt4 import QtCore, QtGui
-from camera import Camera
-from gorgon.gui.explorer.common.spinbox3 import SpinBox3
-from scene import Scene
-
-import sys, os
+from ..window import Window
+from ..sse.viewer import SSEViewer
+from ..calpha.viewer import CAlphaViewer
+from ...toolkit.sse.correspondence.StructurePrediction import StructurePrediction
 
 
-class MainWindowForm(QtGui.QMainWindow):
+class MainWindowForm(Window):
 
-    def __init__(self, version):
-        super(MainWindowForm, self).__init__()
+    def __init__(self, args):
+        super(MainWindowForm, self).__init__(args, None)
+
+        self.sse    = SSEViewer(self)
         
-        self.form = SpinBox3(self)
-        self.form.show()
-        
-        self.menubar = self.menuBar()
-        self.docksMenu = self.menubar.addMenu('&Docks')
+        self.hasSemiAtomicPlacementForm = False
+        self.structPred = StructurePrediction.load(self.args.calpha, self)
+        self.calpha = CAlphaViewer(self)
 
-        self.scene = Scene(self)
-        scenes = self.scene.getShapes()
+        self.scene.append(self.sse)
+        self.scene.append(self.calpha)
 
-        self.mainCamera = Camera(scenes, self)
-        self.setCentralWidget(self.mainCamera)
-        
-#         self.form.raise_()
-        
-#         self.dockWidgets = []
-                
-        self.statusBar().showMessage(self.tr("Gorgon: Protein Visualization Suite"))
-        self.setWindowTitle(self.tr("Gorgon Explorer - v" + version))
-        pathname = os.path.abspath(os.path.dirname(sys.argv[0]))
-        self.setWindowIcon(QtGui.QIcon(pathname + '/gorgon.ico'))
-        
+    @classmethod
+    def set_parser(cls, parser):
+        parser.description = "Gorgon Explorer"
+        parser.add_argument('volume')
+        parser.add_argument('skeleton')
+        parser.add_argument('sequence')
+        parser.add_argument('helix')
+        parser.add_argument('calpha')
+
     def load(self):
-        self.scene.load()
+        super(MainWindowForm, self).load()
 
-#         dockwidget.dockLocationChanged.connect(self.dockLocationChanged(dockwidget))
-#
-#     def removeDockWidget (self, dockwidget):
-#         QtGui.QMainWindow.removeDockWidget(self, dockwidget)
-#         if(dockwidget in self.dockWidgets):
-#             self.dockWidgets.remove(dockwidget)
-#             dockwidget.dockLocationChanged.disconnect()
-    
-    def exitApplication(self):
-        QtGui.qApp.closeAllWindows()
-            
-#     def closeEvent(self, event):
-#         exitText = "This will close Gorgon, you will lose all unsaved data.\nAre you sure?"
-#
-#         if (QtGui.QMessageBox.warning (self, self.tr("Exit Gorgon?"), self.tr(exitText), QtGui.QMessageBox.Yes | QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Yes):
-#             event.accept()
-#         else:
-#             event.ignore()
-
-#     def dockLocationChanged(self, widget):
-#         def dockLocationChanged_widget(area):
-#             widget.area = area
-#         return dockLocationChanged_widget
+        self.skeleton.load(self.args.skeleton)
+        self.sse.loadHelixDataFromFile(self.args.helix)
+        self.calpha.loadData(self.args.calpha)
