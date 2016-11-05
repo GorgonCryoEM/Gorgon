@@ -46,7 +46,8 @@ class Window(QtGui.QMainWindow):
 
     def load(self):
         self.volume.load(self.args.volume)
-        self.form.modelLoaded()
+        if hasattr(self, 'form'):
+            self.form.modelLoaded()
         
     def exitApplication(self):
         QtGui.qApp.closeAllWindows()
