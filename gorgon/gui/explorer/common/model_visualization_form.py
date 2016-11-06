@@ -37,12 +37,12 @@ class ModelVisualizationForm(object):
     def updateFromViewer(self):
         self.ui.pushButtonModelColor.setColor(self.viewer.getColor())
          
-        if(self.viewer.displayStyle == self.viewer.DisplayStyleWireframe):
-            self.ui.radioButtonWireframe.setChecked(True) 
-        elif(self.viewer.displayStyle == self.viewer.DisplayStyleFlat):
-            self.ui.radioButtonFlat.setChecked(True)   
-        else :
-            self.ui.radioButtonSmooth.setChecked(True)   
+        # if(self.viewer.displayStyle == self.viewer.DisplayStyleWireframe):
+        #     self.ui.radioButtonWireframe.setChecked(True) 
+        # elif(self.viewer.displayStyle == self.viewer.DisplayStyleFlat):
+        #     self.ui.radioButtonFlat.setChecked(True)   
+        # else :
+        #     self.ui.radioButtonSmooth.setChecked(True)   
             
         self.ui.doubleSpinBoxSizeX.setValue(self.viewer.renderer.getSpacingX())   
         self.ui.doubleSpinBoxSizeY.setValue(self.viewer.renderer.getSpacingY())
