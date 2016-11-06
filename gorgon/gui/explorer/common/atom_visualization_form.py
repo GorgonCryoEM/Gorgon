@@ -18,7 +18,6 @@ class AtomVisualizationForm(ModelVisualizationForm):
         self.ui.pushButtonColor3.valueChanged.connect(self.setColor3)  
         self.ui.pushButtonColor4.valueChanged.connect(self.setColor4)  
         self.ui.pushButtonCenter.pressed.connect(self.viewer.on_center_clicked)
-        # self.ui.pushButtonClose.pressed.connect(self.viewer.unloadData)
         self.ui.doubleSpinBoxSizeX.editingFinished.connect(self.scaleChanged)
         self.ui.doubleSpinBoxSizeY.editingFinished.connect(self.scaleChanged)
         self.ui.doubleSpinBoxSizeZ.editingFinished.connect(self.scaleChanged)

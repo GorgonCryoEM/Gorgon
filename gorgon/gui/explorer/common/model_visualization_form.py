@@ -36,7 +36,6 @@ class ModelVisualizationForm(object):
         
     def updateFromViewer(self):
         self.ui.pushButtonModelColor.setColor(self.viewer.getColor())
-        # self.ui.checkBoxModelVisible.setChecked(self.viewer.modelVisible)
          
         if(self.viewer.displayStyle == self.viewer.DisplayStyleWireframe):
             self.ui.radioButtonWireframe.setChecked(True) 
