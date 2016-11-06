@@ -74,12 +74,12 @@ class ModelVisualizationForm(object):
 
     def setDisplayStyle(self, dummy):
         if(self.ui.radioButtonWireframe.isChecked()) :
-            displayStyle = self.viewer.DisplayStyleWireframe      
+            self.viewer.runDisplayType = self.viewer.display_styles[0]
         elif(self.ui.radioButtonFlat.isChecked()) :
-            displayStyle = self.viewer.DisplayStyleFlat    
+            self.viewer.runDisplayType = self.viewer.display_styles[1]
         elif(self.ui.radioButtonSmooth.isChecked()) :
-            displayStyle = self.viewer.DisplayStyleSmooth
-        self.viewer.setDisplayStyle(displayStyle)
+            self.viewer.runDisplayType = self.viewer.display_styles[2]
+        self.viewer.visualizationUpdated.emit()
                                                   
     def scaleChanged(self):
         self.viewer.setScale(self.ui.doubleSpinBoxSizeX.value(), self.ui.doubleSpinBoxSizeY.value(), self.ui.doubleSpinBoxSizeZ.value())        

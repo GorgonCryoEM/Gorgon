@@ -45,7 +45,7 @@ class BaseViewer(BaseDockWidget):
         # self.ui.createUI()
         # self.setupSignals()
         
-        self.runDisplayType = wireframe
+        self.runDisplayType = smooth
 
     def setupSignals(self):
         self.ui.pushButtonModelColor.valueChanged.connect(self.setColor)
@@ -102,6 +102,7 @@ class BaseViewer(BaseDockWidget):
         glEnable (GL_BLEND);
         glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         
+        self.runDisplayType()
 
     def unInitializeGLDisplayType(self):
         glPopAttrib()
