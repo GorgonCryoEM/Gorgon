@@ -35,10 +35,10 @@ class AtomVisualizationForm(ModelVisualizationForm):
         # self.ui.hSliderSmoothness.valueChanged.connect(self.viewer.setSegments)
         # self.ui.hSliderRoundedness.valueChanged.connect(self.viewer.setSlices)
         # the following four methods for testing purposes only
-        self.connect(self.ui.rslider, QtCore.SIGNAL("valueChanged (int)"), self.viewer.setHltR)
-        self.connect(self.ui.gslider, QtCore.SIGNAL("valueChanged (int)"), self.viewer.setHltG)
-        self.connect(self.ui.bslider, QtCore.SIGNAL("valueChanged (int)"), self.viewer.setHltB)
-        self.connect(self.ui.aslider, QtCore.SIGNAL("valueChanged (int)"), self.viewer.setHltA)
+        self.ui.rslider.valueChanged.connect(self.viewer.setHltR)
+        self.ui.gslider.valueChanged.connect(self.viewer.setHltG)
+        self.ui.bslider.valueChanged.connect(self.viewer.setHltB)
+        self.ui.aslider.valueChanged.connect(self.viewer.setHltA)
                                                  
         
     def updateFromViewer(self):
