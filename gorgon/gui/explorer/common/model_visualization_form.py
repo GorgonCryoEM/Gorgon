@@ -70,7 +70,7 @@ class ModelVisualizationForm(object):
         self.updateFromViewer()
     
     def setModelColor(self):
-        self.viewer.setModelColor(self.ui.pushButtonModelColor.color())
+        self.viewer.setColor(self.ui.pushButtonModelColor.color())
 
     def setDisplayStyle(self, dummy):
         if(self.ui.radioButtonWireframe.isChecked()) :
