@@ -9,8 +9,6 @@ class ModelVisualizationForm(object):
         self.title = viewer.title + " Visualization Options"
         
         self.viewer.visualizationUpdated.connect(self.modelLoaded)
-        # self.connect(self.viewer, QtCore.SIGNAL("modelChanged()"), self.modelChanged)
-        # self.connect(self.viewer, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)   
         self.viewer.setWindowTitle(self.title)
         
         self.createUI()
