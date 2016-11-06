@@ -1,11 +1,10 @@
 from PyQt4 import QtCore, QtGui
 from ui_dialog_atom_visualization import Ui_DialogAtomVisualization
-from base_dock_widget import BaseDockWidget
 from model_visualization_form import ModelVisualizationForm 
 
 class AtomVisualizationForm(ModelVisualizationForm):
     def __init__(self, main, viewer, parent=None):
-        ModelVisualizationForm.__init__(self, main, viewer, parent)
+        super(AtomVisualizationForm, self).__init__(main, viewer, parent)
 
 
     def createUI(self):

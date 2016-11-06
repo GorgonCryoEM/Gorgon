@@ -4,6 +4,7 @@ from base_dock_widget import BaseDockWidget
 from gorgon.libs import Vec3
 from .display_styles import *
 from ...toolkit.libpytoolkit import *
+from .common.model_visualization_form import ModelVisualizationForm
 
 
 class BaseViewer(BaseDockWidget):
@@ -15,7 +16,7 @@ class BaseViewer(BaseDockWidget):
     
     display_styles = [wireframe, flat, smooth]
     
-    def __init__(self, renderer, main):
+    def __init__(self, renderer, main, ui=ModelVisualizationForm):
         super(BaseViewer, self).__init__(
                                 main,
                                 self,
@@ -40,8 +41,8 @@ class BaseViewer(BaseDockWidget):
         self.multipleSelection = True
         self.color = QtGui.QColor(180, 180, 180, 150)
         
-        self.ui = Ui_Common()
-        self.ui.setupUi(self)
+        self.ui = ui(self.app, self)
+        self.ui.createUI()
         self.setupSignals()
 #         self.ui.buttonGroup.setExclusive(False)
         

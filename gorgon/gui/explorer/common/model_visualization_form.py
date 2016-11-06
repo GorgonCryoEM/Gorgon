@@ -1,24 +1,13 @@
 from PyQt4 import QtCore, QtGui
 from ui_dialog_model_visualization import Ui_DialogModelVisualization
-from base_dock_widget import BaseDockWidget
 
-class ModelVisualizationForm(BaseDockWidget):
+
+class ModelVisualizationForm(object):
     def __init__(self, main, viewer, parent=None):
         self.app = main
         self.viewer = viewer
         self.title = viewer.title + " Visualization Options"
         
-        BaseDockWidget.__init__(self, 
-                                main, 
-                                self.title, 
-                                "Load the " + self.viewer.title + " visualization options", 
-                                "show_" + self.viewer.title + "Visualization",
-                                "window-" + self.viewer.title + "VisualizationOptions", 
-                                "window", 
-                                QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea, 
-                                QtCore.Qt.RightDockWidgetArea,
-                                parent)
-
         self.connect(self.viewer, QtCore.SIGNAL("modelLoaded()"), self.modelLoaded)
         self.connect(self.viewer, QtCore.SIGNAL("modelChanged()"), self.modelChanged)
         self.connect(self.viewer, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)   

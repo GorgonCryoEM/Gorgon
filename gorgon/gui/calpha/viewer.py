@@ -7,6 +7,7 @@ from .sequence_dock import CAlphaSequenceDock
 from ...libs import Vec3
 from ...toolkit.libpytoolkit import CAlphaRenderer
 from ...toolkit.sse.seq_model.Chain import Chain
+from ..explorer.common.atom_visualization_form import AtomVisualizationForm
 
 
 class CAlphaViewer(BaseViewer):
@@ -16,7 +17,7 @@ class CAlphaViewer(BaseViewer):
     
     def __init__(self, parent):
         self.title = "C-Alpha"
-        super(CAlphaViewer, self).__init__(CAlphaRenderer(), parent)
+        super(CAlphaViewer, self).__init__(CAlphaRenderer(), parent, AtomVisualizationForm)
         self.shortTitle = "CAL"
         self.parent = parent
         self.colors = {}
