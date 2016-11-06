@@ -11,7 +11,7 @@ class ModelVisualizationForm(object):
         self.connect(self.viewer, QtCore.SIGNAL("modelLoaded()"), self.modelLoaded)
         self.connect(self.viewer, QtCore.SIGNAL("modelChanged()"), self.modelChanged)
         self.connect(self.viewer, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)   
-        self.setWindowTitle(self.title)
+        self.viewer.setWindowTitle(self.title)
         
         self.createUI()
         self.createActions()
