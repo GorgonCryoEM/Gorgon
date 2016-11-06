@@ -96,7 +96,6 @@ class ModelVisualizationForm(object):
     def modelLoaded(self):
         self.visualizerAct.setEnabled(True)
         self.updateFromViewer()        
-        self.showWidget(True)
     
     def modelChanged(self):
         self.updateFromViewer()
