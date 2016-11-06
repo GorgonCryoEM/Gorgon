@@ -24,9 +24,7 @@ class ModelVisualizationForm(object):
         self.ui.radioButtonWireframe.toggled.connect(self.setDisplayStyle)
         self.ui.radioButtonFlat.toggled.connect(self.setDisplayStyle)
         self.ui.radioButtonSmooth.toggled.connect(self.setDisplayStyle)
-        # self.ui.checkBoxBoundingBox.toggled.connect(self.viewer.setBoundingBox)
         self.ui.checkBoxModelVisible.toggled.connect(self.viewer.setModelVisibility)
-        # self.ui.pushButtonBoundingBoxColor.colorChanged.connect(self.setBoundingBoxColor)        
         self.ui.pushButtonModelColor.valueChanged.connect(self.setModelColor)  
         self.ui.pushButtonCenter.pressed.connect(self.viewer.on_center_clicked)
         # self.ui.pushButtonClose.pressed.connect(self.viewer.unloadData)
@@ -41,8 +39,6 @@ class ModelVisualizationForm(object):
         
     def updateFromViewer(self):
         self.ui.pushButtonModelColor.setColor(self.viewer.getColor())
-        # self.ui.pushButtonBoundingBoxColor.setColor(self.viewer.getBoundingBoxColor())            
-        # self.ui.checkBoxBoundingBox.setChecked(self.viewer.showBox)    
         # self.ui.checkBoxModelVisible.setChecked(self.viewer.modelVisible)
          
         if(self.viewer.displayStyle == self.viewer.DisplayStyleWireframe):
@@ -90,9 +86,6 @@ class ModelVisualizationForm(object):
         self.visualizerAct.setEnabled(False)
         self.showWidget(False)    
 
-    def setBoundingBoxColor(self):
-        self.viewer.setBoundingBoxColor(self.ui.pushButtonBoundingBoxColor.color())
-        
     def setModelColor(self):
         self.viewer.setModelColor(self.ui.pushButtonModelColor.color())
 

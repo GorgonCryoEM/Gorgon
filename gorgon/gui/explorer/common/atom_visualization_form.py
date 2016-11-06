@@ -13,8 +13,6 @@ class AtomVisualizationForm(ModelVisualizationForm):
         self.ui.radioButtonBackbone.toggled.connect(self.setDisplayStyle)
         self.ui.radioButtonRibbon.toggled.connect(self.setDisplayStyle)
         self.ui.radioButtonSideChain.toggled.connect(self.setDisplayStyle)
-        # self.ui.checkBoxBoundingBox.toggled.connect(self.viewer.setBoundingBox)
-        # self.ui.pushButtonBoundingBoxColor.colorChanged.connect(self.setBoundingBoxColor)        
         self.ui.pushButtonColor1.valueChanged.connect(self.setColor1)  
         self.ui.pushButtonColor2.valueChanged.connect(self.setColor2)  
         self.ui.pushButtonColor3.valueChanged.connect(self.setColor3)  
@@ -37,8 +35,6 @@ class AtomVisualizationForm(ModelVisualizationForm):
                                                  
         
     def updateFromViewer(self):
-        # self.ui.pushButtonBoundingBoxColor.setColor(self.viewer.getBoundingBoxColor())            
-        # self.ui.checkBoxBoundingBox.setChecked(self.viewer.showBox)    
         # self.ui.checkBoxShowAtoms.setChecked(self.viewer.atomsVisible)
         # self.ui.checkBoxShowBonds.setChecked(self.viewer.bondsVisible)
         # self.ui.checkBoxShowHelices.setChecked(self.viewer.helicesVisible)
