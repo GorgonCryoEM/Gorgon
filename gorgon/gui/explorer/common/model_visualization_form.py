@@ -20,7 +20,7 @@ class ModelVisualizationForm(object):
 
     def createUI(self):
         self.ui = Ui_DialogModelVisualization()
-        self.ui.setupUi(self)    
+        self.ui.setupUi(self.viewer)    
         self.ui.checkBoxModel2Visible.setVisible(False)
         self.ui.pushButtonModel2Color.setVisible(False)
         self.ui.checkBoxModel3Visible.setVisible(False)

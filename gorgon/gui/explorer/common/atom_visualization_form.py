@@ -9,7 +9,7 @@ class AtomVisualizationForm(ModelVisualizationForm):
 
     def createUI(self):
         self.ui = Ui_DialogAtomVisualization()
-        self.ui.setupUi(self)
+        self.ui.setupUi(self.viewer)
         self.connect(self.ui.radioButtonBackbone, QtCore.SIGNAL("toggled (bool)"), self.setDisplayStyle)
         self.connect(self.ui.radioButtonRibbon, QtCore.SIGNAL("toggled (bool)"), self.setDisplayStyle)
         self.connect(self.ui.radioButtonSideChain, QtCore.SIGNAL("toggled (bool)"), self.setDisplayStyle)
