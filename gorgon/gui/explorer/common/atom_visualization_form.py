@@ -89,9 +89,9 @@ class AtomVisualizationForm(ModelVisualizationForm):
                   
         elif(self.ui.radioButtonRibbon.isChecked()) :
             displayStyle = self.viewer.DisplayStyleRibbon
-            self.ui.labelColor1.setText(self.tr('Helix color:'))
-            self.ui.labelColor2.setText(self.tr('Strand color:'))
-            self.ui.labelColor3.setText(self.tr('Loop color:'))
+            self.ui.labelColor1.setText('Helix color:')
+            self.ui.labelColor2.setText('Strand color:')
+            self.ui.labelColor3.setText('Loop color:')
             self.ui.pushButtonColor1.setColor(self.viewer.getHelixColor())
             self.ui.pushButtonColor2.setColor(self.viewer.getStrandColor())
             self.ui.pushButtonColor3.setColor(self.viewer.getLoopColor())            
@@ -109,10 +109,10 @@ class AtomVisualizationForm(ModelVisualizationForm):
         elif(self.ui.radioButtonSideChain.isChecked()) :
             displayStyle = self.viewer.DisplayStyleSideChain
 
-            self.ui.labelColor1.setText(self.tr('Carbon color:'))
-            self.ui.labelColor2.setText(self.tr('Nitrogen color:'))
-            self.ui.labelColor3.setText(self.tr('Oxygen color:'))
-            self.ui.labelColor4.setText(self.tr('Sulphur color:'))
+            self.ui.labelColor1.setText('Carbon color:')
+            self.ui.labelColor2.setText('Nitrogen color:')
+            self.ui.labelColor3.setText('Oxygen color:')
+            self.ui.labelColor4.setText('Sulphur color:')
             self.ui.pushButtonColor1.setColor(self.viewer.getCarbonColor())
             self.ui.pushButtonColor2.setColor(self.viewer.getNitrogenColor())
             self.ui.pushButtonColor3.setColor(self.viewer.getOxygenColor())                        
