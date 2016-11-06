@@ -19,10 +19,6 @@ class ModelVisualizationForm(object):
     def createUI(self):
         self.ui = Ui_DialogModelVisualization()
         self.ui.setupUi(self.viewer)    
-        self.ui.checkBoxModel2Visible.setVisible(False)
-        self.ui.pushButtonModel2Color.setVisible(False)
-        self.ui.checkBoxModel3Visible.setVisible(False)
-        self.ui.pushButtonModel3Color.setVisible(False)
         self.ui.spinBoxThickness.setVisible(False)
         self.ui.labelThickness.setVisible(False)
         self.ui.radioButtonWireframe.toggled.connect(self.setDisplayStyle)
@@ -30,12 +26,8 @@ class ModelVisualizationForm(object):
         self.ui.radioButtonSmooth.toggled.connect(self.setDisplayStyle)
         # self.ui.checkBoxBoundingBox.toggled.connect(self.viewer.setBoundingBox)
         self.ui.checkBoxModelVisible.toggled.connect(self.viewer.setModelVisibility)
-        # self.ui.checkBoxModel2Visible.toggled.connect(self.viewer.setModel2Visibility)
-        # self.ui.checkBoxModel3Visible.toggled.connect(self.viewer.setModel3Visibility)
         # self.ui.pushButtonBoundingBoxColor.colorChanged.connect(self.setBoundingBoxColor)        
         self.ui.pushButtonModelColor.valueChanged.connect(self.setModelColor)  
-        # self.ui.pushButtonModel2Color.colorChanged.connect(self.setModel2Color)  
-        # self.ui.pushButtonModel3Color.colorChanged.connect(self.setModel3Color)  
         self.ui.pushButtonCenter.pressed.connect(self.viewer.on_center_clicked)
         # self.ui.pushButtonClose.pressed.connect(self.viewer.unloadData)
         self.ui.doubleSpinBoxSizeX.editingFinished.connect(self.scaleChanged)
@@ -49,13 +41,9 @@ class ModelVisualizationForm(object):
         
     def updateFromViewer(self):
         self.ui.pushButtonModelColor.setColor(self.viewer.getColor())
-        # self.ui.pushButtonModel2Color.setColor(self.viewer.getModel2Color())
-        # self.ui.pushButtonModel3Color.setColor(self.viewer.getModel3Color())
         # self.ui.pushButtonBoundingBoxColor.setColor(self.viewer.getBoundingBoxColor())            
         # self.ui.checkBoxBoundingBox.setChecked(self.viewer.showBox)    
         # self.ui.checkBoxModelVisible.setChecked(self.viewer.modelVisible)
-        # self.ui.checkBoxModel2Visible.setChecked(self.viewer.model2Visible)
-        # self.ui.checkBoxModel3Visible.setChecked(self.viewer.model3Visible)
          
         if(self.viewer.displayStyle == self.viewer.DisplayStyleWireframe):
             self.ui.radioButtonWireframe.setChecked(True) 
@@ -108,12 +96,6 @@ class ModelVisualizationForm(object):
     def setModelColor(self):
         self.viewer.setModelColor(self.ui.pushButtonModelColor.color())
 
-    def setModel2Color(self):
-        self.viewer.setModel2Color(self.ui.pushButtonModel2Color.color())
-    
-    def setModel3Color(self):
-        self.viewer.setModel3Color(self.ui.pushButtonModel3Color.color())
-    
     def setDisplayStyle(self, dummy):
         if(self.ui.radioButtonWireframe.isChecked()) :
             displayStyle = self.viewer.DisplayStyleWireframe      
