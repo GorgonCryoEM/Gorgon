@@ -16,7 +16,7 @@ class BaseViewer(BaseDockWidget):
     
     display_styles = [wireframe, flat, smooth]
     
-    def __init__(self, renderer, main, ui=ModelVisualizationForm):
+    def __init__(self, renderer, main, form=ModelVisualizationForm):
         super(BaseViewer, self).__init__(
                                 main,
                                 self,
@@ -41,7 +41,7 @@ class BaseViewer(BaseDockWidget):
         self.multipleSelection = True
         self.color = QtGui.QColor(180, 180, 180, 150)
         
-        self.ui = ui(self.app, self)
+        self.ui = form(self.app, self)
         # self.ui.createUI()
         # self.setupSignals()
         
