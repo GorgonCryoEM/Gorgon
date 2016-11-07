@@ -59,14 +59,14 @@ class AtomVisualizationForm(ModelVisualizationForm):
                                        str(round(self.viewer.renderer.getMaxPos(0) - self.viewer.renderer.getMinPos(0) ,2)) + ", " +
                                        str(round(self.viewer.renderer.getMaxPos(1) - self.viewer.renderer.getMinPos(1) ,2)) + ", " +
                                        str(round(self.viewer.renderer.getMaxPos(2) - self.viewer.renderer.getMinPos(2) ,2)) + "}")
-        if(len(self.viewer.fileName) > 0):
-            names = self.viewer.fileName.split('\\')
-            name = names[len(names)-1];
-            names = name.split('/')
-            name = names[len(names)-1];            
-            self.ui.labelModelName.setText(name)
-        else:
-            self.ui.labelModelName.setText("")
+        # if(len(self.viewer.fileName) > 0):
+        #     names = self.viewer.fileName.split('\\')
+        #     name = names[len(names)-1];
+        #     names = name.split('/')
+        #     name = names[len(names)-1];            
+        #     self.ui.labelModelName.setText(name)
+        # else:
+        #     self.ui.labelModelName.setText("")
             
        
     def setDisplayStyle(self, dummy):
