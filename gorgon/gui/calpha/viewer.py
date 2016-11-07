@@ -34,7 +34,7 @@ class CAlphaViewer(BaseViewer):
         self.colors["C-Alpha:BoundingBox"] = QtGui.QColor( 255, 255, 255, 255)
         self.isClosedMesh = False
         self.selectEnabled = True
-#         self.renderer.setDisplayStyle(self.displayStyle)
+        self.renderer.setDisplayStyle(self.displayStyle)
         self.structPred = self.parent.structPred
         try:
             self.main_chain = self.structPred.chain
