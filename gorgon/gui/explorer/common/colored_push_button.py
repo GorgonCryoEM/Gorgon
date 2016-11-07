@@ -24,7 +24,7 @@ class ColoredPushButton(QPushButton):
             self.update()
             self.valueChanged.emit(self.color)
     
-    def color(self):
+    def getColor(self):
         return self.color
         
     def buttonPressed(self):

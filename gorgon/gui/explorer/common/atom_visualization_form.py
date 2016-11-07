@@ -74,8 +74,8 @@ class AtomVisualizationForm(ModelVisualizationForm):
             displayStyle = self.viewer.DisplayStyleBackbone            
             self.ui.labelColor1.setText('Atom color:')
             self.ui.labelColor2.setText('Bond color:')
-            # self.ui.pushButtonColor1.setColor(self.viewer.getAtomColor())
-            # self.ui.pushButtonColor2.setColor(self.viewer.getBondColor())            
+            # self.ui.pushButtonColor1.setColor(self.viewer.colors["C-Alpha:Atom"       ])
+            # self.ui.pushButtonColor2.setColor(self.viewer.colors["C-Alpha:Bond"       ])            
             self.ui.labelColor1.setVisible(True)
             self.ui.labelColor2.setVisible(True)
             self.ui.labelColor3.setVisible(False)
@@ -92,9 +92,9 @@ class AtomVisualizationForm(ModelVisualizationForm):
             self.ui.labelColor1.setText('Helix color:')
             self.ui.labelColor2.setText('Strand color:')
             self.ui.labelColor3.setText('Loop color:')
-            self.ui.pushButtonColor1.setColor(self.viewer.getHelixColor())
-            self.ui.pushButtonColor2.setColor(self.viewer.getStrandColor())
-            self.ui.pushButtonColor3.setColor(self.viewer.getLoopColor())            
+            self.ui.pushButtonColor1.setColor(self.viewer.colors["C-Alpha:Helix"      ])
+            self.ui.pushButtonColor2.setColor(self.viewer.colors["C-Alpha:Strand"     ])
+            self.ui.pushButtonColor3.setColor(self.viewer.colors["C-Alpha:Loop"       ])            
             self.ui.labelColor1.setVisible(True)
             self.ui.labelColor2.setVisible(True)
             self.ui.labelColor3.setVisible(True)
@@ -113,10 +113,10 @@ class AtomVisualizationForm(ModelVisualizationForm):
             self.ui.labelColor2.setText('Nitrogen color:')
             self.ui.labelColor3.setText('Oxygen color:')
             self.ui.labelColor4.setText('Sulphur color:')
-            self.ui.pushButtonColor1.setColor(self.viewer.getCarbonColor())
-            self.ui.pushButtonColor2.setColor(self.viewer.getNitrogenColor())
-            self.ui.pushButtonColor3.setColor(self.viewer.getOxygenColor())                        
-            self.ui.pushButtonColor4.setColor(self.viewer.getSulphurColor())                        
+            self.ui.pushButtonColor1.setColor(self.viewer.colors["C-Alpha:Carbon"     ])
+            self.ui.pushButtonColor2.setColor(self.viewer.colors["C-Alpha:Nitrogen"   ])
+            self.ui.pushButtonColor3.setColor(self.viewer.colors["C-Alpha:Oxygen"     ])                        
+            self.ui.pushButtonColor4.setColor(self.viewer.colors["C-Alpha:Sulphur"    ])                        
             self.ui.labelColor1.setVisible(True)
             self.ui.labelColor2.setVisible(True)
             self.ui.labelColor3.setVisible(True)
@@ -133,27 +133,27 @@ class AtomVisualizationForm(ModelVisualizationForm):
         
     def setColor1(self):
         if(self.ui.radioButtonBackbone.isChecked()) :
-            self.viewer.setAtomColor(self.ui.pushButtonColor1.color())                              
+            self.viewer.colors["C-Alpha:Atom"       ] = self.ui.pushButtonColor1.getColor()                              
         elif(self.ui.radioButtonRibbon.isChecked()) :
-            self.viewer.setHelixColor(self.ui.pushButtonColor1.color())                
+            self.viewer.colors["C-Alpha:Helix"      ] = self.ui.pushButtonColor1.getColor()                
         elif(self.ui.radioButtonSideChain.isChecked()) :
-            self.viewer.setCarbonColor(self.ui.pushButtonColor1.color())                                       
+            self.viewer.colors["C-Alpha:Carbon"     ] = self.ui.pushButtonColor1.getColor()                                       
 
     def setColor2(self):
         if(self.ui.radioButtonBackbone.isChecked()) :
-            self.viewer.setBondColor(self.ui.pushButtonColor2.color())                              
+            self.viewer.colors["C-Alpha:Bond"       ] = self.ui.pushButtonColor2.getColor()                              
         elif(self.ui.radioButtonRibbon.isChecked()) :
-            self.viewer.setStrandColor(self.ui.pushButtonColor2.color())                
+            self.viewer.colors["C-Alpha:Strand"     ] = self.ui.pushButtonColor2.getColor()                
         elif(self.ui.radioButtonSideChain.isChecked()) :
-            self.viewer.setNitrogenColor(self.ui.pushButtonColor2.color()) 
+            self.viewer.colors["C-Alpha:Nitrogen"   ] = self.ui.pushButtonColor2.getColor() 
                    
     def setColor3(self):
         if(self.ui.radioButtonBackbone.isChecked()) :
             pass                              
         elif(self.ui.radioButtonRibbon.isChecked()) :
-            self.viewer.setLoopColor(self.ui.pushButtonColor3.color())                
+            self.viewer.colors["C-Alpha:Loop"       ] = self.ui.pushButtonColor3.getColor()                
         elif(self.ui.radioButtonSideChain.isChecked()) :
-            self.viewer.setOxygenColor(self.ui.pushButtonColor3.color()) 
+            self.viewer.colors["C-Alpha:Oxygen"     ] = self.ui.pushButtonColor3.getColor() 
             
     def setColor4(self):
         if(self.ui.radioButtonBackbone.isChecked()) :
@@ -161,6 +161,6 @@ class AtomVisualizationForm(ModelVisualizationForm):
         elif(self.ui.radioButtonRibbon.isChecked()) :
             pass                
         elif(self.ui.radioButtonSideChain.isChecked()) :
-            self.viewer.setSulphurColor(self.ui.pushButtonColor4.color()) 
+            self.viewer.colors["C-Alpha:Sulphur"    ] = self.ui.pushButtonColor4.getColor() 
 
                                                                                                                                                       
