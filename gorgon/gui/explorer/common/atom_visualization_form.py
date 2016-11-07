@@ -29,8 +29,8 @@ class AtomVisualizationForm(ModelVisualizationForm):
         # self.ui.checkBoxShowHelices.toggled.connect(self.viewer.setHelixVisibility)
         # self.ui.checkBoxShowStrands.toggled.connect(self.viewer.setStrandVisibility)
         # self.ui.checkBoxShowLoops.toggled.connect(self.viewer.setLoopVisibility)
-        # self.ui.hSliderSmoothness.valueChanged.connect(self.viewer.setSegments)
-        # self.ui.hSliderRoundedness.valueChanged.connect(self.viewer.setSlices)
+        self.ui.hSliderSmoothness.valueChanged.connect(self.viewer.setSegments)
+        self.ui.hSliderRoundedness.valueChanged.connect(self.viewer.setSlices)
                                                  
         
     def updateFromViewer(self):
