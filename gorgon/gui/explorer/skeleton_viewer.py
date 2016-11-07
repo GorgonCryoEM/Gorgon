@@ -23,7 +23,7 @@ class SkeletonViewer(BaseViewer):
         self.lineThickness = 3
         self.renderer.setLineThickness(self.lineThickness)
         
-        self.ui.pushButtonSave.clicked.connect(self.saveData)
+        # self.ui.pushButtonSave.clicked.connect(self.saveData)
         
     def saveData(self):
         self.fileName = QtGui.QFileDialog.getSaveFileName(self, self.tr("Save Data"), "")

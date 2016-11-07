@@ -43,8 +43,7 @@ class BaseViewer(BaseDockWidget):
         
         self.ui = ui(self.app, self)
         self.ui.createUI()
-        self.setupSignals()
-#         self.ui.buttonGroup.setExclusive(False)
+        # self.setupSignals()
         
         self.runDisplayType = wireframe
 
@@ -52,14 +51,6 @@ class BaseViewer(BaseDockWidget):
         self.ui.pushButtonModelColor.valueChanged.connect(self.setColor)
         self.ui.checkBoxModelVisible.toggled.connect(self.setModelVisibility)
                 
-        buttons = self.ui.buttonGroup.buttons()
-        self.bg = self.ui.buttonGroup
-        for i in range(len(self.display_styles)):
-            self.bg.setId(buttons[i], i)
-        
-        print [self.bg.id(b) for b in buttons]
-        
-        self.bg.buttonClicked[int].connect(self.visualizationUpdated)
         self.colorChanged.connect(self.ui.pushButtonModelColor.setColor)
         self.ui.pushButtonCenter.clicked.connect(self.on_center_clicked)
         self.ui.pushButtonSave.clicked.connect(self.saveData)
@@ -111,7 +102,6 @@ class BaseViewer(BaseDockWidget):
         glEnable (GL_BLEND);
         glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         
-        self.display_styles[self.bg.checkedId()]()
 
     def unInitializeGLDisplayType(self):
         glPopAttrib()

@@ -59,7 +59,7 @@ class CAlphaViewer(BaseViewer):
                      self.processElementClick)
         self.connect(self, QtCore.SIGNAL("modelChanged"), self.modelChanged)
         # self.emit(QtCore.SIGNAL('modelChanged'))
-        self.ui.pushButtonSave.clicked.connect(self.saveData)
+        # self.ui.pushButtonSave.clicked.connect(self.saveData)
         if self.parent.hasSemiAtomicPlacementForm:
             self.createActions()
       
