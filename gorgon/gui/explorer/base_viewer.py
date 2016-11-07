@@ -250,7 +250,7 @@ class BaseViewer(BaseDockWidget):
             QtGui.QMessageBox.critical(self, "Unable to load data file", "The file might be corrupt, or the format may not be supported.", "Ok")
 
             self.loaded = False
-        self.ui.labelModelName.setText(fileName)
+        self.ui.ui.labelModelName.setText(fileName)
 
     def modelLoadedPreDraw(self):
         pass
