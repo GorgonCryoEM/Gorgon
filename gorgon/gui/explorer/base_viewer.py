@@ -42,7 +42,7 @@ class BaseViewer(BaseDockWidget):
         self.color = QtGui.QColor(180, 180, 180, 150)
         
         self.ui = ui(self.app, self)
-        self.ui.createUI()
+        # self.ui.createUI()
         # self.setupSignals()
         
         self.runDisplayType = wireframe

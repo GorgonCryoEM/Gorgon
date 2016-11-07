@@ -12,8 +12,6 @@ class ModelVisualizationForm(object):
         self.viewer.setWindowTitle(self.title)
         
         self.createUI()
-        self.createActions()
-        self.createMenus()
         self.updateFromViewer()
 
     def createUI(self):
@@ -27,7 +25,6 @@ class ModelVisualizationForm(object):
         self.ui.checkBoxModelVisible.toggled.connect(self.viewer.setModelVisibility)
         self.ui.pushButtonModelColor.valueChanged.connect(self.setModelColor)  
         self.ui.pushButtonCenter.pressed.connect(self.viewer.on_center_clicked)
-        # self.ui.pushButtonClose.pressed.connect(self.viewer.unloadData)
         self.ui.doubleSpinBoxSizeX.editingFinished.connect(self.scaleChanged)
         self.ui.doubleSpinBoxSizeY.editingFinished.connect(self.scaleChanged)
         self.ui.doubleSpinBoxSizeZ.editingFinished.connect(self.scaleChanged)
@@ -67,25 +64,12 @@ class ModelVisualizationForm(object):
         else:
             self.ui.labelModelName.setText("")
             
-                                    
-    def createActions(self):               
-        self.visualizerAct = self.displayAct
-        self.visualizerAct.setEnabled(False)
-  
-    def createMenus(self):
-        pass     
-             
     def modelLoaded(self):
-        self.visualizerAct.setEnabled(True)
         self.updateFromViewer()        
     
     def modelChanged(self):
         self.updateFromViewer()
     
-    def modelUnloaded(self):
-        self.visualizerAct.setEnabled(False)
-        self.showWidget(False)    
-
     def setModelColor(self):
         self.viewer.setModelColor(self.ui.pushButtonModelColor.color())
 
