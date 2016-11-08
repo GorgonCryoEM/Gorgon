@@ -7,6 +7,7 @@ from .sequence_dock import CAlphaSequenceDock
 from ...libs import Vec3
 from ...toolkit.libpytoolkit import CAlphaRenderer
 from ...toolkit.sse.seq_model.Chain import Chain
+from ..explorer.common.atom_visualization_form import AtomVisualizationForm
 
 
 class CAlphaViewer(BaseViewer):
@@ -16,7 +17,8 @@ class CAlphaViewer(BaseViewer):
     
     def __init__(self, parent):
         self.title = "C-Alpha"
-        super(CAlphaViewer, self).__init__(CAlphaRenderer(), parent)
+        self.displayStyle = self.DisplayStyleBackbone
+        super(CAlphaViewer, self).__init__(CAlphaRenderer(), parent, AtomVisualizationForm)
         self.shortTitle = "CAL"
         self.parent = parent
         self.colors = {}
@@ -32,8 +34,7 @@ class CAlphaViewer(BaseViewer):
         self.colors["C-Alpha:BoundingBox"] = QtGui.QColor( 255, 255, 255, 255)
         self.isClosedMesh = False
         self.selectEnabled = True
-        self.displayStyle = self.DisplayStyleBackbone
-#         self.renderer.setDisplayStyle(self.displayStyle)
+        self.renderer.setDisplayStyle(self.displayStyle)
         self.structPred = self.parent.structPred
         try:
             self.main_chain = self.structPred.chain
@@ -58,7 +59,7 @@ class CAlphaViewer(BaseViewer):
                      self.processElementClick)
         self.connect(self, QtCore.SIGNAL("modelChanged"), self.modelChanged)
         # self.emit(QtCore.SIGNAL('modelChanged'))
-        self.ui.pushButtonSave.clicked.connect(self.saveData)
+        # self.ui.pushButtonSave.clicked.connect(self.saveData)
         if self.parent.hasSemiAtomicPlacementForm:
             self.createActions()
       

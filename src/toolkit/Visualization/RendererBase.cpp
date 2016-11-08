@@ -12,6 +12,10 @@ namespace Visualization {
 
     RendererBase::RendererBase()
     {}
+    
+    void RendererBase::setDisplayStyle(int style) {
+        displayStyle = style;
+    }
 
     float RendererBase::getMinPos(int i) const {
         return -100.0;
