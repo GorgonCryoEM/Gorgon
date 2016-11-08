@@ -625,11 +625,11 @@ class CAlphaViewer(BaseViewer):
 
     def setAtomVisibility(self, visible):
         self.atomsVisible = visible
-        self.repaintCamera()
+        self.modelChanged()
     
     def setBondVisibility(self, visible):
         self.bondsVisible = visible
-        self.repaintCamera()
+        self.modelChanged()
 
     def setHelixVisibility(self, visible):
         self.helicesVisible = visible
