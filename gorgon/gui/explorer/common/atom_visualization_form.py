@@ -40,12 +40,12 @@ class AtomVisualizationForm(ModelVisualizationForm):
         # self.ui.checkBoxShowStrands.setChecked(self.viewer.strandsVisible)
         # self.ui.checkBoxShowLoops.setChecked(self.viewer.loopsVisible)
          
-        if(self.viewer.displayStyle == self.viewer.DisplayStyleBackbone):
-            self.ui.radioButtonBackbone.setChecked(True) 
-        elif(self.viewer.displayStyle == self.viewer.DisplayStyleRibbon):
-            self.ui.radioButtonRibbon.setChecked(True)   
-        else :
-            self.ui.radioButtonSideChain.setChecked(True)   
+        # if(self.viewer.displayStyle == self.viewer.DisplayStyleBackbone):
+        #     self.ui.radioButtonBackbone.setChecked(True) 
+        # elif(self.viewer.displayStyle == self.viewer.DisplayStyleRibbon):
+        #     self.ui.radioButtonRibbon.setChecked(True)   
+        # else :
+        #     self.ui.radioButtonSideChain.setChecked(True)   
             
         self.setDisplayStyle(None)
             
