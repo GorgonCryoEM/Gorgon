@@ -138,6 +138,8 @@ class AtomVisualizationForm(ModelVisualizationForm):
             self.viewer.colors["C-Alpha:Helix"      ] = self.ui.pushButtonColor1.getColor()                
         elif(self.ui.radioButtonSideChain.isChecked()) :
             self.viewer.colors["C-Alpha:Carbon"     ] = self.ui.pushButtonColor1.getColor()                                       
+        self.viewer.setAtomColorsAndVisibility(self.viewer.displayStyle)
+        self.viewer.modelChanged()
 
     def setColor2(self):
         if(self.ui.radioButtonBackbone.isChecked()) :
@@ -146,6 +148,8 @@ class AtomVisualizationForm(ModelVisualizationForm):
             self.viewer.colors["C-Alpha:Strand"     ] = self.ui.pushButtonColor2.getColor()                
         elif(self.ui.radioButtonSideChain.isChecked()) :
             self.viewer.colors["C-Alpha:Nitrogen"   ] = self.ui.pushButtonColor2.getColor() 
+        self.viewer.setAtomColorsAndVisibility(self.viewer.displayStyle)
+        self.viewer.modelChanged()
                    
     def setColor3(self):
         if(self.ui.radioButtonBackbone.isChecked()) :
@@ -154,6 +158,8 @@ class AtomVisualizationForm(ModelVisualizationForm):
             self.viewer.colors["C-Alpha:Loop"       ] = self.ui.pushButtonColor3.getColor()                
         elif(self.ui.radioButtonSideChain.isChecked()) :
             self.viewer.colors["C-Alpha:Oxygen"     ] = self.ui.pushButtonColor3.getColor() 
+        self.viewer.setAtomColorsAndVisibility(self.viewer.displayStyle)
+        self.viewer.modelChanged()
             
     def setColor4(self):
         if(self.ui.radioButtonBackbone.isChecked()) :
@@ -162,5 +168,7 @@ class AtomVisualizationForm(ModelVisualizationForm):
             pass                
         elif(self.ui.radioButtonSideChain.isChecked()) :
             self.viewer.colors["C-Alpha:Sulphur"    ] = self.ui.pushButtonColor4.getColor() 
+        self.viewer.setAtomColorsAndVisibility(self.viewer.displayStyle)
+        self.viewer.modelChanged()
 
                                                                                                                                                       
