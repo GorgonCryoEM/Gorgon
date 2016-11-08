@@ -74,8 +74,8 @@ class AtomVisualizationForm(ModelVisualizationForm):
             displayStyle = self.viewer.DisplayStyleBackbone            
             self.ui.labelColor1.setText('Atom color:')
             self.ui.labelColor2.setText('Bond color:')
-            # self.ui.pushButtonColor1.setColor(self.viewer.colors["C-Alpha:Atom"       ])
-            # self.ui.pushButtonColor2.setColor(self.viewer.colors["C-Alpha:Bond"       ])            
+            self.ui.pushButtonColor1.setColor(self.viewer.colors["C-Alpha:Atom"       ])
+            self.ui.pushButtonColor2.setColor(self.viewer.colors["C-Alpha:Bond"       ])            
             self.ui.labelColor1.setVisible(True)
             self.ui.labelColor2.setVisible(True)
             self.ui.labelColor3.setVisible(False)

@@ -18,9 +18,6 @@ class CAlphaViewer(BaseViewer):
     def __init__(self, parent):
         self.title = "C-Alpha"
         self.displayStyle = self.DisplayStyleBackbone
-        super(CAlphaViewer, self).__init__(CAlphaRenderer(), parent, AtomVisualizationForm)
-        self.shortTitle = "CAL"
-        self.parent = parent
         self.colors = {}
         self.colors["C-Alpha:Atom"       ] = QtGui.QColor( 170, 170, 0, 255)
         self.colors["C-Alpha:Bond"       ] = QtGui.QColor( 120, 120, 170, 255)
@@ -32,9 +29,13 @@ class CAlphaViewer(BaseViewer):
         self.colors["C-Alpha:Oxygen"     ] = QtGui.QColor( 255, 0, 0, 255)
         self.colors["C-Alpha:Sulphur"    ] = QtGui.QColor( 255, 255, 0, 255)
         self.colors["C-Alpha:BoundingBox"] = QtGui.QColor( 255, 255, 255, 255)
+        super(CAlphaViewer, self).__init__(CAlphaRenderer(), parent, AtomVisualizationForm)
+        self.shortTitle = "CAL"
+        self.parent = parent
         self.isClosedMesh = False
         self.selectEnabled = True
         self.renderer.setDisplayStyle(self.displayStyle)
+        self.ui.setDisplayStyle(self.displayStyle)
         self.structPred = self.parent.structPred
         try:
             self.main_chain = self.structPred.chain
