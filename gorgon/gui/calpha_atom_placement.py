@@ -18,7 +18,7 @@ class CalphaAtomPlacement(Window):
         
         self.calpha = CAlphaViewer(self)
         
-        self.scene.append(self.calpha)
+        self.mainCamera.append_scene(self.calpha)
         
     @classmethod
     def set_parser(cls, parser):

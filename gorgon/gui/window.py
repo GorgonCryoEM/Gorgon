@@ -22,10 +22,10 @@ class Window(QtGui.QMainWindow):
         self.skeleton = SkeletonViewer(self)
         
         self.scene = []
-        self.scene.append(self.skeleton)
-        self.scene.append(self.volume)
         
         self.mainCamera = Camera(self.scene, self)
+        self.mainCamera.append_scenes([self.skeleton, self.volume])
+        
         self.setCentralWidget(self.mainCamera)
         
         if form:
