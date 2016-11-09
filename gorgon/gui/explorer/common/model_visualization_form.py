@@ -8,7 +8,7 @@ class ModelVisualizationForm(object):
         self.viewer = viewer
         self.title = viewer.title + " Visualization Options"
         
-        self.viewer.visualizationUpdated.connect(self.modelLoaded)
+        # self.viewer.visualizationUpdated.connect(self.modelLoaded)
         self.viewer.setWindowTitle(self.title)
         
         self.createUI()
