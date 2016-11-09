@@ -30,12 +30,12 @@ class SSEViewer(BaseViewer):
         self.model3Visible = False
 #         self.initVisualizationOptions(ModelVisualizationForm(self.app, self))
         self.ui.ui.checkBoxModelVisible.setText("Show helices colored:")
-        self.ui.ui.checkBoxModel2Visible.setText("Show sheets colored:")
-        self.ui.ui.checkBoxModel2Visible.setVisible(True)
-        self.ui.ui.pushButtonModel2Color.setVisible(True)
-        self.ui.ui.checkBoxModel3Visible.setText("Show skeleton sheets colored:")
-        self.ui.ui.checkBoxModel3Visible.setVisible(False)
-        self.ui.ui.pushButtonModel3Color.setVisible(False)
+        # self.ui.ui.checkBoxModel2Visible.setText("Show sheets colored:")
+        # self.ui.ui.checkBoxModel2Visible.setVisible(True)
+        # self.ui.ui.pushButtonModel2Color.setVisible(True)
+        # self.ui.ui.checkBoxModel3Visible.setText("Show skeleton sheets colored:")
+        # self.ui.ui.checkBoxModel3Visible.setVisible(False)
+        # self.ui.ui.pushButtonModel3Color.setVisible(False)
         
         # self.connect(self, QtCore.SIGNAL('elementSelected (int, int, int, int, int, int, QMouseEvent)'), self.updateCurrentMatch)
         
