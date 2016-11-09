@@ -53,6 +53,15 @@ class Camera(QtOpenGL.QGLWidget):
         
         self.lastPos = QtCore.QPoint()
         
+    def append_scene(self, scene):
+        self.scene.append(scene)
+        self.init_scenes()
+        
+    def append_scenes(self, scenes):
+        self.scene.extend(scenes)
+        self.init_scenes()
+
+    def init_scenes(self):
         for i in range(len(self.scene)):
             self.scene[i].sceneIndex = i;
 

@@ -15,8 +15,7 @@ class MainWindowForm(Window):
         self.structPred = StructurePrediction.load(self.args.calpha, self)
         self.calpha = CAlphaViewer(self)
 
-        self.scene.append(self.sse)
-        self.scene.append(self.calpha)
+        self.mainCamera.append_scenes([self.sse, self.calpha])
 
     @classmethod
     def set_parser(cls, parser):

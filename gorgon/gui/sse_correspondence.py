@@ -19,8 +19,7 @@ class SSECorrespondence(Window):
         self.sse    = SSEViewer(self)
         self.calpha = CAlphaViewer(self)
 
-        self.scene.append(self.sse)
-        self.scene.append(self.calpha)
+        self.mainCamera.append_scenes([self.sse, self.calpha])
         
         self.form.createUI()
 
