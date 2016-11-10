@@ -47,21 +47,21 @@ class BaseViewer(BaseDockWidget):
         
         self.runDisplayType = smooth
 
-    def setupSignals(self):
-        self.ui.pushButtonModelColor.valueChanged.connect(self.setColor)
-        self.ui.checkBoxModelVisible.toggled.connect(self.setModelVisibility)
-                
-        self.colorChanged.connect(self.ui.pushButtonModelColor.setColor)
-        self.ui.pushButtonCenter.clicked.connect(self.on_center_clicked)
-        self.ui.pushButtonSave.clicked.connect(self.saveData)
-        self.ui.labelModelSize.setText("{" +
-                                       str(round(self.renderer.getMaxPos(0) - self.renderer.getMinPos(0) ,2)) + ", " +
-                                       str(round(self.renderer.getMaxPos(1) - self.renderer.getMinPos(1) ,2)) + ", " +
-                                       str(round(self.renderer.getMaxPos(2) - self.renderer.getMinPos(2) ,2)) + "}")
-        
-        self.ui.loc_scale_xyz.locChanged.connect(self.setLocation)
-        self.ui.loc_scale_xyz.scaleChanged.connect(self.setScale)
-        self.visualizationUpdated.connect(self.modelChanged)
+    # def setupSignals(self):
+    #     self.ui.pushButtonModelColor.valueChanged.connect(self.setColor)
+    #     # self.ui.checkBoxModelVisible.toggled.connect(self.setModelVisibility)
+    #             
+    #     self.colorChanged.connect(self.ui.pushButtonModelColor.setColor)
+    #     self.ui.pushButtonCenter.clicked.connect(self.on_center_clicked)
+    #     self.ui.pushButtonSave.clicked.connect(self.saveData)
+    #     self.ui.labelModelSize.setText("{" +
+    #                                    str(round(self.renderer.getMaxPos(0) - self.renderer.getMinPos(0) ,2)) + ", " +
+    #                                    str(round(self.renderer.getMaxPos(1) - self.renderer.getMinPos(1) ,2)) + ", " +
+    #                                    str(round(self.renderer.getMaxPos(2) - self.renderer.getMinPos(2) ,2)) + "}")
+    #     
+    #     self.ui.loc_scale_xyz.locChanged.connect(self.setLocation)
+    #     self.ui.loc_scale_xyz.scaleChanged.connect(self.setScale)
+    #     self.visualizationUpdated.connect(self.modelChanged)
 
 #         self.ui.pushButtonClose.clicked.connect(self.viewer.unload)
 #         self.ui.doubleSpinBoxSizeX.editingFinished.connect(self.scaleChanged)
