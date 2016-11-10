@@ -523,25 +523,27 @@ class CAlphaViewer(BaseViewer):
         else:
             pass
 
-        for chain in self.loadedChains:
-            # Setting visibility of SSE atoms
-            for i, secel in chain.secelList.items():
-                if i in chain.residueList:
-                    for atomName in chain[i].getAtomNames():
-                        atom = chain[i].getAtom(atomName)
-                        if atom:
-                            atom.setVisible((secel.type == "helix" and self.helicesVisible) or (
-                                secel.type == "strand" and self.strandsVisible)
-                                            or (secel.type == "loop" and self.loopsVisible))
+        if hasattr(self, 'loadedChains'):
+            for chain in self.loadedChains:
+                # Setting visibility of SSE atoms
+                for i, secel in chain.secelList.items():
+                    if i in chain.residueList:
+                        for atomName in chain[i].getAtomNames():
+                            atom = chain[i].getAtom(atomName)
+                            if atom:
+                                atom.setVisible((secel.type == "helix" and self.helicesVisible) or (
+                                    secel.type == "strand" and self.strandsVisible)
+                                                or (secel.type == "loop" and self.loopsVisible))
 
     def setAllAtomColor(self, color):
-        for chain in self.loadedChains:
-            for i in chain.residueRange():
-                if i in chain.residueList:
-                    for atomName in chain[i].getAtomNames():
-                        atom = chain[i].getAtom(atomName)
-                        if atom:
-                            atom.setColor(color.redF(), color.greenF(), color.blueF(), color.alphaF())
+        if hasattr(self, 'loadedChains'):
+            for chain in self.loadedChains:
+                for i in chain.residueRange():
+                    if i in chain.residueList:
+                        for atomName in chain[i].getAtomNames():
+                            atom = chain[i].getAtom(atomName)
+                            if atom:
+                                atom.setColor(color.redF(), color.greenF(), color.blueF(), color.alphaF())
 
     def setSpecificAtomColor(self, molecule, color):
         for chain in self.loadedChains:
