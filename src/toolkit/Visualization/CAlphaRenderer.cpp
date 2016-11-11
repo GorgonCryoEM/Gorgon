@@ -821,17 +821,17 @@ namespace Visualization {
     }
 
     void CAlphaRenderer::draw(int subSceneIndex, bool selectEnabled) {
-//        switch(displayStyle) {
-//            case CALPHA_DISPLAY_STYLE_BACKBONE: // Backbone only
+        switch(displayStyle) {
+            case CALPHA_DISPLAY_STYLE_BACKBONE: // Backbone only
                 drawBackboneModel(subSceneIndex, selectEnabled);
-//                break;
-//            case CALPHA_DISPLAY_STYLE_RIBBON: // Ribbon mode
+                break;
+            case CALPHA_DISPLAY_STYLE_RIBBON: // Ribbon mode
                 drawRibbonModel(subSceneIndex, selectEnabled);
-//                break;
-//            case CALPHA_DISPLAY_STYLE_SIDE_CHAIN: // Side chains
+                break;
+            case CALPHA_DISPLAY_STYLE_SIDE_CHAIN: // Side chains
                 drawSideChainModel(subSceneIndex, selectEnabled);
-//                break;
-//        }
+                break;
+        }
     }
 
     PDBAtom * CAlphaRenderer::getAtomFromHitStack(int subsceneIndex, bool forceTrue, int ix0, int ix1, int ix2, int ix3, int ix4) {
@@ -1109,7 +1109,6 @@ namespace Visualization {
 
     void CAlphaRenderer::selectionToggle(int subsceneIndex, bool forceTrue, int ix0, int ix1, int ix2, int ix3, int ix4) {
 //        RendererBase::SelectionToggle(subsceneIndex, forceTrue, ix0, ix1, ix2, ix3, ix4);
-        displayStyle=5;
 //        #ifdef GORGON_DEBUG
               cout<<"\033[32mDEBUG: File:   CAlphaRenderer.cpp"<<endl;
               cout<<"DEBUG: Method: CAlphaRenderer::selectionToggle(int, bool, int, int, int, int, int)\033[0m"<<endl;

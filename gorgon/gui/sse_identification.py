@@ -16,13 +16,10 @@ class SSEIdentification(Window):
         
         self.structPred = None
 
-        self.viewers = {}
-        
         self.calpha = CAlphaViewer(self)
         self.sse = SSEViewer(self)
         
-        self.scene.append(self.calpha)
-        self.scene.append(self.sse)
+        self.mainCamera.append_scenes([self.calpha, self.sse])
         
         self.form.init_again()
         

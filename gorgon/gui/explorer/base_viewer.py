@@ -3,8 +3,8 @@ from PyQt4 import QtGui, QtCore
 from base_dock_widget import BaseDockWidget
 from gorgon.libs import Vec3
 from .display_styles import *
-from .ui_common import Ui_Common
 from ...toolkit.libpytoolkit import *
+from .common.model_visualization_form import ModelVisualizationForm
 
 
 class BaseViewer(BaseDockWidget):
@@ -16,7 +16,7 @@ class BaseViewer(BaseDockWidget):
     
     display_styles = [wireframe, flat, smooth]
     
-    def __init__(self, renderer, main):
+    def __init__(self, renderer, main, form=ModelVisualizationForm):
         super(BaseViewer, self).__init__(
                                 main,
                                 self,
@@ -41,32 +41,41 @@ class BaseViewer(BaseDockWidget):
         self.multipleSelection = True
         self.color = QtGui.QColor(180, 180, 180, 150)
         
-        self.ui = Ui_Common()
-        self.ui.setupUi(self)
-        self.setupSignals()
-#         self.ui.buttonGroup.setExclusive(False)
+        self.ui = form(self.app, self)
+        # self.ui.createUI()
+        # self.setupSignals()
         
-        self.runDisplayType = wireframe
+        self.runDisplayType = smooth
 
-    def setupSignals(self):
-        self.ui.pushButtonModelColor.valueChanged.connect(self.setColor)
-        self.ui.checkBoxModelVisible.toggled.connect(self.setModelVisibility)
-                
-        buttons = self.ui.buttonGroup.buttons()
-        self.bg = self.ui.buttonGroup
-        for i in range(len(self.display_styles)):
-            self.bg.setId(buttons[i], i)
-        
-        print [self.bg.id(b) for b in buttons]
-        
-        self.bg.buttonClicked[int].connect(self.visualizationUpdated)
-        self.colorChanged.connect(self.ui.pushButtonModelColor.setColor)
-        self.ui.pushButtonCenter.clicked.connect(self.on_center_clicked)
+    # def setupSignals(self):
+    #     self.ui.pushButtonModelColor.valueChanged.connect(self.setColor)
+    #     # self.ui.checkBoxModelVisible.toggled.connect(self.setModelVisibility)
+    #             
+    #     self.colorChanged.connect(self.ui.pushButtonModelColor.setColor)
+    #     self.ui.pushButtonCenter.clicked.connect(self.on_center_clicked)
+    #     self.ui.pushButtonSave.clicked.connect(self.saveData)
+    #     self.ui.labelModelSize.setText("{" +
+    #                                    str(round(self.renderer.getMaxPos(0) - self.renderer.getMinPos(0) ,2)) + ", " +
+    #                                    str(round(self.renderer.getMaxPos(1) - self.renderer.getMinPos(1) ,2)) + ", " +
+    #                                    str(round(self.renderer.getMaxPos(2) - self.renderer.getMinPos(2) ,2)) + "}")
+    #     
+    #     self.ui.loc_scale_xyz.locChanged.connect(self.setLocation)
+    #     self.ui.loc_scale_xyz.scaleChanged.connect(self.setScale)
+    #     self.visualizationUpdated.connect(self.modelChanged)
+
 #         self.ui.pushButtonClose.clicked.connect(self.viewer.unload)
 #         self.ui.doubleSpinBoxSizeX.editingFinished.connect(self.scaleChanged)
 #         self.ui.doubleSpinBoxSizeY.editingFinished.connect(self.scaleChanged)
 #         self.ui.doubleSpinBoxSizeZ.editingFinished.connect(self.scaleChanged)
 #         self.ui.spinBoxThickness.valueChanged.connect(self.setThickness)
+
+    def saveData(self):
+        self.fileName = QtGui.QFileDialog.getSaveFileName(self, self.tr("Save Data"), "")
+        if not self.fileName.isEmpty():
+            self.setCursor(QtCore.Qt.WaitCursor)
+            self.renderer.saveFile(str(self.fileName))
+            self.dirty = False
+            self.setCursor(QtCore.Qt.ArrowCursor)
 
     def initializeGL(self):
         self.setupGlList()
@@ -93,7 +102,7 @@ class BaseViewer(BaseDockWidget):
         glEnable (GL_BLEND);
         glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         
-        self.display_styles[self.bg.checkedId()]()
+        self.runDisplayType()
 
     def unInitializeGLDisplayType(self):
         glPopAttrib()
@@ -242,6 +251,7 @@ class BaseViewer(BaseDockWidget):
             QtGui.QMessageBox.critical(self, "Unable to load data file", "The file might be corrupt, or the format may not be supported.", "Ok")
 
             self.loaded = False
+        self.ui.ui.labelModelName.setText(fileName)
 
     def modelLoadedPreDraw(self):
         pass

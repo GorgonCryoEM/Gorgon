@@ -29,13 +29,13 @@ class SSEViewer(BaseViewer):
         self.model2Visible = True
         self.model3Visible = False
 #         self.initVisualizationOptions(ModelVisualizationForm(self.app, self))
-#         self.visualizationOptions.ui.checkBoxModelVisible.setText("Show helices colored:")
-#         self.visualizationOptions.ui.checkBoxModel2Visible.setText("Show sheets colored:")
-#         self.visualizationOptions.ui.checkBoxModel2Visible.setVisible(True)
-#         self.visualizationOptions.ui.pushButtonModel2Color.setVisible(True)
-#         self.visualizationOptions.ui.checkBoxModel3Visible.setText("Show skeleton sheets colored:")
-#         self.visualizationOptions.ui.checkBoxModel3Visible.setVisible(False)
-#         self.visualizationOptions.ui.pushButtonModel3Color.setVisible(False)
+        self.ui.ui.checkBoxModelVisible.setText("Show helices colored:")
+        # self.ui.ui.checkBoxModel2Visible.setText("Show sheets colored:")
+        # self.ui.ui.checkBoxModel2Visible.setVisible(True)
+        # self.ui.ui.pushButtonModel2Color.setVisible(True)
+        # self.ui.ui.checkBoxModel3Visible.setText("Show skeleton sheets colored:")
+        # self.ui.ui.checkBoxModel3Visible.setVisible(False)
+        # self.ui.ui.pushButtonModel3Color.setVisible(False)
         
         # self.connect(self, QtCore.SIGNAL('elementSelected (int, int, int, int, int, int, QMouseEvent)'), self.updateCurrentMatch)
         
@@ -43,21 +43,21 @@ class SSEViewer(BaseViewer):
 #         self.connect(self.app.viewers["volume"], QtCore.SIGNAL('modelUnloaded()'), self.updateActionsAndMenus)
 #         self.connect(self, QtCore.SIGNAL('modelLoaded()'), self.updateActionsAndMenus)
 #         self.connect(self, QtCore.SIGNAL('modelUnloaded()'), self.updateActionsAndMenus)
-        self.ui.pushButtonSave.clicked.connect(self.saveHelixData)
+#         self.ui.pushButtonSave.clicked.connect(self.saveHelixData)
         
         self.selectedObjects = []
         self.correspondences = []
         
-    def drawGL(self):
-#         BaseViewer.drawGL(self)
-        try:
-            print termcolor.colored('renderer.draw', 'yellow')
-            for kk in range(3):
-                self.renderer.draw(kk, True)
-        except:
-            print "Problem in sseViewer::drawGL: renderer.draw"
-        else:
-            self.extraDrawingRoutines()
+#     def drawGL(self):
+# #         BaseViewer.drawGL(self)
+#         try:
+#             print termcolor.colored('renderer.draw', 'yellow')
+#             for kk in range(3):
+#                 self.renderer.draw(kk, True)
+#         except:
+#             print "Problem in sseViewer::drawGL: renderer.draw"
+#         else:
+#             self.extraDrawingRoutines()
 
     def extraDrawingRoutines(self):
         try:

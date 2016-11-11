@@ -47,6 +47,8 @@ def main():
                        args.correlationWeight,
                        args.skeletonWeight,
                        args.geometryWeight)
+    sseh.run()
+    sseh.savePseudoatoms()
 
 if __name__ == "__main__":
     main()

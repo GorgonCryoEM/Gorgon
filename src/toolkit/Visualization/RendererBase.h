@@ -18,6 +18,7 @@ namespace Visualization {
     class RendererBase {
         public:
             RendererBase();
+            virtual void setDisplayStyle(int style);
 
             virtual float getMinPos(int i) const;
             virtual float getMaxPos(int i) const;
@@ -33,6 +34,7 @@ namespace Visualization {
             virtual float getOriginZ() const;
 
         protected:
+            int displayStyle;
     };
 }
 

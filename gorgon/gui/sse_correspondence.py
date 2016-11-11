@@ -1,6 +1,6 @@
 from .explorer.skeleton_viewer import SkeletonViewer
 from .calpha.viewer import CAlphaViewer
-from .sse.helix_correspondence_finder_form import SSEHelixCorrespondenceFinderForm
+from .sse.helix_correspondence_form import SSEHelixCorrespondenceForm
 from .sse.viewer import SSEViewer
 from .explorer import Camera
 from ..toolkit.sse.correspondence.StructurePrediction import StructurePrediction
@@ -10,19 +10,16 @@ from .window import Window
 class SSECorrespondence(Window):
 
     def __init__(self, args):
-        super(SSECorrespondence, self).__init__(args, SSEHelixCorrespondenceFinderForm)
+        super(SSECorrespondence, self).__init__(args, SSEHelixCorrespondenceForm)
         
         self.hasSemiAtomicPlacementForm = False
 
         self.structPred = StructurePrediction.load(self.args.sequence, self)
         
-        self.viewers = {}
-        
         self.sse    = SSEViewer(self)
         self.calpha = CAlphaViewer(self)
 
-        self.scene.append(self.sse)
-        self.scene.append(self.calpha)
+        self.mainCamera.append_scenes([self.sse, self.calpha])
         
         self.form.createUI()
 

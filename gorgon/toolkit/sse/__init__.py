@@ -1,2 +1,2 @@
 from .hunter import pySSEHunter
-from .helix_correspondence import SSEHelixCorrespondence
+from .helix_correspondence import HelixCorrespondence

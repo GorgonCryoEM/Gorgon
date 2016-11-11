@@ -7,7 +7,7 @@ from termcolor import colored
 class pySSEHunter(object):
 
     def __init__(self, volume, skeleton, output, resolution, threshold, correlationWeight, skeletonWeight,
-                 geometryWeight, autorun=True):
+                 geometryWeight):
         self.logger = logging.getLogger(__name__)
         
         self.output            = output
@@ -56,10 +56,6 @@ class pySSEHunter(object):
         '''
         
         self.sseh = SSEHunter()
-        
-        if autorun:
-            self.run()
-            self.savePseudoatoms()
 
     def savePseudoatoms(self):
         self.calpha.saveSSEHunterFile(self.output)
