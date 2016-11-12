@@ -64,8 +64,13 @@ class SSEViewer(BaseViewer):
     def extraDrawingRoutines(self):
         try:
             print termcolor.colored('correspondenceEngine.draw', 'yellow')
+            form = self.app.form
             self.correspondenceEngine.draw(0)
-            self.correspondenceEngine.drawAllPaths(0,True,True,True,False)
+            self.correspondenceEngine.drawAllPaths(0,
+                                                   form.ui.checkBoxShowAllPaths.isChecked(),
+                                                   form.ui.checkBoxShowHelixCorners.isChecked(),
+                                                   form.ui.checkBoxShowSheetCorners.isChecked(),
+                                                   False)
         except:
             print "Problem in sseViewer::drawGL: correspondenceEngine.draw"
 
