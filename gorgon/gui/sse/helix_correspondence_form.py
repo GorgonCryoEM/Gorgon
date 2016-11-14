@@ -108,52 +108,52 @@ class SSEHelixCorrespondenceForm(QtGui.QDialog):
 #         self.ui.lineEditSettingsFile.setText("")
 #         self.loadDefaultParams()
 
-    def loadDefaultParams(self):
-        self.ui.pushButtonExportToRosetta.setVisible(False)
-        # Graph Settings tab
-        self.ui.spinBoxBorderMarginThreshold.setValue(5)
-        self.ui.doubleSpinBoxEuclideanDistance.setValue(0.0)
-        self.ui.checkBoxIncludeSheets.setChecked(True)
-        #min sheet size
-        #max sheet distance
-        #sheet self-loop length
-
-        self.ui.checkBoxShowSkeleton.setChecked(self.parent.skeleton.visualizationOptions.ui.checkBoxModelVisible.isChecked())
-        self.ui.checkBoxShowHelices.setChecked(self.sse.visualizationOptions.ui.checkBoxModelVisible.isChecked())
-        self.ui.checkBoxShowHelixCorners.setChecked(False)
-        self.ui.checkBoxShowSheets.setChecked(self.sse.visualizationOptions.ui.checkBoxModel2Visible.isChecked())
-        self.ui.checkBoxShowSheetColors.setChecked(self.sse.visualizationOptions.ui.checkBoxModel3Visible.isChecked())
-        self.ui.checkBoxShowSheetCorners.setChecked(False)
-        self.ui.checkBoxShowAllPaths.setChecked(False)
-
-        # Matching Settings tab
-        self.ui.doubleSpinBoxEuclideanToPDBRatio.setValue(10.0)
-        self.ui.radioButtonAbsoluteDifference.setChecked(True)
-        self.ui.radioButtonNormalizedDifference.setChecked(False)
-        self.ui.radioButtonQuadraticError.setChecked(False)
-
-        self.ui.doubleSpinBoxLoopImportance.setValue(0.2)
-        self.ui.doubleSpinBoxEuclideanLoopUsedPenalty.setValue(5.0)
-        
-        self.ui.doubleSpinBoxHelixImportance.setValue(1.0)
-        self.ui.checkBoxMissingHelices.setChecked(False)
-        self.ui.spinBoxMissingHelixCount.setValue(0)
-        self.ui.doubleSpinBoxHelixMissingPenalty.setValue(5.0)
-        self.ui.doubleSpinBoxHelixMissingPenaltyScaled.setValue(0.0)
-        self.ui.doubleSpinBoxEndHelixMissingPenalty.setValue(5.0)
-
-        self.ui.doubleSpinBoxSheetImportance.setValue(1.0)
-        self.ui.checkBoxMissingSheets.setChecked(False)
-        self.ui.spinBoxMissingSheetCount.setValue(0)
-        self.ui.doubleSpinBoxSheetMissingPenalty.setValue(5.0)
-        self.ui.doubleSpinBoxSheetMissingPenaltyScaled.setValue(0.0)
-
-        # Results tab
-        self.ui.tableWidgetCorrespondenceList.clearContents()
-        self.ui.tabWidget.setCurrentIndex(0)
-        self.ui.comboBoxCorrespondences.setCurrentIndex(-1)
-
-        self.checkOk()
+    # def loadDefaultParams(self):
+    #     self.ui.pushButtonExportToRosetta.setVisible(False)
+    #     # Graph Settings tab
+    #     self.ui.spinBoxBorderMarginThreshold.setValue(5)
+    #     self.ui.doubleSpinBoxEuclideanDistance.setValue(0.0)
+    #     self.ui.checkBoxIncludeSheets.setChecked(True)
+    #     #min sheet size
+    #     #max sheet distance
+    #     #sheet self-loop length
+    # 
+    #     self.ui.checkBoxShowSkeleton.setChecked(self.parent.skeleton.visualizationOptions.ui.checkBoxModelVisible.isChecked())
+    #     self.ui.checkBoxShowHelices.setChecked(self.sse.visualizationOptions.ui.checkBoxModelVisible.isChecked())
+    #     self.ui.checkBoxShowHelixCorners.setChecked(False)
+    #     self.ui.checkBoxShowSheets.setChecked(self.sse.visualizationOptions.ui.checkBoxModel2Visible.isChecked())
+    #     self.ui.checkBoxShowSheetColors.setChecked(self.sse.visualizationOptions.ui.checkBoxModel3Visible.isChecked())
+    #     self.ui.checkBoxShowSheetCorners.setChecked(False)
+    #     self.ui.checkBoxShowAllPaths.setChecked(False)
+    # 
+    #     # Matching Settings tab
+    #     self.ui.doubleSpinBoxEuclideanToPDBRatio.setValue(10.0)
+    #     self.ui.radioButtonAbsoluteDifference.setChecked(True)
+    #     self.ui.radioButtonNormalizedDifference.setChecked(False)
+    #     self.ui.radioButtonQuadraticError.setChecked(False)
+    # 
+    #     self.ui.doubleSpinBoxLoopImportance.setValue(0.2)
+    #     self.ui.doubleSpinBoxEuclideanLoopUsedPenalty.setValue(5.0)
+    #     
+    #     self.ui.doubleSpinBoxHelixImportance.setValue(1.0)
+    #     self.ui.checkBoxMissingHelices.setChecked(False)
+    #     self.ui.spinBoxMissingHelixCount.setValue(0)
+    #     self.ui.doubleSpinBoxHelixMissingPenalty.setValue(5.0)
+    #     self.ui.doubleSpinBoxHelixMissingPenaltyScaled.setValue(0.0)
+    #     self.ui.doubleSpinBoxEndHelixMissingPenalty.setValue(5.0)
+    # 
+    #     self.ui.doubleSpinBoxSheetImportance.setValue(1.0)
+    #     self.ui.checkBoxMissingSheets.setChecked(False)
+    #     self.ui.spinBoxMissingSheetCount.setValue(0)
+    #     self.ui.doubleSpinBoxSheetMissingPenalty.setValue(5.0)
+    #     self.ui.doubleSpinBoxSheetMissingPenaltyScaled.setValue(0.0)
+    # 
+    #     # Results tab
+    #     self.ui.tableWidgetCorrespondenceList.clearContents()
+    #     self.ui.tabWidget.setCurrentIndex(0)
+    #     self.ui.comboBoxCorrespondences.setCurrentIndex(-1)
+    # 
+    #     self.checkOk()
         
 #     def openFile(self, title, fileformats):
 #         fileName = QtGui.QFileDialog.getOpenFileName(self, self.tr(title), "", self.tr(fileformats))
