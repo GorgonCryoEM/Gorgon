@@ -19,7 +19,6 @@ class SSEViewer(BaseViewer):
         self.isClosedMesh = False
         self.helixFileName = ""
         self.sheetFileName = ""
-        self.currentMatch = None
         self.showBox = False;
         self.helixLoaded = False
         self.sheetLoaded = False
@@ -47,7 +46,6 @@ class SSEViewer(BaseViewer):
 #         self.ui.pushButtonSave.clicked.connect(self.saveHelixData)
         
         self.selectedObjects = []
-        self.correspondences = []
         
 #     def drawGL(self):
 # #         BaseViewer.drawGL(self)
@@ -119,9 +117,6 @@ class SSEViewer(BaseViewer):
         self.sheetFileName = ""
         BaseViewer.unloadData(self)
 
-    def updateCorrespondences(self, corrs):
-        self.correspondences  = corrs
-        
     # Overridden
     def emitElementClicked(self, hitStack, event):
 #         if (self.app.viewers["calpha"].displayStyle == self.app.viewers["calpha"].DisplayStyleRibbon):
