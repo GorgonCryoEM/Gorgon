@@ -2,7 +2,7 @@ import termcolor
 from PyQt4 import QtGui, QtCore
 
 from ..explorer import BaseViewer
-from ...toolkit.libpytoolkit import SSERenderer, SSEEngine
+from ...toolkit.libpytoolkit import SSERenderer
 
 
 class SSEViewer(BaseViewer):
@@ -23,7 +23,6 @@ class SSEViewer(BaseViewer):
         self.showBox = False;
         self.helixLoaded = False
         self.sheetLoaded = False
-        self.correspondenceEngine = SSEEngine()
         self.selectEnabled = True
         self.app.sse = self
         self.model2Visible = True
