@@ -46,17 +46,6 @@ class SSEViewer(BaseViewer):
 #         self.ui.pushButtonSave.clicked.connect(self.saveHelixData)
         
         self.selectedObjects = []
-        
-#     def drawGL(self):
-# #         BaseViewer.drawGL(self)
-#         try:
-#             print termcolor.colored('renderer.draw', 'yellow')
-#             for kk in range(3):
-#                 self.renderer.draw(kk, True)
-#         except:
-#             print "Problem in sseViewer::drawGL: renderer.draw"
-#         else:
-#             self.extraDrawingRoutines()
 
     def loadHelixDataFromFile(self, fileName):
         try:
