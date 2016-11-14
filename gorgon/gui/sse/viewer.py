@@ -131,14 +131,6 @@ class SSEViewer(BaseViewer):
         self.helixFileName = ""
         self.sheetFileName = ""
         BaseViewer.unloadData(self)
-          
-    def makeSheetSurfaces(self, offsetx, offsety, offsetz, scalex, scaley, scalez):
-        # rebuild the set of sheets to render
-        numHelicesSheets = self.correspondenceEngine.getSkeletonSSECount()
-        self.renderer.unloadGraphSSEs()
-        for i in range(numHelicesSheets):
-            if self.correspondenceEngine.getSkeletonSSE(i).isSheet():
-                self.renderer.loadGraphSSE(i, self.correspondenceEngine.getSkeletonSSE(i), offsetx, offsety, offsetz, scalex, scaley, scalez)
 
     def updateCorrespondences(self, corrs):
         self.correspondences  = corrs

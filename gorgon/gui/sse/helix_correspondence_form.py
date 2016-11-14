@@ -219,7 +219,7 @@ class SSEHelixCorrespondenceForm(QtGui.QDialog):
             self.correspondenceLibrary.correspondenceList = self.populateEmptyResults(self.correspondenceLibrary)
             print "correspondenceList has length " + str(len(self.correspondenceLibrary.correspondenceList))
             self.populateComboBox(self.correspondenceLibrary)
-            self.sse.makeSheetSurfaces(self.parent.skeleton.renderer.getOriginX(),
+            self.makeSheetSurfaces(self.parent.skeleton.renderer.getOriginX(),
                                        self.parent.skeleton.renderer.getOriginY(),
                                        self.parent.skeleton.renderer.getOriginZ(),
                                        self.parent.skeleton.renderer.getSpacingX(),
@@ -1034,3 +1034,11 @@ class SSEHelixCorrespondenceForm(QtGui.QDialog):
 
                 menu.exec_(self.parent.mainCamera.mapToGlobal(self.parent.mainCamera.mouseDownPoint))
                 self.parent.mainCamera.updateGL()
+
+    def makeSheetSurfaces(self, offsetx, offsety, offsetz, scalex, scaley, scalez):
+        # rebuild the set of sheets to render
+        numHelicesSheets = self.correspondenceEngine.getSkeletonSSECount()
+        self.sse.renderer.unloadGraphSSEs()
+        for i in range(numHelicesSheets):
+            if self.correspondenceEngine.getSkeletonSSE(i).isSheet():
+                self.renderer.loadGraphSSE(i, self.correspondenceEngine.getSkeletonSSE(i), offsetx, offsety, offsetz, scalex, scaley, scalez)
