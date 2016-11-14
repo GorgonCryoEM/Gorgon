@@ -22,6 +22,7 @@ import termcolor
 from ..helix import create_helix
 
 from ...toolkit.libpytoolkit import SSEEngine
+from viewer import SSEViewer
 
 class SSEHelixCorrespondenceForm(QtGui.QDialog):
 
@@ -49,6 +50,10 @@ class SSEHelixCorrespondenceForm(QtGui.QDialog):
         self.allLoaded  = True
 
         self.correspondenceEngine = SSEEngine()
+
+        # KLUDGE: This class should be drawn as itself,
+        # not by injecting its drawing function into SSEViewer
+        SSEViewer.extraDrawingRoutines = self.extraDrawingRoutines
 
 #         exit()
 
@@ -1042,3 +1047,15 @@ class SSEHelixCorrespondenceForm(QtGui.QDialog):
         for i in range(numHelicesSheets):
             if self.correspondenceEngine.getSkeletonSSE(i).isSheet():
                 self.renderer.loadGraphSSE(i, self.correspondenceEngine.getSkeletonSSE(i), offsetx, offsety, offsetz, scalex, scaley, scalez)
+
+    def extraDrawingRoutines(self):
+        try:
+            print termcolor.colored('correspondenceEngine.draw', 'yellow')
+            self.correspondenceEngine.draw(0)
+            self.correspondenceEngine.drawAllPaths(0,
+                                                   self.ui.checkBoxShowAllPaths.isChecked(),
+                                                   self.ui.checkBoxShowHelixCorners.isChecked(),
+                                                   self.ui.checkBoxShowSheetCorners.isChecked(),
+                                                   False)
+        except:
+            print "Problem in sseViewer::drawGL: correspondenceEngine.draw"
