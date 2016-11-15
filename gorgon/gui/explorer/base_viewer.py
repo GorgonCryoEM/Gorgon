@@ -26,7 +26,6 @@ class BaseViewer(BaseDockWidget):
                                 QtCore.Qt.RightDockWidgetArea)
         self.renderer = renderer
         self.app = main
-        self.sceneIndex = -1;
         self.loaded = False
         self.selectEnabled = True
         self.mouseMoveEnabled = True

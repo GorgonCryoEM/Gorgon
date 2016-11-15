@@ -62,9 +62,6 @@ class Camera(QtOpenGL.QGLWidget):
         self.init_scenes()
 
     def init_scenes(self):
-        for i in range(len(self.scene)):
-            self.scene[i].sceneIndex = i;
-
         for s in self.scene:
             s.visualizationUpdated.connect(self.updateGL)
             s.centerRequested.connect(self.sceneSetCenterLocal)
