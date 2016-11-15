@@ -83,6 +83,7 @@ class BaseViewer(BaseDockWidget):
             gridlayout = form.gridlayout5
 
         gridlayout.addWidget(self.pushButtonSave, 1, 0, 1, 2)
+        self.pushButtonSave.pressed.connect(self.saveData)
 
     def saveData(self):
         self.fileName = QtGui.QFileDialog.getSaveFileName(self, self.tr("Save Data"), "")
