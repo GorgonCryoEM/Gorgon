@@ -6,6 +6,7 @@ from .display_styles import *
 from ...toolkit.libpytoolkit import *
 from .common.model_visualization_form import ModelVisualizationForm
 
+from .common.ui_dialog_model_visualization import Ui_DialogModelVisualization
 
 class BaseViewer(BaseDockWidget):
     
@@ -46,6 +47,7 @@ class BaseViewer(BaseDockWidget):
         # self.setupSignals()
         
         self.runDisplayType = smooth
+        self.addSaveButton()
 
     # def setupSignals(self):
     #     self.ui.pushButtonModelColor.valueChanged.connect(self.setColor)
@@ -68,6 +70,19 @@ class BaseViewer(BaseDockWidget):
 #         self.ui.doubleSpinBoxSizeY.editingFinished.connect(self.scaleChanged)
 #         self.ui.doubleSpinBoxSizeZ.editingFinished.connect(self.scaleChanged)
 #         self.ui.spinBoxThickness.valueChanged.connect(self.setThickness)
+
+    def addSaveButton(self):
+        self.pushButtonSave = QtGui.QPushButton(self)
+        self.pushButtonSave.setObjectName("pushButtonSave")
+        self.pushButtonSave.setText(QtGui.QApplication.translate("DialogModelVisualization", "Save", None, QtGui.QApplication.UnicodeUTF8))
+
+        form = self.ui.ui
+        if isinstance(form, Ui_DialogModelVisualization):
+            gridlayout = form.gridlayout6
+        else:
+            gridlayout = form.gridlayout5
+
+        gridlayout.addWidget(self.pushButtonSave, 1, 0, 1, 2)
 
     def saveData(self):
         self.fileName = QtGui.QFileDialog.getSaveFileName(self, self.tr("Save Data"), "")
