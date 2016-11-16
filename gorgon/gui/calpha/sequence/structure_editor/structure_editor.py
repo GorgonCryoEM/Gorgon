@@ -66,7 +66,7 @@ class CAlphaStructureEditor(QtGui.QWidget):
         self.redoButton = QtGui.QPushButton('Redo')
         self.redoButton.setEnabled(self.undoStack.canRedo())
         self.mockSidechainsCheckBox = QtGui.QCheckBox('Mock Sidechains')
-        self.removeButton = QtGui.QPushButton('Remove Selected Atoms')
+        self.removeButton = QtGui.QPushButton('Delete')
         self.helixFlipButton = QtGui.QPushButton(self.tr('Flip'))
 
         self.tabWidget = QtGui.QTabWidget()
