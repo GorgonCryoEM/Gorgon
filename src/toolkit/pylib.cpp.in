@@ -160,6 +160,7 @@ BOOST_PYTHON_MODULE(@current_pylib@)
        .def("getOriginZ",  &RendererBase::getOriginZ)
        .def("getMinPos", &RendererBase::getMinPos)
        .def("getMaxPos", &RendererBase::getMaxPos)
+       .def("selectionClear", &RendererBase::selectionClear)     
   ;
   
   class_<VolumeRenderer, bases<Volume, RendererBase> >("VolumeRenderer", init<>())

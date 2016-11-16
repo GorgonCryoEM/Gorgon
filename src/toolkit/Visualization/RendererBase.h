@@ -32,9 +32,11 @@ namespace Visualization {
             virtual float getOriginX() const;
             virtual float getOriginY() const;
             virtual float getOriginZ() const;
+            virtual void selectionClear();
 
         protected:
             int displayStyle;
+            bool isSelected;
     };
 }
 

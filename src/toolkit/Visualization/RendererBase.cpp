@@ -62,4 +62,14 @@ namespace Visualization {
         return 0;
     }
 
+    void RendererBase::selectionClear() {
+//        if (isSelected) {
+            isSelected = false;
+//            return true;
+//        } else {
+//            return false;
+//        }
+    }
+
+
 }
