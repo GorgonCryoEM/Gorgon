@@ -23,6 +23,8 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
         self.sse = self.parent.sse
         self.viewer = self.sse
         
+        self.volume.selectEnabled = False
+        
         dock = QtGui.QDockWidget("SSEBuilder", self.volume)
         dock.setWidget(self)
         dock.setAllowedAreas(QtCore.Qt.AllDockWidgetAreas)

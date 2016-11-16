@@ -11,6 +11,7 @@ class VolumeViewer(BaseViewer):
         self.shortTitle = "VOL"
         
         self.loaded = False
+        self.selectEnabled = False
         
         self.form = VolumeSurfaceEditorForm(main)
         # self.setColor(QtGui.QColor(50, 200, 50, 150))
