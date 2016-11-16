@@ -660,6 +660,9 @@ class CAlphaStructureEditor(QtGui.QWidget):
         # self.connect(self.loopStartEndBuildingButton, QtCore.SIGNAL('clicked()'), self.startEndLoopBuilding)
         # 
         # self.updateLoopEditorEnables()
+        
+        self.loopVolumeLoadedLabel.setVisible(False)
+        self.loopVolumeLoadButton.setVisible(False)
 
     def setupPositionTab(self):
         self.posTranslateGroup = QtGui.QGroupBox('Translate:')
