@@ -5,6 +5,7 @@ from PyQt4 import QtOpenGL, QtCore, QtGui
 
 from gorgon.libs import Vec3
 from ...toolkit.libpytoolkit import *
+from volume_viewer import VolumeViewer
 
 
 class Camera(QtOpenGL.QGLWidget):
@@ -62,6 +63,12 @@ class Camera(QtOpenGL.QGLWidget):
         self.init_scenes()
 
     def init_scenes(self):
+        # VolumeViewer must be the last to draw
+        # Assumes only one instance of VolumeViewer
+        for i in range(len(self.scene)-1):
+            if isinstance(self.scene[i], VolumeViewer):
+                self.scene[i], self.scene[-1] = self.scene[-1], self.scene[i]
+        
         for s in self.scene:
             s.visualizationUpdated.connect(self.updateGL)
             s.centerRequested.connect(self.sceneSetCenterLocal)
