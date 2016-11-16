@@ -383,6 +383,7 @@ class BaseViewer(BaseDockWidget):
         print self.title, ": ", hitStack
         hits = [-1,-1,-1,-1,-1]
         self.multipleSelection = not forceTrue
+        print "processMouseClick: %s: " % (self.title) , self.selectEnabled
         if(self.selectEnabled):
             for i in range(5):
                 if(len(hitStack) > i+1):
