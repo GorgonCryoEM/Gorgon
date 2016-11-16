@@ -13,7 +13,7 @@ def main():
     parser.add_argument('skeleton', action="store")
     parser.add_argument('output',   action="store")
     parser.add_argument('--resolution',        type=float, default=8.0)
-    parser.add_argument('--threshold',         type=float, default=0.38)
+    parser.add_argument('--thresh',            type=float, default=0.38)
     parser.add_argument('--correlationWeight', type=float, default=1.0)
     parser.add_argument('--skeletonWeight',    type=float, default=1.0)
     parser.add_argument('--geometryWeight',    type=float, default=1.0)
@@ -43,7 +43,7 @@ def main():
                        args.skeleton,
                        args.output,
                        args.resolution,
-                       args.threshold,
+                       args.thresh,
                        args.correlationWeight,
                        args.skeletonWeight,
                        args.geometryWeight)
