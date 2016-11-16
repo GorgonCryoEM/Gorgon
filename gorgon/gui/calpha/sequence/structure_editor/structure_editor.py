@@ -66,7 +66,7 @@ class CAlphaStructureEditor(QtGui.QWidget):
         self.redoButton = QtGui.QPushButton('Redo')
         self.redoButton.setEnabled(self.undoStack.canRedo())
         self.mockSidechainsCheckBox = QtGui.QCheckBox('Mock Sidechains')
-        self.removeButton = QtGui.QPushButton('Remove Selected Atoms')
+        self.removeButton = QtGui.QPushButton('Delete')
         self.helixFlipButton = QtGui.QPushButton(self.tr('Flip'))
 
         self.tabWidget = QtGui.QTabWidget()
@@ -660,6 +660,9 @@ class CAlphaStructureEditor(QtGui.QWidget):
         # self.connect(self.loopStartEndBuildingButton, QtCore.SIGNAL('clicked()'), self.startEndLoopBuilding)
         # 
         # self.updateLoopEditorEnables()
+        
+        self.loopVolumeLoadedLabel.setVisible(False)
+        self.loopVolumeLoadButton.setVisible(False)
 
     def setupPositionTab(self):
         self.posTranslateGroup = QtGui.QGroupBox('Translate:')

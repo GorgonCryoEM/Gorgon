@@ -9,8 +9,8 @@ class Skeletonizer(Operation):
 
     def _add_parser_arguments(self):
         self.parser.add_argument("--thresh", type=float)
-        self.parser.add_argument("--min_curve_length", default=4)
-        self.parser.add_argument("--min_surface_size", default=4)
+        self.parser.add_argument("--min_curve_length", type=int, default=4)
+        self.parser.add_argument("--min_surface_size", type=int, default=4)
 
     def _run(self, args):
         self.thresh = float(args.thresh) if args.thresh else self.defaultDensity()
@@ -50,9 +50,9 @@ class GrayScale(Skeletonizer):
 
     def _add_parser_arguments(self):
         self.parser.add_argument("--step_count", type=int, default=250)
-        self.parser.add_argument("--curve_radius", default=2)
-        self.parser.add_argument("--surface_radius", default=2)
-        self.parser.add_argument("--skeleton_radius", default=4)
+        self.parser.add_argument("--curve_radius", type=int, default=2)
+        self.parser.add_argument("--surface_radius", type=int, default=2)
+        self.parser.add_argument("--skeleton_radius", type=int, default=4)
 
     def _run_derived(self, args):
         self.skeleton = self.renderer.performGrayscaleSkeletonizationAbeysinghe2008(self.thresh, args.step_count, args.min_curve_length, args.min_surface_size, args.curve_radius, args.surface_radius, args.skeleton_radius)
