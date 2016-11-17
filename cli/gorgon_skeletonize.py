@@ -5,11 +5,9 @@ import logging
 from gorgon.toolkit import *
 
 def main():
-    mode_map = {'filter': {"normalize":"Normalize", "lowpass":"LowPass", "gaussian":"Gaussian"},
-                'skeletonize': {"binary":"Binary", "grayscale":"GrayScale"}
-                }
-    
     parser = argparse.ArgumentParser(description='Gorgon Skeletonizer')
+
+    mode_map = {"binary":"Binary", "grayscale":"GrayScale"}
     parser.add_argument('--log', action="store",
                         dest='loglevel',
                         choices=['info', 'debug'],
