@@ -21,18 +21,15 @@ def main():
     cmd_objects = {}
     
 #     Update subparsers by initializing the objects listed in mode_map
-    for k in mode_map:
-        subparser = subparsers.add_parser(k)
-        subparser.add_argument('operation_type', choices=(mode_map[k]))
-        for opt in mode_map[k]:
-            mode = globals()[mode_map[k][opt]]
-            # initialization
-            cmd_objects[mode_map[k][opt]] = mode(subparser)
+    for method in mode_map:
+        mode = globals()[mode_map[method]]
+        # initialization
+        cmd_objects[mode_map[method]] = mode(parser)
 
     args = parser.parse_args()
     
     # get selected object
-    cmd = cmd_objects[mode_map[args.operation][args.operation_type]]    
+    cmd = cmd_objects[mode_map[args.method]]    
     cmd.run(args)
     
 # 	Logging setup
