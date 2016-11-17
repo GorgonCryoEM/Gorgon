@@ -635,8 +635,6 @@ class CAlphaStructureEditor(QtGui.QWidget):
     def setupLoopTab(self):
         self.loopBuildingStarted = False
 
-        self.loopVolumeLoadedLabel = QtGui.QLabel('Volume not loaded.  Please load a volume to place loops.')
-        self.loopVolumeLoadButton = QtGui.QPushButton('Load Volume')
         self.loopStartEndBuildingButton = QtGui.QPushButton('Start Loop Placement')
 
         self.loopStartLabel = QtGui.QLabel('Start Residue:')
@@ -647,8 +645,6 @@ class CAlphaStructureEditor(QtGui.QWidget):
         self.loopStopSpinBox.setMaximum(10000)
 
         loopLayout = QtGui.QGridLayout()
-        loopLayout.addWidget(self.loopVolumeLoadedLabel, 0, 0, 1, 2)
-        loopLayout.addWidget(self.loopVolumeLoadButton, 1, 0, 1, 1)
         loopLayout.addWidget(self.loopStartEndBuildingButton, 2, 0, 1, 1)
         loopLayout.addWidget(self.loopStartLabel, 3, 0, 1, 1)
         loopLayout.addWidget(self.loopStartSpinBox, 3, 1, 1, 1)
@@ -656,13 +652,9 @@ class CAlphaStructureEditor(QtGui.QWidget):
         loopLayout.addWidget(self.loopStopSpinBox, 4, 1, 1, 1)
         self.loopTab.setLayout(loopLayout)
 
-        # self.connect(self.loopVolumeLoadButton, QtCore.SIGNAL('clicked()'), self.loadLoopVolume)
         # self.connect(self.loopStartEndBuildingButton, QtCore.SIGNAL('clicked()'), self.startEndLoopBuilding)
         # 
         # self.updateLoopEditorEnables()
-        
-        self.loopVolumeLoadedLabel.setVisible(False)
-        self.loopVolumeLoadButton.setVisible(False)
 
     def setupPositionTab(self):
         self.posTranslateGroup = QtGui.QGroupBox('Translate:')
