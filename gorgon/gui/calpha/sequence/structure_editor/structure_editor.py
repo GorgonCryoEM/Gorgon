@@ -645,11 +645,11 @@ class CAlphaStructureEditor(QtGui.QWidget):
         self.loopStopSpinBox.setMaximum(10000)
 
         loopLayout = QtGui.QGridLayout()
-        loopLayout.addWidget(self.loopStartEndBuildingButton, 1, 0, 1, 1)
-        loopLayout.addWidget(self.loopStartLabel, 2, 0, 1, 1)
-        loopLayout.addWidget(self.loopStartSpinBox, 2, 1, 1, 1)
-        loopLayout.addWidget(self.loopStopLabel, 3, 0, 1, 1)
-        loopLayout.addWidget(self.loopStopSpinBox, 3, 1, 1, 1)
+        loopLayout.addWidget(self.loopStartEndBuildingButton, 2, 0, 1, 1)
+        loopLayout.addWidget(self.loopStartLabel, 3, 0, 1, 1)
+        loopLayout.addWidget(self.loopStartSpinBox, 3, 1, 1, 1)
+        loopLayout.addWidget(self.loopStopLabel, 4, 0, 1, 1)
+        loopLayout.addWidget(self.loopStopSpinBox, 4, 1, 1, 1)
         self.loopTab.setLayout(loopLayout)
 
         # self.connect(self.loopStartEndBuildingButton, QtCore.SIGNAL('clicked()'), self.startEndLoopBuilding)
