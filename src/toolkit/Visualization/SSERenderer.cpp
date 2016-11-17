@@ -465,7 +465,7 @@ namespace Visualization {
 
 
         for(unsigned int i = 0; i < helices.size(); i++) {
-            if(helices[i]->GetSelected()) {
+            if(helices[i]->isSelected()) {
                 fitter->FitHelix(helices[i], 0.005, 1.0/360.0, discretizationStep, 200);
             }
         }
@@ -479,7 +479,7 @@ namespace Visualization {
         } */
 
         delete fitter;
-        UpdateBoundingBox();
+//        UpdateBoundingBox();
     }
 
     void SSERenderer::removeHelices() {
