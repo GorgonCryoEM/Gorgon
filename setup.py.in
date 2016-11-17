@@ -12,7 +12,6 @@ setup(
                 ],
     entry_points={
         'console_scripts': [
-            'gorgon=@cli_install_dir@.gorgon_cli:main',
             'gorgon-skeletonize=@cli_install_dir@.gorgon_skeletonize:main',
             'gorgon-filter=@cli_install_dir@.gorgon_filter:main',
             'gorgon-sse-hunter=@cli_install_dir@.gorgon_sse_hunter:main',
