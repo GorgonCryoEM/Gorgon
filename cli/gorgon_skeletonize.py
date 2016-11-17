@@ -11,15 +11,13 @@ def main():
 
     parser.add_argument('input', action="store")
     parser.add_argument('output', action="store")
+    parser.add_argument('method', choices=mode_map.keys())
     parser.add_argument('--log', action="store",
                         dest='loglevel',
                         choices=['info', 'debug'],
                         default='info',
                         help="log level"
                         )
-    
-    subparsers = parser.add_subparsers(dest='operation')
-    
     cmd_objects = {}
     
 #     Update subparsers by initializing the objects listed in mode_map
