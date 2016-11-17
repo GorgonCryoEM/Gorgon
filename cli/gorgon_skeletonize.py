@@ -8,6 +8,9 @@ def main():
     parser = argparse.ArgumentParser(description='Gorgon Skeletonizer')
 
     mode_map = {"binary":"Binary", "grayscale":"GrayScale"}
+
+    parser.add_argument('input', action="store")
+    parser.add_argument('output', action="store")
     parser.add_argument('--log', action="store",
                         dest='loglevel',
                         choices=['info', 'debug'],
@@ -28,9 +31,6 @@ def main():
             # initialization
             cmd_objects[mode_map[k][opt]] = mode(subparser)
 
-    parser.add_argument('input', action="store")
-    parser.add_argument('output', action="store")
-    
     args = parser.parse_args()
     
     # get selected object
