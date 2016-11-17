@@ -7,6 +7,7 @@ from .command_atom_placement import CAlphaStructureEditorCommandAtomPlacement
 from .command_change_position import CAlphaStructureEditorCommandChangePosition
 from ....helix import create_helix
 from .....toolkit.libpytoolkit import PDBAtom, PDBBond
+from .loop_builder import CAlphaInteractiveLoopBuilder
 
 
 class CAlphaStructureEditor(QtGui.QWidget):
@@ -652,9 +653,9 @@ class CAlphaStructureEditor(QtGui.QWidget):
         loopLayout.addWidget(self.loopStopSpinBox, 4, 1, 1, 1)
         self.loopTab.setLayout(loopLayout)
 
-        # self.connect(self.loopStartEndBuildingButton, QtCore.SIGNAL('clicked()'), self.startEndLoopBuilding)
-        # 
-        # self.updateLoopEditorEnables()
+        self.connect(self.loopStartEndBuildingButton, QtCore.SIGNAL('clicked()'), self.startEndLoopBuilding)
+
+        self.updateLoopEditorEnables()
 
     def setupPositionTab(self):
         self.posTranslateGroup = QtGui.QGroupBox('Translate:')
