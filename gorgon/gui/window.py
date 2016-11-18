@@ -23,6 +23,7 @@ class Window(QtGui.QMainWindow):
         
         self.scene = []
         
+        self.toolbar = self.addToolBar("Toolbar")
         self.mainCamera = Camera(self.scene, self)
         self.mainCamera.append_scenes([self.skeleton, self.volume])
         
@@ -39,10 +40,6 @@ class Window(QtGui.QMainWindow):
                                 'design',
                                 'gorgon.ico')
         self.setWindowIcon(QtGui.QIcon(pathname))
-
-        self.toolbar = self.addToolBar("Toolbar")
-        for s in self.scene:
-            self.toolbar.addAction(s.toggleViewAction())
         
     @classmethod
     def set_parser(cls, parser):
