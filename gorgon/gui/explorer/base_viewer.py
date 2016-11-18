@@ -47,6 +47,7 @@ class BaseViewer(BaseDockWidget):
         
         self.runDisplayType = smooth
         self.addSaveButton()
+        self.dock.hide()
 
     # def setupSignals(self):
     #     self.ui.pushButtonModelColor.valueChanged.connect(self.setColor)
