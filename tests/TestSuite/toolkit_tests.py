@@ -64,9 +64,9 @@ class ToolkitTestCases(unittest.TestCase):
 			if self.prog_option:
 				cmd_option = '%s %s' % (self.prog_option, option)
 			else:
-				cmd_option = ''
+				cmd_option = '%s' % (option)
 			
-			cmd = '%s %s %s %s' % (self.exe, cmd_option, inputs, self.output)
+			cmd = '%s %s %s %s' % (self.exe, inputs, self.output, cmd_option)
 			
 			return cmd
 
