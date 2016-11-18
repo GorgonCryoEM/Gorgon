@@ -160,8 +160,8 @@ class CAlphaViewer(BaseViewer):
             self.unloadData()
         self.fileName = fileName
         self.renderer.loadSSEHunterFile(str(fileName))
-        volumeViewer = self.parent.volumeViewer
-        skeletonViewer = self.parent.skeletonViewer
+        # volumeViewer = self.parent.volumeViewer
+        # skeletonViewer = self.parent.skeletonViewer
         
         self.dirty = False
         self.loaded = True

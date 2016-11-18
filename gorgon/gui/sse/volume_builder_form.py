@@ -42,9 +42,7 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
         self.connect(self.pushButtonSelectionToSheet, QtCore.SIGNAL("clicked (bool)"),       self.selectionToSheet)
         self.connect(self.pushButtonRemoveSSE,        QtCore.SIGNAL("clicked (bool)"),       self.removeSSE)
         self.connect(self.pushButtonSSEHunter,        QtCore.SIGNAL("clicked (bool)"),       self.runSSEHunter)
-        self.connect(self.pushButtonLoadVolume,       QtCore.SIGNAL("clicked (bool)"),       self.loadVolume)
         self.connect(self.pushButtonSavePseudoatoms,  QtCore.SIGNAL("clicked (bool)"),       self.savePseudoatoms)
-        self.connect(self.pushButtonLoadSkeleton,     QtCore.SIGNAL("clicked (bool)"),       self.loadSkeleton)
         self.connect(self.pushButtonAddHelices,       QtCore.SIGNAL("clicked (bool)"),       self.autoBuildHelices)
         self.connect(self.pushButtonRemoveHelices,    QtCore.SIGNAL("clicked (bool)"),       self.removeHelices)
         self.connect(self.doubleSpinBoxCorrelation,   QtCore.SIGNAL("valueChanged(double)"), self.updateTotalScoreSSEHunterAtoms)
@@ -65,14 +63,6 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
                 pass
             self.setCursor(QtCore.Qt.ArrowCursor)
     
-    def loadVolume(self, temp):
-        self.parent.actions.getAction("load_Volume").trigger()
-        self.bringToFront()
-        
-    def loadSkeleton(self, temp):
-        self.parent.actions.getAction("load_Skeleton").trigger()
-        self.bringToFront()
-
     def removeHelices(self):
         self.viewer.renderer.removeHelices()
         self.viewer.modelChanged()
