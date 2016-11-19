@@ -29,7 +29,7 @@ class ToolkitTestCases(unittest.TestCase):
 			self.prog_option   = prog_option
 			self.out_extension = '.' + out_extension
 			
-			testsdir           = join(topdir, 'tests')
+			testsdir           = join(topdir, 'demo')
 
 			self.indir         = join(topdir,     'demo', 'groel')
 			self.outdir        = join(testsdir,   'outputs')
