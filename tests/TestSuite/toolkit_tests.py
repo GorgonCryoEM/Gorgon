@@ -89,6 +89,8 @@ class ToolkitTestCases(unittest.TestCase):
 			# remove output file in case left from previous test runs
 			if path.isfile(self.output):
 				os.remove(self.output)
+			if not path.exists(self.outdir):
+				mkdir(self.outdir)
 			# check_call([self._cmd(option)], shell=True)
 			call([self._cmd(option)], shell=True)
 			# assert cmp(self.output, self.ref), "\nFiles differ:\n   1: %s\n   2: %s" % (self.output, self.ref)
