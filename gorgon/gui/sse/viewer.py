@@ -2,7 +2,7 @@ import termcolor
 from PyQt4 import QtGui, QtCore
 
 from ..explorer import BaseViewer
-from ...toolkit.libpytoolkit import SSERenderer, SSEEngine
+from ...toolkit.libpytoolkit import SSERenderer
 
 
 class SSEViewer(BaseViewer):
@@ -19,11 +19,9 @@ class SSEViewer(BaseViewer):
         self.isClosedMesh = False
         self.helixFileName = ""
         self.sheetFileName = ""
-        self.currentMatch = None
         self.showBox = False;
         self.helixLoaded = False
         self.sheetLoaded = False
-        self.correspondenceEngine = SSEEngine()
         self.selectEnabled = True
         self.app.sse = self
         self.model2Visible = True
@@ -48,31 +46,6 @@ class SSEViewer(BaseViewer):
 #         self.ui.pushButtonSave.clicked.connect(self.saveHelixData)
         
         self.selectedObjects = []
-        self.correspondences = []
-        
-#     def drawGL(self):
-# #         BaseViewer.drawGL(self)
-#         try:
-#             print termcolor.colored('renderer.draw', 'yellow')
-#             for kk in range(3):
-#                 self.renderer.draw(kk, True)
-#         except:
-#             print "Problem in sseViewer::drawGL: renderer.draw"
-#         else:
-#             self.extraDrawingRoutines()
-
-    def extraDrawingRoutines(self):
-        try:
-            print termcolor.colored('correspondenceEngine.draw', 'yellow')
-            form = self.app.form
-            self.correspondenceEngine.draw(0)
-            self.correspondenceEngine.drawAllPaths(0,
-                                                   form.ui.checkBoxShowAllPaths.isChecked(),
-                                                   form.ui.checkBoxShowHelixCorners.isChecked(),
-                                                   form.ui.checkBoxShowSheetCorners.isChecked(),
-                                                   False)
-        except:
-            print "Problem in sseViewer::drawGL: correspondenceEngine.draw"
 
     def loadHelixDataFromFile(self, fileName):
         try:
@@ -132,18 +105,7 @@ class SSEViewer(BaseViewer):
         self.helixFileName = ""
         self.sheetFileName = ""
         BaseViewer.unloadData(self)
-          
-    def makeSheetSurfaces(self, offsetx, offsety, offsetz, scalex, scaley, scalez):
-        # rebuild the set of sheets to render
-        numHelicesSheets = self.correspondenceEngine.getSkeletonSSECount()
-        self.renderer.unloadGraphSSEs()
-        for i in range(numHelicesSheets):
-            if self.correspondenceEngine.getSkeletonSSE(i).isSheet():
-                self.renderer.loadGraphSSE(i, self.correspondenceEngine.getSkeletonSSE(i), offsetx, offsety, offsetz, scalex, scaley, scalez)
 
-    def updateCorrespondences(self, corrs):
-        self.correspondences  = corrs
-        
     # Overridden
     def emitElementClicked(self, hitStack, event):
 #         if (self.app.viewers["calpha"].displayStyle == self.app.viewers["calpha"].DisplayStyleRibbon):
