@@ -12,12 +12,12 @@ class Form(QtGui.QDialog):
         dock.setWidget(self)
         dock.setAllowedAreas(QtCore.Qt.AllDockWidgetAreas)
         self.parent.addDockWidget(QtCore.Qt.LeftDockWidgetArea, dock)
-        self.connect(self.volume, QtCore.SIGNAL("modelLoaded()"), self.modelLoaded)
-        self.connect(self.volume, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)
-        self.createUI()
+        # self.createUI()
 
     def createUI(self):
         self.ui.setupUi(self)
+        self.connect(self.volume, QtCore.SIGNAL("modelLoaded()"), self.modelLoaded)
+        self.connect(self.volume, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)
         self.connect(self.ui.horizontalSliderIsoLevel,QtCore.SIGNAL("valueChanged(int)"),self.isoValueChanged)
         self.connect(self.ui.comboBoxMethod, QtCore.SIGNAL("currentIndexChanged (int)"), self.methodChanged)
         self.methodChanged(0)
