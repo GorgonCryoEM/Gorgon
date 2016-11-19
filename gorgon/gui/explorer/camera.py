@@ -74,6 +74,7 @@ class Camera(QtOpenGL.QGLWidget):
             s.centerRequested.connect(self.sceneSetCenterLocal)
             s.centerAllRequested.connect(self.sceneSetCenter)
             self.connect(s, QtCore.SIGNAL("mouseTrackingChanged()"), self.refreshMouseTracking)
+            self.app.toolbar.addAction(s.toggleViewAction())
 
     def initializeGL(self):
         self.initializeScene()

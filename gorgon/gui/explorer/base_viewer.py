@@ -37,6 +37,7 @@ class BaseViewer(BaseDockWidget):
 
         self.glList =  GLuint()
         self.twoWayLighting = False
+        self.isSetMaterial = True
         
         self.multipleSelection = True
         self.color = QtGui.QColor(180, 180, 180, 150)
@@ -147,7 +148,8 @@ class BaseViewer(BaseDockWidget):
         glDepthMask(GL_TRUE);
         
         if(self.loaded and self.modelVisible):
-            self.setMaterials()
+            if self.isSetMaterial:
+                self.setMaterials()
             self.initializeGLDisplayType()
             
 #             print "self.glList: %s: %d" %(self.title, self.glList)
