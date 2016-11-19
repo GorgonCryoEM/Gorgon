@@ -6,8 +6,7 @@ class Form(QtGui.QDialog):
     def __init__(self, parent, ui, dock_title):
         self.parent = parent
         self.ui = ui()
-        self.volume = self.parent.volume
-        self.skeleton = self.parent.skeleton
+        self.volume = None
         super(Form, self).__init__()
         dock = QtGui.QDockWidget(dock_title, self.volume)
         dock.setWidget(self)
