@@ -5,7 +5,7 @@ from os.path import join
 import unittest
 import abc
 
-from subprocess import check_call
+from subprocess import check_call, call
 from filecmp import cmp
 import termcolor
 
@@ -74,7 +74,7 @@ class ToolkitTestCases(unittest.TestCase):
 				else:
 					print "%s does exist" % f
 				
-				check_call([self.exe, "-h"], shell=True)
+				call([self.exe, "-h"], shell=True)
 			return cmd
 
 		def run(self, option=''):
