@@ -16,10 +16,11 @@ class SSECorrespondence(Window):
 
         self.structPred = StructurePrediction.load(self.args.sequence, self)
         
+        self.skeleton = SkeletonViewer(self)
         self.sse    = SSEViewer(self)
         self.calpha = CAlphaViewer(self)
 
-        self.mainCamera.append_scenes([self.sse, self.calpha])
+        self.mainCamera.append_scenes([self.skeleton, self.sse, self.calpha])
         
         self.form.createUI()
 
