@@ -60,13 +60,13 @@ class ToolkitTestCases(unittest.TestCase):
 			self.output = join(self.outdir, filename)
 			self.ref    = join(self.refdir, filename)
 			
-			inputs = ' '.join([os.path.abspath(f) for f in self.get_inputs()])
+			inputs = ' '.join(self.get_inputs())
 			if self.prog_option:
 				cmd_option = '%s %s' % (self.prog_option, option)
 			else:
 				cmd_option = '%s' % (option)
 			
-			cmd = '%s %s %s %s' % (self.exe, inputs, os.path.abspath(self.output), cmd_option)
+			cmd = '%s %s %s %s' % (self.exe, inputs, self.output, cmd_option)
 			
 			print "cmd: %s" % cmd
 			lll = [self.ref]
