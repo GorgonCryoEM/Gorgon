@@ -68,6 +68,13 @@ class ToolkitTestCases(unittest.TestCase):
 			
 			cmd = '%s %s %s %s' % (self.exe, inputs, self.output, cmd_option)
 			
+			for f in [self.ref, inputs]:
+				if path.isfile(f):
+					print "%s does NOT exist" % f
+				else:
+					print "%s does exist" % f
+				
+				check_call([self.exe, "-h"], shell=True)
 			return cmd
 
 		def run(self, option=''):
