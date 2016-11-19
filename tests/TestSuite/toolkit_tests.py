@@ -32,7 +32,7 @@ class ToolkitTestCases(unittest.TestCase):
 			testsdir           = join(topdir, 'demo')
 
 			self.indir         = join(topdir,     'demo', 'groel')
-			self.outdir        = join(testsdir,   'outputs')
+			self.outdir        = join(testsdir,   '')
 			self.refdir        = join(self.indir, 'refs')
 
 			self.volume        = join(self.indir, 'densityMap.mrc')
