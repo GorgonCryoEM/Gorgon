@@ -8,11 +8,6 @@ class BinarySkeletonization(Window):
 
     def __init__(self, args):
         super(BinarySkeletonization, self).__init__(args, VolumeBinarySkeletonizationForm)
-        
-        self.volume = VolumeViewer(self)
-        self.skeleton = SkeletonViewer(self)
-
-        self.mainCamera.append_scenes([self.skeleton, self.volume])
 
     @classmethod
     def set_parser(cls, parser):
@@ -20,6 +15,14 @@ class BinarySkeletonization(Window):
         parser.add_argument('volume')
 
     def load(self):
+        self.volume = VolumeViewer(self)
+        self.skeleton = SkeletonViewer(self)
+        self.form.volume = self.volume
+        self.form.skeleton = self.skeleton
+        self.form.createUI()
+    
+        self.mainCamera.append_scenes([self.skeleton, self.volume])
+        
         self.volume.load(self.args.volume)
         
         super(BinarySkeletonization, self).load()
