@@ -69,6 +69,7 @@ class ToolkitTestCases(unittest.TestCase):
 			cmd = '%s %s %s %s' % (self.exe, inputs, self.output, cmd_option)
 			
 			for f in [self.ref, inputs]:
+				f = os.path.abspath(f)
 				if path.isfile(f):
 					print "%s does NOT exist" % f
 				else:
