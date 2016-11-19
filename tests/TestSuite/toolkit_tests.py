@@ -69,7 +69,8 @@ class ToolkitTestCases(unittest.TestCase):
 			cmd = '%s %s %s %s' % (self.exe, inputs, self.output, cmd_option)
 			
 			print "cmd: %s" % cmd
-			lll = [self.ref, *self.get_inputs()]
+			lll = [self.ref]
+			lll.extend(self.get_inputs())
 			print "lll: %s" % lll
 			for f in lll:
 				print "   ---in for loop: %s" % f
