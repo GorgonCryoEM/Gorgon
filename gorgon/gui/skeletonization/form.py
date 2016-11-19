@@ -6,19 +6,18 @@ class Form(QtGui.QDialog):
     def __init__(self, parent, ui, dock_title):
         self.parent = parent
         self.ui = ui()
-        self.volume = self.parent.volume
-        self.skeleton = self.parent.skeleton
+        self.volume = None
         super(Form, self).__init__()
         dock = QtGui.QDockWidget(dock_title, self.volume)
         dock.setWidget(self)
         dock.setAllowedAreas(QtCore.Qt.AllDockWidgetAreas)
         self.parent.addDockWidget(QtCore.Qt.LeftDockWidgetArea, dock)
-        self.connect(self.volume, QtCore.SIGNAL("modelLoaded()"), self.modelLoaded)
-        self.connect(self.volume, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)
-        self.createUI()
+        # self.createUI()
 
     def createUI(self):
         self.ui.setupUi(self)
+        self.connect(self.volume, QtCore.SIGNAL("modelLoaded()"), self.modelLoaded)
+        self.connect(self.volume, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)
         self.connect(self.ui.horizontalSliderIsoLevel,QtCore.SIGNAL("valueChanged(int)"),self.isoValueChanged)
         self.connect(self.ui.comboBoxMethod, QtCore.SIGNAL("currentIndexChanged (int)"), self.methodChanged)
         self.methodChanged(0)
