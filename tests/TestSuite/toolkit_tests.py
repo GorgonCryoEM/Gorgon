@@ -68,9 +68,9 @@ class ToolkitTestCases(unittest.TestCase):
 			
 			cmd = '%s %s %s %s' % (self.exe, inputs, self.output, cmd_option)
 			
-			print cmd
+			print "cmd: %s" % cmd
 			lll = [self.ref, inputs]
-			print lll
+			print "lll: %s" % lll
 			for f in lll:
 				print f
 				f = os.path.abspath(f)
@@ -79,7 +79,7 @@ class ToolkitTestCases(unittest.TestCase):
 				else:
 					print "%s does exist" % f
 				
-				call([self.exe, "-h"], shell=True)
+				# call([self.exe, "-h"], shell=True)
 			return cmd
 
 		def run(self, option=''):
