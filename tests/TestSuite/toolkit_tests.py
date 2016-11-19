@@ -72,7 +72,7 @@ class ToolkitTestCases(unittest.TestCase):
 			lll = [self.ref, inputs]
 			print "lll: %s" % lll
 			for f in lll:
-				print f
+				print "   ---in for loop: %s" % f
 				f = os.path.abspath(f)
 				if not path.isfile(f):
 					print "%s does NOT exist" % f
