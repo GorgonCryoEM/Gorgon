@@ -292,6 +292,8 @@ namespace GraphMatch {
             MISSING_HELIX_COUNT = intValue;
         } else if(token == TOKEN_MISSING_SHEET_COUNT) {
             MISSING_SHEET_COUNT = intValue;
+        } else if(token == TOKEN_BORDER_MARGIN_THRESHOLD) {
+            BORDER_MARGIN_THRESHOLD = intValue;
         } else {
             return false;
         }
