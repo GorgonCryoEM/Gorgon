@@ -1099,7 +1099,7 @@ namespace GraphMatch {
         }
 
 #ifdef VERBOSE
-//        baseGraph.print();
+        baseGraph.print();
 #endif
     }
 
@@ -1148,7 +1148,7 @@ namespace GraphMatch {
         }
 
 #ifdef VERBOSE
-//        baseGraph.print();
+        baseGraph.print();
 #endif
     }
 

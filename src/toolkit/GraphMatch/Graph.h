@@ -549,7 +549,7 @@ namespace GraphMatch {
         }
 #ifdef VERBOSE
         cout << "=== graph after merging sheets ===" << endl;
-//        print();
+        print();
         cout << "=== ===" << endl;
 #endif
     }
