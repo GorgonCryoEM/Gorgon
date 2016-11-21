@@ -484,7 +484,7 @@ namespace GraphMatch {
                         q.pop();
                         ox  = res.x;
                         oy  = res.y;
-                        oz  = res.y;
+                        oz  = res.z;
 
                         // Test if neighbors satisfy sheet condition
                         if ( isSkeletonSheet(*vol, ox, oy, oz ) )
