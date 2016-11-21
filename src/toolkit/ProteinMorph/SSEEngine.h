@@ -88,7 +88,7 @@ namespace Visualization {
         skeleton = *readFile(MRC_FILE_NAME, VRML_HELIX_FILE_NAME, SSE_FILE_NAME, VRML_SHEET_FILE_NAME);
         clock_t finish = clock();
         #ifdef VERBOSE
-            printf("\033[32m\tReading Base file Took %f seconds.\n\033[0m", (double) (finish - start) / (double) CLOCKS_PER_SEC ) ;
+            printf("\tReading Base file Took %f seconds.\n", (double) (finish - start) / (double) CLOCKS_PER_SEC ) ;
             skeleton.print();
         #endif
     }
