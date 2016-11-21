@@ -294,6 +294,8 @@ namespace GraphMatch {
             MISSING_SHEET_COUNT = intValue;
         } else if(token == TOKEN_BORDER_MARGIN_THRESHOLD) {
             BORDER_MARGIN_THRESHOLD = intValue;
+        } else if(token == TOKEN_MINIMUM_SHEET_SIZE) {
+            MINIMUM_SHEET_SIZE = intValue;
         } else {
             return false;
         }
