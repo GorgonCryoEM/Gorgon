@@ -40,6 +40,14 @@ class HelixCorrespondence(object):
         #Graph Settings tab
         self.constants.setConstant("BORDER_MARGIN_THRESHOLD", self.defaults.BorderMarginThreshold)
         self.constants.setConstant("EUCLIDEAN_DISTANCE_THRESHOLD", self.defaults.EuclideanDistance)
+        self.constants.setConstant("MAXIMUM_DISTANCE_SHEET_SKELETON", self.defaults.MaxSheetDistance)
+        self.constants.setConstant("MINIMUM_SHEET_SIZE", self.defaults.MinSheetSize)
+        self.constants.setConstant("SHEET_SELF_LOOP_LENGTH", self.defaults.SheetSelfLoopLength)
+        self.constants.setConstant("SHEET_MERGE_THRESHOLD", self.defaults.SheetMergeThreshold)
+        # if (self.ui.checkBoxIncludeStrands.isChecked()):
+        #     self.constants.setConstant("INCLUDE_STRANDS", 1)
+        # else:
+        #     self.constants.setConstant("INCLUDE_STRANDS", 0)
 
         #Matching Settings tab
         self.constants.setConstant("EUCLIDEAN_VOXEL_TO_PDB_RATIO", self.defaults.EuclideanToPDBRatio)
