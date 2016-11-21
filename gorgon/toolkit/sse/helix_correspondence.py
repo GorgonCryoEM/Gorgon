@@ -59,6 +59,32 @@ class HelixCorrespondence(object):
             self.constants.setConstant("COST_FUNCTION", 3)
 
         self.constants.setConstant("LOOP_WEIGHT_COEFFICIENT", self.defaults.LoopImportance)
+        self.constants.setConstant("EUCLIDEAN_LOOP_PENALTY", self.defaults.EuclideanLoopUsedPenalty)
+
+        self.constants.setConstant("HELIX_WEIGHT_COEFFICIENT", self.defaults.HelixImportance)
+        # if(self.ui.checkBoxMissingHelices.isChecked()):
+        #     self.constants.setConstant("MISSING_HELIX_COUNT", self.defaults.MissingHelixCount)
+        # else:
+        #     self.constants.setConstant("MISSING_HELIX_COUNT", -1)
+        self.constants.setConstant("MISSING_HELIX_COUNT", -1)
+        
+        self.constants.setConstant("MISSING_HELIX_PENALTY", self.defaults.HelixMissingPenalty)
+        self.constants.setConstant("MISSING_HELIX_PENALTY_SCALED", self.defaults.HelixMissingPenaltyScaled)
+        self.constants.setConstant("START_END_MISSING_HELIX_PENALTY", self.defaults.EndHelixMissingPenalty)
+
+        self.constants.setConstant("SHEET_WEIGHT_COEFFICIENT", self.defaults.SheetImportance)
+        # if(self.ui.checkBoxMissingSheets.isChecked()):
+        #     self.constants.setConstant("MISSING_SHEET_COUNT", self.defaults.MissingSheetCount)
+        # else:
+        #     self.constants.setConstant("MISSING_SHEET_COUNT", -1)
+        self.constants.setConstant("MISSING_SHEET_COUNT", -1)
+        
+        self.constants.setConstant("MISSING_SHEET_PENALTY", self.defaults.SheetMissingPenalty)
+        self.constants.setConstant("MISSING_SHEET_PENALTY_SCALED", self.defaults.SheetMissingPenaltyScaled)
+
+        # no longer needed?
+        self.constants.setConstant("NORMALIZE_GRAPHS", True)
+
 
     def accept(self):
         self.setConstants()
