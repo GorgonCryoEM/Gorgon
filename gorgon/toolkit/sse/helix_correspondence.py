@@ -85,8 +85,45 @@ class HelixCorrespondence(object):
         # no longer needed?
         self.constants.setConstant("NORMALIZE_GRAPHS", True)
 
+    def loadDefaultParams(self):
+        # Graph Settings tab
+        self.defaults.BorderMarginThreshold = 5
+        self.defaults.EuclideanDistance = 0.0
+        self.defaults.IncludeSheets = True
+    
+        self.defaults.ShowHelixCorners = False
+        self.defaults.ShowSheetCorners = False
+        self.defaults.ShowAllPaths = False
+    
+        # Matching Settings tab
+        self.defaults.EuclideanToPDBRatio = 10.0
+        self.defaults.AbsoluteDifference = True
+        self.defaults.NormalizedDifference = False
+        self.defaults.QuadraticError = False
+    
+        self.defaults.LoopImportance = 0.2
+        self.defaults.EuclideanLoopUsedPenalty = 5.0
+    
+        self.defaults.HelixImportance = 1.0
+        self.defaults.MissingHelices = False
+        self.defaults.MissingHelixCount = 0
+        self.defaults.HelixMissingPenalty = 5.0
+        self.defaults.HelixMissingPenaltyScaled = 0.0
+        self.defaults.EndHelixMissingPenalty = 5.0
+    
+        self.defaults.SheetImportance = 1.0
+        self.defaults.MissingSheets = False
+        self.defaults.MissingSheetCount = 0
+        self.defaults.SheetMissingPenalty = 5.0
+        self.defaults.SheetMissingPenaltyScaled = 0.0
+        # 
+        # # Results tab
+        # self.ui.tableWidgetCorrespondenceList.clearContents()
+        # self.ui.tabWidget.setCurrentIndex(0)
+        # self.ui.comboBoxCorrespondences.setCurrentIndex(-1)
 
     def accept(self):
+        self.loadDefaultParams()
         self.setConstants()
         self.correspondenceEngine.loadSequenceGraph()
         self.correspondenceEngine.loadSkeletonGraph()
