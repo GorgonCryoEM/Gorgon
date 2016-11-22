@@ -73,7 +73,7 @@ namespace GraphMatch {
             bool expandNode(NodeStub * currentStub); // Expands all the children of the current node.
             void normalizeGraphs();
             void normalizeSheets();
-            void printNodeConcise(LinkedNode *node, int rank, bool endOfLine, bool printCostBreakdown);
+            void printNodeConcise(Node *node, int rank, bool endOfLine, bool printCostBreakdown);
             int bestMatches[RESULT_COUNT][MAX_NODES];
     };
 
@@ -917,7 +917,7 @@ namespace GraphMatch {
 
     // code copied from LinkedNode::PrintNodeConcise
     // Adding a breakdown of the cost into loops, nodes, and helices
-    void WongMatch::printNodeConcise(LinkedNode * node, int rank, bool endOfLine, bool printCostBreakdown) {
+    void WongMatch::printNodeConcise(Node * node, int rank, bool endOfLine, bool printCostBreakdown) {
         bool used[MAX_NODES];
         int n1[MAX_NODES];
         int n2[MAX_NODES];
@@ -926,7 +926,7 @@ namespace GraphMatch {
             used[i] = false;
         }
 
-        LinkedNodeStub * currentNode = node;
+        NodeStub * currentNode = node;
         bool continueLoop = true;
         while(continueLoop) {
             if(currentNode->parentNode == NULL) {
