@@ -858,7 +858,7 @@ namespace GraphMatch {
         int skippedHelixNodes = 0;
         int skippedSheetNodes = 0;
 
-        int numNodes = patternGraph->GetNodeCount();
+        int numNodes = patternGraph.getNodeCount();
 
         // iterate over all correspondences, adding each to the previous solution
         while(n2 < numNodes) {
@@ -867,19 +867,19 @@ namespace GraphMatch {
                 if(extraMessages) {
                     cout << "skipped node found at " << n1 + 1
                          << " with adj matrix value "
-                         << patternGraph->adjacencyMatrix[n1][n1][0] << endl;
+                         << patternGraph.adjacencyMatrix[n1][n1][0] << endl;
                 }
-                if(patternGraph->adjacencyMatrix[n1][n1][0] == GRAPHNODE_HELIX)
+                if(patternGraph.adjacencyMatrix[n1][n1][0] == GRAPHNODE_HELIX)
                     skippedHelixNodes++;
-                if(patternGraph->adjacencyMatrix[n1][n1][0] == GRAPHNODE_SHEET)
+                if(patternGraph.adjacencyMatrix[n1][n1][0] == GRAPHNODE_SHEET)
                     skippedSheetNodes++;
             }
 
             // find the end of the current correspondence
             while(solution[n2] == -1 && n2 < numNodes - 1) {
-                if(patternGraph->adjacencyMatrix[n2][n2][0] == GRAPHNODE_HELIX)
+                if(patternGraph.adjacencyMatrix[n2][n2][0] == GRAPHNODE_HELIX)
                     skippedHelixNodes++;
-                if(patternGraph->adjacencyMatrix[n2][n2][0] == GRAPHNODE_SHEET)
+                if(patternGraph.adjacencyMatrix[n2][n2][0] == GRAPHNODE_SHEET)
                     skippedSheetNodes++;
                 n2++;
             }
@@ -895,7 +895,7 @@ namespace GraphMatch {
             // if edge exists in base graph, find the cost of this correspondence.
             if(solution[n1] == -1) {
                 singleEdgeCost = 0;
-                singleEdgePenaltyCost = GetPenaltyCost(n1, n2 - n1 + 1, extraMessages);
+                singleEdgePenaltyCost = getPenaltyCost(n1, n2 - n1 + 1, extraMessages);
 
                 if(extraMessages) {
                     cout << "  GetPenaltyCost(" << n1 << "," << n2 - n1 + 1
@@ -904,17 +904,17 @@ namespace GraphMatch {
 
                 skipPenaltyCost += singleEdgePenaltyCost;
             }
-            else if(baseGraph->EdgeExists(solution[n1]-1, solution[n2]-1)) {
+            else if(baseGraph.edgeExists(solution[n1]-1, solution[n2]-1)) {
                 if(solution[n2] == -1 && n2 == numNodes - 1) {
                     // last edge is skip edge
                     singleEdgeCost = 0;
                 }
                 else
-                    singleEdgeCost = GetCost(n1+1, n2-n1, solution[n1], solution[n2], extraMessages);
+                    singleEdgeCost = getCost(n1+1, n2-n1, solution[n1], solution[n2], extraMessages);
 
-                singleEdgePenaltyCost = GetPenaltyCost(n1+1, n2-n1, extraMessages);
+                singleEdgePenaltyCost = getPenaltyCost(n1+1, n2-n1, extraMessages);
 
-                if(baseGraph->adjacencyMatrix[solution[n1]-1][solution[n2]-1][0] == GRAPHEDGE_HELIX) {
+                if(baseGraph.adjacencyMatrix[solution[n1]-1][solution[n2]-1][0] == GRAPHEDGE_HELIX) {
                     helixCost        += singleEdgeCost;
                     helixPenaltyCost += singleEdgePenaltyCost;
                     skipPenaltyCost  += singleEdgePenaltyCost;
@@ -957,12 +957,12 @@ namespace GraphMatch {
             }
 
             // add node cost
-            double singleNodeCost = GetC(n2+1, solution[n2]);
+            double singleNodeCost = getC(n2+1, solution[n2]);
             // if at beginning of sequence, check first node
-            if(patternGraph->adjacencyMatrix[n2][n2][0] == GRAPHNODE_SHEET)
+            if(patternGraph.adjacencyMatrix[n2][n2][0] == GRAPHNODE_SHEET)
                 sheetCost += singleNodeCost;
-            if(n1 == 0 && patternGraph->adjacencyMatrix[n1][n1][0] == GRAPHNODE_SHEET) {
-                double firstNodeCost = GetC(n1 + 1, solution[n1]);
+            if(n1 == 0 && patternGraph.adjacencyMatrix[n1][n1][0] == GRAPHNODE_SHEET) {
+                double firstNodeCost = getC(n1 + 1, solution[n1]);
                 sheetCost      += firstNodeCost;
                 singleNodeCost += firstNodeCost;
             }
@@ -990,7 +990,7 @@ namespace GraphMatch {
         double ratioCorrectSheets = 0;
         int ns = 0, nh = 0;
         for(int i = 0; i < numNodes; i++) {
-            if(patternGraph->adjacencyMatrix[i][i][0] == GRAPHNODE_HELIX) {
+            if(patternGraph.adjacencyMatrix[i][i][0] == GRAPHNODE_HELIX) {
                 nh++;
                 if(solution[i] == SOLUTION[i])
                     ratioCorrectHelices++;
@@ -1008,7 +1008,7 @@ namespace GraphMatch {
                     helicesCorrectFlipped = false;
             }
 
-            if(patternGraph->adjacencyMatrix[i][i][0] == GRAPHNODE_SHEET) {
+            if(patternGraph.adjacencyMatrix[i][i][0] == GRAPHNODE_SHEET) {
                 ns++;
                 if(solution[i] == SOLUTION[i])
                     ratioCorrectSheets++;
