@@ -8,6 +8,10 @@
 #ifndef SRC_TOOLKIT_FOUNDATION_NODESTUB_H_
 #define SRC_TOOLKIT_FOUNDATION_NODESTUB_H_
 
+#include <iostream>
+
+using std::ostream;
+
 namespace GraphMatch {
 
     class NodeStub {
@@ -19,6 +23,13 @@ namespace GraphMatch {
             NodeStub();
             ~NodeStub();
     };
+
+    inline ostream& operator<<(ostream &out, const NodeStub& obj) {
+        return out<<(int)obj.n1Node
+                  <<" "<<(int)obj.n2Node
+                  <<" "<<obj.parentNode
+                  <<std::endl;
+    } 
 
 } /* namespace GraphMatch */
 
