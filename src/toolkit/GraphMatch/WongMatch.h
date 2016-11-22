@@ -838,7 +838,7 @@ namespace GraphMatch {
     }
 
     // Compute the cost of the ground truth solution which is submitted by the user.
-    void WongMatch::ComputeSolutionCost(int solution[], bool extraMessages) {
+    inline void WongMatch::ComputeSolutionCost(int solution[], bool extraMessages) {
         if(extraMessages) {
             cout << "starting ComputeSolutionCost" << endl;
         }
@@ -1153,7 +1153,7 @@ namespace GraphMatch {
 
     // code copied from LinkedNode::PrintNodeConcise
     // Adding a breakdown of the cost into loops, nodes, and helices
-    void WongMatch::printNodeConcise(Node * node, int rank, bool endOfLine, bool printCostBreakdown) {
+    inline void WongMatch::printNodeConcise(Node * node, int rank, bool endOfLine, bool printCostBreakdown) {
         bool used[MAX_NODES];
         int n1[MAX_NODES];
         int n2[MAX_NODES];
