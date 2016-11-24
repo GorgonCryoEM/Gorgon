@@ -77,7 +77,9 @@ namespace GraphMatch {
             for(int j = 0; j < nodeCount; j++) {
                 adjacencyMatrix[i][j][0] = 3;
                 adjacencyMatrix[i][j][1] = MAXINTT;
+                euclideanMatrix[i][j] = 0.0;
             }
+            nodeWeights[i] = 0.0;
         }
         pdbStructures.clear();
     }
@@ -98,6 +100,7 @@ namespace GraphMatch {
                 fscanf(fin, "%lf", &(adjacencyMatrix[i][j][1]));
             }
             fscanf(fin, "\n");
+            nodeWeights[i] = 0.0;
         }
         fclose( fin ) ;
         pdbStructures.clear();
