@@ -111,6 +111,15 @@ namespace Visualization {
             set_MISSING_SHEET_COUNT(MISSING_SHEET_COUNT);
         }
         init(sequence, skeleton);
+#ifdef GORGON_DEBUG
+        cout<<"\033[32mDEBUG: File:   SSEEngine.h"<<endl;
+        cout<<"\nSTART: inline int SSEEngine::run()"<<endl;
+        cout<<"sequence.print()\n";
+        sequence.print();
+        cout<<"skeleton.print()\n";
+        skeleton.print();
+        cout<<"\nEND: inline int SSEEngine::run()"<<endl;
+#endif
         clock_t start = clock();
         int matchCount = WongMatch::run(start);
         saveResults();
