@@ -328,6 +328,15 @@ namespace GraphMatch {
                 // same for reverse direction
                 graph->setCost(node2, node1, length);
                 graph->setType(node2, node1, helixes[i]->type);
+                
+#ifdef GORGON_DEBUG_LOOP
+                cout<<" "<<helixes[i]->type
+                    <<" "<<i
+                    <<" "<<node1
+                    <<" "<<node2
+                    <<endl;
+#endif
+                
             } else if (helixes[i]->type == GRAPHEDGE_SHEET) {
                 // assign node number this sheet
                 int sheetNode = numH + i + 1; // each helix takes two nodes
@@ -338,6 +347,13 @@ namespace GraphMatch {
                 // cost is length of self-loops
                 graph->setCost(sheetNode, sheetNode, SHEET_SELF_LOOP_LENGTH); // nonzero so it shows up as edge in StandardGraph::EdgeExists
                 graph->setType(sheetNode, sheetNode, GRAPHNODE_SHEET);
+                
+#ifdef GORGON_DEBUG_LOOP
+                cout<<" "<<helixes[i]->type
+                    <<" "<<i
+                    <<" "<<sheetNode
+                    <<endl;
+#endif
             }
 
         }
