@@ -298,7 +298,7 @@ namespace GraphMatch {
 
         // create a graph with one node per helix end point and with edges connecting nodes that
         // are connected along the volume.
-        //cout << "adding " << (int)helixes.size() << " helices and sheets to adjacency matrix" << endl;
+        cout << "adding " << (int)helixes.size() << " helices and sheets to adjacency matrix" << endl;
         for(unsigned int i = 0; i < (int)helixes.size(); i++) {
             if(helixes[i]->type == GRAPHEDGE_HELIX) {
                 // assign node numbers for helix ends
@@ -307,9 +307,9 @@ namespace GraphMatch {
 
                 // find the two corner cells in this helix
                 helixes[i]->findCornerCellsInHelix();
-                //cout << "helix " << i << " has " << helixes[i]->cornerCells.size() << " corners." << endl;
+                cout << "helix " << i << " has " << helixes[i]->cornerCells.size() << " corners." << endl;
                 for (unsigned int j = 0; j < helixes[i]->cornerCells.size(); j++) {
-                    //cout << "corner " << j << " is associated with node " << helixes[i]->cornerCells[j].node << endl;
+                    cout << "corner " << j << " is associated with node " << helixes[i]->cornerCells[j].node << endl;
                 }
 
                 // length of this helix
@@ -341,7 +341,7 @@ namespace GraphMatch {
             }
 
         }
-        //cout << "adding sheet sizes as sheet node costs" << endl;
+        cout << "adding sheet sizes as sheet node costs" << endl;
         for (unsigned int s = 0; s < skeletonSheets.size(); s++) {
             int sseSheetNum = helixesMapping[s];
             //cout << "node " << s << " corresponds to sheet " << helixesMapping[s] << endl;
