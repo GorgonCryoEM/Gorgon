@@ -23,6 +23,7 @@ from ..helix import create_helix
 
 from ...toolkit.libpytoolkit import SSEEngine
 from viewer import SSEViewer
+from ...toolkit import HelixCorrespondence
 
 class SSEHelixCorrespondenceForm(QtGui.QDialog):
 
@@ -49,7 +50,8 @@ class SSEHelixCorrespondenceForm(QtGui.QDialog):
         self.dataLoaded = True
         self.allLoaded  = True
 
-        self.correspondenceEngine = SSEEngine()
+        self.sse_finder = HelixCorrespondence(self.args)
+        self.correspondenceEngine = self.sse_finder.correspondenceEngine
 
         # KLUDGE: This class should be drawn as itself,
         # not by injecting its drawing function into SSEViewer
