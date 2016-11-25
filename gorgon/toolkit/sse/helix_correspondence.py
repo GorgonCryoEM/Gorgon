@@ -7,7 +7,7 @@ class HelixCorrespondence(object):
 
     def __init__(self, args):
         self.defaults = SSEDefaults()
-        if args.json:
+        if hasattr(args, 'json') and args.json:
             with open(args.json) as data_file:
                 json_data = json.load(data_file)
             for key, val in json_data.iteritems():
@@ -16,7 +16,8 @@ class HelixCorrespondence(object):
         self.skeleton = args.skeleton
         self.sequence = args.sequence
         self.helix    = args.helix
-        self.output   = args.output
+        if hasattr(args, 'output') and args.output:
+            self.output   = args.output
                 
         '''
         SSEViewer
