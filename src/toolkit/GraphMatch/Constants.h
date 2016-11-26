@@ -221,7 +221,7 @@ namespace GraphMatch {
         }
     }
 
-    inline bool setConstantFree(string token, string stringValue){
+    inline bool setConstant(string token, string stringValue){
         if(token == TOKEN_SSE_FILE_NAME) {
             SSE_FILE_NAME = stringValue;
         } else if(token == TOKEN_VRML_HELIX_FILE_NAME) {
@@ -240,7 +240,7 @@ namespace GraphMatch {
         return true;
     }
 
-    inline bool setConstantFree(string token, double doubleValue){
+    inline bool setConstant(string token, double doubleValue){
         if(token == TOKEN_MAXIMUM_DISTANCE_SHEET_SKELETON) {
             MAXIMUM_DISTANCE_SHEET_SKELETON = doubleValue;
         } else if(token == TOKEN_EUCLIDEAN_DISTANCE_THRESHOLD) {
@@ -283,7 +283,7 @@ namespace GraphMatch {
         return true;
     }
 
-    inline bool setConstantFree(string token, int intValue){
+    inline bool setConstant(string token, int intValue){
         if(token == TOKEN_COST_FUNCTION) {
             COST_FUNCTION = intValue;
         } else if(token == TOKEN_INCLUDE_STRANDS) {
@@ -292,13 +292,17 @@ namespace GraphMatch {
             MISSING_HELIX_COUNT = intValue;
         } else if(token == TOKEN_MISSING_SHEET_COUNT) {
             MISSING_SHEET_COUNT = intValue;
+        } else if(token == TOKEN_BORDER_MARGIN_THRESHOLD) {
+            BORDER_MARGIN_THRESHOLD = intValue;
+        } else if(token == TOKEN_MINIMUM_SHEET_SIZE) {
+            MINIMUM_SHEET_SIZE = intValue;
         } else {
             return false;
         }
         return true;
     }
 
-    inline bool setConstantFree(string token, bool boolValue){
+    inline bool setConstant(string token, bool boolValue){
         if(token == TOKEN_NORMALIZE_GRAPHS) {
             NORMALIZE_GRAPHS = boolValue;
         } else if(token == TOKEN_TRANSLATE_VOLUMETRIC_COORDINATES) {

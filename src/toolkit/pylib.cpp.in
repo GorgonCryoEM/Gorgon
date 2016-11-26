@@ -527,16 +527,12 @@ BOOST_PYTHON_MODULE(@current_pylib@)
         .def("getCornerCell3", &Shape::getCornerCell3)
     ;
 
-    bool (IBackEnd::*setConstant1)(string, string)   = &IBackEnd::setConstant;
-    bool (IBackEnd::*setConstant2)(string, double)   = &IBackEnd::setConstant;
-    bool (IBackEnd::*setConstant3)(string, int)      = &IBackEnd::setConstant;
-    bool (IBackEnd::*setConstant4)(string, bool)     = &IBackEnd::setConstant;
 
     class_<IBackEnd>("IBackEnd", init<>())
-        .def("setConstant", setConstant1)
-        .def("setConstant", setConstant2)
-        .def("setConstant", setConstant3)
-        .def("setConstant", setConstant4)
+        .def("setConstantString", &IBackEnd::setConstantString)
+        .def("setConstantDouble", &IBackEnd::setConstantDouble)
+        .def("setConstantInt", &IBackEnd::setConstantInt)
+        .def("setConstantBool", &IBackEnd::setConstantBool)
         .def("getConstantString",   &IBackEnd::getConstantString)
         .def("getConstantDouble",   &IBackEnd::getConstantDouble)
         .def("getConstantInt",      &IBackEnd::getConstantInt)

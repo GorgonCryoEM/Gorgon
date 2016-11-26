@@ -11,8 +11,10 @@ namespace GraphMatch {
     public:
         // Initialization Methods
         void loadConstantsFromFile(string fileName);
-        template <class T>
-        bool setConstant(string token, T value);
+        bool setConstantString(string token, string value);
+        bool setConstantDouble(string token, double value);
+        bool setConstantInt(string token, int value);
+        bool setConstantBool(string token, bool value);
         string getConstantString(string token);
         double getConstantDouble(string token);
         int getConstantInt(string token);
@@ -24,9 +26,20 @@ namespace GraphMatch {
         LoadConstantsFromFile(fileName);
     }
 
-    template <class T>
-    inline bool IBackEnd::setConstant(string token, T value) {
-        return setConstantFree(token, value);
+    inline bool IBackEnd::setConstantString(string token, string value) {
+        return setConstant(token, value);
+    }
+
+    inline bool IBackEnd::setConstantDouble(string token, double value) {
+        return setConstant(token, value);
+    }
+
+    inline bool IBackEnd::setConstantInt(string token, int value) {
+        return setConstant(token, value);
+    }
+
+    inline bool IBackEnd::setConstantBool(string token, bool value) {
+        return setConstant(token, value);
     }
 
     inline string IBackEnd::getConstantString(string token) {

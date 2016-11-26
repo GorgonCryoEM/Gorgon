@@ -2,7 +2,7 @@
 	"MissingSheets": false, 
 	"EuclideanDistance": 0.0, 
 	"AbsoluteDifference": true, 
-	"BorderMarginThreshold": 3, 
+	"BorderMarginThreshold": 5, 
 	"SheetSelfLoopLength": 5.0, 
 	"SheetMissingPenalty": 5.0, 
 	"SheetMissingPenaltyScaled": 0.0, 
