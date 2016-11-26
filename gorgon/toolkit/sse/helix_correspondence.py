@@ -127,4 +127,4 @@ class HelixCorrespondence(object):
         self.setConstants()
         self.correspondenceEngine.loadSequenceGraph()
         self.correspondenceEngine.loadSkeletonGraph()
-        self.correspondenceEngine.executeQuery()
+        return self.correspondenceEngine.executeQuery()
