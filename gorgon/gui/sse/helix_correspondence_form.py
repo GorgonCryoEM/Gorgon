@@ -722,7 +722,7 @@ class SSEHelixCorrespondenceForm(QtGui.QDialog):
         self.createBasicCorrespondence()
                 
         # execute correspondence query and do cleanup
-        self.resultCount = self.correspondenceEngine.executeQuery()
+        self.resultCount = self.sse_finder.accept()
 
         print "found " + str(self.resultCount) + " results. cleaning up memory."
 
