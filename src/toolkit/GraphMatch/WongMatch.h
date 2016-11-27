@@ -47,7 +47,8 @@ namespace GraphMatch {
             Node * currentNode;
 
             typedef Pair<double, Node *> Elem;
-            priority_queue<Elem> q;
+            typedef priority_queue<Elem, std::vector<Elem>, std::greater<Elem> > PriorityQueue;
+            PriorityQueue q;
 
             vector<NodeStub*> usedNodes;
             int nMissHelix;
@@ -125,7 +126,7 @@ namespace GraphMatch {
 #ifdef VERBOSE
         cout << "Creating priority queue" << endl;
 #endif
-        q = priority_queue<Elem>();
+        q = PriorityQueue();
 #ifdef VERBOSE
         cout << "Loading pattern graph" << endl;
 #endif
