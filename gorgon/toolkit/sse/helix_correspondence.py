@@ -116,6 +116,28 @@ class HelixCorrespondence(object):
         # self.ui.tableWidgetCorrespondenceList.clearContents()
         # self.ui.tabWidget.setCurrentIndex(0)
         # self.ui.comboBoxCorrespondences.setCurrentIndex(-1)
+        
+        # SSEDefaults
+        self.defaults.HelixImportance           = 1.0
+        self.defaults.HelixMissingPenalty       = 5.0
+        self.defaults.HelixMissingPenaltyScaled = 0.0
+        self.defaults.EndHelixMissingPenalty    = 8.0
+        self.defaults.SheetImportance           = 1.0
+        self.defaults.SheetMissingPenalty       = 5.0
+        self.defaults.SheetMissingPenaltyScaled = 0.0
+        self.defaults.BorderMarginThreshold           = 3
+        self.defaults.EuclideanDistance         = 0.0
+        self.defaults.MinSheetSize              = 10
+        self.defaults.MaxSheetDistance          = 5.0
+        self.defaults.SheetSelfLoopLength       = 5.0
+        self.defaults.SheetMergeThreshold       = 3.0
+        self.defaults.EuclideanToPDBRatio       = 10.0
+        self.defaults.AbsoluteDifference          = True
+        self.defaults.LoopImportance            = 0.2
+        self.defaults.EuclideanLoopUsedPenalty  = 5.0
+
+        self.defaults.MissingHelices = bool()
+        self.defaults.MissingSheets = bool()
 
     def accept(self):
         self.loadDefaultParams()
