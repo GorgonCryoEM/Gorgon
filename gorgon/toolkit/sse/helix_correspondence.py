@@ -30,84 +30,84 @@ class HelixCorrespondence(object):
             self.constants.setConstantString("SEQUENCE_FILE_TYPE", "SEQ")
         
         #Graph Settings tab
-        self.constants.setConstantInt("BORDER_MARGIN_THRESHOLD", self.defaults.BorderMarginThreshold)
-        self.constants.setConstantDouble("EUCLIDEAN_DISTANCE_THRESHOLD", self.defaults.EuclideanDistance)
-        self.constants.setConstantDouble("MAXIMUM_DISTANCE_SHEET_SKELETON", self.defaults.MaxSheetDistance)
-        self.constants.setConstantInt("MINIMUM_SHEET_SIZE", self.defaults.MinSheetSize)
-        self.constants.setConstantDouble("SHEET_SELF_LOOP_LENGTH", self.defaults.SheetSelfLoopLength)
-        self.constants.setConstantDouble("SHEET_MERGE_THRESHOLD", self.defaults.SheetMergeThreshold)
+        self.constants.setConstantInt("BORDER_MARGIN_THRESHOLD", self.BorderMarginThreshold)
+        self.constants.setConstantDouble("EUCLIDEAN_DISTANCE_THRESHOLD", self.EuclideanDistance)
+        self.constants.setConstantDouble("MAXIMUM_DISTANCE_SHEET_SKELETON", self.MaxSheetDistance)
+        self.constants.setConstantInt("MINIMUM_SHEET_SIZE", self.MinSheetSize)
+        self.constants.setConstantDouble("SHEET_SELF_LOOP_LENGTH", self.SheetSelfLoopLength)
+        self.constants.setConstantDouble("SHEET_MERGE_THRESHOLD", self.SheetMergeThreshold)
         # if (self.ui.checkBoxIncludeStrands.isChecked()):
         #     self.constants.setConstant("INCLUDE_STRANDS", 1)
         # else:
         #     self.constants.setConstant("INCLUDE_STRANDS", 0)
 
         #Matching Settings tab
-        self.constants.setConstantDouble("EUCLIDEAN_VOXEL_TO_PDB_RATIO", self.defaults.EuclideanToPDBRatio)
-        if(self.defaults.AbsoluteDifference):
+        self.constants.setConstantDouble("EUCLIDEAN_VOXEL_TO_PDB_RATIO", self.EuclideanToPDBRatio)
+        if(self.AbsoluteDifference):
             self.constants.setConstantInt("COST_FUNCTION", 1)
-        elif (self.defaults.NormalizedDifference.isChecked()):
+        elif (self.NormalizedDifference.isChecked()):
             self.constants.setConstantInt("COST_FUNCTION", 2)
         else:
             self.constants.setConstantInt("COST_FUNCTION", 3)
 
-        self.constants.setConstantDouble("LOOP_WEIGHT_COEFFICIENT", self.defaults.LoopImportance)
-        self.constants.setConstantDouble("EUCLIDEAN_LOOP_PENALTY", self.defaults.EuclideanLoopUsedPenalty)
+        self.constants.setConstantDouble("LOOP_WEIGHT_COEFFICIENT", self.LoopImportance)
+        self.constants.setConstantDouble("EUCLIDEAN_LOOP_PENALTY", self.EuclideanLoopUsedPenalty)
 
-        self.constants.setConstantDouble("HELIX_WEIGHT_COEFFICIENT", self.defaults.HelixImportance)
+        self.constants.setConstantDouble("HELIX_WEIGHT_COEFFICIENT", self.HelixImportance)
         # if(self.ui.checkBoxMissingHelices.isChecked()):
-        #     self.constants.setConstant("MISSING_HELIX_COUNT", self.defaults.MissingHelixCount)
+        #     self.constants.setConstant("MISSING_HELIX_COUNT", self.MissingHelixCount)
         # else:
         #     self.constants.setConstant("MISSING_HELIX_COUNT", -1)
         self.constants.setConstantInt("MISSING_HELIX_COUNT", -1)
         
-        self.constants.setConstantDouble("MISSING_HELIX_PENALTY", self.defaults.HelixMissingPenalty)
-        self.constants.setConstantDouble("MISSING_HELIX_PENALTY_SCALED", self.defaults.HelixMissingPenaltyScaled)
-        self.constants.setConstantDouble("START_END_MISSING_HELIX_PENALTY", self.defaults.EndHelixMissingPenalty)
+        self.constants.setConstantDouble("MISSING_HELIX_PENALTY", self.HelixMissingPenalty)
+        self.constants.setConstantDouble("MISSING_HELIX_PENALTY_SCALED", self.HelixMissingPenaltyScaled)
+        self.constants.setConstantDouble("START_END_MISSING_HELIX_PENALTY", self.EndHelixMissingPenalty)
 
-        self.constants.setConstantDouble("SHEET_WEIGHT_COEFFICIENT", self.defaults.SheetImportance)
+        self.constants.setConstantDouble("SHEET_WEIGHT_COEFFICIENT", self.SheetImportance)
         # if(self.ui.checkBoxMissingSheets.isChecked()):
-        #     self.constants.setConstant("MISSING_SHEET_COUNT", self.defaults.MissingSheetCount)
+        #     self.constants.setConstant("MISSING_SHEET_COUNT", self.MissingSheetCount)
         # else:
         #     self.constants.setConstant("MISSING_SHEET_COUNT", -1)
         self.constants.setConstantInt("MISSING_SHEET_COUNT", -1)
         
-        self.constants.setConstantDouble("MISSING_SHEET_PENALTY", self.defaults.SheetMissingPenalty)
-        self.constants.setConstantDouble("MISSING_SHEET_PENALTY_SCALED", self.defaults.SheetMissingPenaltyScaled)
+        self.constants.setConstantDouble("MISSING_SHEET_PENALTY", self.SheetMissingPenalty)
+        self.constants.setConstantDouble("MISSING_SHEET_PENALTY_SCALED", self.SheetMissingPenaltyScaled)
 
         # no longer needed?
         self.constants.setConstantBool("NORMALIZE_GRAPHS", True)
 
     def loadDefaultParams(self):
         # Graph Settings tab
-        self.defaults.BorderMarginThreshold = 5
-        self.defaults.EuclideanDistance = 0.0
-        self.defaults.IncludeSheets = True
+        self.BorderMarginThreshold = 5
+        self.EuclideanDistance = 0.0
+        self.IncludeSheets = True
     
-        self.defaults.ShowHelixCorners = False
-        self.defaults.ShowSheetCorners = False
-        self.defaults.ShowAllPaths = False
+        self.ShowHelixCorners = False
+        self.ShowSheetCorners = False
+        self.ShowAllPaths = False
     
         # Matching Settings tab
-        self.defaults.EuclideanToPDBRatio = 10.0
-        self.defaults.AbsoluteDifference = True
-        self.defaults.NormalizedDifference = False
-        self.defaults.QuadraticError = False
+        self.EuclideanToPDBRatio = 10.0
+        self.AbsoluteDifference = True
+        self.NormalizedDifference = False
+        self.QuadraticError = False
     
-        self.defaults.LoopImportance = 0.2
-        self.defaults.EuclideanLoopUsedPenalty = 5.0
+        self.LoopImportance = 0.2
+        self.EuclideanLoopUsedPenalty = 5.0
     
-        self.defaults.HelixImportance = 1.0
-        self.defaults.MissingHelices = False
-        self.defaults.MissingHelixCount = 0
-        self.defaults.HelixMissingPenalty = 5.0
-        self.defaults.HelixMissingPenaltyScaled = 0.0
-        self.defaults.EndHelixMissingPenalty = 5.0
+        self.HelixImportance = 1.0
+        self.MissingHelices = False
+        self.MissingHelixCount = 0
+        self.HelixMissingPenalty = 5.0
+        self.HelixMissingPenaltyScaled = 0.0
+        self.EndHelixMissingPenalty = 5.0
     
-        self.defaults.SheetImportance = 1.0
-        self.defaults.MissingSheets = False
-        self.defaults.MissingSheetCount = 0
-        self.defaults.SheetMissingPenalty = 5.0
-        self.defaults.SheetMissingPenaltyScaled = 0.0
+        self.SheetImportance = 1.0
+        self.MissingSheets = False
+        self.MissingSheetCount = 0
+        self.SheetMissingPenalty = 5.0
+        self.SheetMissingPenaltyScaled = 0.0
         # 
         # # Results tab
         # self.ui.tableWidgetCorrespondenceList.clearContents()
@@ -115,10 +115,10 @@ class HelixCorrespondence(object):
         # self.ui.comboBoxCorrespondences.setCurrentIndex(-1)
         
         # Sheet related
-        self.defaults.MinSheetSize        = 10
-        self.defaults.MaxSheetDistance    = 5.0
-        self.defaults.SheetSelfLoopLength = 5.0
-        self.defaults.SheetMergeThreshold = 3.0
+        self.MinSheetSize        = 10
+        self.MaxSheetDistance    = 5.0
+        self.SheetSelfLoopLength = 5.0
+        self.SheetMergeThreshold = 3.0
 
     def accept(self):
         self.loadDefaultParams()
