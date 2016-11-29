@@ -118,10 +118,10 @@ class HelixCorrespondence(object):
         # self.ui.comboBoxCorrespondences.setCurrentIndex(-1)
         
         # Sheet related
-        self.defaults.MinSheetSize              = 10
-        self.defaults.MaxSheetDistance          = 5.0
-        self.defaults.SheetSelfLoopLength       = 5.0
-        self.defaults.SheetMergeThreshold       = 3.0
+        self.defaults.MinSheetSize        = 10
+        self.defaults.MaxSheetDistance    = 5.0
+        self.defaults.SheetSelfLoopLength = 5.0
+        self.defaults.SheetMergeThreshold = 3.0
 
     def accept(self):
         self.loadDefaultParams()
