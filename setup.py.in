@@ -6,7 +6,6 @@ setup(
     packages=find_packages(),
     package_data={'@lib_install_dir@.hello':['libpyhello.so', 'libpyhello.pyd'],
                   '@lib_install_dir@.toolkit':['libpytoolkit.so', 'libpytoolkit.pyd'],
-                  '@lib_install_dir@.toolkit.sse':['sse_defaults.json'],
                   },
     data_files=[('design', ['design/gorgon.ico']),
                 ],
