@@ -1,12 +1,9 @@
 from ..libpytoolkit import SSEEngine, IBackEnd
-from .defaults import SSEDefaults
 
 
 class HelixCorrespondence(object):
 
     def __init__(self, args):
-        self.defaults = SSEDefaults()
-        
         self.skeleton = args.skeleton
         self.sequence = args.sequence
         self.helix    = args.helix
