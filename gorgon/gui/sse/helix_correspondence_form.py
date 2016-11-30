@@ -34,7 +34,6 @@ class SSEHelixCorrespondenceForm(QtGui.QDialog, HelixCorrespondence):
 
         QtGui.QDialog.__init__(self, self.parent)
         HelixCorrespondence.__init__(self, self.args)
-        self.constants = IBackEnd()
         
         dock = QtGui.QDockWidget("SSEHelixCorrespondenceFinder", self.parent)
         dock.setWidget(self)
@@ -50,9 +49,6 @@ class SSEHelixCorrespondenceForm(QtGui.QDialog, HelixCorrespondence):
         self.selectedRow = 0
         self.dataLoaded = True
         self.allLoaded  = True
-
-        self.sse_finder = HelixCorrespondence(self.args)
-        self.correspondenceEngine = self.sse_finder.correspondenceEngine
 
         # KLUDGE: This class should be drawn as itself,
         # not by injecting its drawing function into SSEViewer
@@ -280,7 +276,7 @@ class SSEHelixCorrespondenceForm(QtGui.QDialog, HelixCorrespondence):
 #             print "done loading settings file"
         
     def setConstants(self):
-        self.sse_finder.setConstants()
+        HelixCorrespondence.setConstants(self)
         #Tab 4 User Constraints
         # comment out the constraint clearing so that constraints can be loaded from settings files
         #self.correspondenceEngine.clearAllConstraints()
@@ -621,7 +617,7 @@ class SSEHelixCorrespondenceForm(QtGui.QDialog, HelixCorrespondence):
         self.createBasicCorrespondence()
                 
         # execute correspondence query and do cleanup
-        self.resultCount = self.sse_finder.accept()
+        self.resultCount = HelixCorrespondence.accept(self)
 
         print "found " + str(self.resultCount) + " results. cleaning up memory."
 
