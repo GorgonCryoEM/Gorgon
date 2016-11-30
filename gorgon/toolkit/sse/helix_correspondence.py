@@ -36,10 +36,7 @@ class HelixCorrespondence(object):
         self.constants.setConstantInt("MINIMUM_SHEET_SIZE", self.MinSheetSize)
         self.constants.setConstantDouble("SHEET_SELF_LOOP_LENGTH", self.SheetSelfLoopLength)
         self.constants.setConstantDouble("SHEET_MERGE_THRESHOLD", self.SheetMergeThreshold)
-        # if (self.ui.checkBoxIncludeStrands.isChecked()):
-        #     self.constants.setConstant("INCLUDE_STRANDS", 1)
-        # else:
-        #     self.constants.setConstant("INCLUDE_STRANDS", 0)
+        self.constants.setConstantBool("INCLUDE_STRANDS", 0)
 
         #Matching Settings tab
         self.constants.setConstantDouble("EUCLIDEAN_VOXEL_TO_PDB_RATIO", self.EuclideanToPDBRatio)
@@ -54,10 +51,6 @@ class HelixCorrespondence(object):
         self.constants.setConstantDouble("EUCLIDEAN_LOOP_PENALTY", self.EuclideanLoopUsedPenalty)
 
         self.constants.setConstantDouble("HELIX_WEIGHT_COEFFICIENT", self.HelixImportance)
-        # if(self.ui.checkBoxMissingHelices.isChecked()):
-        #     self.constants.setConstant("MISSING_HELIX_COUNT", self.MissingHelixCount)
-        # else:
-        #     self.constants.setConstant("MISSING_HELIX_COUNT", -1)
         self.constants.setConstantInt("MISSING_HELIX_COUNT", -1)
         
         self.constants.setConstantDouble("MISSING_HELIX_PENALTY", self.HelixMissingPenalty)
@@ -65,10 +58,6 @@ class HelixCorrespondence(object):
         self.constants.setConstantDouble("START_END_MISSING_HELIX_PENALTY", self.EndHelixMissingPenalty)
 
         self.constants.setConstantDouble("SHEET_WEIGHT_COEFFICIENT", self.SheetImportance)
-        # if(self.ui.checkBoxMissingSheets.isChecked()):
-        #     self.constants.setConstant("MISSING_SHEET_COUNT", self.MissingSheetCount)
-        # else:
-        #     self.constants.setConstant("MISSING_SHEET_COUNT", -1)
         self.constants.setConstantInt("MISSING_SHEET_COUNT", -1)
         
         self.constants.setConstantDouble("MISSING_SHEET_PENALTY", self.SheetMissingPenalty)
