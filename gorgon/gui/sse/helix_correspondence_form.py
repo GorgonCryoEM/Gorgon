@@ -108,9 +108,6 @@ class SSEHelixCorrespondenceForm(QtGui.QDialog):
 #         self.ui.lineEditSettingsFile.setText("")
 #         self.loadDefaultParams()
 
-    # def loadDefaultParams(self):
-    #     self.checkOk()
-        
 #     def openFile(self, title, fileformats):
 #         fileName = QtGui.QFileDialog.getOpenFileName(self, self.tr(title), "", self.tr(fileformats))
 #         return fileName
