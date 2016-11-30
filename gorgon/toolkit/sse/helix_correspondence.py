@@ -12,6 +12,7 @@ class HelixCorrespondence(object):
                 
         self.correspondenceEngine = SSEEngine()
         self.constants = IBackEnd()
+        self.loadDefaultParams()
         
     def setConstants(self):
         #Data Sources tab
@@ -107,7 +108,6 @@ class HelixCorrespondence(object):
         self.SheetMergeThreshold = 3.0
 
     def accept(self):
-        self.loadDefaultParams()
         self.setConstants()
         self.correspondenceEngine.loadSequenceGraph()
         self.correspondenceEngine.loadSkeletonGraph()
