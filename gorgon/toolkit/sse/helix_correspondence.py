@@ -10,9 +10,6 @@ class HelixCorrespondence(object):
         if hasattr(args, 'output') and args.output:
             self.output   = args.output
                 
-        '''
-        SSEViewer
-        '''
         self.correspondenceEngine = SSEEngine()
         self.constants = IBackEnd()
         
