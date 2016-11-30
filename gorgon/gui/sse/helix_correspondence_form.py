@@ -188,6 +188,7 @@ class SSEHelixCorrespondenceForm(QtGui.QDialog, HelixCorrespondence):
             print "data not loaded"
         print "correspondence index at end is " + str(self.ui.comboBoxCorrespondences.currentIndex())
         print "end checkOk"
+        self.getConstants()
     
 #     def loadSettings(self):
 #
@@ -309,61 +310,61 @@ class SSEHelixCorrespondenceForm(QtGui.QDialog, HelixCorrespondence):
         #         if (match.predicted.type) == 'helix':
         #             predictedGraphNode += 2
 
-    # def getConstants(self):
-    #     
-    #     #Graph Settings tab
-    #     self.ui.spinBoxBorderMarginThreshold.setValue(self.constants.getConstantInt("BORDER_MARGIN_THRESHOLD"))
-    #     self.ui.doubleSpinBoxEuclideanDistance.setValue(self.constants.getConstantDouble("EUCLIDEAN_DISTANCE_THRESHOLD"))
-    #     self.ui.spinBoxMinSheetSize.setValue(self.constants.getConstantInt("MINIMUM_SHEET_SIZE"))
-    #     self.ui.doubleSpinBoxMaxSheetDistance.setValue(self.constants.getConstantDouble("MAXIMUM_DISTANCE_SHEET_SKELETON"))
-    #     self.ui.doubleSpinBoxSheetSelfLoopLength.setValue(self.constants.getConstantDouble("SHEET_SELF_LOOP_LENGTH"))
-    #     self.ui.doubleSpinBoxSheetMergeThreshold.setValue(self.constants.getConstantDouble("SHEET_MERGE_THRESHOLD"))
-    #     if(self.constants.getConstantInt("INCLUDE_STRANDS") == 1):
-    #         self.ui.checkBoxIncludeStrands.setChecked(True)
-    #     else:
-    #         self.ui.checkBoxIncludeStrands.setChecked(False)
-    # 
-    #     #Matching settings tab
-    #     self.ui.doubleSpinBoxEuclideanToPDBRatio.setValue(self.constants.getConstantDouble("EUCLIDEAN_VOXEL_TO_PDB_RATIO"))
-    #     if(self.constants.getConstantInt("COST_FUNCTION") == 1):
-    #         self.ui.radioButtonAbsoluteDifference.setChecked(True)
-    #         self.ui.radioButtonNormalizedDifference.setChecked(False)
-    #         self.ui.radioButtonQuadraticError.setChecked(False)
-    #     elif (self.constants.getConstantInt("COST_FUNCTION") == 2):
-    #         self.ui.radioButtonAbsoluteDifference.setChecked(False)
-    #         self.ui.radioButtonNormalizedDifference.setChecked(True)
-    #         self.ui.radioButtonQuadraticError.setChecked(False)
-    #     elif (self.constants.getConstantInt("COST_FUNCTION") == 3):
-    #         self.ui.radioButtonAbsoluteDifference.setChecked(False)
-    #         self.ui.radioButtonNormalizedDifference.setChecked(False)
-    #         self.ui.radioButtonQuadraticError.setChecked(True)
-    # 
-    #     self.ui.doubleSpinBoxLoopImportance.setValue(self.sse.correspondenceEngine.getConstantDouble("LOOP_WEIGHT_COEFFICIENT"))
-    #     self.ui.doubleSpinBoxEuclideanLoopUsedPenalty.setValue(self.sse.correspondenceEngine.getConstantDouble("EUCLIDEAN_LOOP_PENALTY"))
-    # 
-    #     self.ui.doubleSpinBoxHelixImportance.setValue(self.constants.getConstantDouble("HELIX_WEIGHT_COEFFICIENT"))
-    #     if (self.constants.getConstantInt("MISSING_HELIX_COUNT") == -1):
-    #         self.ui.checkBoxMissingHelices.setChecked(False)
-    #     else:
-    #         self.ui.checkBoxMissingHelices.setChecked(True)
-    #         self.ui.spinBoxMissingHelixCount.setValue(self.constants.getConstantInt("MISSING_HELIX_COUNT"))
-    #     self.ui.doubleSpinBoxHelixMissingPenalty.setValue(self.constants.getConstantDouble("MISSING_HELIX_PENALTY"))
-    #     self.ui.doubleSpinBoxHelixMissingPenaltyScaled.setValue(self.constants.getConstantDouble("MISSING_HELIX_PENALTY_SCALED"))
-    #     self.ui.doubleSpinBoxEndHelixMissingPenalty.setValue(self.constants.getConstantDouble("START_END_MISSING_HELIX_PENALTY"))
-    #     
-    #     self.ui.checkBoxIncludeSheets.setChecked(True)
-    #     self.ui.doubleSpinBoxSheetImportance.setEnabled(True)
-    #     self.ui.doubleSpinBoxSheetImportance.setValue(self.sse.correspondenceEngine.getConstantDouble("SHEET_WEIGHT_COEFFICIENT"))
-    #     self.ui.checkBoxMissingSheets.setEnabled(True)
-    #     if (self.constants.getConstantInt("MISSING_SHEET_COUNT") == -1):
-    #         self.ui.checkBoxMissingSheets.setChecked(False)
-    #     else:
-    #         self.ui.checkBoxMissingSheets.setChecked(True)
-    #         self.ui.spinBoxMissingSheetCount.setValue(self.constants.getConstantInt("MISSING_SHEET_COUNT"))
-    #     self.ui.doubleSpinBoxSheetMissingPenalty.setEnabled(True)
-    #     self.ui.doubleSpinBoxSheetMissingPenalty.setValue(self.sse.correspondenceEngine.getConstantDouble("MISSING_SHEET_PENALTY"))
-    #     self.ui.doubleSpinBoxSheetMissingPenaltyScaled.setEnabled(True)
-    #     self.ui.doubleSpinBoxSheetMissingPenaltyScaled.setValue(self.sse.correspondenceEngine.getConstantDouble("MISSING_SHEET_PENALTY_SCALED"))
+    def getConstants(self):
+        
+        #Graph Settings tab
+        self.ui.spinBoxBorderMarginThreshold.setValue(self.constants.getConstantInt("BORDER_MARGIN_THRESHOLD"))
+        self.ui.doubleSpinBoxEuclideanDistance.setValue(self.constants.getConstantDouble("EUCLIDEAN_DISTANCE_THRESHOLD"))
+        self.ui.spinBoxMinSheetSize.setValue(self.constants.getConstantInt("MINIMUM_SHEET_SIZE"))
+        self.ui.doubleSpinBoxMaxSheetDistance.setValue(self.constants.getConstantDouble("MAXIMUM_DISTANCE_SHEET_SKELETON"))
+        self.ui.doubleSpinBoxSheetSelfLoopLength.setValue(self.constants.getConstantDouble("SHEET_SELF_LOOP_LENGTH"))
+        self.ui.doubleSpinBoxSheetMergeThreshold.setValue(self.constants.getConstantDouble("SHEET_MERGE_THRESHOLD"))
+        if(self.constants.getConstantInt("INCLUDE_STRANDS") == 1):
+            self.ui.checkBoxIncludeStrands.setChecked(True)
+        else:
+            self.ui.checkBoxIncludeStrands.setChecked(False)
+    
+        #Matching settings tab
+        self.ui.doubleSpinBoxEuclideanToPDBRatio.setValue(self.constants.getConstantDouble("EUCLIDEAN_VOXEL_TO_PDB_RATIO"))
+        if(self.constants.getConstantInt("COST_FUNCTION") == 1):
+            self.ui.radioButtonAbsoluteDifference.setChecked(True)
+            self.ui.radioButtonNormalizedDifference.setChecked(False)
+            self.ui.radioButtonQuadraticError.setChecked(False)
+        elif (self.constants.getConstantInt("COST_FUNCTION") == 2):
+            self.ui.radioButtonAbsoluteDifference.setChecked(False)
+            self.ui.radioButtonNormalizedDifference.setChecked(True)
+            self.ui.radioButtonQuadraticError.setChecked(False)
+        elif (self.constants.getConstantInt("COST_FUNCTION") == 3):
+            self.ui.radioButtonAbsoluteDifference.setChecked(False)
+            self.ui.radioButtonNormalizedDifference.setChecked(False)
+            self.ui.radioButtonQuadraticError.setChecked(True)
+    
+        self.ui.doubleSpinBoxLoopImportance.setValue(self.constants.getConstantDouble("LOOP_WEIGHT_COEFFICIENT"))
+        self.ui.doubleSpinBoxEuclideanLoopUsedPenalty.setValue(self.constants.getConstantDouble("EUCLIDEAN_LOOP_PENALTY"))
+    
+        self.ui.doubleSpinBoxHelixImportance.setValue(self.constants.getConstantDouble("HELIX_WEIGHT_COEFFICIENT"))
+        if (self.constants.getConstantInt("MISSING_HELIX_COUNT") == -1):
+            self.ui.checkBoxMissingHelices.setChecked(False)
+        else:
+            self.ui.checkBoxMissingHelices.setChecked(True)
+            self.ui.spinBoxMissingHelixCount.setValue(self.constants.getConstantInt("MISSING_HELIX_COUNT"))
+        self.ui.doubleSpinBoxHelixMissingPenalty.setValue(self.constants.getConstantDouble("MISSING_HELIX_PENALTY"))
+        self.ui.doubleSpinBoxHelixMissingPenaltyScaled.setValue(self.constants.getConstantDouble("MISSING_HELIX_PENALTY_SCALED"))
+        self.ui.doubleSpinBoxEndHelixMissingPenalty.setValue(self.constants.getConstantDouble("START_END_MISSING_HELIX_PENALTY"))
+        
+        self.ui.checkBoxIncludeSheets.setChecked(True)
+        self.ui.doubleSpinBoxSheetImportance.setEnabled(True)
+        self.ui.doubleSpinBoxSheetImportance.setValue(self.constants.getConstantDouble("SHEET_WEIGHT_COEFFICIENT"))
+        self.ui.checkBoxMissingSheets.setEnabled(True)
+        if (self.constants.getConstantInt("MISSING_SHEET_COUNT") == -1):
+            self.ui.checkBoxMissingSheets.setChecked(False)
+        else:
+            self.ui.checkBoxMissingSheets.setChecked(True)
+            self.ui.spinBoxMissingSheetCount.setValue(self.constants.getConstantInt("MISSING_SHEET_COUNT"))
+        self.ui.doubleSpinBoxSheetMissingPenalty.setEnabled(True)
+        self.ui.doubleSpinBoxSheetMissingPenalty.setValue(self.constants.getConstantDouble("MISSING_SHEET_PENALTY"))
+        self.ui.doubleSpinBoxSheetMissingPenaltyScaled.setEnabled(True)
+        self.ui.doubleSpinBoxSheetMissingPenaltyScaled.setValue(self.constants.getConstantDouble("MISSING_SHEET_PENALTY_SCALED"))
 
     def getConstraints(self):
         print "Reading constraints from c++ layer to python layer"
