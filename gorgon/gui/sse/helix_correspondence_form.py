@@ -25,7 +25,7 @@ from ...toolkit.libpytoolkit import SSEEngine
 from viewer import SSEViewer
 from ...toolkit import HelixCorrespondence
 
-class SSEHelixCorrespondenceForm(QtGui.QDialog):
+class SSEHelixCorrespondenceForm(QtGui.QDialog, HelixCorrespondence):
 
     def __init__(self, parent):
         self.parent = parent
@@ -33,6 +33,7 @@ class SSEHelixCorrespondenceForm(QtGui.QDialog):
         self.correspondenceLibrary = CorrespondenceLibrary()
 
         QtGui.QDialog.__init__(self, self.parent)
+        HelixCorrespondence.__init__(self, self.args)
         self.constants = IBackEnd()
         
         dock = QtGui.QDockWidget("SSEHelixCorrespondenceFinder", self.parent)
