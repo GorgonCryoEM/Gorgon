@@ -277,37 +277,37 @@ class SSEHelixCorrespondenceForm(QtGui.QDialog, HelixCorrespondence):
         
     def setConstants(self):
         HelixCorrespondence.setConstants(self)
-        #Tab 4 User Constraints
-        # comment out the constraint clearing so that constraints can be loaded from settings files
-        #self.correspondenceEngine.clearAllConstraints()
-        correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
-        if(correspondenceIndex >= 0):
-            corr = self.correspondenceLibrary.correspondenceList[correspondenceIndex]
-            predictedGraphNode = 1
-            nObservedHelices = len(self.correspondenceLibrary.structureObservation.helixDict)
-            for i in range(len(corr.matchList)):
-                match = corr.matchList[i]
-                self.userConstraints[i] = match.constrained
-                if match.predicted.type == 'helix':
-                    if match.constrained:
-                        if(match.observed):
-                            setHelixConstraint(predictedGraphNode, 2*match.observed.label + 1)
-                        else:
-                            setHelixConstraint(predictedGraphNode, -1)
-                if match.predicted.type == 'strand':
-                    if(not self.ui.checkBoxIncludeSheets.isChecked()):
-                        self.userConstraints[i]=False # clear all strand constraints
-                        match.constrained = False     # clear all strand constraints
-                        self.correspondenceEngine.setNodeConstraint(predictedGraphNode, -1)
-                    elif(match.constrained):
-                        if(match.observed):
-                            self.correspondenceEngine.setNodeConstraint(predictedGraphNode, match.observed.label + nObservedHelices + 1)
-                        else:
-                            self.correspondenceEngine.setNodeConstraint(predictedGraphNode, -1)
-                if (match.predicted.type) == 'strand':
-                    predictedGraphNode += 1
-                if (match.predicted.type) == 'helix':
-                    predictedGraphNode += 2
+        # #Tab 4 User Constraints
+        # # comment out the constraint clearing so that constraints can be loaded from settings files
+        # #self.correspondenceEngine.clearAllConstraints()
+        # correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
+        # if(correspondenceIndex >= 0):
+        #     corr = self.correspondenceLibrary.correspondenceList[correspondenceIndex]
+        #     predictedGraphNode = 1
+        #     nObservedHelices = len(self.correspondenceLibrary.structureObservation.helixDict)
+        #     for i in range(len(corr.matchList)):
+        #         match = corr.matchList[i]
+        #         self.userConstraints[i] = match.constrained
+        #         if match.predicted.type == 'helix':
+        #             if match.constrained:
+        #                 if(match.observed):
+        #                     setHelixConstraint(predictedGraphNode, 2*match.observed.label + 1)
+        #                 else:
+        #                     setHelixConstraint(predictedGraphNode, -1)
+        #         if match.predicted.type == 'strand':
+        #             if(not self.ui.checkBoxIncludeSheets.isChecked()):
+        #                 self.userConstraints[i]=False # clear all strand constraints
+        #                 match.constrained = False     # clear all strand constraints
+        #                 self.correspondenceEngine.setNodeConstraint(predictedGraphNode, -1)
+        #             elif(match.constrained):
+        #                 if(match.observed):
+        #                     self.correspondenceEngine.setNodeConstraint(predictedGraphNode, match.observed.label + nObservedHelices + 1)
+        #                 else:
+        #                     self.correspondenceEngine.setNodeConstraint(predictedGraphNode, -1)
+        #         if (match.predicted.type) == 'strand':
+        #             predictedGraphNode += 1
+        #         if (match.predicted.type) == 'helix':
+        #             predictedGraphNode += 2
 
     # def getConstants(self):
     #     
