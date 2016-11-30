@@ -188,6 +188,7 @@ class SSEHelixCorrespondenceForm(QtGui.QDialog, HelixCorrespondence):
             print "data not loaded"
         print "correspondence index at end is " + str(self.ui.comboBoxCorrespondences.currentIndex())
         print "end checkOk"
+        self.getConstants()
     
 #     def loadSettings(self):
 #
