@@ -25,7 +25,7 @@ from ...toolkit.libpytoolkit import SSEEngine
 from viewer import SSEViewer
 from ...toolkit import HelixCorrespondence
 
-class SSEHelixCorrespondenceForm(QtGui.QDialog):
+class SSEHelixCorrespondenceForm(QtGui.QDialog, HelixCorrespondence):
 
     def __init__(self, parent):
         self.parent = parent
@@ -33,7 +33,7 @@ class SSEHelixCorrespondenceForm(QtGui.QDialog):
         self.correspondenceLibrary = CorrespondenceLibrary()
 
         QtGui.QDialog.__init__(self, self.parent)
-        self.constants = IBackEnd()
+        HelixCorrespondence.__init__(self, self.args)
         
         dock = QtGui.QDockWidget("SSEHelixCorrespondenceFinder", self.parent)
         dock.setWidget(self)
@@ -50,9 +50,6 @@ class SSEHelixCorrespondenceForm(QtGui.QDialog):
         self.dataLoaded = True
         self.allLoaded  = True
 
-        self.sse_finder = HelixCorrespondence(self.args)
-        self.correspondenceEngine = self.sse_finder.correspondenceEngine
-
         # KLUDGE: This class should be drawn as itself,
         # not by injecting its drawing function into SSEViewer
         SSEViewer.extraDrawingRoutines = self.extraDrawingRoutines
@@ -68,10 +65,11 @@ class SSEHelixCorrespondenceForm(QtGui.QDialog):
 #         self.connect(self.ui.pushButtonGetSheetLocationFile, QtCore.SIGNAL("pressed ()"), self.getSheetLocationFile)
 #         self.connect(self.ui.pushButtonGetSkeletonFile, QtCore.SIGNAL("pressed ()"), self.getSkeletonFile)
 #         self.connect(self.ui.pushButtonGetSequenceFile, QtCore.SIGNAL("pressed ()"), self.getSequenceFile)
-#         self.connect(self.ui.pushButtonGetSettingsFile, QtCore.SIGNAL("pressed ()"), self.getSettingsFile)
+        self.connect(self.ui.pushButtonGetSettingsFile, QtCore.SIGNAL("pressed ()"), self.getSettingsFile)
 #         self.connect(self.ui.pushButtonReset, QtCore.SIGNAL("pressed ()"), self.loadDefaults)
         self.connect(self.ui.pushButtonAddHelices, QtCore.SIGNAL("pressed ()"), self.create_all_helices)
         self.connect(self.ui.pushButtonOk, QtCore.SIGNAL("pressed ()"), self.accept)
+        self.connect(self.ui.pushButtonRebuildGraph, QtCore.SIGNAL("pressed ()"), self.rebuildGraph)
         self.connect(self.ui.comboBoxCorrespondences, QtCore.SIGNAL("currentIndexChanged (int)"), self.selectCorrespondence)
 #         self.connect(self.ui.pushButtonExportToRosetta, QtCore.SIGNAL("pressed ()"), self.exportToRosetta)
         self.ui.checkBoxShowAllPaths.clicked.connect(self.sse.modelChanged)
@@ -97,6 +95,8 @@ class SSEHelixCorrespondenceForm(QtGui.QDialog):
         self.ui.checkBoxShowHelixCorners.setChecked(False)
         self.ui.checkBoxShowSheetCorners.setChecked(False)
         self.ui.checkBoxShowAllPaths.setChecked(False)
+
+        self.getConstants()
           
 #     # populate parameter boxes with default values for correspondence search
 #     def loadDefaults(self):
@@ -108,57 +108,10 @@ class SSEHelixCorrespondenceForm(QtGui.QDialog):
 #         self.ui.lineEditSettingsFile.setText("")
 #         self.loadDefaultParams()
 
-    def loadDefaultParams(self):
-        self.ui.pushButtonExportToRosetta.setVisible(False)
-        # Graph Settings tab
-        self.ui.spinBoxBorderMarginThreshold.setValue(5)
-        self.ui.doubleSpinBoxEuclideanDistance.setValue(0.0)
-        self.ui.checkBoxIncludeSheets.setChecked(True)
-        #min sheet size
-        #max sheet distance
-        #sheet self-loop length
+    def openFile(self, title, fileformats):
+        fileName = QtGui.QFileDialog.getOpenFileName(self, self.tr(title), "", self.tr(fileformats))
+        return fileName
 
-        self.ui.checkBoxShowSkeleton.setChecked(self.parent.skeleton.visualizationOptions.ui.checkBoxModelVisible.isChecked())
-        self.ui.checkBoxShowHelices.setChecked(self.sse.visualizationOptions.ui.checkBoxModelVisible.isChecked())
-        self.ui.checkBoxShowHelixCorners.setChecked(False)
-        self.ui.checkBoxShowSheets.setChecked(self.sse.visualizationOptions.ui.checkBoxModel2Visible.isChecked())
-        self.ui.checkBoxShowSheetColors.setChecked(self.sse.visualizationOptions.ui.checkBoxModel3Visible.isChecked())
-        self.ui.checkBoxShowSheetCorners.setChecked(False)
-        self.ui.checkBoxShowAllPaths.setChecked(False)
-
-        # Matching Settings tab
-        self.ui.doubleSpinBoxEuclideanToPDBRatio.setValue(10.0)
-        self.ui.radioButtonAbsoluteDifference.setChecked(True)
-        self.ui.radioButtonNormalizedDifference.setChecked(False)
-        self.ui.radioButtonQuadraticError.setChecked(False)
-
-        self.ui.doubleSpinBoxLoopImportance.setValue(0.2)
-        self.ui.doubleSpinBoxEuclideanLoopUsedPenalty.setValue(5.0)
-        
-        self.ui.doubleSpinBoxHelixImportance.setValue(1.0)
-        self.ui.checkBoxMissingHelices.setChecked(False)
-        self.ui.spinBoxMissingHelixCount.setValue(0)
-        self.ui.doubleSpinBoxHelixMissingPenalty.setValue(5.0)
-        self.ui.doubleSpinBoxHelixMissingPenaltyScaled.setValue(0.0)
-        self.ui.doubleSpinBoxEndHelixMissingPenalty.setValue(5.0)
-
-        self.ui.doubleSpinBoxSheetImportance.setValue(1.0)
-        self.ui.checkBoxMissingSheets.setChecked(False)
-        self.ui.spinBoxMissingSheetCount.setValue(0)
-        self.ui.doubleSpinBoxSheetMissingPenalty.setValue(5.0)
-        self.ui.doubleSpinBoxSheetMissingPenaltyScaled.setValue(0.0)
-
-        # Results tab
-        self.ui.tableWidgetCorrespondenceList.clearContents()
-        self.ui.tabWidget.setCurrentIndex(0)
-        self.ui.comboBoxCorrespondences.setCurrentIndex(-1)
-
-        self.checkOk()
-        
-#     def openFile(self, title, fileformats):
-#         fileName = QtGui.QFileDialog.getOpenFileName(self, self.tr(title), "", self.tr(fileformats))
-#         return fileName
-#
 #     def getHelixLengthFile(self):
 #         self.ui.lineEditHelixLengthFile.setText(self.openFile("Load Helix Length File", "SSE Hunter results (*.sse)"))
 #         self.checkOk()
@@ -189,14 +142,14 @@ class SSEHelixCorrespondenceForm(QtGui.QDialog):
 #         self.ui.lineEditSequenceFile.setText(self.openFile("Load Sequence File", "Sequence with SSE predictions (*.seq)\nPDB Helix Annotations (*.pdb)"))
 #         self.checkOk()
 # #         self.bringToFront()
-#
-#     def getSettingsFile(self):
-#         """
-#         This loads a settings file, which contains filenames and search parameters.
-#         """
-#         self.ui.lineEditSettingsFile.setText(self.openFile("Load Settings File", "Settings File (*.txt)"))
-#         self.loadSettings()
-# #         self.bringToFront()
+
+    def getSettingsFile(self):
+        """
+        This loads a settings file, which contains filenames and search parameters.
+        """
+        self.ui.lineEditSettingsFile.setText(self.openFile("Load Settings File", "Settings File (*.txt)"))
+        self.loadSettings()
+#         self.bringToFront()
         
     def checkOk(self):
         """
@@ -239,180 +192,180 @@ class SSEHelixCorrespondenceForm(QtGui.QDialog):
         print "correspondence index at end is " + str(self.ui.comboBoxCorrespondences.currentIndex())
         print "end checkOk"
     
-#     def loadSettings(self):
-#
-#         if (not(self.ui.lineEditSettingsFile.text().isEmpty())):
-#
-#             print "loading default parameters"
-#             self.loadDefaultParams()
-#
-#             print "loading settings file"
-#             oldCursor = self.cursor()
-#             self.setCursor(QtCore.Qt.BusyCursor)
-#
-#             print "calling setConstantsFromFile"
-#             self.setConstants()
-#             self.correspondenceEngine.setConstantsFromFile(str(self.ui.lineEditSettingsFile.text()))
-#
-#             print "copying constants from file to GUI"
-#             self.getConstants()
-#
-#             print "getting settings filename"
-#             settingsFilename = str(self.ui.lineEditSettingsFile.text())
-#
-#             #self.correspondenceEngine.printConstants
-#             print "reading other filenames for parsing"
-#             helixFilename = self.correspondenceEngine.getConstantString("VRML_HELIX_FILE_NAME")
-#             print "helix filename is " + helixFilename
-#             sheetFilename = self.correspondenceEngine.getConstantString("VRML_SHEET_FILE_NAME")
-#             print "sheet filename is " + sheetFilename
-#             sequenceFilename = self.correspondenceEngine.getConstantString("SEQUENCE_FILE_NAME")
-#             print "sequence filename is " + sequenceFilename
-#             skeletonFilename = self.correspondenceEngine.getConstantString("MRC_FILE_NAME")
-#             print "skeleton filename is " + skeletonFilename
-#             sseFilename = self.correspondenceEngine.getConstantString("SSE_FILE_NAME")
-#             print "sse filename is " + sseFilename
-#
-#             import os
-#             path,settingsFile = os.path.split(settingsFilename)
-#             ssePath,sseFile = os.path.split(sseFilename)
-#             helixPath,helixFile = os.path.split(helixFilename)
-#             sheetPath,sheetFile = os.path.split(sheetFilename)
-#             skeletonPath,skeletonFile = os.path.split(skeletonFilename)
-#             seqPath,seqFile = os.path.split(sequenceFilename)
-#
-#             print "The path (raw) is " + path
-#             path = path.replace('/', os.sep)  # replace forward slash with separator for this OS
-#             path = path.replace('\\', os.sep) # replace backslash with separator for this OS
-#             print "The path (fixed) is " + path
-#
-#             settingsFilePath = path + os.sep + settingsFile
-#             sseFilePath = path + os.sep + sseFile
-#             helixFilePath = path + os.sep + helixFile
-#             sheetFilePath = path + os.sep + sheetFile
-#             skeletonFilePath = path + os.sep + skeletonFile
-#             seqFilePath = path + os.sep + seqFile
-#
-#             print "The settings file is " + settingsFilePath
-#             print "The sse file is " + sseFilePath
-#             print "The helix file is " + helixFilePath
-#             print "The sheet file is " + sheetFilePath
-#             print "The skeleton file is " + skeletonFilePath
-#             print "The seq file is " + seqFilePath
-#
-#             # store sequence filename
-#             self.ui.lineEditSequenceFile.setText(seqFilePath)
-#
-#             # load helix file and store the filename
-#             self.sse.loadHelixDataFromFile(helixFilePath)
-#             self.ui.lineEditHelixLocationFile.setText(helixFilePath)
-#
-#             # load sheet file and store the filename
-#             self.sse.loadSheetDataFromFile(sheetFilePath)
-#             self.ui.lineEditSheetLocationFile.setText(sheetFilePath)
-#
-#             # load skeleton file and store the filename
-#             self.parent.skeleton.loadDataFromFile(skeletonFilePath)
-#             self.ui.lineEditSkeletonFile.setText(skeletonFilePath)
-#
-#             # store helix length filename
-#             self.ui.lineEditHelixLengthFile.setText(sseFilePath)
-#
-#             self.setCursor(oldCursor)
-#
-#             self.checkOk()
-#
-#             self.getConstraints()
-#             print "done loading settings file"
+    def loadSettings(self):
+
+        if (not(self.ui.lineEditSettingsFile.text().isEmpty())):
+
+            print "loading default parameters"
+            self.loadDefaultParams()
+
+            print "loading settings file"
+            oldCursor = self.cursor()
+            self.setCursor(QtCore.Qt.BusyCursor)
+
+            print "calling setConstantsFromFile"
+            self.setConstants()
+            self.constants.loadConstantsFromFile(str(self.ui.lineEditSettingsFile.text()))
+
+            print "copying constants from file to GUI"
+            self.getConstants()
+
+            print "getting settings filename"
+            settingsFilename = str(self.ui.lineEditSettingsFile.text())
+
+            #self.constants.printConstants
+            print "reading other filenames for parsing"
+            helixFilename = self.constants.getConstantString("VRML_HELIX_FILE_NAME")
+            print "helix filename is " + helixFilename
+            sheetFilename = self.constants.getConstantString("VRML_SHEET_FILE_NAME")
+            print "sheet filename is " + sheetFilename
+            sequenceFilename = self.constants.getConstantString("SEQUENCE_FILE_NAME")
+            print "sequence filename is " + sequenceFilename
+            skeletonFilename = self.constants.getConstantString("MRC_FILE_NAME")
+            print "skeleton filename is " + skeletonFilename
+            sseFilename = self.constants.getConstantString("SSE_FILE_NAME")
+            print "sse filename is " + sseFilename
+
+            import os
+            path,settingsFile = os.path.split(settingsFilename)
+            ssePath,sseFile = os.path.split(sseFilename)
+            helixPath,helixFile = os.path.split(helixFilename)
+            sheetPath,sheetFile = os.path.split(sheetFilename)
+            skeletonPath,skeletonFile = os.path.split(skeletonFilename)
+            seqPath,seqFile = os.path.split(sequenceFilename)
+
+            print "The path (raw) is " + path
+            path = path.replace('/', os.sep)  # replace forward slash with separator for this OS
+            path = path.replace('\\', os.sep) # replace backslash with separator for this OS
+            print "The path (fixed) is " + path
+
+            settingsFilePath = path + os.sep + settingsFile
+            sseFilePath = path + os.sep + sseFile
+            helixFilePath = path + os.sep + helixFile
+            sheetFilePath = path + os.sep + sheetFile
+            skeletonFilePath = path + os.sep + skeletonFile
+            seqFilePath = path + os.sep + seqFile
+
+            print "The settings file is " + settingsFilePath
+            print "The sse file is " + sseFilePath
+            print "The helix file is " + helixFilePath
+            print "The sheet file is " + sheetFilePath
+            print "The skeleton file is " + skeletonFilePath
+            print "The seq file is " + seqFilePath
+
+            # # store sequence filename
+            # self.ui.lineEditSequenceFile.setText(seqFilePath)
+            # 
+            # # load helix file and store the filename
+            # self.sse.loadHelixDataFromFile(helixFilePath)
+            # self.ui.lineEditHelixLocationFile.setText(helixFilePath)
+            # 
+            # # load sheet file and store the filename
+            # self.sse.loadSheetDataFromFile(sheetFilePath)
+            # self.ui.lineEditSheetLocationFile.setText(sheetFilePath)
+            # 
+            # # load skeleton file and store the filename
+            # self.parent.skeleton.loadDataFromFile(skeletonFilePath)
+            # self.ui.lineEditSkeletonFile.setText(skeletonFilePath)
+            # 
+            # # store helix length filename
+            # self.ui.lineEditHelixLengthFile.setText(sseFilePath)
+
+            self.setCursor(oldCursor)
+
+            self.checkOk()
+
+            # self.getConstraints()
+            print "done loading settings file"
         
     def setConstants(self):
         #Data Sources tab
         #self.constants.setConstant("SSE_FILE_NAME", str(self.ui.lineEditHelixLengthFile.text()))
-        self.constants.setConstant("VRML_HELIX_FILE_NAME", str(self.ui.lineEditHelixLocationFile.text()))
-        self.constants.setConstant("VRML_SHEET_FILE_NAME", str(self.ui.lineEditSheetLocationFile.text()))
-        self.constants.setConstant("MRC_FILE_NAME", str(self.ui.lineEditSkeletonFile.text()))
+        self.constants.setConstantString("VRML_HELIX_FILE_NAME", str(self.ui.lineEditHelixLocationFile.text()))
+        self.constants.setConstantString("VRML_SHEET_FILE_NAME", str(self.ui.lineEditSheetLocationFile.text()))
+        self.constants.setConstantString("MRC_FILE_NAME", str(self.ui.lineEditSkeletonFile.text()))
         self.sequenceFileName = str(self.ui.lineEditSequenceFile.text())
-        self.constants.setConstant("SEQUENCE_FILE_NAME", self.sequenceFileName)
+        self.constants.setConstantString("SEQUENCE_FILE_NAME", self.sequenceFileName)
         if self.sequenceFileName.split('.')[-1].lower() == 'pdb':
-            self.constants.setConstant("SEQUENCE_FILE_TYPE", "PDB")
+            self.constants.setConstantString("SEQUENCE_FILE_TYPE", "PDB")
         elif self.sequenceFileName.split('.')[-1].lower() == 'seq':
-            self.constants.setConstant("SEQUENCE_FILE_TYPE", "SEQ")
-        
+            self.constants.setConstantString("SEQUENCE_FILE_TYPE", "SEQ")
+
         #Graph Settings tab
-        self.constants.setConstant("BORDER_MARGIN_THRESHOLD", self.ui.spinBoxBorderMarginThreshold.value())
-        self.constants.setConstant("EUCLIDEAN_DISTANCE_THRESHOLD", self.ui.doubleSpinBoxEuclideanDistance.value())
-        self.constants.setConstant("MAXIMUM_DISTANCE_SHEET_SKELETON", self.ui.doubleSpinBoxMaxSheetDistance.value())
-        self.constants.setConstant("MINIMUM_SHEET_SIZE", self.ui.spinBoxMinSheetSize.value())
-        self.constants.setConstant("SHEET_SELF_LOOP_LENGTH", self.ui.doubleSpinBoxSheetSelfLoopLength.value())
-        self.constants.setConstant("SHEET_MERGE_THRESHOLD", self.ui.doubleSpinBoxSheetMergeThreshold.value())
+        self.constants.setConstantInt("BORDER_MARGIN_THRESHOLD", self.ui.spinBoxBorderMarginThreshold.value())
+        self.constants.setConstantDouble("EUCLIDEAN_DISTANCE_THRESHOLD", self.ui.doubleSpinBoxEuclideanDistance.value())
+        self.constants.setConstantDouble("MAXIMUM_DISTANCE_SHEET_SKELETON", self.ui.doubleSpinBoxMaxSheetDistance.value())
+        self.constants.setConstantInt("MINIMUM_SHEET_SIZE", self.ui.spinBoxMinSheetSize.value())
+        self.constants.setConstantDouble("SHEET_SELF_LOOP_LENGTH", self.ui.doubleSpinBoxSheetSelfLoopLength.value())
+        self.constants.setConstantDouble("SHEET_MERGE_THRESHOLD", self.ui.doubleSpinBoxSheetMergeThreshold.value())
         if (self.ui.checkBoxIncludeStrands.isChecked()):
-            self.constants.setConstant("INCLUDE_STRANDS", 1)
+            self.constants.setConstantInt("INCLUDE_STRANDS", 1)
         else:
-            self.constants.setConstant("INCLUDE_STRANDS", 0)
+            self.constants.setConstantInt("INCLUDE_STRANDS", 0)
 
         #Matching Settings tab
-        self.constants.setConstant("EUCLIDEAN_VOXEL_TO_PDB_RATIO", self.ui.doubleSpinBoxEuclideanToPDBRatio.value())
+        self.constants.setConstantDouble("EUCLIDEAN_VOXEL_TO_PDB_RATIO", self.ui.doubleSpinBoxEuclideanToPDBRatio.value())
         if(self.ui.radioButtonAbsoluteDifference.isChecked()):
-            self.constants.setConstant("COST_FUNCTION", 1)
+            self.constants.setConstantInt("COST_FUNCTION", 1)
         elif (self.ui.radioButtonNormalizedDifference.isChecked()):
-            self.constants.setConstant("COST_FUNCTION", 2)
+            self.constants.setConstantInt("COST_FUNCTION", 2)
         else:
-            self.constants.setConstant("COST_FUNCTION", 3)
+            self.constants.setConstantInt("COST_FUNCTION", 3)
 
-        self.constants.setConstant("LOOP_WEIGHT_COEFFICIENT", self.ui.doubleSpinBoxLoopImportance.value())
-        self.constants.setConstant("EUCLIDEAN_LOOP_PENALTY", self.ui.doubleSpinBoxEuclideanLoopUsedPenalty.value())
+        self.constants.setConstantDouble("LOOP_WEIGHT_COEFFICIENT", self.ui.doubleSpinBoxLoopImportance.value())
+        self.constants.setConstantDouble("EUCLIDEAN_LOOP_PENALTY", self.ui.doubleSpinBoxEuclideanLoopUsedPenalty.value())
 
-        self.constants.setConstant("HELIX_WEIGHT_COEFFICIENT", self.ui.doubleSpinBoxHelixImportance.value())
+        self.constants.setConstantDouble("HELIX_WEIGHT_COEFFICIENT", self.ui.doubleSpinBoxHelixImportance.value())
         if(self.ui.checkBoxMissingHelices.isChecked()):
-            self.constants.setConstant("MISSING_HELIX_COUNT", self.ui.spinBoxMissingHelixCount.value())
+            self.constants.setConstantInt("MISSING_HELIX_COUNT", self.ui.spinBoxMissingHelixCount.value())
         else:
-            self.constants.setConstant("MISSING_HELIX_COUNT", -1)
-        self.constants.setConstant("MISSING_HELIX_PENALTY", self.ui.doubleSpinBoxHelixMissingPenalty.value())
-        self.constants.setConstant("MISSING_HELIX_PENALTY_SCALED", self.ui.doubleSpinBoxHelixMissingPenaltyScaled.value())
-        self.constants.setConstant("START_END_MISSING_HELIX_PENALTY", self.ui.doubleSpinBoxEndHelixMissingPenalty.value())
-        
-        self.constants.setConstant("SHEET_WEIGHT_COEFFICIENT", self.ui.doubleSpinBoxSheetImportance.value())
+            self.constants.setConstantInt("MISSING_HELIX_COUNT", -1)
+        self.constants.setConstantDouble("MISSING_HELIX_PENALTY", self.ui.doubleSpinBoxHelixMissingPenalty.value())
+        self.constants.setConstantDouble("MISSING_HELIX_PENALTY_SCALED", self.ui.doubleSpinBoxHelixMissingPenaltyScaled.value())
+        self.constants.setConstantDouble("START_END_MISSING_HELIX_PENALTY", self.ui.doubleSpinBoxEndHelixMissingPenalty.value())
+
+        self.constants.setConstantDouble("SHEET_WEIGHT_COEFFICIENT", self.ui.doubleSpinBoxSheetImportance.value())
         if(self.ui.checkBoxMissingSheets.isChecked()):
             self.constants.setConstant("MISSING_SHEET_COUNT", self.ui.spinBoxMissingSheetCount.value())
         else:
-            self.constants.setConstant("MISSING_SHEET_COUNT", -1)
-        self.constants.setConstant("MISSING_SHEET_PENALTY", self.ui.doubleSpinBoxSheetMissingPenalty.value())
-        self.constants.setConstant("MISSING_SHEET_PENALTY_SCALED", self.ui.doubleSpinBoxSheetMissingPenaltyScaled.value())
-        
-        # no longer needed?
-        self.constants.setConstant("NORMALIZE_GRAPHS", True)
+            self.constants.setConstantInt("MISSING_SHEET_COUNT", -1)
+        self.constants.setConstantDouble("MISSING_SHEET_PENALTY", self.ui.doubleSpinBoxSheetMissingPenalty.value())
+        self.constants.setConstantDouble("MISSING_SHEET_PENALTY_SCALED", self.ui.doubleSpinBoxSheetMissingPenaltyScaled.value())
 
-        #Tab 4 User Constraints
-        # comment out the constraint clearing so that constraints can be loaded from settings files
-        #self.correspondenceEngine.clearAllConstraints()
-        correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
-        if(correspondenceIndex >= 0):
-            corr = self.correspondenceLibrary.correspondenceList[correspondenceIndex]
-            predictedGraphNode = 1
-            nObservedHelices = len(self.correspondenceLibrary.structureObservation.helixDict)
-            for i in range(len(corr.matchList)):
-                match = corr.matchList[i]
-                self.userConstraints[i] = match.constrained
-                if match.predicted.type == 'helix':
-                    if match.constrained:
-                        if(match.observed):
-                            setHelixConstraint(predictedGraphNode, 2*match.observed.label + 1)
-                        else:
-                            setHelixConstraint(predictedGraphNode, -1)
-                if match.predicted.type == 'strand':
-                    if(not self.ui.checkBoxIncludeSheets.isChecked()):
-                        self.userConstraints[i]=False # clear all strand constraints
-                        match.constrained = False     # clear all strand constraints
-                        self.correspondenceEngine.setNodeConstraint(predictedGraphNode, -1)
-                    elif(match.constrained):
-                        if(match.observed):
-                            self.correspondenceEngine.setNodeConstraint(predictedGraphNode, match.observed.label + nObservedHelices + 1)
-                        else:
-                            self.correspondenceEngine.setNodeConstraint(predictedGraphNode, -1)
-                if (match.predicted.type) == 'strand':
-                    predictedGraphNode += 1
-                if (match.predicted.type) == 'helix':
-                    predictedGraphNode += 2
+        # no longer needed?
+        self.constants.setConstantBool("NORMALIZE_GRAPHS", True)
+
+        # #Tab 4 User Constraints
+        # # comment out the constraint clearing so that constraints can be loaded from settings files
+        # #self.correspondenceEngine.clearAllConstraints()
+        # correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
+        # if(correspondenceIndex >= 0):
+        #     corr = self.correspondenceLibrary.correspondenceList[correspondenceIndex]
+        #     predictedGraphNode = 1
+        #     nObservedHelices = len(self.correspondenceLibrary.structureObservation.helixDict)
+        #     for i in range(len(corr.matchList)):
+        #         match = corr.matchList[i]
+        #         self.userConstraints[i] = match.constrained
+        #         if match.predicted.type == 'helix':
+        #             if match.constrained:
+        #                 if(match.observed):
+        #                     setHelixConstraint(predictedGraphNode, 2*match.observed.label + 1)
+        #                 else:
+        #                     setHelixConstraint(predictedGraphNode, -1)
+        #         if match.predicted.type == 'strand':
+        #             if(not self.ui.checkBoxIncludeSheets.isChecked()):
+        #                 self.userConstraints[i]=False # clear all strand constraints
+        #                 match.constrained = False     # clear all strand constraints
+        #                 self.correspondenceEngine.setNodeConstraint(predictedGraphNode, -1)
+        #             elif(match.constrained):
+        #                 if(match.observed):
+        #                     self.correspondenceEngine.setNodeConstraint(predictedGraphNode, match.observed.label + nObservedHelices + 1)
+        #                 else:
+        #                     self.correspondenceEngine.setNodeConstraint(predictedGraphNode, -1)
+        #         if (match.predicted.type) == 'strand':
+        #             predictedGraphNode += 1
+        #         if (match.predicted.type) == 'helix':
+        #             predictedGraphNode += 2
 
     def getConstants(self):
         
@@ -427,7 +380,7 @@ class SSEHelixCorrespondenceForm(QtGui.QDialog):
             self.ui.checkBoxIncludeStrands.setChecked(True)
         else:
             self.ui.checkBoxIncludeStrands.setChecked(False)
-
+    
         #Matching settings tab
         self.ui.doubleSpinBoxEuclideanToPDBRatio.setValue(self.constants.getConstantDouble("EUCLIDEAN_VOXEL_TO_PDB_RATIO"))
         if(self.constants.getConstantInt("COST_FUNCTION") == 1):
@@ -442,10 +395,10 @@ class SSEHelixCorrespondenceForm(QtGui.QDialog):
             self.ui.radioButtonAbsoluteDifference.setChecked(False)
             self.ui.radioButtonNormalizedDifference.setChecked(False)
             self.ui.radioButtonQuadraticError.setChecked(True)
-
-        self.ui.doubleSpinBoxLoopImportance.setValue(self.sse.correspondenceEngine.getConstantDouble("LOOP_WEIGHT_COEFFICIENT"))
-        self.ui.doubleSpinBoxEuclideanLoopUsedPenalty.setValue(self.sse.correspondenceEngine.getConstantDouble("EUCLIDEAN_LOOP_PENALTY"))
-
+    
+        self.ui.doubleSpinBoxLoopImportance.setValue(self.constants.getConstantDouble("LOOP_WEIGHT_COEFFICIENT"))
+        self.ui.doubleSpinBoxEuclideanLoopUsedPenalty.setValue(self.constants.getConstantDouble("EUCLIDEAN_LOOP_PENALTY"))
+    
         self.ui.doubleSpinBoxHelixImportance.setValue(self.constants.getConstantDouble("HELIX_WEIGHT_COEFFICIENT"))
         if (self.constants.getConstantInt("MISSING_HELIX_COUNT") == -1):
             self.ui.checkBoxMissingHelices.setChecked(False)
@@ -458,7 +411,7 @@ class SSEHelixCorrespondenceForm(QtGui.QDialog):
         
         self.ui.checkBoxIncludeSheets.setChecked(True)
         self.ui.doubleSpinBoxSheetImportance.setEnabled(True)
-        self.ui.doubleSpinBoxSheetImportance.setValue(self.sse.correspondenceEngine.getConstantDouble("SHEET_WEIGHT_COEFFICIENT"))
+        self.ui.doubleSpinBoxSheetImportance.setValue(self.constants.getConstantDouble("SHEET_WEIGHT_COEFFICIENT"))
         self.ui.checkBoxMissingSheets.setEnabled(True)
         if (self.constants.getConstantInt("MISSING_SHEET_COUNT") == -1):
             self.ui.checkBoxMissingSheets.setChecked(False)
@@ -466,9 +419,9 @@ class SSEHelixCorrespondenceForm(QtGui.QDialog):
             self.ui.checkBoxMissingSheets.setChecked(True)
             self.ui.spinBoxMissingSheetCount.setValue(self.constants.getConstantInt("MISSING_SHEET_COUNT"))
         self.ui.doubleSpinBoxSheetMissingPenalty.setEnabled(True)
-        self.ui.doubleSpinBoxSheetMissingPenalty.setValue(self.sse.correspondenceEngine.getConstantDouble("MISSING_SHEET_PENALTY"))
+        self.ui.doubleSpinBoxSheetMissingPenalty.setValue(self.constants.getConstantDouble("MISSING_SHEET_PENALTY"))
         self.ui.doubleSpinBoxSheetMissingPenaltyScaled.setEnabled(True)
-        self.ui.doubleSpinBoxSheetMissingPenaltyScaled.setValue(self.sse.correspondenceEngine.getConstantDouble("MISSING_SHEET_PENALTY_SCALED"))
+        self.ui.doubleSpinBoxSheetMissingPenaltyScaled.setValue(self.constants.getConstantDouble("MISSING_SHEET_PENALTY_SCALED"))
 
     def getConstraints(self):
         print "Reading constraints from c++ layer to python layer"
@@ -722,7 +675,7 @@ class SSEHelixCorrespondenceForm(QtGui.QDialog):
         self.createBasicCorrespondence()
                 
         # execute correspondence query and do cleanup
-        self.resultCount = self.sse_finder.accept()
+        self.resultCount = HelixCorrespondence.accept(self)
 
         print "found " + str(self.resultCount) + " results. cleaning up memory."
 
@@ -743,6 +696,24 @@ class SSEHelixCorrespondenceForm(QtGui.QDialog):
         self.sse.modelChanged()
         self.ui.tabWidget.setCurrentIndex(4)
         print "done with search"
+
+    def rebuildGraph(self):
+        print "correspondence index before rebuilding is "
+        print self.ui.comboBoxCorrespondences.currentIndex()
+        self.ui.comboBoxCorrespondences.setCurrentIndex(-1)
+        print "correspondence index after setting to -1 is "
+        print self.ui.comboBoxCorrespondences.currentIndex()
+        self.setConstants()
+        self.checkOk()
+        self.makeSheetSurfaces(self.parent.skeleton.renderer.getOriginX(),
+                               self.parent.skeleton.renderer.getOriginY(),
+                               self.parent.skeleton.renderer.getOriginZ(),
+                               self.parent.skeleton.renderer.getSpacingX(),
+                               self.parent.skeleton.renderer.getSpacingY(),
+                               self.parent.skeleton.renderer.getSpacingZ())
+        self.sse.modelChanged()
+        print "correspondence index after rebuilding is "
+        print self.ui.comboBoxCorrespondences.currentIndex()
                 
     def getIndexedSheetColor(self, index, size):
         """returns a color for sheet 'index' out of 'size' sheets. colors will be orange or red."""
