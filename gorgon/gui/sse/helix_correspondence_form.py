@@ -252,23 +252,23 @@ class SSEHelixCorrespondenceForm(QtGui.QDialog, HelixCorrespondence):
             print "The skeleton file is " + skeletonFilePath
             print "The seq file is " + seqFilePath
 
-            # store sequence filename
-            self.ui.lineEditSequenceFile.setText(seqFilePath)
-
-            # load helix file and store the filename
-            self.sse.loadHelixDataFromFile(helixFilePath)
-            self.ui.lineEditHelixLocationFile.setText(helixFilePath)
-
-            # load sheet file and store the filename
-            self.sse.loadSheetDataFromFile(sheetFilePath)
-            self.ui.lineEditSheetLocationFile.setText(sheetFilePath)
-
-            # load skeleton file and store the filename
-            self.parent.skeleton.loadDataFromFile(skeletonFilePath)
-            self.ui.lineEditSkeletonFile.setText(skeletonFilePath)
-
-            # store helix length filename
-            self.ui.lineEditHelixLengthFile.setText(sseFilePath)
+            # # store sequence filename
+            # self.ui.lineEditSequenceFile.setText(seqFilePath)
+            # 
+            # # load helix file and store the filename
+            # self.sse.loadHelixDataFromFile(helixFilePath)
+            # self.ui.lineEditHelixLocationFile.setText(helixFilePath)
+            # 
+            # # load sheet file and store the filename
+            # self.sse.loadSheetDataFromFile(sheetFilePath)
+            # self.ui.lineEditSheetLocationFile.setText(sheetFilePath)
+            # 
+            # # load skeleton file and store the filename
+            # self.parent.skeleton.loadDataFromFile(skeletonFilePath)
+            # self.ui.lineEditSkeletonFile.setText(skeletonFilePath)
+            # 
+            # # store helix length filename
+            # self.ui.lineEditHelixLengthFile.setText(sseFilePath)
 
             self.setCursor(oldCursor)
 
