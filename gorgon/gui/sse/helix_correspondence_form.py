@@ -705,8 +705,13 @@ class SSEHelixCorrespondenceForm(QtGui.QDialog, HelixCorrespondence):
         print self.ui.comboBoxCorrespondences.currentIndex()
         self.setConstants()
         self.checkOk()
-        self.viewer.makeSheetSurfaces(self.app.skeletonViewer.renderer.getOriginX(), self.app.skeletonViewer.renderer.getOriginY(), self.app.skeletonViewer.renderer.getOriginZ(), self.app.skeletonViewer.renderer.getSpacingX(), self.app.skeletonViewer.renderer.getSpacingY(), self.app.skeletonViewer.renderer.getSpacingZ())
-        self.viewer.modelChanged()
+        self.makeSheetSurfaces(self.parent.skeleton.renderer.getOriginX(),
+                               self.parent.skeleton.renderer.getOriginY(),
+                               self.parent.skeleton.renderer.getOriginZ(),
+                               self.parent.skeleton.renderer.getSpacingX(),
+                               self.parent.skeleton.renderer.getSpacingY(),
+                               self.parent.skeleton.renderer.getSpacingZ())
+        self.sse.modelChanged()
         print "correspondence index after rebuilding is "
         print self.ui.comboBoxCorrespondences.currentIndex()
                 
