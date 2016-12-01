@@ -204,7 +204,7 @@ class SSEHelixCorrespondenceForm(QtGui.QDialog, HelixCorrespondence):
 
             print "calling setConstantsFromFile"
             self.setConstants()
-            self.correspondenceEngine.setConstantsFromFile(str(self.ui.lineEditSettingsFile.text()))
+            self.correspondenceEngine.loadConstantsFromFile(str(self.ui.lineEditSettingsFile.text()))
 
             print "copying constants from file to GUI"
             self.getConstants()
