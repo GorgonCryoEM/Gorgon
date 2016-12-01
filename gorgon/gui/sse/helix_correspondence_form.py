@@ -277,7 +277,62 @@ class SSEHelixCorrespondenceForm(QtGui.QDialog, HelixCorrespondence):
 #             print "done loading settings file"
         
     def setConstants(self):
-        HelixCorrespondence.setConstants(self)
+        #Data Sources tab
+        #self.constants.setConstant("SSE_FILE_NAME", str(self.ui.lineEditHelixLengthFile.text()))
+        self.constants.setConstantString("VRML_HELIX_FILE_NAME", str(self.ui.lineEditHelixLocationFile.text()))
+        self.constants.setConstantString("VRML_SHEET_FILE_NAME", str(self.ui.lineEditSheetLocationFile.text()))
+        self.constants.setConstantString("MRC_FILE_NAME", str(self.ui.lineEditSkeletonFile.text()))
+        self.sequenceFileName = str(self.ui.lineEditSequenceFile.text())
+        self.constants.setConstantString("SEQUENCE_FILE_NAME", self.sequenceFileName)
+        if self.sequenceFileName.split('.')[-1].lower() == 'pdb':
+            self.constants.setConstantString("SEQUENCE_FILE_TYPE", "PDB")
+        elif self.sequenceFileName.split('.')[-1].lower() == 'seq':
+            self.constants.setConstantString("SEQUENCE_FILE_TYPE", "SEQ")
+
+        #Graph Settings tab
+        self.constants.setConstantInt("BORDER_MARGIN_THRESHOLD", self.ui.spinBoxBorderMarginThreshold.value())
+        self.constants.setConstantDouble("EUCLIDEAN_DISTANCE_THRESHOLD", self.ui.doubleSpinBoxEuclideanDistance.value())
+        self.constants.setConstantDouble("MAXIMUM_DISTANCE_SHEET_SKELETON", self.ui.doubleSpinBoxMaxSheetDistance.value())
+        self.constants.setConstantInt("MINIMUM_SHEET_SIZE", self.ui.spinBoxMinSheetSize.value())
+        self.constants.setConstantDouble("SHEET_SELF_LOOP_LENGTH", self.ui.doubleSpinBoxSheetSelfLoopLength.value())
+        self.constants.setConstantDouble("SHEET_MERGE_THRESHOLD", self.ui.doubleSpinBoxSheetMergeThreshold.value())
+        if (self.ui.checkBoxIncludeStrands.isChecked()):
+            self.constants.setConstantInt("INCLUDE_STRANDS", 1)
+        else:
+            self.constants.setConstantInt("INCLUDE_STRANDS", 0)
+
+        #Matching Settings tab
+        self.constants.setConstantDouble("EUCLIDEAN_VOXEL_TO_PDB_RATIO", self.ui.doubleSpinBoxEuclideanToPDBRatio.value())
+        if(self.ui.radioButtonAbsoluteDifference.isChecked()):
+            self.constants.setConstantInt("COST_FUNCTION", 1)
+        elif (self.ui.radioButtonNormalizedDifference.isChecked()):
+            self.constants.setConstantInt("COST_FUNCTION", 2)
+        else:
+            self.constants.setConstantInt("COST_FUNCTION", 3)
+
+        self.constants.setConstantDouble("LOOP_WEIGHT_COEFFICIENT", self.ui.doubleSpinBoxLoopImportance.value())
+        self.constants.setConstantDouble("EUCLIDEAN_LOOP_PENALTY", self.ui.doubleSpinBoxEuclideanLoopUsedPenalty.value())
+
+        self.constants.setConstantDouble("HELIX_WEIGHT_COEFFICIENT", self.ui.doubleSpinBoxHelixImportance.value())
+        if(self.ui.checkBoxMissingHelices.isChecked()):
+            self.constants.setConstantInt("MISSING_HELIX_COUNT", self.ui.spinBoxMissingHelixCount.value())
+        else:
+            self.constants.setConstantInt("MISSING_HELIX_COUNT", -1)
+        self.constants.setConstantDouble("MISSING_HELIX_PENALTY", self.ui.doubleSpinBoxHelixMissingPenalty.value())
+        self.constants.setConstantDouble("MISSING_HELIX_PENALTY_SCALED", self.ui.doubleSpinBoxHelixMissingPenaltyScaled.value())
+        self.constants.setConstantDouble("START_END_MISSING_HELIX_PENALTY", self.ui.doubleSpinBoxEndHelixMissingPenalty.value())
+
+        self.constants.setConstantDouble("SHEET_WEIGHT_COEFFICIENT", self.ui.doubleSpinBoxSheetImportance.value())
+        if(self.ui.checkBoxMissingSheets.isChecked()):
+            self.constants.setConstant("MISSING_SHEET_COUNT", self.ui.spinBoxMissingSheetCount.value())
+        else:
+            self.constants.setConstantInt("MISSING_SHEET_COUNT", -1)
+        self.constants.setConstantDouble("MISSING_SHEET_PENALTY", self.ui.doubleSpinBoxSheetMissingPenalty.value())
+        self.constants.setConstantDouble("MISSING_SHEET_PENALTY_SCALED", self.ui.doubleSpinBoxSheetMissingPenaltyScaled.value())
+
+        # no longer needed?
+        self.constants.setConstantBool("NORMALIZE_GRAPHS", True)
+
         # #Tab 4 User Constraints
         # # comment out the constraint clearing so that constraints can be loaded from settings files
         # #self.correspondenceEngine.clearAllConstraints()
