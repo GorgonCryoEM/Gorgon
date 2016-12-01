@@ -274,7 +274,7 @@ class SSEHelixCorrespondenceForm(QtGui.QDialog, HelixCorrespondence):
 
             self.checkOk()
 
-            self.getConstraints()
+            # self.getConstraints()
             print "done loading settings file"
         
     def setConstants(self):
