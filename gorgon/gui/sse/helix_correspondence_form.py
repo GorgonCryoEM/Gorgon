@@ -204,7 +204,7 @@ class SSEHelixCorrespondenceForm(QtGui.QDialog, HelixCorrespondence):
 
             print "calling setConstantsFromFile"
             self.setConstants()
-            self.correspondenceEngine.loadConstantsFromFile(str(self.ui.lineEditSettingsFile.text()))
+            self.constants.loadConstantsFromFile(str(self.ui.lineEditSettingsFile.text()))
 
             print "copying constants from file to GUI"
             self.getConstants()
@@ -212,17 +212,17 @@ class SSEHelixCorrespondenceForm(QtGui.QDialog, HelixCorrespondence):
             print "getting settings filename"
             settingsFilename = str(self.ui.lineEditSettingsFile.text())
 
-            #self.correspondenceEngine.printConstants
+            #self.constants.printConstants
             print "reading other filenames for parsing"
-            helixFilename = self.correspondenceEngine.getConstantString("VRML_HELIX_FILE_NAME")
+            helixFilename = self.constants.getConstantString("VRML_HELIX_FILE_NAME")
             print "helix filename is " + helixFilename
-            sheetFilename = self.correspondenceEngine.getConstantString("VRML_SHEET_FILE_NAME")
+            sheetFilename = self.constants.getConstantString("VRML_SHEET_FILE_NAME")
             print "sheet filename is " + sheetFilename
-            sequenceFilename = self.correspondenceEngine.getConstantString("SEQUENCE_FILE_NAME")
+            sequenceFilename = self.constants.getConstantString("SEQUENCE_FILE_NAME")
             print "sequence filename is " + sequenceFilename
-            skeletonFilename = self.correspondenceEngine.getConstantString("MRC_FILE_NAME")
+            skeletonFilename = self.constants.getConstantString("MRC_FILE_NAME")
             print "skeleton filename is " + skeletonFilename
-            sseFilename = self.correspondenceEngine.getConstantString("SSE_FILE_NAME")
+            sseFilename = self.constants.getConstantString("SSE_FILE_NAME")
             print "sse filename is " + sseFilename
 
             import os
