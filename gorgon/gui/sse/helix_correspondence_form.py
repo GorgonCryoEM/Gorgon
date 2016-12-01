@@ -69,6 +69,7 @@ class SSEHelixCorrespondenceForm(QtGui.QDialog, HelixCorrespondence):
 #         self.connect(self.ui.pushButtonReset, QtCore.SIGNAL("pressed ()"), self.loadDefaults)
         self.connect(self.ui.pushButtonAddHelices, QtCore.SIGNAL("pressed ()"), self.create_all_helices)
         self.connect(self.ui.pushButtonOk, QtCore.SIGNAL("pressed ()"), self.accept)
+        self.connect(self.ui.pushButtonRebuildGraph, QtCore.SIGNAL("pressed ()"), self.rebuildGraph)
         self.connect(self.ui.comboBoxCorrespondences, QtCore.SIGNAL("currentIndexChanged (int)"), self.selectCorrespondence)
 #         self.connect(self.ui.pushButtonExportToRosetta, QtCore.SIGNAL("pressed ()"), self.exportToRosetta)
         self.ui.checkBoxShowAllPaths.clicked.connect(self.sse.modelChanged)
@@ -695,6 +696,19 @@ class SSEHelixCorrespondenceForm(QtGui.QDialog, HelixCorrespondence):
         self.sse.modelChanged()
         self.ui.tabWidget.setCurrentIndex(4)
         print "done with search"
+
+    def rebuildGraph(self):
+        print "correspondence index before rebuilding is "
+        print self.ui.comboBoxCorrespondences.currentIndex()
+        self.ui.comboBoxCorrespondences.setCurrentIndex(-1)
+        print "correspondence index after setting to -1 is "
+        print self.ui.comboBoxCorrespondences.currentIndex()
+        self.setConstants()
+        self.checkOk()
+        self.viewer.makeSheetSurfaces(self.app.skeletonViewer.renderer.getOriginX(), self.app.skeletonViewer.renderer.getOriginY(), self.app.skeletonViewer.renderer.getOriginZ(), self.app.skeletonViewer.renderer.getSpacingX(), self.app.skeletonViewer.renderer.getSpacingY(), self.app.skeletonViewer.renderer.getSpacingZ())
+        self.viewer.modelChanged()
+        print "correspondence index after rebuilding is "
+        print self.ui.comboBoxCorrespondences.currentIndex()
                 
     def getIndexedSheetColor(self, index, size):
         """returns a color for sheet 'index' out of 'size' sheets. colors will be orange or red."""
