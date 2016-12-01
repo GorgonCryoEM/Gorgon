@@ -14,7 +14,7 @@ class HelixCorrespondence(object):
         self.constants = IBackEnd()
         self.loadDefaultParams()
         
-    def setConstants(self):
+    def setParams(self):
         #Data Sources tab
         #self.constants.setConstant("SSE_FILE_NAME", str(self.ui.lineEditHelixLengthFile.text()))
         self.constants.setConstantString("VRML_HELIX_FILE_NAME", self.helix)
@@ -107,8 +107,10 @@ class HelixCorrespondence(object):
         self.SheetSelfLoopLength = 5.0
         self.SheetMergeThreshold = 3.0
 
+        self.setParams()
+
     def accept(self):
-        self.setConstants()
+        self.setParams()
         self.correspondenceEngine.loadSequenceGraph()
         self.correspondenceEngine.loadSkeletonGraph()
         return self.correspondenceEngine.executeQuery()
