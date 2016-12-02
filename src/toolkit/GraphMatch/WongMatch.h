@@ -215,14 +215,31 @@ namespace GraphMatch {
 
         // create and set up a new node to start the search
         currentNode = new Node();
+#ifdef GORGON_DEBUG_LOOP
+        cout<<" Before for loop 1:";
+        cout<<*currentNode<<endl;
+#endif
         for(int j = 1; j <= patternGraph.nodeCount; j++) {
             Node::AddNodeToBitmap(currentNode->m1Bitmap, j);
+#ifdef GORGON_DEBUG_LOOP
+            cout<<*currentNode<<endl;
+#endif
         }
+#ifdef GORGON_DEBUG_LOOP
+        cout<<" Before for loop 2:";
+#endif
         for(int j = 1; j <= baseGraph.nodeCount; j++) {
             Node::AddNodeToBitmap(currentNode->m2Bitmap, j);
+#ifdef GORGON_DEBUG_LOOP
+            cout<<*currentNode<<endl;
+#endif
         }
         q.push(Elem(currentNode->cost, currentNode));
         pathGenerator = new PathGenerator(&baseGraph);
+#ifdef GORGON_DEBUG_LOOP
+        cout<<"init: currentNode\n";
+        cout<<*currentNode<<endl;
+#endif
     }
 
     // searches for correspondences between the pattern graph and base graph.
@@ -234,12 +251,31 @@ namespace GraphMatch {
         bool continueLoop = true;
         clock_t finishTime;
         // repeat the following loop until all results are found
+#ifdef GORGON_DEBUG_LOOP
+        cout<<"Before while(continueLoop) ";
+        cout<<*currentNode<<endl;
+        int cc=0;
+#endif
         while(continueLoop) {
+#ifdef GORGON_DEBUG_LOOP
+            cout<<"   In while(continueLoop): "
+                <<" cc: "<<cc
+                <<" foundCount: "<<foundCount
+                <<endl;
+            cc++;
+#endif
             popBestNode();
             if(currentNode == NULL) {
                 break;
             }
 
+#ifdef GORGON_DEBUG_LOOP
+            cout << "After popBestNode():"
+                << *currentNode << endl;
+            cout<<"Before IF: "<<(int)currentNode->depth
+                <<" " <<patternGraph.nodeCount
+                <<endl;
+#endif
             // if currentNode contains a complete sequence match, add it to the solutions list
             if(currentNode->depth == patternGraph.nodeCount) {
                 finishTime = clock();
@@ -264,6 +300,12 @@ namespace GraphMatch {
             }
             else {
                 NodeStub * currentStub = new NodeStub(*currentNode);
+#ifdef GORGON_DEBUG_LOOP
+                cout<<"ELSE: currentNode: "<<*currentNode
+                    <<endl;
+                cout<<"ELSE: currentStub: "<<*currentStub
+                    <<endl;
+#endif
                 if(expandNode(currentStub)) {
                     usedNodes.push_back(currentStub);
                 }
@@ -574,6 +616,10 @@ namespace GraphMatch {
         double cost;
         Elem res = q.top();
         currentNode = res.second;
+#ifdef GORGON_DEBUG_LOOP
+        cout<<"WongMatch::popBestNode ";
+        cout<<res.first<<" "<<*currentNode<<endl;
+#endif
         q.pop();
 #ifdef VERBOSE
         timeInQueue += clock() - start;
@@ -771,6 +817,10 @@ namespace GraphMatch {
 
                             currentNode->cost = getF();
                             q.push(Elem(currentNode->cost, currentNode));
+#ifdef GORGON_DEBUG_LOOP
+                            cout<<"  expandNode(): ";
+                            cout<<currentNode->cost<<" "<<*currentNode<<endl;
+#endif
                             expanded = true;
                         }
                         else { // not an allowed match

@@ -241,6 +241,14 @@ namespace GraphMatch {
     }
 
     inline bool setConstant(string token, double doubleValue){
+#ifdef GORGON_DEBUG
+        cout<<"\033[32mDEBUG: File:   Constants.h"<<endl;
+        cout<<"inline bool setConstant(string token, double doubleValue)\n";
+        cout<<" token: "<<token
+            <<" intValue: "<<doubleValue
+            <<endl;
+#endif
+
         if(token == TOKEN_MAXIMUM_DISTANCE_SHEET_SKELETON) {
             MAXIMUM_DISTANCE_SHEET_SKELETON = doubleValue;
         } else if(token == TOKEN_EUCLIDEAN_DISTANCE_THRESHOLD) {
@@ -284,6 +292,14 @@ namespace GraphMatch {
     }
 
     inline bool setConstant(string token, int intValue){
+#ifdef GORGON_DEBUG
+        cout<<"\033[32mDEBUG: File:   Constants.h"<<endl;
+        cout<<"inline bool setConstant(string token, int intValue)\n";
+        cout<<" token: "<<token
+            <<" intValue: "<<intValue
+            <<endl;
+#endif
+
         if(token == TOKEN_COST_FUNCTION) {
             COST_FUNCTION = intValue;
         } else if(token == TOKEN_INCLUDE_STRANDS) {

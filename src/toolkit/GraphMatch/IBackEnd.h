@@ -27,18 +27,50 @@ namespace GraphMatch {
     }
 
     inline bool IBackEnd::setConstantString(string token, string value) {
+#ifdef GORGON_DEBUG
+        cout<<"\033[32mDEBUG: File:   IBackEnd.h"<<endl;
+        cout<<"inline bool IBackEnd::setConstantString()\n";
+        cout<<" token: "<<token
+            <<" value: "<<value
+            <<endl;
+#endif
+
         return setConstant(token, value);
     }
 
     inline bool IBackEnd::setConstantDouble(string token, double value) {
+#ifdef GORGON_DEBUG
+        cout<<"\033[32mDEBUG: File:   IBackEnd.h"<<endl;
+        cout<<"inline bool IBackEnd::setConstantDouble()\n";
+        cout<<" token: "<<token
+            <<" value: "<<value
+            <<endl;
+#endif
+
         return setConstant(token, value);
     }
 
     inline bool IBackEnd::setConstantInt(string token, int value) {
+#ifdef GORGON_DEBUG
+        cout<<"\033[32mDEBUG: File:   IBackEnd.h"<<endl;
+        cout<<"inline bool IBackEnd::setConstantInt()\n";
+        cout<<" token: "<<token
+            <<" value: "<<value
+            <<endl;
+#endif
+
         return setConstant(token, value);
     }
 
     inline bool IBackEnd::setConstantBool(string token, bool value) {
+#ifdef GORGON_DEBUG
+        cout<<"\033[32mDEBUG: File:   IBackEnd.h"<<endl;
+        cout<<"inline bool IBackEnd::setConstantBool()\n";
+        cout<<" token: "<<token
+            <<" value: "<<value
+            <<endl;
+#endif
+
         return setConstant(token, value);
     }
 
