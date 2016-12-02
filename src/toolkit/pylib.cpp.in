@@ -538,6 +538,7 @@ BOOST_PYTHON_MODULE(@current_pylib@)
         .def("getConstantInt",      &IBackEnd::getConstantInt)
         .def("getConstantBool",     &IBackEnd::getConstantBool)
         .def("clearAllConstraints", &IBackEnd::clearAllConstraints)          
+        .def("loadConstantsFromFile", &IBackEnd::loadConstantsFromFile)
     ;
     
     def("setHelixConstraint", AddHelixConstraint);
