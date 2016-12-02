@@ -821,11 +821,11 @@ namespace GraySkeletonCPP {
               cout<<"\033[33mDEBUG: File:   VolumeSkeletonizer.h"<<endl;
               cout<<"DEBUG: Method: VolumeSkeletonizer::PerformPureJuSkeletonization\033[0m"<<endl;
               cout<<"DEBUG: Args: Volume*, string, double, int, int\033[0m"<<endl;
-              cout<<imageVol->getSize()<<endl;
+              cout<<imageVol.getSize()<<endl;
         #endif
         imageVol.pad(MAX_GAUSS_FILT_R, 0);
         #ifdef GORGON_DEBUG
-              cout<<"imageVol->getSize(): "<<imageVol->getSize()<<endl;
+              cout<<"imageVol->getSize(): "<<imageVol.getSize()<<endl;
         #endif
 
 
@@ -835,7 +835,7 @@ namespace GraySkeletonCPP {
         // Skeletonizing while preserving surface features curve features and topology
         Volume surfaceVol = *GetJuSurfaceSkeleton(imageVol, preservedVol, threshold);
         #ifdef GORGON_DEBUG
-              cout<<"surfaceVol->getSize(): "<<surfaceVol->getSize()<<endl;
+              cout<<"surfaceVol->getSize(): "<<surfaceVol.getSize()<<endl;
         #endif
 
         PruneSurfaces(surfaceVol, minSurfaceWidth);
@@ -843,13 +843,13 @@ namespace GraySkeletonCPP {
 
         Volume curveVol = *Skeletonizer::GetJuCurveSkeleton(imageVol, preservedVol, threshold, true);
         #ifdef GORGON_DEBUG
-              cout<<"curveVol->getSize(): "<<curveVol->getSize()<<endl;
+              cout<<"curveVol->getSize(): "<<curveVol.getSize()<<endl;
         #endif
         Skeletonizer::PruneCurves(curveVol, minCurveWidth);
         VoxelOr(preservedVol, &curveVol);
 #ifdef GORGON_DEBUG
-        cout<<"preservedVol->getSize(): "<<preservedVol->getSize()<<endl;
-        cout<<"curveVol->getSize(): "<<curveVol->getSize()<<endl;
+        cout<<"preservedVol->getSize(): "<<preservedVol.getSize()<<endl;
+        cout<<"curveVol->getSize(): "<<curveVol.getSize()<<endl;
 #endif
 
         Volume * topologyVol = Skeletonizer::GetJuTopologySkeleton(imageVol, preservedVol, threshold);
