@@ -11,8 +11,10 @@
 #include "NodeStub.h"
 
 #include <vector>
+#include <iostream>
 
 using std::vector;
+using std::ostream;
 
 namespace GraphMatch {
 
@@ -41,6 +43,18 @@ namespace GraphMatch {
 
     inline bool operator<(const Node & l, const Node & r) {
         return l.cost < r.cost;
+    }
+    
+    inline ostream& operator<<(ostream &out, const Node& obj) {
+        return out
+            <<" "<<obj.m1Bitmap
+            <<" "<<obj.m2Bitmap
+            <<" "<<(int)obj.missingNodesUsed
+            <<" "<<(int)obj.missingHelixNodesUsed
+            <<" "<<(int)obj.missingSheetNodesUsed
+            <<" "<<(int)obj.depth
+            <<" "<<obj.cost
+            <<" "<<obj.costGStar;
     }
 
 } /* namespace GraphMatch */

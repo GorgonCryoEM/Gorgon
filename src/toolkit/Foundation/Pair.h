@@ -31,6 +31,11 @@ namespace Foundation {
         return (lhs.first < rhs.first);
     }
 
+    template <class T, class U>
+    inline bool operator>(const Pair<T,U>& lhs, const Pair<T, U> &rhs) {
+        return (lhs.first > rhs.first);
+    }
+
 } /* namespace Foundation */
 
 #endif /* SRC_TOOLKIT_FOUNDATION_PAIR_H_ */
