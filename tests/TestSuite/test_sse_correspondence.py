@@ -21,6 +21,17 @@ class TestSSECorrespondence:
 		else:
 			self.exe          = self.prog_name
 				
+	def test_groel(self):
+		self.dir = 'groel'
+		self.ref    = path.join('demo', 'groel', 'refs', 'gorgon_sse_correspondence.corr')
+		self.inputs = ['densityMap-skeleton.mrc', 'groel-segment.seq', 'helices-densityMap.wrl']
+		self._run()
+	
+	def test_rotavirus(self):
+		self.dir = 'rotavirus'
+		self.ref    = path.join('demo', 'rotavirus', 'refs', 'gorgon_sse_correspondence.corr')
+		self.inputs = ['skeleton-vp6-b0.4.mrc', 'vp6.seq', 'vp6-helices.wrl']
+		self._run()
 		
 	def _run(self):
 		inputs = [path.join(path.curdir, 'demo', self.dir, f) for f in self.inputs]
