@@ -10,11 +10,16 @@ class TestSSECorrespondence:
 
 	def __init__(self):
 		if os.getenv('CONDA_BUILD_STATE') == 'TEST':
-			prog_name = 'gorgon-sse-correspondence'
+			self.prog_name = 'gorgon-sse-correspondence'
 		else:
-			prog_name = 'gorgon_sse_correspondence.py'
+			self.prog_name = 'gorgon_sse_correspondence.py'
 		
 		
+		if EXE_PATH:
+			self.exe          = path.join(EXE_PATH, self.prog_name)
+		else:
+			self.exe          = self.prog_name
+				
 		
 	def _run(self):
 		inputs = [path.join(path.curdir, 'demo', self.dir, f) for f in self.inputs]
