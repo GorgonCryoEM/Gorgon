@@ -298,7 +298,7 @@ namespace GraphMatch {
 
         // create a graph with one node per helix end point and with edges connecting nodes that
         // are connected along the volume.
-        //cout << "adding " << (int)helixes.size() << " helices and sheets to adjacency matrix" << endl;
+        cout << "adding " << (int)helixes.size() << " helices and sheets to adjacency matrix" << endl;
         for(unsigned int i = 0; i < (int)helixes.size(); i++) {
             if(helixes[i]->type == GRAPHEDGE_HELIX) {
                 // assign node numbers for helix ends
@@ -307,9 +307,9 @@ namespace GraphMatch {
 
                 // find the two corner cells in this helix
                 helixes[i]->findCornerCellsInHelix();
-                //cout << "helix " << i << " has " << helixes[i]->cornerCells.size() << " corners." << endl;
+                cout << "helix " << i << " has " << helixes[i]->cornerCells.size() << " corners." << endl;
                 for (unsigned int j = 0; j < helixes[i]->cornerCells.size(); j++) {
-                    //cout << "corner " << j << " is associated with node " << helixes[i]->cornerCells[j].node << endl;
+                    cout << "corner " << j << " is associated with node " << helixes[i]->cornerCells[j].node << endl;
                 }
 
                 // length of this helix
@@ -328,6 +328,15 @@ namespace GraphMatch {
                 // same for reverse direction
                 graph->setCost(node2, node1, length);
                 graph->setType(node2, node1, helixes[i]->type);
+                
+#ifdef GORGON_DEBUG_LOOP
+                cout<<" "<<helixes[i]->type
+                    <<" "<<i
+                    <<" "<<node1
+                    <<" "<<node2
+                    <<endl;
+#endif
+                
             } else if (helixes[i]->type == GRAPHEDGE_SHEET) {
                 // assign node number this sheet
                 int sheetNode = numH + i + 1; // each helix takes two nodes
@@ -338,10 +347,17 @@ namespace GraphMatch {
                 // cost is length of self-loops
                 graph->setCost(sheetNode, sheetNode, SHEET_SELF_LOOP_LENGTH); // nonzero so it shows up as edge in StandardGraph::EdgeExists
                 graph->setType(sheetNode, sheetNode, GRAPHNODE_SHEET);
+                
+#ifdef GORGON_DEBUG_LOOP
+                cout<<" "<<helixes[i]->type
+                    <<" "<<i
+                    <<" "<<sheetNode
+                    <<endl;
+#endif
             }
 
         }
-        //cout << "adding sheet sizes as sheet node costs" << endl;
+        cout << "adding sheet sizes as sheet node costs" << endl;
         for (unsigned int s = 0; s < skeletonSheets.size(); s++) {
             int sseSheetNum = helixesMapping[s];
             //cout << "node " << s << " corresponds to sheet " << helixesMapping[s] << endl;
@@ -484,7 +500,7 @@ namespace GraphMatch {
                         q.pop();
                         ox  = res.x;
                         oy  = res.y;
-                        oz  = res.y;
+                        oz  = res.z;
 
                         // Test if neighbors satisfy sheet condition
                         if ( isSkeletonSheet(*vol, ox, oy, oz ) )

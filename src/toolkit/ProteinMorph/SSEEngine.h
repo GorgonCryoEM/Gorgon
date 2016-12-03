@@ -76,7 +76,7 @@ namespace Visualization {
         clock_t finish = clock();
         #ifdef VERBOSE
             printf("\tReading Pattern file Took %f seconds.\n", (double) (finish - start) / (double) CLOCKS_PER_SEC ) ;
-//            sequence.print();
+            sequence.print();
         #endif
     }
 
@@ -89,7 +89,7 @@ namespace Visualization {
         clock_t finish = clock();
         #ifdef VERBOSE
             printf("\033[32m\tReading Base file Took %f seconds.\n\033[0m", (double) (finish - start) / (double) CLOCKS_PER_SEC ) ;
-//            skeleton.print();
+            skeleton.print();
         #endif
     }
 
@@ -111,6 +111,15 @@ namespace Visualization {
             set_MISSING_SHEET_COUNT(MISSING_SHEET_COUNT);
         }
         init(sequence, skeleton);
+#ifdef GORGON_DEBUG
+        cout<<"\033[32mDEBUG: File:   SSEEngine.h"<<endl;
+        cout<<"\nSTART: inline int SSEEngine::run()"<<endl;
+        cout<<"sequence.print()\n";
+        sequence.print();
+        cout<<"skeleton.print()\n";
+        skeleton.print();
+        cout<<"\nEND: inline int SSEEngine::run()"<<endl;
+#endif
         clock_t start = clock();
         int matchCount = WongMatch::run(start);
         saveResults();

@@ -47,7 +47,8 @@ namespace GraphMatch {
             Node * currentNode;
 
             typedef Pair<double, Node *> Elem;
-            priority_queue<Elem> q;
+            typedef priority_queue<Elem, std::vector<Elem>, std::greater<Elem> > PriorityQueue;
+            PriorityQueue q;
 
             vector<NodeStub*> usedNodes;
             int nMissHelix;
@@ -73,6 +74,8 @@ namespace GraphMatch {
             bool expandNode(NodeStub * currentStub); // Expands all the children of the current node.
             void normalizeGraphs();
             void normalizeSheets();
+            void ComputeSolutionCost(int solution[], bool extraMessages);
+            void printNodeConcise(Node *node, int rank, bool endOfLine, bool printCostBreakdown);
             int bestMatches[RESULT_COUNT][MAX_NODES];
     };
 
@@ -123,7 +126,7 @@ namespace GraphMatch {
 #ifdef VERBOSE
         cout << "Creating priority queue" << endl;
 #endif
-        q = priority_queue<Elem>();
+        q = PriorityQueue();
 #ifdef VERBOSE
         cout << "Loading pattern graph" << endl;
 #endif
@@ -212,14 +215,31 @@ namespace GraphMatch {
 
         // create and set up a new node to start the search
         currentNode = new Node();
+#ifdef GORGON_DEBUG_LOOP
+        cout<<" Before for loop 1:";
+        cout<<*currentNode<<endl;
+#endif
         for(int j = 1; j <= patternGraph.nodeCount; j++) {
             Node::AddNodeToBitmap(currentNode->m1Bitmap, j);
+#ifdef GORGON_DEBUG_LOOP
+            cout<<*currentNode<<endl;
+#endif
         }
+#ifdef GORGON_DEBUG_LOOP
+        cout<<" Before for loop 2:";
+#endif
         for(int j = 1; j <= baseGraph.nodeCount; j++) {
             Node::AddNodeToBitmap(currentNode->m2Bitmap, j);
+#ifdef GORGON_DEBUG_LOOP
+            cout<<*currentNode<<endl;
+#endif
         }
         q.push(Elem(currentNode->cost, currentNode));
         pathGenerator = new PathGenerator(&baseGraph);
+#ifdef GORGON_DEBUG_LOOP
+        cout<<"init: currentNode\n";
+        cout<<*currentNode<<endl;
+#endif
     }
 
     // searches for correspondences between the pattern graph and base graph.
@@ -231,16 +251,36 @@ namespace GraphMatch {
         bool continueLoop = true;
         clock_t finishTime;
         // repeat the following loop until all results are found
+#ifdef GORGON_DEBUG_LOOP
+        cout<<"Before while(continueLoop) ";
+        cout<<*currentNode<<endl;
+        int cc=0;
+#endif
         while(continueLoop) {
+#ifdef GORGON_DEBUG_LOOP
+            cout<<"   In while(continueLoop): "
+                <<" cc: "<<cc
+                <<" foundCount: "<<foundCount
+                <<endl;
+            cc++;
+#endif
             popBestNode();
             if(currentNode == NULL) {
                 break;
             }
 
+#ifdef GORGON_DEBUG_LOOP
+            cout << "After popBestNode():"
+                << *currentNode << endl;
+            cout<<"Before IF: "<<(int)currentNode->depth
+                <<" " <<patternGraph.nodeCount
+                <<endl;
+#endif
             // if currentNode contains a complete sequence match, add it to the solutions list
             if(currentNode->depth == patternGraph.nodeCount) {
                 finishTime = clock();
                 foundCount++;
+                printNodeConcise(currentNode, foundCount, false, false);
                 printf(": (%d expanded) (%f seconds) (%d parent size)\n",
                                         nExpand,
                                         (double) (finishTime - startTime) / (double) CLOCKS_PER_SEC,
@@ -260,6 +300,12 @@ namespace GraphMatch {
             }
             else {
                 NodeStub * currentStub = new NodeStub(*currentNode);
+#ifdef GORGON_DEBUG_LOOP
+                cout<<"ELSE: currentNode: "<<*currentNode
+                    <<endl;
+                cout<<"ELSE: currentStub: "<<*currentStub
+                    <<endl;
+#endif
                 if(expandNode(currentStub)) {
                     usedNodes.push_back(currentStub);
                 }
@@ -570,6 +616,10 @@ namespace GraphMatch {
         double cost;
         Elem res = q.top();
         currentNode = res.second;
+#ifdef GORGON_DEBUG_LOOP
+        cout<<"WongMatch::popBestNode ";
+        cout<<res.first<<" "<<*currentNode<<endl;
+#endif
         q.pop();
 #ifdef VERBOSE
         timeInQueue += clock() - start;
@@ -767,6 +817,10 @@ namespace GraphMatch {
 
                             currentNode->cost = getF();
                             q.push(Elem(currentNode->cost, currentNode));
+#ifdef GORGON_DEBUG_LOOP
+                            cout<<"  expandNode(): ";
+                            cout<<currentNode->cost<<" "<<*currentNode<<endl;
+#endif
                             expanded = true;
                         }
                         else { // not an allowed match
@@ -834,6 +888,241 @@ namespace GraphMatch {
         return expanded;
     }
 
+    // Compute the cost of the ground truth solution which is submitted by the user.
+    inline void WongMatch::ComputeSolutionCost(int solution[], bool extraMessages) {
+        if(extraMessages) {
+            cout << "starting ComputeSolutionCost" << endl;
+        }
+        int n1 = 0, n2 = 1;
+        double edgeCost = 0.0;
+
+        double helixCost = 0.0;
+        double helixPenaltyCost = 0.0;
+        double loopCost = 0.0;
+        double loopPenaltyCost = 0.0;
+        double sheetCost = 0.0;
+        double sheetPenaltyCost = 0.0;
+        double skipPenaltyCost = 0.0;
+
+        double edgePenaltyCost = 0.0;
+        double nodeCost = 0.0;
+        int skippedHelixNodes = 0;
+        int skippedSheetNodes = 0;
+
+        int numNodes = patternGraph.getNodeCount();
+
+        // iterate over all correspondences, adding each to the previous solution
+        while(n2 < numNodes) {
+            // check if first node is skipped helix or sheet
+            if(solution[n1] == -1) {
+                if(extraMessages) {
+                    cout << "skipped node found at " << n1 + 1
+                         << " with adj matrix value "
+                         << patternGraph.adjacencyMatrix[n1][n1][0] << endl;
+                }
+                if(patternGraph.adjacencyMatrix[n1][n1][0] == GRAPHNODE_HELIX)
+                    skippedHelixNodes++;
+                if(patternGraph.adjacencyMatrix[n1][n1][0] == GRAPHNODE_SHEET)
+                    skippedSheetNodes++;
+            }
+
+            // find the end of the current correspondence
+            while(solution[n2] == -1 && n2 < numNodes - 1) {
+                if(patternGraph.adjacencyMatrix[n2][n2][0] == GRAPHNODE_HELIX)
+                    skippedHelixNodes++;
+                if(patternGraph.adjacencyMatrix[n2][n2][0] == GRAPHNODE_SHEET)
+                    skippedSheetNodes++;
+                n2++;
+            }
+
+            // add edge cost
+            if(extraMessages) {
+                cout << "adding (" << n1 + 1 << "," << n2 + 1 << ","
+                     << solution[n1] << "," << solution[n2] << ")" << endl;
+            }
+            double singleEdgeCost = 1000;
+            double singleEdgePenaltyCost = 0;
+
+            // if edge exists in base graph, find the cost of this correspondence.
+            if(solution[n1] == -1) {
+                singleEdgeCost = 0;
+                singleEdgePenaltyCost = getPenaltyCost(n1, n2 - n1 + 1, extraMessages);
+
+                if(extraMessages) {
+                    cout << "  GetPenaltyCost(" << n1 << "," << n2 - n1 + 1
+                         << ")=" << singleEdgePenaltyCost << endl;
+                }
+
+                skipPenaltyCost += singleEdgePenaltyCost;
+            }
+            else if(baseGraph.edgeExists(solution[n1]-1, solution[n2]-1)) {
+                if(solution[n2] == -1 && n2 == numNodes - 1) {
+                    // last edge is skip edge
+                    singleEdgeCost = 0;
+                }
+                else
+                    singleEdgeCost = getCost(n1+1, n2-n1, solution[n1], solution[n2], extraMessages);
+
+                singleEdgePenaltyCost = getPenaltyCost(n1+1, n2-n1, extraMessages);
+
+                if(baseGraph.adjacencyMatrix[solution[n1]-1][solution[n2]-1][0] == GRAPHEDGE_HELIX) {
+                    helixCost        += singleEdgeCost;
+                    helixPenaltyCost += singleEdgePenaltyCost;
+                    skipPenaltyCost  += singleEdgePenaltyCost;
+                }
+                else {
+                    loopCost        += singleEdgeCost;
+                    skipPenaltyCost += singleEdgePenaltyCost;
+                }
+                if(extraMessages) {
+                    cout << "  GetCost(" << n1 + 1 << "," << n2 - n1 << ","
+                         << solution[n1] << "," << solution[n2] << ")="
+                         << singleEdgeCost << endl;
+                    cout << "  GetPenaltyCost(" << n1 + 1 << "," << n2 - n1
+                         << ")=" << singleEdgePenaltyCost << endl;
+                }
+                if(singleEdgeCost == -1) {
+                    cout << "  MATCH FROM NODE " << solution[n1] << " TO NODE "
+                         << solution[n2]
+                         << " IS NOT ALLOWED (CUTOFF OR TYPE MISMATCH?)"
+                         << endl;
+                }
+            }
+            else {
+                cout << "  BASE GRAPH DOES NOT HAVE AN EDGE FROM NODE "
+                     << solution[n1] << " TO NODE " << solution[n2]
+                     << ". THIS SOLUTION NOT POSSIBLE!" << endl;
+            }
+
+            // check if first or last helix is unmatched
+            if(   (n1 == 0 && singleEdgeCost == -1)
+               || (n2 == numNodes && singleEdgeCost == -1)
+              )
+            {
+                if(extraMessages)
+                    cout << "  first helix or sheet is unmatched. adding penalty of " << singleEdgeCost << endl;
+            }
+            else {
+                if(extraMessages)
+                    cout << "  cost of this addition is " << singleEdgeCost << endl;
+            }
+
+            // add node cost
+            double singleNodeCost = getC(n2+1, solution[n2]);
+            // if at beginning of sequence, check first node
+            if(patternGraph.adjacencyMatrix[n2][n2][0] == GRAPHNODE_SHEET)
+                sheetCost += singleNodeCost;
+            if(n1 == 0 && patternGraph.adjacencyMatrix[n1][n1][0] == GRAPHNODE_SHEET) {
+                double firstNodeCost = getC(n1 + 1, solution[n1]);
+                sheetCost      += firstNodeCost;
+                singleNodeCost += firstNodeCost;
+            }
+            if(extraMessages) {
+                cout << "  node cost for nodes " << n2 + 1 << " and "
+                     << solution[n2] << " is " << singleNodeCost << endl;
+            }
+
+            // add the costs from this iteration to the running totals
+            edgeCost        += singleEdgeCost;
+            edgePenaltyCost += singleEdgePenaltyCost;
+            nodeCost        += singleNodeCost;
+
+            // prepare for next iteration
+            n1 = n2;
+            n2++;
+        }
+
+        // Check if all helices or all sheets were correctly matched
+        bool sheetsCorrect = true;
+        bool helicesCorrect = true;
+        bool helicesCorrectFlipped = true;
+        double ratioCorrectHelices = 0;
+        double ratioCorrectHelicesFlipped = 0;
+        double ratioCorrectSheets = 0;
+        int ns = 0, nh = 0;
+        for(int i = 0; i < numNodes; i++) {
+            if(patternGraph.adjacencyMatrix[i][i][0] == GRAPHNODE_HELIX) {
+                nh++;
+                if(solution[i] == SOLUTION[i])
+                    ratioCorrectHelices++;
+                else
+                    helicesCorrect = false;
+
+                if(   solution[i] == SOLUTION[i]
+                   || solution[i] == SOLUTION[max(0, i - 1)]
+                   || solution[i] == SOLUTION[min(numNodes - 1, i + 1)]
+                  )
+                {
+                    ratioCorrectHelicesFlipped++;
+                }
+                else
+                    helicesCorrectFlipped = false;
+            }
+
+            if(patternGraph.adjacencyMatrix[i][i][0] == GRAPHNODE_SHEET) {
+                ns++;
+                if(solution[i] == SOLUTION[i])
+                    ratioCorrectSheets++;
+                else
+                    sheetsCorrect = false;
+            }
+        }
+        int incorrectHelixCount = (nh - (int) (ratioCorrectHelices + 0.1)) / 2;
+        int incorrectStrandCount = ns - (int) (ratioCorrectSheets + 0.1);
+        if(ns > 0)
+            ratioCorrectSheets /= ns;
+
+        if(nh > 0)
+            ratioCorrectHelices /= nh;
+
+        if(nh > 0)
+            ratioCorrectHelicesFlipped /= nh;
+
+        char sheetChar;
+        if(sheetsCorrect) sheetChar = 'S';
+        else              sheetChar = '-';
+
+        char helixChar;
+        if(helicesCorrect)             helixChar = 'H';
+        else if(helicesCorrectFlipped) helixChar = 'h';
+        else                           helixChar = '-';
+
+        if(extraMessages) {
+            cout << "total edge cost is " << edgeCost << endl;
+            cout << "total edge penalty cost is " << edgePenaltyCost << endl;
+            cout << "total node cost is " << nodeCost << endl;
+        }
+
+        double helixPenalty = skippedHelixNodes / 2 * MISSING_HELIX_PENALTY;
+        double sheetPenalty = skippedSheetNodes * MISSING_SHEET_PENALTY;
+
+        if(extraMessages) {
+            cout << "missing helices: " << skippedHelixNodes / 2
+                 << " contribute cost of " << helixPenalty << endl;
+            cout << "missing sheets:  " << skippedSheetNodes
+                 << " contribute cost of " << sheetPenalty << endl;
+            cout << "together, missing helices and sheets contribute cost of "
+                 << sheetPenalty + helixPenalty << endl;
+            cout << "algorithm thinks missing helices and sheets should contribute cost of "
+                 << edgePenaltyCost << endl;
+        }
+
+        double cost = edgeCost + nodeCost + helixPenalty + sheetPenalty;
+
+        if(extraMessages) {
+            cout << "total cost is " << cost << endl;
+        }
+        cout << "C=" << loopCost + helixCost + sheetCost + skipPenaltyCost
+             << "(" << helixChar << sheetChar << ")(h" << incorrectHelixCount
+             << ",s" << incorrectStrandCount << ")(" << ratioCorrectHelices
+             << "," << ratioCorrectHelicesFlipped << "," << ratioCorrectSheets
+             << ")(L=" << loopCost << ",H=" << helixCost << ",S=" << sheetCost
+             << ",P=" << skipPenaltyCost << ")";
+        if(extraMessages) {
+            cout << endl;
+        }
+    }
+
     inline void WongMatch::normalizeGraphs() {
 #ifdef VERBOSE
         printf("Normalizing Graphs\n");
@@ -860,7 +1149,7 @@ namespace GraphMatch {
         }
 
 #ifdef VERBOSE
-//        baseGraph.print();
+        baseGraph.print();
 #endif
     }
 
@@ -909,8 +1198,85 @@ namespace GraphMatch {
         }
 
 #ifdef VERBOSE
-//        baseGraph.print();
+        baseGraph.print();
 #endif
+    }
+
+    // code copied from LinkedNode::PrintNodeConcise
+    // Adding a breakdown of the cost into loops, nodes, and helices
+    inline void WongMatch::printNodeConcise(Node * node, int rank, bool endOfLine, bool printCostBreakdown) {
+        bool used[MAX_NODES];
+        int n1[MAX_NODES];
+        int n2[MAX_NODES];
+        int top = 0;
+        for(int i = 0; i < MAX_NODES; i++) {
+            used[i] = false;
+        }
+
+        NodeStub * currentNode = node;
+        bool continueLoop = true;
+        while(continueLoop) {
+            if(currentNode->parentNode == NULL) {
+                break;
+            }
+            n1[top] = currentNode->n1Node;
+            n2[top] = currentNode->n2Node;
+            used[(int)currentNode->n1Node] = true;
+            top++;
+            currentNode = currentNode->parentNode;
+        }
+
+        for(int i = 1; i <= node->depth; i++) {
+            if(!used[i]) {
+                n1[top] = i;
+                n2[top] = -1;
+                top++;
+            }
+        }
+
+        int minIndex;
+        int temp;
+        for(int i = 0; i < top - 1; i++) {
+            minIndex = i;
+            for(int j = i+1; j < top; j++) {
+                if(n1[minIndex] > n1[j]) {
+                    minIndex = j;
+                }
+            }
+            temp = n1[minIndex];
+            n1[minIndex] = n1[i];
+            n1[i] = temp;
+
+            temp = n2[minIndex];
+            n2[minIndex] = n2[i];
+            n2[i] = temp;
+        }
+
+
+        if(rank != -1) {
+            printf("%d)", rank);
+        }
+        printf("\t");
+        for(int i = 0; i < top; i++) {
+            printf("%2d ", n2[i]);
+        }
+
+        // print the cost of the current solution
+        if(INCLUDE_STRANDS) {
+            ComputeSolutionCost(n2,false);
+        }
+        for (int i = 0; i < MAX_NODES; i++){
+            bestMatches[rank-1][i]=n2[i];
+        }
+
+        if(printCostBreakdown) {
+            printf(" - %f = %f + %f", node->cost, node->costGStar, node->cost - node->costGStar);
+        } else {
+            printf(" - %f", node->cost);
+        }
+        if(endOfLine) {
+            printf("\n");
+        }
     }
 }
 #endif
