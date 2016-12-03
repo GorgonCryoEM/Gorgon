@@ -1,5 +1,9 @@
 import os
-from .toolkit_tests import ToolkitTestCases
+from os import path
+from subprocess import check_call
+from filecmp import cmp
+import termcolor
+from . import EXE_PATH
 
 
 class TestSSECorrespondence(ToolkitTestCases.ToolkitTests):
