@@ -14,6 +14,7 @@ class TestSSECorrespondence:
 		else:
 			self.prog_name = 'gorgon_sse_correspondence.py'
 		
+		self.output = path.join('tests', 'outputs', 'ppp.txt')
 		
 		if EXE_PATH:
 			self.exe          = path.join(EXE_PATH, self.prog_name)
