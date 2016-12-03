@@ -15,8 +15,19 @@ class TestSSECorrespondence:
 			prog_name = 'gorgon_sse_correspondence.py'
 		
 		
+		
+	def _run(self):
+		inputs = [path.join(path.curdir, 'demo', self.dir, f) for f in self.inputs]
+		
+		# remove output file in case left from previous test runs
+		if path.isfile(self.output):
+			os.remove(self.output)
 
-	def test_sse_correspondence(self):
+		cmd = [self.exe] + inputs + ['--output', self.output]
+		print termcolor.colored("\n+ %s" % cmd, "green")
+		check_call(cmd)
+
+		assert cmp(self.output, self.ref), "\nFiles differ:\n   1: %s\n   2: %s" % (self.output, self.ref)
 		
 
 if __name__ == '__main__':
