@@ -6,7 +6,7 @@ import termcolor
 from . import EXE_PATH
 
 
-class TestSSECorrespondence(ToolkitTestCases.ToolkitTests):
+class TestSSECorrespondence:
 
 	def __init__(self):
 		if os.getenv('CONDA_BUILD_STATE') == 'TEST':
@@ -14,13 +14,9 @@ class TestSSECorrespondence(ToolkitTestCases.ToolkitTests):
 		else:
 			prog_name = 'gorgon_sse_correspondence.py'
 		
-		ToolkitTestCases.ToolkitTests.__init__(self, 'corr', prog_name=prog_name)
 		
-	def get_inputs(self):
-		return [self.skeleton, self.segment, self.helices]
 
 	def test_sse_correspondence(self):
-		self.run()
 		
 
 if __name__ == '__main__':
