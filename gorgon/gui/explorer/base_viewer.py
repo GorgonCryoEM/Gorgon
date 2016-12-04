@@ -42,7 +42,8 @@ class BaseViewer(BaseDockWidget):
         self.multipleSelection = True
         self.color = QtGui.QColor(180, 180, 180, 150)
         
-        self.ui = form(self.app, self)
+        if form:
+            self.ui = form(self.app, self)
         # self.ui.createUI()
         # self.setupSignals()
         
@@ -77,14 +78,15 @@ class BaseViewer(BaseDockWidget):
         self.pushButtonSave.setObjectName("pushButtonSave")
         self.pushButtonSave.setText(QtGui.QApplication.translate("DialogModelVisualization", "Save", None, QtGui.QApplication.UnicodeUTF8))
 
-        form = self.ui.ui
-        if isinstance(form, Ui_DialogModelVisualization):
-            gridlayout = form.gridlayout6
-        else:
-            gridlayout = form.gridlayout5
-
-        gridlayout.addWidget(self.pushButtonSave, 1, 0, 1, 2)
-        self.pushButtonSave.pressed.connect(self.saveData)
+        if hasattr(self, "ui"):
+            form = self.ui.ui
+            if isinstance(form, Ui_DialogModelVisualization):
+                gridlayout = form.gridlayout6
+            else:
+                gridlayout = form.gridlayout5
+    
+            gridlayout.addWidget(self.pushButtonSave, 1, 0, 1, 2)
+            self.pushButtonSave.pressed.connect(self.saveData)
 
     def saveData(self):
         self.fileName = QtGui.QFileDialog.getSaveFileName(self, self.tr("Save Data"), "")
