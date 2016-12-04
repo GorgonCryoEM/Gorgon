@@ -13,12 +13,11 @@ class Grid3D(BaseViewer):
 
     def __init__(self, main, p1, p2):
         self.title = "Grid3D"
-        super(Grid3D, self).__init__(main)
+        super(Grid3D, self).__init__(RendererBase(), main)
         
         self.p1 = Vec3(p1)
         self.p2 = Vec3(p2)
         
-        self.renderer = RendererBase()
         
         self.loaded           = True
         self.setColor(QtGui.QColor(self._col*20, 20, 50, 150))
