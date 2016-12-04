@@ -25,7 +25,7 @@ class Grid3D(BaseViewer):
 #         self._col.setBlue(self._col.blue() + 20)
         print "self._col= ", self._col
 
-    def drawGL(self):
+    def paintGL(self):
         print "Grid3D.drawGL"
         print self.getColor().red(), self.getColor().green(), self.getColor().blue()
         glLineWidth(3)
