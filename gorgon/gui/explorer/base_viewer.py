@@ -222,7 +222,8 @@ class BaseViewer(BaseDockWidget):
         self.visualizationUpdated.emit()
 
     def setLocation(self, x, y, z):
-        self.renderer.setOrigin(x, y, z)
+        # self.renderer.setOrigin(x, y, z)
+        # self.app.mainCamera.setCenter(Vec3(x, y, z))
         self.visualizationUpdated.emit()
 
     def getCenter(self):
@@ -249,7 +250,8 @@ class BaseViewer(BaseDockWidget):
 
     def getMinMax(self):
         scale    = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
-        location = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]
+        # location = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]
+        location = [0, 0, 0]
         minPos = Vec3([(self.renderer.getMinPos(i)*scale[i] + location[i]) for i in range(3)])
         maxPos = Vec3([(self.renderer.getMaxPos(i)*scale[i] + location[i]) for i in range(3)])
         return minPos, maxPos
