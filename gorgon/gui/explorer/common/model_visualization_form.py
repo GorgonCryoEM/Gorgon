@@ -44,17 +44,16 @@ class ModelVisualizationForm(object):
         # else :
         #     self.ui.radioButtonSmooth.setChecked(True)   
             
-        if self.viewer.renderer:
-            self.ui.doubleSpinBoxSizeX.setValue(self.viewer.renderer.getSpacingX())   
-            self.ui.doubleSpinBoxSizeY.setValue(self.viewer.renderer.getSpacingY())
-            self.ui.doubleSpinBoxSizeZ.setValue(self.viewer.renderer.getSpacingZ())
-            self.ui.doubleSpinBoxLocationX.setValue(self.viewer.renderer.getOriginX())
-            self.ui.doubleSpinBoxLocationY.setValue(self.viewer.renderer.getOriginY())
-            self.ui.doubleSpinBoxLocationZ.setValue(self.viewer.renderer.getOriginZ())
-            self.ui.labelModelSize.setText("{" +
-                                           str(round(self.viewer.renderer.getMaxPos(0) - self.viewer.renderer.getMinPos(0) ,2)) + ", " +
-                                           str(round(self.viewer.renderer.getMaxPos(1) - self.viewer.renderer.getMinPos(1) ,2)) + ", " +
-                                           str(round(self.viewer.renderer.getMaxPos(2) - self.viewer.renderer.getMinPos(2) ,2)) + "}")
+        self.ui.doubleSpinBoxSizeX.setValue(self.viewer.renderer.getSpacingX())   
+        self.ui.doubleSpinBoxSizeY.setValue(self.viewer.renderer.getSpacingY())
+        self.ui.doubleSpinBoxSizeZ.setValue(self.viewer.renderer.getSpacingZ())
+        self.ui.doubleSpinBoxLocationX.setValue(self.viewer.renderer.getOriginX())
+        self.ui.doubleSpinBoxLocationY.setValue(self.viewer.renderer.getOriginY())
+        self.ui.doubleSpinBoxLocationZ.setValue(self.viewer.renderer.getOriginZ())
+        self.ui.labelModelSize.setText("{" +
+                                       str(round(self.viewer.renderer.getMaxPos(0) - self.viewer.renderer.getMinPos(0) ,2)) + ", " +
+                                       str(round(self.viewer.renderer.getMaxPos(1) - self.viewer.renderer.getMinPos(1) ,2)) + ", " +
+                                       str(round(self.viewer.renderer.getMaxPos(2) - self.viewer.renderer.getMinPos(2) ,2)) + "}")
         # if(len(self.viewer.fileName) > 0):
         #     names = self.viewer.fileName.split('\\')
         #     name = names[len(names)-1];

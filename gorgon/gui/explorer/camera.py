@@ -91,10 +91,9 @@ class Camera(QtOpenGL.QGLWidget):
         self.setGluLookAt()
         self.setLights()
         for i in range(len(self.scene)):
-            if self.scene[i].renderer:
-                glPushName(i)
-                self.scene[i].paintGL()
-                glPopName()
+            glPushName(i)
+            self.scene[i].paintGL()
+            glPopName()
         glPopMatrix()
 
     def resizeGL(self, w, h):

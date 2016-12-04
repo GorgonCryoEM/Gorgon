@@ -162,13 +162,12 @@ class BaseViewer(BaseDockWidget):
         glPopMatrix()
 
     def modelChanged(self):
-        if self.renderer:
-            glPushAttrib(GL_LIGHTING_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT)
-            self.extraDrawingRoutines()
-            if(self.loaded):
-                self.setupGlList()
-            glPopAttrib()
-            self.app.mainCamera.updateGL()
+        glPushAttrib(GL_LIGHTING_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT)
+        self.extraDrawingRoutines()
+        if(self.loaded):
+            self.setupGlList()
+        glPopAttrib()
+        self.app.mainCamera.updateGL()
 
     def setupGlList(self):
         self.glList = glGenLists(1)
@@ -179,16 +178,15 @@ class BaseViewer(BaseDockWidget):
     def drawGL(self):
         ss=[0,1,2]
         for s in ss:
-            if self.renderer:
-                if(self.color.alpha() < 255):
-                    glDepthFunc(GL_LESS)
-                    glColorMask(False, False, False, False)
-                    self.renderer.draw(s, False)
-                    glDepthFunc(GL_LEQUAL)
-                    glColorMask(True, True, True, True)
-                    self.renderer.draw(s, True)
-                else:
-                    self.renderer.draw(s, True)
+            if(self.color.alpha() < 255):
+                glDepthFunc(GL_LESS)
+                glColorMask(False, False, False, False)
+                self.renderer.draw(s, False)
+                glDepthFunc(GL_LEQUAL)
+                glColorMask(True, True, True, True)
+                self.renderer.draw(s, True)
+            else:
+                self.renderer.draw(s, True)
         
         self.extraDrawingRoutines()
 
