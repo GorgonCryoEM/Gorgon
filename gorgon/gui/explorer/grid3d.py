@@ -4,7 +4,7 @@ from PyQt4 import QtGui
 from gorgon.libs import Vec3
 from . import BaseViewer
 from ...toolkit.libpytoolkit import RendererBase
-from ...toolkit.libpytoolkit import drawLine
+from ...toolkit.libpytoolkit import drawLine, drawSphere
 
 
 class Grid3D(BaseViewer):
@@ -29,6 +29,7 @@ class Grid3D(BaseViewer):
         print "Grid3D.drawGL"
         print self.getColor().red(), self.getColor().green(), self.getColor().blue()
         glLineWidth(3)
+        drawSphere(Vec3([-42,-42,-42]), 10.)
         for i in range(int(self.p1[0]), int(self.p2[0])+1, 25):
             # drawLine(self.p1, self.p2)
             # p1 = self.p1
