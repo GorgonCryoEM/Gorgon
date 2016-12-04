@@ -29,4 +29,12 @@ class Grid3D(BaseViewer):
         print "Grid3D.drawGL"
         print self.getColor().red(), self.getColor().green(), self.getColor().blue()
         glLineWidth(3)
-        drawLine(self.p1, self.p2)
+        for i in range(int(self.p1[0]), int(self.p2[0])+1, 25):
+            # drawLine(self.p1, self.p2)
+            # p1 = self.p1
+            # p2 = self.p2
+            p1 = Vec3([i, -25, self.p1[2]])
+            p2 = Vec3([i, -25, self.p2[2]])
+            
+            drawLine(p1, p2)
+            print "p1, p2: %s %s" % (p1, p2)
