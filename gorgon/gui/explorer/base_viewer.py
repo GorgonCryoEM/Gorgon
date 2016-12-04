@@ -27,7 +27,7 @@ class BaseViewer(BaseDockWidget):
         self.renderer = renderer
         self.app = main
         self.loaded = False
-        self.selectEnabled = True
+        self.selectEnabled = False
         self.mouseMoveEnabled = True
         self.mouseMoveEnabledRay = True
         self.isClosedMesh = True
