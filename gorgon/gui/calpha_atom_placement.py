@@ -22,7 +22,7 @@ class CalphaAtomPlacement(Window):
         
         self.calpha = CAlphaViewer(self)
         
-        self.mainCamera.append_scenes([self.volume, self.skeleton, self.calpha, Grid3D(self, [0,-100,0], [0,100,0])])
+        self.mainCamera.append_scenes([self.volume, self.skeleton, self.calpha, Grid3D(self, [-100,-100,-100], [100,100,100])])
         
     @classmethod
     def set_parser(cls, parser):
