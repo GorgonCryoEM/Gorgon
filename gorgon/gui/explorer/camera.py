@@ -242,6 +242,7 @@ class Camera(QtOpenGL.QGLWidget):
         for s in self.scene:
             if s.loaded:
                 minPos, maxPos = s.getMinMax()
+                print "..--++ %s: %s %s" % (s.title, minPos, maxPos)
                 for i in range(3):
                     minmax[i].setMin(minPos[i])
                     minmax[i].setMax(maxPos[i])
@@ -251,6 +252,7 @@ class Camera(QtOpenGL.QGLWidget):
         c   = (sceneMin + sceneMax)*0.5
         d   = (sceneMin - sceneMax).length()
         
+        print "self.sceneSetCenterLocal(c[0], c[1], c[2], d): %f %f %f %f" % (c[0], c[1], c[2], d)
         self.sceneSetCenterLocal(c[0], c[1], c[2], d)
 
     def sceneSetCenterLocal(self, cX, cY, cZ, d):
