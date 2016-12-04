@@ -5,6 +5,7 @@ from .calpha.viewer import CAlphaViewer
 from .explorer import Camera
 from ..toolkit.sse.correspondence.StructurePrediction import StructurePrediction
 from .window import Window
+from .explorer.grid3d import Grid3D
 
 
 class CalphaAtomPlacement(Window):
@@ -21,7 +22,7 @@ class CalphaAtomPlacement(Window):
         
         self.calpha = CAlphaViewer(self)
         
-        self.mainCamera.append_scenes([self.volume, self.skeleton, self.calpha])
+        self.mainCamera.append_scenes([self.volume, self.skeleton, self.calpha, Grid3D(self, [-100,-100,-100], [100,100,100])])
         
     @classmethod
     def set_parser(cls, parser):
