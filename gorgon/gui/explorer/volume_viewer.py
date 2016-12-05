@@ -12,7 +12,7 @@ class VolumeViewer(BaseViewer):
         
         self.loaded = False
         
-        self.form = VolumeSurfaceEditorForm(main)
+        self.addHistogram()
         # self.setColor(QtGui.QColor(50, 200, 50, 150))
 
     def modelLoadedPreDraw(self):
@@ -25,5 +25,10 @@ class VolumeViewer(BaseViewer):
         self.renderer.setSurfaceValue(defaultDensity)
         self.renderer.setDisplayRadius(maxRadius)
         
-        self.form.setViewer(self)
-        self.form.modelLoadedPreDraw()
+    def addHistogram(self):
+        self.histogram_widget = VolumeSurfaceEditorForm(self)
+    
+        gridlayout = self.ui.ui.gridlayout6
+        gridlayout.addWidget(self.histogram_widget, 2, 0, 1, 2)
+        
+        self.histogram_widget.setViewer(self)
