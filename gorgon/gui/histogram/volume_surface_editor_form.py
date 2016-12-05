@@ -15,7 +15,7 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
         
     def setViewer(self, viewer):
         self.viewer = viewer
-        self.connect(self.viewer, QtCore.SIGNAL("modelLoadedPreDraw()"), self.modelLoadedPreDraw)
+        self.viewer.visualizationUpdated.connect(self.modelLoadedPreDraw)
         self.connect(self.viewer, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)
 
     def toggleViewAction(self):
