@@ -20,12 +20,12 @@ namespace Core {
     }
 
     SkeletonMesh::SkeletonMesh(const Volume & src) {
-//#ifdef GORGON_DEBUG
+#ifdef GORGON_DEBUG
         cout<<"\033[33mDEBUG: File:   SkeletonMesh.h"<<endl;
         cout<<"DEBUG: Method: SkeletonMesh::SkeletonMesh\033[0m"<<endl;
         cout<<"DEBUG: Args: Volume*\033[0m"<<endl;
         cout<<"src.getSize(): "<<src.getSize()<<endl;
-//#endif
+#endif
 
         vector<int> lVertices(src.getSize());
 
@@ -104,12 +104,12 @@ namespace Core {
             }
         }
 
-//#ifdef GORGON_DEBUG
+#ifdef GORGON_DEBUG
         cout<<"\033[33mDEBUG: END"<<endl;
         cout<<getSize()<<endl;
         cout<<*this<<endl;
         cout<<"DEBUG: Method: SkeletonMesh::SkeletonMesh\n\033[0m"<<endl;
-//#endif
+#endif
 
     }
 
@@ -191,12 +191,12 @@ namespace Core {
                 glPushName(0);
                 glPushName(0);
             }
-//            #ifdef GORGON_DEBUG
+#ifdef GORGON_DEBUG
                   cout<<"\033[32m"<<endl;
                   cout<<"DEBUG: Method: SkeletonMesh::draw(bool, bool, bool, bool, bool, bool, bool, bool, bool, bool, int, bool)\033[0m"<<endl;
                   cout<<"faces.size(): "<<faces.size()<<endl;
                   cout<<"\033[0m";
-//            #endif
+#endif
 
             for(unsigned int i = 0; i < faces.size(); i++) {
                 if(annotateSurfaces) {
