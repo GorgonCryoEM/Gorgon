@@ -2797,19 +2797,19 @@ void Volume::downsample() {
 }
 
 void Volume::load(string inputFile) {
-//    #ifdef GORGON_DEBUG
+    #ifdef GORGON_DEBUG
           cout<<"\033[32mDEBUG: File:   volume.cpp"<<endl;
           cout<<"DEBUG: Method: Volume::load(string)\033[0m"<<endl;
           cout<<*this<<endl;
-//    #endif
+    #endif
 
     *this = *MRCReaderPicker::pick(inputFile.c_str())->getVolume();
 
-//    #ifdef GORGON_DEBUG
+    #ifdef GORGON_DEBUG
           cout<<"\033[32mDEBUG: File:   volume.cpp"<<endl;
           cout<<"DEBUG: Method: Volume::load(string)\033[0m"<<endl;
           cout<<*this<<endl;
-//    #endif
+    #endif
 
 }
 
@@ -2833,16 +2833,16 @@ Volume Volume::binarySkeletonization(double threshold,
 {
     Skeletonizer skeletonizer(0, 0, 0,
                               DEFAULT_SKELETON_DIRECTION_RADIUS);
-//    #ifdef GORGON_DEBUG
+    #ifdef GORGON_DEBUG
           cout<<"\033[32mDEBUG: File:   volume.cpp"<<endl;
           cout<<"DEBUG: Method: Volume::PerformBinarySkeletonizationJu2007(double, int, int)\033[0m"<<endl;
           cout<<*this<<endl;
-//    #endif
+    #endif
 
     Volume outputVol = *skeletonizer.PerformPureJuSkeletonization(*this, "",
             threshold, minCurveSize, minSurfaceSize);
 
-//    #ifdef GORGON_DEBUG
+    #ifdef GORGON_DEBUG
           cout<<"\033[32mDEBUG: File:   volume.cpp"<<endl;
           cout<<"DEBUG: Method: Volume::PerformBinarySkeletonizationJu2007(double, int, int)\033[0m"<<endl;
           cout<<"outputVol->getSize(): "<<outputVol.getSize()<<endl;
@@ -2852,7 +2852,7 @@ Volume Volume::binarySkeletonization(double threshold,
               <<"\t"<<minSurfaceSize
               <<endl;
           cout<<outputVol<<endl;
-//    #endif
+    #endif
 
     return outputVol;
 }

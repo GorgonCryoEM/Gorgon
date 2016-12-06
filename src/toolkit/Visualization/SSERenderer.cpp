@@ -200,11 +200,11 @@ namespace Visualization {
         for(unsigned int i = 0; i < helices.size(); i++) {
             delete helices[i];
         }
-//        #ifdef GORGON_DEBUG
+        #ifdef GORGON_DEBUG
               cout<<"\033[32mDEBUG: File:   SSERenderer.cpp"<<endl;
               cout<<"DEBUG: Method: SSERenderer::loadHelixFile(string)\033[0m"<<endl;
               cout<<"YAY"<<endl;
-//        #endif
+        #endif
 
         helices.clear();
 

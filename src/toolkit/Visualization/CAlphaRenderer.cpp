@@ -1109,12 +1109,12 @@ namespace Visualization {
 
     void CAlphaRenderer::selectionToggle(int subsceneIndex, bool forceTrue, int ix0, int ix1, int ix2, int ix3, int ix4) {
 //        RendererBase::SelectionToggle(subsceneIndex, forceTrue, ix0, ix1, ix2, ix3, ix4);
-//        #ifdef GORGON_DEBUG
+        #ifdef GORGON_DEBUG
               cout<<"\033[32mDEBUG: File:   CAlphaRenderer.cpp"<<endl;
               cout<<"DEBUG: Method: CAlphaRenderer::selectionToggle(int, bool, int, int, int, int, int)\033[0m"<<endl;
               cout<<subsceneIndex<<endl;
               cout<<displayStyle<<endl;
-//        #endif
+        #endif
 
         AtomMapType::iterator it;
         PDBAtom * a;

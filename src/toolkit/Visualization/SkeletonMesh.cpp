@@ -20,12 +20,12 @@ namespace Core {
     }
 
     SkeletonMesh::SkeletonMesh(const Volume & src) {
-//#ifdef GORGON_DEBUG
+#ifdef GORGON_DEBUG
         cout<<"\033[33mDEBUG: File:   SkeletonMesh.h"<<endl;
         cout<<"DEBUG: Method: SkeletonMesh::SkeletonMesh\033[0m"<<endl;
         cout<<"DEBUG: Args: Volume*\033[0m"<<endl;
         cout<<"src.getSize(): "<<src.getSize()<<endl;
-//#endif
+#endif
 
         vector<int> lVertices(src.getSize());
 
@@ -104,12 +104,12 @@ namespace Core {
             }
         }
 
-//#ifdef GORGON_DEBUG
+#ifdef GORGON_DEBUG
         cout<<"\033[33mDEBUG: END"<<endl;
         cout<<getSize()<<endl;
         cout<<*this<<endl;
         cout<<"DEBUG: Method: SkeletonMesh::SkeletonMesh\n\033[0m"<<endl;
-//#endif
+#endif
 
     }
 
@@ -130,10 +130,12 @@ namespace Core {
                                bool disableSurfaceLighting, bool disableCurveLighting, bool disablePointLighting,
                                int lineThickness, bool smoothSurfaceNormals)
     {
+#ifdef GORGON_DEBUG
         ofstream fout1("vertices.txt");
         ofstream fout2("faces.txt");
         ofstream fout3("edges.txt");
         ofstream fout4("non-manifold-mesh.txt");
+#endif
 
         map<unsigned int, Vertex> mapVertices;
         for(unsigned int i=0; i<vertices.size(); ++i)
@@ -147,10 +149,12 @@ namespace Core {
         for(unsigned int i=0; i<faces.size(); ++i)
             mapFaces[i] = faces[i];
 
+#ifdef GORGON_DEBUG
         fout1 << mapVertices;
         fout2 << mapFaces;
         fout3 << mapEdges;
         fout4 << *this;
+#endif
 
         glPushAttrib(GL_LIGHTING_BIT | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT | GL_POINT_BIT);
 
@@ -187,12 +191,12 @@ namespace Core {
                 glPushName(0);
                 glPushName(0);
             }
-//            #ifdef GORGON_DEBUG
+#ifdef GORGON_DEBUG
                   cout<<"\033[32m"<<endl;
                   cout<<"DEBUG: Method: SkeletonMesh::draw(bool, bool, bool, bool, bool, bool, bool, bool, bool, bool, int, bool)\033[0m"<<endl;
                   cout<<"faces.size(): "<<faces.size()<<endl;
                   cout<<"\033[0m";
-//            #endif
+#endif
 
             for(unsigned int i = 0; i < faces.size(); i++) {
                 if(annotateSurfaces) {
