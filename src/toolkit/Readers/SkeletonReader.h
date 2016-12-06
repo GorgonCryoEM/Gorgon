@@ -148,12 +148,12 @@ namespace GraphMatch {
                 }
             }
         }
-//        #ifdef GORGON_DEBUG
+        #ifdef GORGON_DEBUG
               cout<<"\033[32mDEBUG: File:   SkeletonReader.h"<<endl;
               cout<<"DEBUG: Method: ReadFile(char*, char*, char*, char*)\033[0m"<<endl;
               cout<<"vol: "<<endl;
               cout<<*skel<<endl;
-//        #endif
+        #endif
 
 
         Volume* sheetClusters = getSheetsNoThreshold(skel, MINIMUM_SHEET_SIZE);
@@ -683,11 +683,11 @@ namespace GraphMatch {
     }
 
     inline void readHelixFile(string helixFile, string sseFile, vector<Shape*> & helixes){
-//        #ifdef GORGON_DEBUG
+        #ifdef GORGON_DEBUG
               cout<<"\033[32mDEBUG: File:   SkeletonReader.h"<<endl;
               cout<<"DEBUG: Method: ReadHelixFile(string, string, vector<Shape*>&)\033[0m"<<endl;
               cout<<"Im in!"<<endl;
-//        #endif
+        #endif
 
         ifstream fin(helixFile.c_str());
         if (!fin) {
