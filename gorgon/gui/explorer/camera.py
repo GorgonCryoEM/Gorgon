@@ -382,9 +382,9 @@ class Camera(QtOpenGL.QGLWidget):
             minNames.pop(0)
             
         print "...minNames: ", minNames
-        if (left):
-            if (e.modifiers() & QtCore.Qt.CTRL):        # Multiple selection mode
-                if (sceneId >= 0):
+        if left:
+            if e.modifiers() & QtCore.Qt.CTRL:        # Multiple selection mode
+                if sceneId >= 0:
                     self.scene[sceneId].processMouseClick(minNames, e, False)
             else:                                           # Single selection mode
                 for i in range(len(self.scene)):
@@ -395,11 +395,11 @@ class Camera(QtOpenGL.QGLWidget):
                         pass
 
                 for i in range(len(self.scene)):
-                    if (i == sceneId):
+                    if i == sceneId:
                         self.scene[sceneId].processMouseClick(minNames, e, True)
                         
-        elif (right):                                # Focusing on current point
-            if (sceneId >= 0):
+        elif right:                                # Focusing on current point
+            if sceneId >= 0:
                 self.scene[sceneId].emitElementClicked(minNames, e)
 
     def processMouseMove(self, hits, e):
