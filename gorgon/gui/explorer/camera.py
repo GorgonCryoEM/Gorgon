@@ -389,6 +389,15 @@ class Camera(QtOpenGL.QGLWidget):
             else:                                           # Single selection mode
                 self.scene[sceneId].clearSelection()
                 self.scene[sceneId].processMouseClick(minNames, e, True)
+                for i in range(len(self.scene)):
+                    self.scene[i].clearSelection()
+                    self.scene[i].renderer.clearOtherHighlights()
+                    self.scene[i].emitModelChanged()
+
+                for i in range(len(self.scene)):
+                    if (i == sceneId):
+                        self.scene[sceneId].processMouseClick(minNames, e, True)
+                        
         elif (right):                                # Focusing on current point
             if (sceneId >= 0):
                 self.scene[sceneId].emitElementClicked(minNames, e)
