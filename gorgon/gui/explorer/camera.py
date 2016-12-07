@@ -390,7 +390,6 @@ class Camera(QtOpenGL.QGLWidget):
                 for i in range(len(self.scene)):
                     self.scene[i].clearSelection()
                     self.scene[i].renderer.clearOtherHighlights()
-                    self.scene[i].emitModelChanged()
 
                 for i in range(len(self.scene)):
                     if (i == sceneId):
