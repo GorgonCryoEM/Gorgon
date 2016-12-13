@@ -209,6 +209,8 @@ class Chain(baseClass):
                 except ValueError:
                     print 'Chain.__loadFromPDB--no coordinates',
 
+                result.differenceIndex = residueIndex - serialNo
+            
             elif line[0:6].strip() == 'HELIX':
                 Helix.parsePDB(line, result)
             elif line[0:6].strip() == 'SHEET':
