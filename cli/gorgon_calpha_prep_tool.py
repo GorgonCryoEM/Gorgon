@@ -54,6 +54,20 @@ def main():
         words[-1] += str(residues[i_residue])
         ids_atom[-1].append(i_atom)
 
+    # Add atoms corresponding to words extracted to the  sequence
+    seq_string = str(seq)
+    low = 0
+    
+    for i in range(len(words)):
+        word = words[i]
+        l = len(word)
+        for j in range(low, len(seq_string)-l):
+            if word == seq_string[j:j+l]:
+                for k in range(j+1, j+l+1):
+                    seq[k].addAtomObject(atoms[ids_atom[i][k-j-1]])
+                low = j+l
+                break
+    
     seq.saveToPDB(args.output)
 
 if __name__ == "__main__":
