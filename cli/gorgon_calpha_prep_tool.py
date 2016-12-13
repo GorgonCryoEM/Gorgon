@@ -3,6 +3,8 @@
 import argparse
 import logging
 
+from gorgon.toolkit.sse.seq_model.Chain import Chain
+
 
 def main():
     parser = argparse.ArgumentParser(description='Gorgon CAlpha Prep Tool')
@@ -28,6 +30,11 @@ def main():
                         )
     
     logger = logging.getLogger(__name__)
+    
+    seq = Chain.load(args.sequence)
+    pdb = Chain.load(args.pdb)
+
+    seq.saveToPDB(args.output)
 
 if __name__ == "__main__":
     main()
