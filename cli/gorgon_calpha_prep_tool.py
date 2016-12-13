@@ -48,7 +48,6 @@ def main():
 
     # Group consecutive letters into words and corresponding atom ids
     words = []
-    ids_residue = []
     ids_atom = []
     i_old = -1
 
@@ -58,22 +57,18 @@ def main():
         
         if i - i_old > 1:
             words.append('')
-            ids_residue.append([])
             ids_atom.append([])
         i_old = i
         
         words[-1] += str(residues[i_residue])
-        ids_residue[-1].append(i_residue)
         ids_atom[-1].append(i_atom)
         
         logger.debug("%s %s %s %s" % (i_residue, i_atom, residues[i_residue], atoms[i_atom]))
     
-    logger.debug(ids_residue)
     logger.debug(ids_atom)
     logger.debug(words)
 
     # Add atoms corresponding to words extracted to the  sequence
-    ids_seq = []
     seq_string = str(seq)
     low = 0
     
@@ -85,7 +80,6 @@ def main():
         for j in range(low, len(seq_string)-l):
             logger.debug("%s %s %s" % (i, word, seq_string[j:j+l]))
             if word == seq_string[j:j+l]:
-                ids_seq.append(range(j+1,j+l+1))
                 logger.debug("Found %s %s" % (word, seq_string[j:j+l]))
                 logger.debug("   --- %s" % ids_atom[i])
                 logger.debug("   --- %s" % [atoms[k] for k in ids_atom[i]])
@@ -95,7 +89,6 @@ def main():
                 low = j+l
                 break
     
-    logger.debug(ids_seq)
     seq.saveToPDB(args.output)
 
 if __name__ == "__main__":
