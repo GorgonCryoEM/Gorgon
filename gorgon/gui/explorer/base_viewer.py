@@ -66,7 +66,6 @@ class BaseViewer(BaseDockWidget):
     #     self.ui.loc_scale_xyz.scaleChanged.connect(self.setScale)
     #     self.visualizationUpdated.connect(self.modelChanged)
 
-#         self.ui.pushButtonClose.clicked.connect(self.viewer.unload)
 #         self.ui.doubleSpinBoxSizeX.editingFinished.connect(self.scaleChanged)
 #         self.ui.doubleSpinBoxSizeY.editingFinished.connect(self.scaleChanged)
 #         self.ui.doubleSpinBoxSizeZ.editingFinished.connect(self.scaleChanged)
@@ -280,12 +279,6 @@ class BaseViewer(BaseDockWidget):
         self.setCursor(QtCore.Qt.WaitCursor)
         self.renderer.saveFile(str(fileName))
         self.setCursor(QtCore.Qt.ArrowCursor)
-
-    def unload(self):
-        self.loaded = False
-        self.renderer.setOrigin(0,0,0)
-        self.renderer.setSpacing(1, 1, 1)
-        self.rotation = self.identityMatrix()
 
     def identityMatrix(self):
         return [[1.0, 0.0, 0.0, 0.0],
