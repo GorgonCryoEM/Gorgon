@@ -50,9 +50,6 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
         
         self.pushButtonSaveHelices.clicked.connect(self.sse.saveHelixData)
         
-    def disableSavePseudoatoms(self):
-        self.pushButtonSavePseudoatoms.setEnabled(False)
-    
     def savePseudoatoms(self):
         fileName = QtGui.QFileDialog.getSaveFileName(self, self.tr("Save Pseudoatoms"), "", self.tr("Protein Data Bank (PDB) Format (*.pdb)"))
         if not fileName.isEmpty():
@@ -99,7 +96,6 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
         if not pdbFile.isEmpty():
             self.calpha.loadSSEHunterData(pdbFile)
             self.lineEditAtomScore.setText(pdbFile)
-            self.connect(self.calpha,  QtCore.SIGNAL("modelUnloaded()"), self.disableSavePseudoatoms)
             self.pushButtonSavePseudoatoms.setEnabled(True)
 #         self.bringToFront()
         
@@ -161,7 +157,6 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
 #         self.calpha.emitModelLoadedPreDraw()
         self.calpha.modelChanged()
 #         self.calpha.emitViewerSetCenter()
-#         self.connect(self.calpha,  QtCore.SIGNAL("modelUnloaded()"), self.disableSavePseudoatoms)
         self.pushButtonSavePseudoatoms.setEnabled(True)
 #         self.bringToFront()
         
