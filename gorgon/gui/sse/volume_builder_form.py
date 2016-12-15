@@ -29,7 +29,6 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
         self.parent.addDockWidget(self.dockArea, dock)
 
         self.connect(self.volume, QtCore.SIGNAL("modelLoaded()"), self.modelLoaded)
-        self.connect(self.volume, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)
         self.connect(self.calpha, QtCore.SIGNAL("atomSelectionUpdated(PyQt_PyObject)"), self.atomSelectionChanged)
 
         self.createUI()
@@ -87,10 +86,6 @@ class VolumeSSEBuilderForm(QtGui.QDialog, Ui_DialogVolumeSSEBuilder):
         
         print minDensity, maxDensity, defaultDensity
        
-    def modelUnloaded(self):
-        #self.detectSSEAct.setEnabled(False)
-        self.showWidget(False)
-
     def dockVisibilityChanged(self, visible):
         BaseDockWidget.dockVisibilityChanged(self, visible)
         self.calpha.centerOnRMB = not visible
