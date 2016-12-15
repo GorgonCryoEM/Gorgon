@@ -237,9 +237,6 @@ class Ui_DialogModelVisualization(object):
         self.pushButtonCenter = QtGui.QPushButton(DialogModelVisualization)
         self.pushButtonCenter.setObjectName("pushButtonCenter")
         self.gridlayout6.addWidget(self.pushButtonCenter, 0, 0, 1, 1)
-        self.pushButtonClose = QtGui.QPushButton(DialogModelVisualization)
-        self.pushButtonClose.setObjectName("pushButtonClose")
-        self.gridlayout6.addWidget(self.pushButtonClose, 0, 1, 1, 1)
         self.gridlayout.addLayout(self.gridlayout6, 1, 0, 1, 1)
         spacerItem2 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.gridlayout.addItem(spacerItem2, 2, 0, 1, 1)
@@ -247,8 +244,6 @@ class Ui_DialogModelVisualization(object):
         self.retranslateUi(DialogModelVisualization)
         self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(DialogModelVisualization)
-        DialogModelVisualization.setTabOrder(self.pushButtonCenter, self.pushButtonClose)
-        DialogModelVisualization.setTabOrder(self.pushButtonClose, self.tabWidget)
         DialogModelVisualization.setTabOrder(self.tabWidget, self.radioButtonWireframe)
         DialogModelVisualization.setTabOrder(self.radioButtonWireframe, self.radioButtonFlat)
         DialogModelVisualization.setTabOrder(self.radioButtonFlat, self.radioButtonSmooth)
@@ -284,6 +279,5 @@ class Ui_DialogModelVisualization(object):
         self.labelModelSize.setText(QtGui.QApplication.translate("DialogModelVisualization", "{X, Y, Z}", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), QtGui.QApplication.translate("DialogModelVisualization", "Properties", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButtonCenter.setText(QtGui.QApplication.translate("DialogModelVisualization", "Center", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButtonClose.setText(QtGui.QApplication.translate("DialogModelVisualization", "Unload Model", None, QtGui.QApplication.UnicodeUTF8))
 
 from colored_push_button import ColoredPushButton

@@ -326,9 +326,6 @@ class Ui_DialogAtomVisualization(object):
         self.pushButtonCenter = QtGui.QPushButton(DialogAtomVisualization)
         self.pushButtonCenter.setObjectName("pushButtonCenter")
         self.gridlayout5.addWidget(self.pushButtonCenter, 0, 0, 1, 1)
-        self.pushButtonClose = QtGui.QPushButton(DialogAtomVisualization)
-        self.pushButtonClose.setObjectName("pushButtonClose")
-        self.gridlayout5.addWidget(self.pushButtonClose, 0, 1, 1, 1)
         self.verticalLayout_2.addLayout(self.gridlayout5)
         spacerItem2 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.verticalLayout_2.addItem(spacerItem2)
@@ -348,8 +345,6 @@ class Ui_DialogAtomVisualization(object):
         DialogAtomVisualization.setTabOrder(self.checkBoxShowHelices, self.checkBoxShowStrands)
         DialogAtomVisualization.setTabOrder(self.checkBoxShowStrands, self.checkBoxShowLoops)
         DialogAtomVisualization.setTabOrder(self.checkBoxShowLoops, self.pushButtonCenter)
-        DialogAtomVisualization.setTabOrder(self.pushButtonCenter, self.pushButtonClose)
-        DialogAtomVisualization.setTabOrder(self.pushButtonClose, self.doubleSpinBoxSizeX)
         DialogAtomVisualization.setTabOrder(self.doubleSpinBoxSizeX, self.doubleSpinBoxSizeY)
         DialogAtomVisualization.setTabOrder(self.doubleSpinBoxSizeY, self.doubleSpinBoxSizeZ)
         DialogAtomVisualization.setTabOrder(self.doubleSpinBoxSizeZ, self.doubleSpinBoxLocationX)
@@ -391,6 +386,5 @@ class Ui_DialogAtomVisualization(object):
         self.labelModelSize.setText(QtGui.QApplication.translate("DialogAtomVisualization", "{X, Y, Z}", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), QtGui.QApplication.translate("DialogAtomVisualization", "Properties", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButtonCenter.setText(QtGui.QApplication.translate("DialogAtomVisualization", "Center", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButtonClose.setText(QtGui.QApplication.translate("DialogAtomVisualization", "Unload Model", None, QtGui.QApplication.UnicodeUTF8))
 
 from colored_push_button import ColoredPushButton

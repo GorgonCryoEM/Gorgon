@@ -17,7 +17,6 @@ class Form(QtGui.QDialog):
     def createUI(self):
         self.ui.setupUi(self)
         self.connect(self.volume, QtCore.SIGNAL("modelLoaded()"), self.modelLoaded)
-        self.connect(self.volume, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)
         self.connect(self.ui.horizontalSliderIsoLevel,QtCore.SIGNAL("valueChanged(int)"),self.isoValueChanged)
         self.connect(self.ui.comboBoxMethod, QtCore.SIGNAL("currentIndexChanged (int)"), self.methodChanged)
         self.methodChanged(0)
@@ -30,9 +29,6 @@ class Form(QtGui.QDialog):
         defaultDensity = (int(minDensity*100) + int(maxDensity*100.0)) / 2
         self.ui.horizontalSliderIsoLevel.setValue(defaultDensity)
     
-    def modelUnloaded(self):
-        self.close()
-
     def isoValueChanged(self, newLevel):
         self.ui.labelIsoValueDisplay.setNum(newLevel/100.0)
 

@@ -57,7 +57,6 @@ class CAlphaStructureEditor(QtGui.QWidget):
             self.connect(self.posMoveDict['yaw'],   QtCore.SIGNAL('valueChanged(int)'), self.posRotateCM_yaw)
             self.connect(self.removeButton,         QtCore.SIGNAL('clicked()'), self.removeSelectedAtoms)
 #             self.connect(self.parent.volume, QtCore.SIGNAL("modelLoaded()"), self.updateLoopEditorEnables)
-#             self.connect(self.parent.volume, QtCore.SIGNAL("modelUnloaded()"), self.updateLoopEditorEnables)
 
     def setupUi(self):
         #These go on the left hand side
