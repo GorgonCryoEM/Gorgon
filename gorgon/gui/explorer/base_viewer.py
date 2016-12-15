@@ -82,7 +82,7 @@ class BaseViewer(BaseDockWidget):
         else:
             gridlayout = form.gridlayout5
 
-        gridlayout.addWidget(self.pushButtonSave, 1, 0, 1, 2)
+        gridlayout.addWidget(self.pushButtonSave, 0, 1, 1, 1)
         self.pushButtonSave.pressed.connect(self.saveData)
 
     def saveData(self):
