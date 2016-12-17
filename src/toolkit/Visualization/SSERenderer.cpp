@@ -40,6 +40,14 @@ namespace Visualization {
         setMinMax(p1);
         setMinMax(p2);
         
+#ifdef GORGON_DEBUG
+        cout<<"\033[32mDEBUG: File:   SSERenderer.cpp"<<endl;
+        for(int i=0; i<3; ++i) {
+            cout<<" "<<minmaxPts[i].getMin()<<endl;
+            cout<<" "<<minmaxPts[i].getMax()<<endl;
+        }
+#endif
+        
         helices.push_back(newHelix);
     }
 
