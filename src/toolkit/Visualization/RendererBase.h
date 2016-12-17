@@ -10,6 +10,8 @@
 
 #include "Core/volume.h"
 #include "Visualization/MeshBase.h"
+#include "Core/MinMax.h"
+#include "MathTools/Dim3D.h"
 
 using namespace Core;
 
@@ -21,6 +23,7 @@ namespace Visualization {
 
             virtual float getMinPos(int i) const;
             virtual float getMaxPos(int i) const;
+            virtual void setMinMax(Vec3F p);
 
             virtual float getSpacingX() const;
             virtual float getSpacingY() const;
@@ -30,6 +33,8 @@ namespace Visualization {
             virtual float getOriginZ() const;
         protected:
             int displayStyle;
+
+            Dim3D<MinMax> minmaxPts;
     };
 }
 
