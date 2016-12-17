@@ -36,6 +36,10 @@ namespace Visualization {
 
     void SSERenderer::addHelix(Vec3F p1, Vec3F p2) {
         Shape * newHelix = Shape::createHelix(p1, p2, 2.5);
+        
+        setMinMax(p1);
+        setMinMax(p2);
+        
         helices.push_back(newHelix);
     }
 
@@ -194,6 +198,11 @@ namespace Visualization {
 
     void SSERenderer::loadHelixFileVRML(string fileName) {
         readHelixFile(fileName, "", helices);
+        
+        for(unsigned int i = 0; i < helices.size(); i++) {
+            setMinMax(helices[i]->getCenter());
+        }
+
     }
 
     void SSERenderer::loadHelixFile(string fileName) {
