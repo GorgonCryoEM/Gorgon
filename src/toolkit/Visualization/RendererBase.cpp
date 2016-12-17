@@ -45,5 +45,12 @@ namespace Visualization {
     float RendererBase::getOriginZ() const {
         return 0;
     }
+    
+    void RendererBase::setMinMax(Vec3F p) {
+        for(int i=0; i<3; ++i) {
+            minmaxPts[i].setMin(p[i]);
+            minmaxPts[i].setMax(p[i]);
+        }
+    }
 
 }
