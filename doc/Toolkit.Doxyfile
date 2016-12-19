@@ -2121,7 +2121,7 @@ PERL_PATH              = /usr/bin/perl
 # powerful graphs.
 # The default value is: YES.
 
-CLASS_DIAGRAMS         = NO
+CLASS_DIAGRAMS         = YES
 
 # You can define message sequence charts within doxygen comments using the \msc
 # command. Doxygen will then run the mscgen tool (see:
@@ -2330,7 +2330,7 @@ INTERACTIVE_SVG        = YES
 # found. If left blank, it is assumed the dot tool can be found in the path.
 # This tag requires that the tag HAVE_DOT is set to YES.
 
-DOT_PATH               = /usr/local/bin/dot
+DOT_PATH               = /opt/local/bin/dot
 
 # The DOTFILE_DIRS tag can be used to specify one or more directories that
 # contain dot files that are included in the documentation (see the \dotfile
