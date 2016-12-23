@@ -15,6 +15,7 @@
 #include "GorgonGL.h"
 #include "Visualization/Rasterizer.h"
 #include "Core/IdList.h"
+#include "VolumeMesh.h"
 
 using namespace std;
 using namespace MathTools;
@@ -26,7 +27,7 @@ namespace Core {
     typedef map<TKey, Vertex > TV;
     typedef map<TKey, IdList >   TE;
 
-    class SkeletonMesh : public Volume, public MeshBase {
+    class SkeletonMesh : public VolumeMesh {
         public:
             SkeletonMesh();
             SkeletonMesh(const Volume & src);

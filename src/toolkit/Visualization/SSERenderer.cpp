@@ -211,11 +211,9 @@ namespace Visualization {
         int pos = fileName.rfind(".") + 1;
         string extension = fileName.substr(pos, fileName.length()-pos);
         extension = StringUtils::StringToUpper(extension);
-        if(strcmp(extension.c_str(), "WRL") == 0) {
+        if(extension == "WRL" || extension == "VRML") {
             loadHelixFileVRML(fileName);
-        } else if(strcmp(extension.c_str(), "VRML") == 0) {
-            loadHelixFileVRML(fileName);
-        } else if(strcmp(extension.c_str(), "SSE") == 0) {
+        } else if(extension == "SSE") {
             loadHelixFileSSE(fileName);
         }
     }

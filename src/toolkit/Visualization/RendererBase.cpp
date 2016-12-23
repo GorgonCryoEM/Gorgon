@@ -9,9 +9,6 @@
 #include "Foundation/StringUtils.h"
 
 namespace Visualization {
-
-    RendererBase::RendererBase()
-    {}
     
     void RendererBase::setDisplayStyle(int style) {
         displayStyle = style;
