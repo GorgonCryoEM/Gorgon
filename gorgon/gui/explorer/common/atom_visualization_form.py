@@ -52,9 +52,9 @@ class AtomVisualizationForm(ModelVisualizationForm):
         self.ui.doubleSpinBoxSizeX.setValue(self.viewer.renderer.getSpacingX())   
         self.ui.doubleSpinBoxSizeY.setValue(self.viewer.renderer.getSpacingY())
         self.ui.doubleSpinBoxSizeZ.setValue(self.viewer.renderer.getSpacingZ())
-        self.ui.doubleSpinBoxLocationX.setValue(self.viewer.renderer.getOriginX())
-        self.ui.doubleSpinBoxLocationY.setValue(self.viewer.renderer.getOriginY())
-        self.ui.doubleSpinBoxLocationZ.setValue(self.viewer.renderer.getOriginZ())
+        self.ui.doubleSpinBoxLocationX.setValue(self.viewer.offset[0])
+        self.ui.doubleSpinBoxLocationY.setValue(self.viewer.offset[1])
+        self.ui.doubleSpinBoxLocationZ.setValue(self.viewer.offset[2])
         # self.ui.labelModelSize.setText("{" +
         #                                str(round(self.viewer.renderer.getMaxPos(0) - self.viewer.renderer.getMinPos(0) ,2)) + ", " +
         #                                str(round(self.viewer.renderer.getMaxPos(1) - self.viewer.renderer.getMinPos(1) ,2)) + ", " +
