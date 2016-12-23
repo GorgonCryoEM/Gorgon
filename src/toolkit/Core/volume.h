@@ -109,6 +109,9 @@ namespace Core {
         double getMax() const;
         double getMaxValuePosition(int& maxX, int& maxY, int& maxZ);
 
+        virtual float getMinPos(int i) const;
+        virtual float getMaxPos(int i) const;
+
         float getMean(); // Returns the mean value of all the voxels
         float getStdDev(); // Returns the population standard deviation of the values at all the voxels
 

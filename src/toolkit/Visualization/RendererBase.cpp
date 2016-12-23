@@ -15,24 +15,11 @@ namespace Visualization {
     }
 
     float RendererBase::getMinPos(int i) const {
-        return -100.0;
+        return minmaxPts[i].getMin();
     }
 
     float RendererBase::getMaxPos(int i) const {
-        float result;
-        switch(i) {
-            case 0:
-                result = 100.;
-                break;
-            case 1:
-                result = 100.;
-                break;
-            case 2:
-                result = 100.;
-                break;
-        }
-
-        return result;
+        return minmaxPts[i].getMax();
     }
 
     float RendererBase::getSpacingX() const {
@@ -57,6 +44,13 @@ namespace Visualization {
 
     float RendererBase::getOriginZ() const {
         return 0;
+    }
+    
+    void RendererBase::setMinMax(Vec3F p) {
+        for(int i=0; i<3; ++i) {
+            minmaxPts[i].setMin(p[i]);
+            minmaxPts[i].setMax(p[i]);
+        }
     }
 
 }

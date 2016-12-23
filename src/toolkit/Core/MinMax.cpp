@@ -28,11 +28,11 @@ namespace Core {
         max = std::max(max, val);
     }
 
-    float MinMax::getMin() {
+    float MinMax::getMin() const {
         return min;
     }
 
-    float MinMax::getMax() {
+    float MinMax::getMax() const {
         return max;
     }
 
