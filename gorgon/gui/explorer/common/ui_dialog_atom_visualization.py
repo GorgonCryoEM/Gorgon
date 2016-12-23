@@ -345,9 +345,6 @@ class Ui_DialogAtomVisualization(object):
         DialogAtomVisualization.setTabOrder(self.checkBoxShowHelices, self.checkBoxShowStrands)
         DialogAtomVisualization.setTabOrder(self.checkBoxShowStrands, self.checkBoxShowLoops)
         DialogAtomVisualization.setTabOrder(self.checkBoxShowLoops, self.pushButtonCenter)
-        DialogAtomVisualization.setTabOrder(self.doubleSpinBoxSizeX, self.doubleSpinBoxSizeY)
-        DialogAtomVisualization.setTabOrder(self.doubleSpinBoxSizeY, self.doubleSpinBoxSizeZ)
-        DialogAtomVisualization.setTabOrder(self.doubleSpinBoxSizeZ, self.doubleSpinBoxLocationX)
         DialogAtomVisualization.setTabOrder(self.doubleSpinBoxLocationX, self.doubleSpinBoxLocationY)
         DialogAtomVisualization.setTabOrder(self.doubleSpinBoxLocationY, self.doubleSpinBoxLocationZ)
 

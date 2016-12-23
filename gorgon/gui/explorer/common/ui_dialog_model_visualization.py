@@ -248,10 +248,6 @@ class Ui_DialogModelVisualization(object):
         DialogModelVisualization.setTabOrder(self.radioButtonWireframe, self.radioButtonFlat)
         DialogModelVisualization.setTabOrder(self.radioButtonFlat, self.radioButtonSmooth)
         DialogModelVisualization.setTabOrder(self.checkBoxModelVisible, self.pushButtonModelColor)
-        DialogModelVisualization.setTabOrder(self.spinBoxThickness, self.doubleSpinBoxSizeX)
-        DialogModelVisualization.setTabOrder(self.doubleSpinBoxSizeX, self.doubleSpinBoxSizeY)
-        DialogModelVisualization.setTabOrder(self.doubleSpinBoxSizeY, self.doubleSpinBoxSizeZ)
-        DialogModelVisualization.setTabOrder(self.doubleSpinBoxSizeZ, self.doubleSpinBoxLocationX)
         DialogModelVisualization.setTabOrder(self.doubleSpinBoxLocationX, self.doubleSpinBoxLocationY)
         DialogModelVisualization.setTabOrder(self.doubleSpinBoxLocationY, self.doubleSpinBoxLocationZ)
 
