@@ -275,6 +275,7 @@ class BaseViewer(BaseDockWidget):
             self.modelLoadedPreDraw()
             self.modelChanged()
             self.centerAllRequested.emit()
+            self.ui.modelLoaded()
         except AttributeError:
             raise
         except:

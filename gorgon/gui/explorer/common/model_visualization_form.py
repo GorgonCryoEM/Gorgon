@@ -12,7 +12,6 @@ class ModelVisualizationForm(object):
         self.viewer.setWindowTitle(self.title)
         
         self.createUI()
-        self.updateFromViewer()
 
     def createUI(self):
         self.ui = Ui_DialogModelVisualization()
