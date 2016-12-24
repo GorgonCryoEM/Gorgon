@@ -36,6 +36,18 @@ namespace Visualization {
 
     void SSERenderer::addHelix(Vec3F p1, Vec3F p2) {
         Shape * newHelix = Shape::createHelix(p1, p2, 2.5);
+        
+        setMinMax(p1);
+        setMinMax(p2);
+        
+#ifdef GORGON_DEBUG
+        cout<<"\033[32mDEBUG: File:   SSERenderer.cpp"<<endl;
+        for(int i=0; i<3; ++i) {
+            cout<<" "<<minmaxPts[i].getMin()<<endl;
+            cout<<" "<<minmaxPts[i].getMax()<<endl;
+        }
+#endif
+        
         helices.push_back(newHelix);
     }
 
@@ -194,6 +206,11 @@ namespace Visualization {
 
     void SSERenderer::loadHelixFileVRML(string fileName) {
         readHelixFile(fileName, "", helices);
+        
+        for(unsigned int i = 0; i < helices.size(); i++) {
+            setMinMax(helices[i]->getCenter());
+        }
+
     }
 
     void SSERenderer::loadHelixFile(string fileName) {
@@ -211,11 +228,9 @@ namespace Visualization {
         int pos = fileName.rfind(".") + 1;
         string extension = fileName.substr(pos, fileName.length()-pos);
         extension = StringUtils::StringToUpper(extension);
-        if(strcmp(extension.c_str(), "WRL") == 0) {
+        if(extension == "WRL" || extension == "VRML") {
             loadHelixFileVRML(fileName);
-        } else if(strcmp(extension.c_str(), "VRML") == 0) {
-            loadHelixFileVRML(fileName);
-        } else if(strcmp(extension.c_str(), "SSE") == 0) {
+        } else if(extension == "SSE") {
             loadHelixFileSSE(fileName);
         }
     }

@@ -178,6 +178,40 @@ int Volume::id3=0;
         return maxVal;
     }
 
+    float Volume::getMinPos(int i) const {
+        float result;
+        switch(i) {
+            case 0:
+                result = getOriginX();
+                break;
+            case 1:
+                result = getOriginY();
+                break;
+            case 2:
+                result = getOriginZ();
+                break;
+        }
+
+        return result;
+    }
+
+    float Volume::getMaxPos(int i) const {
+        float result;
+        switch(i) {
+            case 0:
+                result = getOriginX() + getSizeX()*getSpacingX();
+                break;
+            case 1:
+                result = getOriginY() + getSizeY()*getSpacingY();
+                break;
+            case 2:
+                result = getOriginZ() + getSizeZ()*getSpacingZ();
+                break;
+        }
+
+        return result;
+    }
+
     int Volume::getNumNeighbor6(int ox, int oy, int oz) {
         Vec3I o(ox, oy, oz);
 

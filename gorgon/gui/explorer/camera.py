@@ -290,8 +290,9 @@ class Camera(QtOpenGL.QGLWidget):
         dirVec = self.mouseVec(dx, dy)
         
         s = self.scene[self.selectedScene]
-        s.renderer.selectionMove(dirVec)
-        s.modelChanged()
+        if hasattr(s.renderer, "selectionMove"):
+            s.renderer.selectionMove(dirVec)
+            s.modelChanged()
 #         for s in self.scene:
 # #             print "  scene: ", s
 #             s.selectionMove(dirVec)

@@ -218,6 +218,7 @@ class CAlphaViewer(BaseViewer):
         
         print "self.renderer.getAtomCount(): ", self.renderer.getAtomCount()
         print self.loadedChains
+        self.ui.modelLoaded()
     
     def unloadData(self):
         # overwriting the function in base viewer
