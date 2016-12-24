@@ -50,6 +50,8 @@ class BaseViewer(BaseDockWidget):
         self.addSaveButton()
         self.dock.hide()
 
+        self._offset = [0, 0, 0]
+
     # def setupSignals(self):
     #     self.ui.pushButtonModelColor.valueChanged.connect(self.setColor)
     #     # self.ui.checkBoxModelVisible.toggled.connect(self.setModelVisibility)
@@ -70,6 +72,15 @@ class BaseViewer(BaseDockWidget):
 #         self.ui.doubleSpinBoxSizeY.editingFinished.connect(self.scaleChanged)
 #         self.ui.doubleSpinBoxSizeZ.editingFinished.connect(self.scaleChanged)
 #         self.ui.spinBoxThickness.valueChanged.connect(self.setThickness)
+
+    @property
+    def offset(self):
+        return self._offset
+
+    @offset.setter
+    def offset(self, val):
+        self._offset = val
+        self.modelChanged()
 
     def addSaveButton(self):
         self.pushButtonSave = QtGui.QPushButton(self)
@@ -133,7 +144,7 @@ class BaseViewer(BaseDockWidget):
         except:
             pass
         else:
-            glTranslated(loc[0], loc[1], loc[2])
+            glTranslated(loc[0] + self.offset[0], loc[1] + self.offset[1], loc[2] + self.offset[2])
         glMultMatrixf(self.rotation)
         try:
             scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
@@ -223,6 +234,7 @@ class BaseViewer(BaseDockWidget):
     def setLocation(self, x, y, z):
         # self.renderer.setOrigin(x, y, z)
         # self.app.mainCamera.setCenter(Vec3(x, y, z))
+        self.offset = [x, y, z]
         self.visualizationUpdated.emit()
 
     def getCenter(self):
@@ -263,6 +275,7 @@ class BaseViewer(BaseDockWidget):
             self.modelLoadedPreDraw()
             self.modelChanged()
             self.centerAllRequested.emit()
+            self.ui.modelLoaded()
         except AttributeError:
             raise
         except:
