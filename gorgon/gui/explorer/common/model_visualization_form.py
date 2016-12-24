@@ -24,9 +24,6 @@ class ModelVisualizationForm(object):
         self.ui.checkBoxModelVisible.toggled.connect(self.viewer.setModelVisibility)
         self.ui.pushButtonModelColor.valueChanged.connect(self.setModelColor)  
         self.ui.pushButtonCenter.pressed.connect(self.viewer.on_center_clicked)
-        self.ui.doubleSpinBoxSizeX.editingFinished.connect(self.scaleChanged)
-        self.ui.doubleSpinBoxSizeY.editingFinished.connect(self.scaleChanged)
-        self.ui.doubleSpinBoxSizeZ.editingFinished.connect(self.scaleChanged)
         self.ui.doubleSpinBoxLocationX.editingFinished.connect(self.locationChanged)
         self.ui.doubleSpinBoxLocationY.editingFinished.connect(self.locationChanged)
         self.ui.doubleSpinBoxLocationZ.editingFinished.connect(self.locationChanged)
@@ -43,9 +40,12 @@ class ModelVisualizationForm(object):
         # else :
         #     self.ui.radioButtonSmooth.setChecked(True)   
             
-        self.ui.doubleSpinBoxSizeX.setValue(self.viewer.renderer.getSpacingX())   
-        self.ui.doubleSpinBoxSizeY.setValue(self.viewer.renderer.getSpacingY())
-        self.ui.doubleSpinBoxSizeZ.setValue(self.viewer.renderer.getSpacingZ())
+        self.ui.doubleSpinBoxSizeX.setText("%f" % self.viewer.renderer.getSpacingX())   
+        self.ui.doubleSpinBoxSizeY.setText("%f" % self.viewer.renderer.getSpacingY())
+        self.ui.doubleSpinBoxSizeZ.setText("%f" % self.viewer.renderer.getSpacingZ())
+        self.ui.doubleSpinBoxSizeX.setReadOnly(True)
+        self.ui.doubleSpinBoxSizeY.setReadOnly(True)
+        self.ui.doubleSpinBoxSizeZ.setReadOnly(True)
         self.ui.doubleSpinBoxLocationX.setValue(self.viewer.offset[0])
         self.ui.doubleSpinBoxLocationY.setValue(self.viewer.offset[1])
         self.ui.doubleSpinBoxLocationZ.setValue(self.viewer.offset[2])
@@ -80,9 +80,6 @@ class ModelVisualizationForm(object):
             self.viewer.runDisplayType = self.viewer.display_styles[2]
         self.viewer.visualizationUpdated.emit()
                                                   
-    def scaleChanged(self):
-        self.viewer.setScale(self.ui.doubleSpinBoxSizeX.value(), self.ui.doubleSpinBoxSizeY.value(), self.ui.doubleSpinBoxSizeZ.value())        
-    
     def locationChanged(self):
         self.viewer.setLocation(self.ui.doubleSpinBoxLocationX.value(), self.ui.doubleSpinBoxLocationY.value(), self.ui.doubleSpinBoxLocationZ.value())
     
