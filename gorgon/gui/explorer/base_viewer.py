@@ -50,6 +50,8 @@ class BaseViewer(BaseDockWidget):
         self.addSaveButton()
         self.dock.hide()
 
+        self._offset = [0, 0, 0]
+
     # def setupSignals(self):
     #     self.ui.pushButtonModelColor.valueChanged.connect(self.setColor)
     #     # self.ui.checkBoxModelVisible.toggled.connect(self.setModelVisibility)
@@ -66,11 +68,19 @@ class BaseViewer(BaseDockWidget):
     #     self.ui.loc_scale_xyz.scaleChanged.connect(self.setScale)
     #     self.visualizationUpdated.connect(self.modelChanged)
 
-#         self.ui.pushButtonClose.clicked.connect(self.viewer.unload)
 #         self.ui.doubleSpinBoxSizeX.editingFinished.connect(self.scaleChanged)
 #         self.ui.doubleSpinBoxSizeY.editingFinished.connect(self.scaleChanged)
 #         self.ui.doubleSpinBoxSizeZ.editingFinished.connect(self.scaleChanged)
 #         self.ui.spinBoxThickness.valueChanged.connect(self.setThickness)
+
+    @property
+    def offset(self):
+        return self._offset
+
+    @offset.setter
+    def offset(self, val):
+        self._offset = val
+        self.modelChanged()
 
     def addSaveButton(self):
         self.pushButtonSave = QtGui.QPushButton(self)
@@ -83,7 +93,7 @@ class BaseViewer(BaseDockWidget):
         else:
             gridlayout = form.gridlayout5
 
-        gridlayout.addWidget(self.pushButtonSave, 1, 0, 1, 2)
+        gridlayout.addWidget(self.pushButtonSave, 0, 1, 1, 1)
         self.pushButtonSave.pressed.connect(self.saveData)
 
     def saveData(self):
@@ -134,7 +144,7 @@ class BaseViewer(BaseDockWidget):
         except:
             pass
         else:
-            glTranslated(loc[0], loc[1], loc[2])
+            glTranslated(loc[0] + self.offset[0], loc[1] + self.offset[1], loc[2] + self.offset[2])
         glMultMatrixf(self.rotation)
         try:
             scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
@@ -224,6 +234,7 @@ class BaseViewer(BaseDockWidget):
     def setLocation(self, x, y, z):
         # self.renderer.setOrigin(x, y, z)
         # self.app.mainCamera.setCenter(Vec3(x, y, z))
+        self.offset = [x, y, z]
         self.visualizationUpdated.emit()
 
     def getCenter(self):
@@ -251,9 +262,8 @@ class BaseViewer(BaseDockWidget):
     def getMinMax(self):
         scale    = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
         # location = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]
-        location = [0, 0, 0]
-        minPos = Vec3([(self.renderer.getMinPos(i)*scale[i] + location[i]) for i in range(3)])
-        maxPos = Vec3([(self.renderer.getMaxPos(i)*scale[i] + location[i]) for i in range(3)])
+        minPos = Vec3([(self.renderer.getMinPos(i)) for i in range(3)])
+        maxPos = Vec3([(self.renderer.getMaxPos(i)) for i in range(3)])
         return minPos, maxPos
 
     def load(self, fileName):
@@ -265,6 +275,7 @@ class BaseViewer(BaseDockWidget):
             self.modelLoadedPreDraw()
             self.modelChanged()
             self.centerAllRequested.emit()
+            self.ui.modelLoaded()
         except AttributeError:
             raise
         except:
@@ -280,12 +291,6 @@ class BaseViewer(BaseDockWidget):
         self.setCursor(QtCore.Qt.WaitCursor)
         self.renderer.saveFile(str(fileName))
         self.setCursor(QtCore.Qt.ArrowCursor)
-
-    def unload(self):
-        self.loaded = False
-        self.renderer.setOrigin(0,0,0)
-        self.renderer.setSpacing(1, 1, 1)
-        self.rotation = self.identityMatrix()
 
     def identityMatrix(self):
         return [[1.0, 0.0, 0.0, 0.0],

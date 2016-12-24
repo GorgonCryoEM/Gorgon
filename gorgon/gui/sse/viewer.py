@@ -39,10 +39,6 @@ class SSEViewer(BaseViewer):
         
         # self.connect(self, QtCore.SIGNAL('elementSelected (int, int, int, int, int, int, QMouseEvent)'), self.updateCurrentMatch)
         
-#         self.connect(self.app.viewers["volume"], QtCore.SIGNAL('modelLoaded()'), self.updateActionsAndMenus)
-#         self.connect(self.app.viewers["volume"], QtCore.SIGNAL('modelUnloaded()'), self.updateActionsAndMenus)
-#         self.connect(self, QtCore.SIGNAL('modelLoaded()'), self.updateActionsAndMenus)
-#         self.connect(self, QtCore.SIGNAL('modelUnloaded()'), self.updateActionsAndMenus)
 #         self.ui.pushButtonSave.clicked.connect(self.saveHelixData)
         
         self.selectedObjects = []
@@ -53,6 +49,7 @@ class SSEViewer(BaseViewer):
             self.loaded = True
             self.helixLoaded = True
             self.modelChanged()
+            self.ui.modelLoaded()
         except:
             QtGui.QMessageBox.critical(self, "Unable to load data file", "The file might be corrupt, or the format may not be supported.", "Ok")
 

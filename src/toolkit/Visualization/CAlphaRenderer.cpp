@@ -41,6 +41,7 @@ namespace Visualization {
 
     PDBAtom * CAlphaRenderer::addAtom(PDBAtom atom) {
         atoms[atom.GetHashKey()] = atom;
+        setMinMax(atom.GetPosition());
         return &atoms[atom.GetHashKey()];
     }
 
@@ -888,6 +889,10 @@ namespace Visualization {
             oldAtom = i;
         }
         sortedSerials.clear();
+
+        for(AtomMapType::iterator it = atoms.begin(); it != atoms.end(); ++it) {
+            setMinMax((it->second).GetPosition());
+        }
     }
 
     void CAlphaRenderer::loadSSEHunterFile(string fileName) {
@@ -926,6 +931,10 @@ namespace Visualization {
             }
 
             i->second.SetColor(r, g, b, 1.0f);
+        }
+
+        for(AtomMapType::iterator it = atoms.begin(); it != atoms.end(); ++it) {
+            setMinMax((it->second).GetPosition());
         }
     }
     bool CAlphaRenderer::saveSSEHunterFile(string fileName) {

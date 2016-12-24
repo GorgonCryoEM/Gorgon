@@ -17,8 +17,8 @@ namespace Core {
 
             void setMin(float val);
             void setMax(float val);
-            float getMin();
-            float getMax();
+            float getMin() const;
+            float getMax() const;
 
         private:
             float min;

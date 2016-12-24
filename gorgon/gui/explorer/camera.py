@@ -44,8 +44,8 @@ class Camera(QtOpenGL.QGLWidget):
         
         self.selectedScene = -1
         
-        self.mouseTrackingEnabled    = True
-        self.mouseTrackingEnabledRay = True
+        self.mouseTrackingEnabled    = False
+        self.mouseTrackingEnabledRay = False
         self.mouseMovePoint = QtCore.QPoint(0,0)
         self.mouseDownPoint = QtCore.QPoint(0,0)
         self.mouseLeftPressed  = False
@@ -290,8 +290,9 @@ class Camera(QtOpenGL.QGLWidget):
         dirVec = self.mouseVec(dx, dy)
         
         s = self.scene[self.selectedScene]
-        s.renderer.selectionMove(dirVec)
-        s.modelChanged()
+        if hasattr(s.renderer, "selectionMove"):
+            s.renderer.selectionMove(dirVec)
+            s.modelChanged()
 #         for s in self.scene:
 # #             print "  scene: ", s
 #             s.selectionMove(dirVec)
