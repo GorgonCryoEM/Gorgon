@@ -72,6 +72,7 @@ namespace Visualization {
             void removeSheets();
             void removeSelectedSSEs();
             int getHelixCount();
+            void FitSelectedSSEs(Volume * vol);
             Vec3F getHelixCorner(int helixIx, int cornerIx);
 
             vector<int> getSelectedHelixIndices();

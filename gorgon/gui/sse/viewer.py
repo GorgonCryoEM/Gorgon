@@ -103,6 +103,10 @@ class SSEViewer(BaseViewer):
         self.sheetFileName = ""
         BaseViewer.unloadData(self)
 
+    def fitSelectedSSEs(self):
+        self.renderer.fitSelectedSSEs(self.app.volumeViewer.renderer.getVolume())
+        self.modelChanged()
+        
     # Overridden
     def emitElementClicked(self, hitStack, event):
 #         if (self.app.viewers["calpha"].displayStyle == self.app.viewers["calpha"].DisplayStyleRibbon):
