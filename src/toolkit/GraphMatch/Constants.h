@@ -8,9 +8,9 @@
 #define GET_AMINO_SEQUENCE
 
 #ifdef _WIN32
-	#include <string>
+    #include <string>
 #else
-	#include <cstring>
+    #include <cstring>
 #endif
 
 #include <cstdio>
@@ -120,8 +120,8 @@ namespace GraphMatch {
     static double MISSING_SHEET_LENGTH = 8;
     static double SHEET_SELF_LOOP_LENGTH = 4.0 * LOOP_C_ALPHA_TO_ANGSTROMS;
     static double SHEET_WEIGHT_COEFFICIENT = 1.0;
-    static int COST_FUNCTION = 1;   // 1 : |a-b|		2 : |a-b|/(a+b)		3:|a-b|^2
-    static int INCLUDE_STRANDS = 0;   // 0 : no		1 : yes
+    static int COST_FUNCTION = 1;   // 1 : |a-b|        2 : |a-b|/(a+b)     3:|a-b|^2
+    static int INCLUDE_STRANDS = 0;   // 0 : no     1 : yes
     static double VOXEL_SIZE = 1;
     static bool TRANSLATE_VOLUMETRIC_COORDINATES = false;
     static int MISSING_HELIX_COUNT = -1;
@@ -192,15 +192,15 @@ namespace GraphMatch {
         int patternNode2 = patternHelix+1;
 
         if(baseHelix == -1) {
-            allowedConstraints[patternNode1-1][nAllowedConstraints[patternNode1-1]] = -1;		nAllowedConstraints[patternNode1-1]++;
-            allowedConstraints[patternNode2-1][nAllowedConstraints[patternNode2-1]] = -1;		nAllowedConstraints[patternNode2-1]++;
+            allowedConstraints[patternNode1-1][nAllowedConstraints[patternNode1-1]] = -1;       nAllowedConstraints[patternNode1-1]++;
+            allowedConstraints[patternNode2-1][nAllowedConstraints[patternNode2-1]] = -1;       nAllowedConstraints[patternNode2-1]++;
         } else {
             int baseNode1 = baseHelix;
             int baseNode2 = baseHelix+1;
-            allowedConstraints[patternNode1-1][nAllowedConstraints[patternNode1-1]] = baseNode1;		nAllowedConstraints[patternNode1-1]++;
-            allowedConstraints[patternNode1-1][nAllowedConstraints[patternNode1-1]] = baseNode2;		nAllowedConstraints[patternNode1-1]++;
-            allowedConstraints[patternNode2-1][nAllowedConstraints[patternNode2-1]] = baseNode1;		nAllowedConstraints[patternNode2-1]++;
-            allowedConstraints[patternNode2-1][nAllowedConstraints[patternNode2-1]] = baseNode2;		nAllowedConstraints[patternNode2-1]++;
+            allowedConstraints[patternNode1-1][nAllowedConstraints[patternNode1-1]] = baseNode1;        nAllowedConstraints[patternNode1-1]++;
+            allowedConstraints[patternNode1-1][nAllowedConstraints[patternNode1-1]] = baseNode2;        nAllowedConstraints[patternNode1-1]++;
+            allowedConstraints[patternNode2-1][nAllowedConstraints[patternNode2-1]] = baseNode1;        nAllowedConstraints[patternNode2-1]++;
+            allowedConstraints[patternNode2-1][nAllowedConstraints[patternNode2-1]] = baseNode2;        nAllowedConstraints[patternNode2-1]++;
         }
     }
 
@@ -209,15 +209,15 @@ namespace GraphMatch {
         int patternNode2 = patternHelix*2;
 
         if(baseHelix == -1) {
-            notAllowedConstraints[patternNode1-1][nNotAllowedConstraints[patternNode1-1]] = -1;		nNotAllowedConstraints[patternNode1-1]++;
-            notAllowedConstraints[patternNode2-1][nNotAllowedConstraints[patternNode2-1]] = -1;		nNotAllowedConstraints[patternNode2-1]++;
+            notAllowedConstraints[patternNode1-1][nNotAllowedConstraints[patternNode1-1]] = -1;     nNotAllowedConstraints[patternNode1-1]++;
+            notAllowedConstraints[patternNode2-1][nNotAllowedConstraints[patternNode2-1]] = -1;     nNotAllowedConstraints[patternNode2-1]++;
         } else {
             int baseNode1 = baseHelix*2 - 1;
             int baseNode2 = baseHelix*2;
-            notAllowedConstraints[patternNode1-1][nNotAllowedConstraints[patternNode1-1]] = baseNode1;		nNotAllowedConstraints[patternNode1-1]++;
-            notAllowedConstraints[patternNode1-1][nNotAllowedConstraints[patternNode1-1]] = baseNode2;		nNotAllowedConstraints[patternNode1-1]++;
-            notAllowedConstraints[patternNode2-1][nNotAllowedConstraints[patternNode2-1]] = baseNode1;		nNotAllowedConstraints[patternNode2-1]++;
-            notAllowedConstraints[patternNode2-1][nNotAllowedConstraints[patternNode2-1]] = baseNode2;		nNotAllowedConstraints[patternNode2-1]++;
+            notAllowedConstraints[patternNode1-1][nNotAllowedConstraints[patternNode1-1]] = baseNode1;      nNotAllowedConstraints[patternNode1-1]++;
+            notAllowedConstraints[patternNode1-1][nNotAllowedConstraints[patternNode1-1]] = baseNode2;      nNotAllowedConstraints[patternNode1-1]++;
+            notAllowedConstraints[patternNode2-1][nNotAllowedConstraints[patternNode2-1]] = baseNode1;      nNotAllowedConstraints[patternNode2-1]++;
+            notAllowedConstraints[patternNode2-1][nNotAllowedConstraints[patternNode2-1]] = baseNode2;      nNotAllowedConstraints[patternNode2-1]++;
         }
     }
 
