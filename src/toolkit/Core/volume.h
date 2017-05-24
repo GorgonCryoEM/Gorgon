@@ -158,6 +158,7 @@ namespace Core {
 
         void Normalize();
         void downsample();
+        void setDataAt( int x, int y, int z, double d );
 
         virtual void load(string fileName);
         virtual void save(string fileName);

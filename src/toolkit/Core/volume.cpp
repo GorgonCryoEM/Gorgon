@@ -195,6 +195,10 @@ int Volume::id3=0;
         return result;
     }
 
+    void Volume::setDataAt( int x, int y, int z, double d ) {
+        (*this)(x, y, z) = d;
+    }
+
     float Volume::getMaxPos(int i) const {
         float result;
         switch(i) {
