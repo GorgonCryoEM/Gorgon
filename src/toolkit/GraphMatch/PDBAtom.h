@@ -10,10 +10,11 @@
 
 #include <MathTools/Vector3.h>
 #include <Foundation/StringUtils.h>
+//#include <MathTools/MatrixTemplate.h>
 #include <string>
-//#include <MathTools/Matrix.h>
+#include <MathTools/Matrix.h>
 
-//using namespace MathTools;
+using namespace MathTools;
 using namespace Foundation;
 using namespace GraphMatch;
 
