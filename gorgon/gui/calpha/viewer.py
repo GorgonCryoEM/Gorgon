@@ -172,20 +172,26 @@ class CAlphaViewer(BaseViewer):
         
     def loadData(self, fileName):
         #Overwriting the function in BaseViewer
+        self.mappings = {}
         def setupChain(mychain):
+            for (resIndex, atomName) in self.mappings:
+                currentAtom = self.mappings[(resIndex, atomName)]
+                atom = mychain[resIndex].addAtom(atomName, currentAtom.getPosition().x(), currentAtom.getPosition().y(), currentAtom.getPosition().z())
+            mychain.secelList = {}
             self.main_chain = mychain
             self.loadedChains.append(mychain)
             mychain.setViewer(self)
-            #Chain.setSelectedChainKey(mychain.getIDs())
             mychain.addCalphaBonds()
             mychain.addSideChainBonds()
             renderer = self.renderer
+
             for i in mychain.residueRange():
                 for atomName in mychain[i].getAtomNames():
                     atom = mychain[i].getAtom(atomName)
                     if atom:
                         atom = renderer.addAtom(atom)
                         mychain[i].addAtomObject(atom)
+
 
         self.fileName = QtCore.QString(fileName)
         fileNameTemp = self.fileName
@@ -200,20 +206,17 @@ class CAlphaViewer(BaseViewer):
                 self.fileName = fileNameTemp
                 
                 if self.whichChainID == 'ALL':
-                    mychainKeys = Chain.loadAllChains(str(self.fileName), qparent=self.parent)
-                    for chainKey in mychainKeys:
-                        setupChain(Chain.getChain(chainKey))
+                    myChains = Chain.loadAllChains(str(self.fileName), qparent=self.parent, loadMapping=True)
+                    for i in range(len(myChains)):
+                        self.mappings = myChains[i][1]
+                        setupChain(myChains[i][0])          
                 else:
                     mychain = Chain.load(str(self.fileName), qparent=self.parent, whichChainID=self.whichChainID)
+
                     setupChain(mychain)
-    
-#                     if not self.loaded:
                 self.dirty = False
                 self.loaded = True
                 self.setAtomColorsAndVisibility(self.displayStyle)
-#                self.emitModelLoadedPreDraw()
-#                self.emitModelLoaded()
-#                self.emitViewerSetCenter()
                 self.modelChanged()
         
         print "self.renderer.getAtomCount(): ", self.renderer.getAtomCount()
