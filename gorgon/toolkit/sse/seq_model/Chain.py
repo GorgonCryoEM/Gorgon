@@ -100,6 +100,7 @@ class Chain(baseClass):
             self.residueList[i] = Residue(char, self)
             i += 1
         Chain.chainsDict[self.key] = self
+        Chain.residueAtomMapping = {}
 
     @classmethod
     def __createUniquePDBID(cls):
@@ -241,6 +242,122 @@ class Chain(baseClass):
             # Chain.setSelectedChainKey(result.getIDs())
 
         return result
+
+    @classmethod
+    def __loadFromPDB2(cls, filename, qparent=None, whichChainID=None):
+        '''
+        This loads the specified chain ID from a PDF file and returns a Chain 
+        object. If no chain ID is specified, it loads the first chain.
+        '''
+        # print Chain.getChainKeys()
+        if qparent and qtEnabled:
+            result = Chain('', qparent=qparent)
+        else:
+            result = Chain('')
+
+        header = open(filename, 'U')
+        headerLine = header.read()
+        if headerLine[:6] == 'HEADER':
+            pdbID = headerLine[62:66]
+        else:
+            pdbID = cls.__createUniquePDBID()
+        header.close()
+        resAtomMapping = {}
+        residue = None
+        firstChain = None
+
+        for line in open(filename,'U'):  # calls the iterator for the file object each time the loop is run - don't have to load entire file into memory
+            if line[0:4] == 'ATOM':
+                chainID = line[21:22]
+                if chainID == ' ':
+                    chainID = 'A'
+                if whichChainID and chainID != whichChainID:  # Search for the specified chainID (if one is specified), otherwise we find the first chain.
+                    continue
+                if not firstChain:  # Sets the value of the first and only chain we will store
+                    firstChain = chainID
+                    ####if the chain key already exists, point to that chain object
+                    ####perhaps this should be modified
+
+                    if not (pdbID, firstChain) in cls.getChainKeys():
+                        result.setIDs(pdbID, firstChain)
+                    else:
+                        result = cls.getChain((pdbID, firstChain))
+
+                residueIndex = int(line[22:26])
+                
+                if residueIndex not in result.residueRange():
+                    #print "residue symbol ", line[17:20].strip()
+                    #print "residueIndex ", residueIndex
+                    residue = Residue(line[17:20].strip(), result)
+                    result[residueIndex] = residue
+                else:
+                    residue = result[residueIndex]
+                
+
+                serialNo = int(line[6:11].strip())
+                atomName = line[12:16].strip()
+                element = line[76:78].strip()
+                try:
+                    tempFactor = float(line[60:66].strip())
+                except ValueError:
+                    tempFactor = None
+                try:
+                    occupancy = float(line[54:60].strip())
+                except ValueError:
+                    occupancy = None
+                try:
+                    x = float(line[30:38])
+                    y = float(line[38:46])
+                    z = float(line[46:54])
+                    atom = residue.addAtom(atomName, x, y, z, element, serialNo, occupancy, tempFactor)
+                    resAtomMapping[(residueIndex, atomName)] = atom
+                    #residue.__atoms[atomName]=atom
+                    result.atoms[serialNo] = atom
+                except ValueError:
+                    print 'Chain.__loadFromPDB--no coordinates',
+                #print result[residueIndex].getAtomNames()
+                result.differenceIndex = residueIndex - serialNo
+            
+            elif line[0:6].strip() == 'HELIX':
+                Helix.parsePDB(line, result)
+            elif line[0:6].strip() == 'SHEET':
+                Sheet.parsePDB(line, result)
+
+        for sheetIndex, sheet in result.sheets.items():
+            validBonds = []
+            for bond in sheet.bonds:
+                if bond[0] in result.residueRange() and bond[1] in result.residueRange():
+                    validBonds.append(bond)
+            sheet.bonds = validBonds
+
+        # Setting up coils
+        startList = []
+        endList = []
+        for secelIx, secel in result.secelList.items():
+            startList.append(secel.startIndex)
+            endList.append(secel.stopIndex)
+        startList.sort()
+        endList.sort()
+
+        if result.residueRange():
+            startPt = min(result.residueRange())
+            coilIx = 1
+            for i in range(len(startList)):
+                if startPt < startList[i]:
+                    result.addCoil(coilIx, Coil(result, coilIx, 'L' + str(coilIx), startPt, startList[i] - 1))
+                    coilIx = coilIx + 1
+                startPt = endList[i] + 1
+
+            if startPt < max(result.residueRange()):
+                result.addCoil(coilIx, Coil(result, coilIx, 'L' + str(coilIx), startPt, max(result.residueRange())))
+
+            Chain.chainsDict[result.key] = result
+        
+        for residueIndex in result.residueRange():
+            for atomName in result[residueIndex].getAtomNames():
+                resAtomMapping[(residueIndex, atomName)] = result[residueIndex].getAtom(atomName)
+        Chain.residueAtomMapping = resAtomMapping
+        return (result, Chain.residueAtomMapping)
 
     @classmethod
     def __loadFromSeq(cls, filename, qparent=None):
@@ -404,13 +521,18 @@ class Chain(baseClass):
         return Chain.__viewer
 
     @classmethod
-    def load(cls, filename, qparent=None, whichChainID=None):
+    def load(cls, filename, qparent=None, whichChainID=None, loadMapping=False):
         '''
         This calls the correct load method based on the file extension.
         '''
         extension = filename.split('.')[-1].lower()
         if extension == 'pdb':
-            return Chain.__loadFromPDB(filename, qparent, whichChainID)
+            if loadMapping == True:
+                (chain, mapping) = Chain.__loadFromPDB2(filename, qparent, whichChainID)
+                return (chain, mapping)
+            else:
+                chain = Chain.__loadFromPDB(filename, qparent, whichChainID)
+                return chain
         elif extension == 'fasta' or extension == 'fa' or extension == 'fas':
             return Chain.__loadFromFASTA(filename, qparent)
         elif extension == 'seq':
@@ -419,7 +541,7 @@ class Chain(baseClass):
             raise NotImplementedError, 'NYI'
 
     @classmethod
-    def loadAllChains(cls, filename, qparent=None):
+    def loadAllChains(cls, filename, qparent=None, loadMapping=False):
         '''
         This loads all the chains specified in a PDB file.  
         '''
@@ -429,7 +551,41 @@ class Chain(baseClass):
         chainIDs = cls.getChainIDsFromPDB(filename, qparent)
         while True:
             try:
-                chanIDs.remove('NULL')
+                chainIDs.remove('NULL')
+            except:
+                break
+        if not chainIDs:
+            chainIDs = [None]
+        for whichChainID in chainIDs:
+            if loadMapping == True:
+                (chain, mapping) = cls.load(filename, qparent, whichChainID, loadMapping)
+            else:
+                chain = Chain.load(filename, qparent, whichChainID, loadMapping)
+
+            #chain = Chain.load(filename, qparent, whichChainID)
+            if not pdbID:
+                pdbID = chain.getPdbID()
+            elif pdbID != chain.getPdbID():
+                chain.setIDs(pdbID, chain.getChainID())  # Needed if PDB ID is auto-generated
+            if loadMapping == True:
+                chains.append((chain, mapping))
+            else:
+                chains.append(chain)
+            cls.chainsDict[chain.key] = chain
+        return chains
+
+    @classmethod
+    def loadAllActualChains(cls, filename, qparent=None):
+        '''
+        This loads all the chains specified in a PDB file.  
+        '''
+        chain = None
+        pdbID = None
+        chains = []
+        chainIDs = cls.getChainIDsFromPDB(filename, qparent)
+        while True:
+            try:
+                chainIDs.remove('NULL')
             except:
                 break
         if not chainIDs:
@@ -440,8 +596,9 @@ class Chain(baseClass):
                 pdbID = chain.getPdbID()
             elif pdbID != chain.getPdbID():
                 chain.setIDs(pdbID, chain.getChainID())  # Needed if PDB ID is auto-generated
-            chains.append(chain.getIDs())
+            chains.append(chain)
             cls.chainsDict[chain.key] = chain
+            print cls.chainsDict[chain.key]
         return chains
 
     # @classmethod
@@ -612,6 +769,31 @@ class Chain(baseClass):
                 viewer.renderer.addBond(bond)
                 cnt = cnt + 1
 
+    def addCalphaBondsNoViewer(self):
+        '''
+        This adds the Calpha bonds for all the residues in a chain. If there is
+        a gap in the sequence of residues, this will not place a C-alpha 
+        bond.setAtom0Ix--one doesn't want a bond between the 97th and 103rd 
+        residue.
+        '''
+        cnt = 0
+        newBonds = []
+        for res0num in self.residueRange():
+            atom0 = self[res0num].getAtom('CA')
+            if not atom0:
+                continue
+            if res0num + 1 in self.residueRange():
+                atom1 = self[res0num + 1].getAtom('CA')
+                if not atom1:
+                    continue
+                bond = PDBBond()
+                bond.setAtom0Ix(atom0.getHashKey())
+                bond.setAtom1Ix(atom1.getHashKey())
+                newBonds.append(bond)
+                cnt = cnt + 1
+                self.bonds.append((res0num, res0num+1)) 
+        return newBonds
+
     def addSideChainBonds(self):
         cnt = 0
         try:
@@ -638,6 +820,29 @@ class Chain(baseClass):
                     bond.setAtom0Ix(atom0.getHashKey())
                     bond.setAtom1Ix(atom1.getHashKey())
                     viewer.renderer.addSideChainBond(bond)
+
+    def addSideChainBondsNoViewer(self):
+        cnt = 0
+        newBonds = []
+        for i in self.residueRange():
+            if self[i].symbol3 in self.sideChainConnectivity:
+                for j in range(len(self.sideChainConnectivity[self[i].symbol3])):
+                    atom0 = self[i].getAtom(self.sideChainConnectivity[self[i].symbol3][j][0])
+                    atom1 = self[i].getAtom(self.sideChainConnectivity[self[i].symbol3][j][1])
+                    if atom0 and atom1:
+                        bond = PDBBond()
+                        bond.setAtom0Ix(atom0.getHashKey())
+                        bond.setAtom1Ix(atom1.getHashKey())
+            # Connecting the C of this residue to the N of the next residue
+            if i + 1 in self.residueRange():
+                atom0 = self[i].getAtom('C')
+                atom1 = self[i + 1].getAtom('N')
+                if atom0 and atom1:
+                    bond = PDBBond()
+                    bond.setAtom0Ix(atom0.getHashKey())
+                    bond.setAtom1Ix(atom1.getHashKey())
+                    newBonds.append(bond)
+        return newBonds
 
     def addSecel(self, secel):
         '''
