@@ -48,6 +48,7 @@ set( EXTERNAL_PROJECTS
         Python
         Boost
         FFTW3F
+        Eigen
         )
 
 foreach(proj ${EXTERNAL_PROJECTS})
