@@ -46,3 +46,21 @@ class SkeletonViewer(BaseViewer):
         self.modelLoadedPreDraw()
         self.modelChanged()
         self.centerAllRequested.emit()
+
+    def loadFile(self):
+        if self.skeletonFile != None:
+            self.renderer.loadFile(self.skeletonFile)
+            self.setScale(self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ())
+            self.loaded = True
+            self.modelLoadedPreDraw()
+            self.modelChanged()
+            self.centerAllRequested.emit()
+
+    def loadFile2(self):
+        if self.skeletonFile != None:
+            self.renderer.loadFile2(self.skeletonFile)
+            self.setScale(self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ())
+            self.loaded = True
+            self.modelLoadedPreDraw()
+            self.modelChanged()
+            self.centerAllRequested.emit()
