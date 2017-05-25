@@ -35,6 +35,9 @@ namespace Visualization {
         return intersectionPoints[ix];
     }
 
+    void SkeletonRenderer::load2(string fileName) {
+        (SkeletonMesh&)(*this) = SkeletonMesh::loadOffFile2(fileName);
+    }
 
     void SkeletonRenderer::load(string fileName) {
         int pos = fileName.rfind(".") + 1;

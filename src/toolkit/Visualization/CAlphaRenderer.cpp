@@ -9,7 +9,7 @@
 #include "Shapes.h"
 #include "ProteinMorph/HermiteCurve.h"
 #include "Foundation/OpenGLUtils.h"
-
+//namespace wustl_mm {
 namespace Visualization {
 
     CAlphaRenderer::CAlphaRenderer() {
@@ -1594,3 +1594,4 @@ namespace Visualization {
     }
 
 } /* namespace Visualization */
+//}

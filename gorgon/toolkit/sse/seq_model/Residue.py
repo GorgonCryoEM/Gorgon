@@ -1,9 +1,9 @@
 # Class:  Residue
 # Class Description: Class that models amino acid residues.  Residue objects aggregate Atom objects.
 #                    More info in: seq_model-doc.txt
+#gorgon.libs
 
-
-from gorgon.libs import Vec3
+from .vec3 import Vec3
 from ...libpytoolkit import PDBAtom
 
 
@@ -89,7 +89,8 @@ class Residue:
         if charge:
             rawAtom.setCharge(charge)
         self.__atoms[atomName] = rawAtom
-        # print "%s PDBAtom added to %s Residue"  %(atomName,self)
+        #print "selfatoms", self.__atoms
+        #print "%s PDBAtom added to %s Residue"  %(atomName,self)
         '''
         #Add atom to viewer and update --Mike's addition
         #self.chain.getViewer().renderer.addAtom(rawAtom)
@@ -107,6 +108,9 @@ class Residue:
         '''Adds an existing PDBAtom object to the residue.'''
         atomName = atomObject.getName()
         self.__atoms[atomName] = atomObject
+
+    def getAllAtoms(self):
+        return self.__atoms
 
     def clearAtom(self, atomName):
         '''Removes the PDBAtom specified by name from the residue'''

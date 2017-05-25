@@ -52,7 +52,7 @@ namespace Core {
 
             Volume toVolume();
             static SkeletonMesh loadOffFile(string fileName);
-
+            static SkeletonMesh loadOffFile2(string fileName);
         public:
             TE curves;
 

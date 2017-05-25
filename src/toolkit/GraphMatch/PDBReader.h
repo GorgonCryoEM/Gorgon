@@ -9,13 +9,13 @@
 //#include <string>
 //#include <MathTools/Vector3.h>
 #include "PDBAtom.h"
-//#include "PDBHelix.h"
+#include "PDBHelix.h"
 #include "Graph.h"
-//#include <MathTools/LinearSolver.h>
+#include <MathTools/LinearSolver.h>
 
 using namespace std;
-//using namespace MathTools;
 
+//using namespace MathTools;
 
 namespace GraphMatch {
     typedef Graph GraphType;
@@ -84,46 +84,6 @@ namespace GraphMatch {
     }
     #endif
 
-    inline vector<PDBHelix> PDBReader::ReadHelixPositions(string fileName) {
-            map<unsigned long long, PDBAtom> atomPositions = ReadAtomPositions(fileName);
-            vector<PDBHelix> helices;
-
-            FILE* fin = fopen((char *)fileName.c_str(), "rt");
-            if (fin == NULL)
-            {
-                printf("Error reading input file %s.\n", fileName.c_str()) ;
-                exit(0) ;
-            }
-
-            char line[100];
-            string lineStr;
-            string token;
-            while(!feof(fin))
-            {
-                fgets(line, 100, fin);
-                lineStr = line;
-                token = lineStr.substr(0, 6);
-
-                vector<Vec3F> helixAtomLocs;
-                if(token.compare("HELIX ") == 0) {
-                    PDBHelix helix = PDBHelix(lineStr);
-                    helixAtomLocs.clear();
-                    for(int i = helix.GetInitialResidueSeqNo(); i <= helix.GetEndResidueSeqNo(); i++) {
-                        helixAtomLocs.push_back(atomPositions[PDBAtom::ConstructHashKey("----", helix.GetInitialResidueChainId(), i, "CA")].GetPosition());
-                    }
-
-                    Vec3F pt1, pt2;
-                    LinearSolver::FindBestFitLine(pt1, pt2, helixAtomLocs);
-
-                    helix.SetEndPositions(pt1, pt2);
-                    helices.push_back(helix);
-                }
-            }
-            atomPositions.clear();
-            fclose(fin);
-            return helices;
-        }
-
     inline Graph * PDBReader::ReadFile(string fname) {
         ifstream fin(fname.c_str());
         if (!fin)
@@ -158,7 +118,7 @@ namespace GraphMatch {
                 currentStructure->endPosition = GetInt(line, 33, 4);
                 currentStructure->sseType = GRAPHEDGE_HELIX;
                 add = true;
-                for(unsigned int i = 0; i < structures.size(); i++)	{
+                for(unsigned int i = 0; i < structures.size(); i++) {
                     add = add && !((currentStructure->startPosition == structures[i]->startPosition) &&
                         (currentStructure->endPosition == structures[i]->endPosition));
                 }
@@ -188,7 +148,7 @@ namespace GraphMatch {
                 currentStructure->endPosition = GetInt(line, 33, 4);
                 currentStructure->sseType = GRAPHEDGE_SHEET;
                 add = true;
-                for(unsigned int i = 0; i < structures.size(); i++)	{
+                for(unsigned int i = 0; i < structures.size(); i++) {
                     add = add && !((currentStructure->startPosition == structures[i]->startPosition) &&
                         (currentStructure->endPosition == structures[i]->endPosition));
                 }
@@ -209,7 +169,7 @@ namespace GraphMatch {
 
         // Sorting the structures by the start position
         int i,j;
-        for(i = 0; i < (int)structures.size()-1; i++)	{
+        for(i = 0; i < (int)structures.size()-1; i++)   {
             for(j = i+1; j < (int)structures.size(); j++) {
                 if(structures[i]->startPosition > structures[j]->startPosition) {
                     currentStructure = structures[i];
@@ -232,7 +192,7 @@ namespace GraphMatch {
             currentStructure = structures[i];
             if (currentStructure->sseType == GRAPHEDGE_HELIX) {
                 numHelices++;
-            } else	if (currentStructure->sseType == GRAPHEDGE_SHEET) {
+            } else  if (currentStructure->sseType == GRAPHEDGE_SHEET) {
                 numSheets++;
             }
         }
@@ -405,6 +365,46 @@ namespace GraphMatch {
         return temp;
     }
 
+   inline vector<PDBHelix> PDBReader::ReadHelixPositions(string fileName) {
+            map<unsigned long long, PDBAtom> atomPositions = ReadAtomPositions(fileName);
+            vector<PDBHelix> helices;
+
+            FILE* fin = fopen((char *)fileName.c_str(), "rt");
+            if (fin == NULL)
+            {
+                printf("Error reading input file %s.\n", fileName.c_str()) ;
+                exit(0) ;
+            }
+
+            char line[100];
+            string lineStr;
+            string token;
+            while(!feof(fin))
+            {
+                fgets(line, 100, fin);
+                lineStr = line;
+                token = lineStr.substr(0, 6);
+
+                vector<Vec3F> helixAtomLocs;
+                if(token.compare("HELIX ") == 0) {
+                    PDBHelix helix = PDBHelix(lineStr);
+                    helixAtomLocs.clear();
+                    for(int i = helix.GetInitialResidueSeqNo(); i <= helix.GetEndResidueSeqNo(); i++) {
+                        helixAtomLocs.push_back(atomPositions[PDBAtom::ConstructHashKey("----", helix.GetInitialResidueChainId(), i, "CA")].GetPosition());
+                    }
+
+                    Vec3F pt1, pt2;
+                    LinearSolver::FindBestFitLine(pt1, pt2, helixAtomLocs);
+
+                    helix.SetEndPositions(pt1, pt2);
+                    helices.push_back(helix);
+                }
+            }
+            atomPositions.clear();
+            fclose(fin);
+            return helices;
+        }
+
     inline int PDBReader::ToInt(string str) {
         int value = 0;
         int sign = 1;
@@ -442,4 +442,5 @@ namespace GraphMatch {
         return true;
     }
 }
+//}
 #endif

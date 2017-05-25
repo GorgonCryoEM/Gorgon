@@ -464,6 +464,7 @@ namespace Core {
     }
 
     SkeletonMesh SkeletonMesh::loadOffFile(string fileName) {
+        //cout << "start loading file " << fileName << endl;
         ifstream inFile(fileName.c_str());
         string strTemp;
         int nVertices, nEdges, nFaces;
@@ -481,12 +482,14 @@ namespace Core {
             mesh.addVertex(Vec3F(xPos, yPos, zPos));
             inFile >> strTemp;
         }
-
+        //cout << "done loading vertices" << endl;
+        //cout << "nFaces " << nFaces << endl;
         int faceNodes[100], nFaceNodes;
         int lFaces = 0;
         for(int i=0; i < nFaces; i++) {
             inFile>>nFaceNodes;
             //printf("[%d]\n", nFaceNodes);
+            cout << "nFaceNodes " << nFaceNodes << endl;
             switch(nFaceNodes) {
                 case 1:
                 case 2:
@@ -513,6 +516,7 @@ namespace Core {
                         inFile >> faceNodes[i];
                     }
                     for(int i = 2; i < nFaceNodes; i++) {
+                        cout << "default face node " << faceNodes[0] << " " << faceNodes[i-1] << " " <<faceNodes[i] << endl;
                         mesh.addFace(Vec3U(faceNodes[0], faceNodes[i-1], faceNodes[i]));
                     }
                     break;
@@ -520,11 +524,62 @@ namespace Core {
             }
             inFile >> strTemp;
         }
+        cout << "done loading faces / edges " << endl;
 
         //printf(" Vertices %d of %d loaded.  Faces %d of %d loaded", lVertices, nVertices, lFaces, nFaces);
 
         inFile.close();
         return mesh;
+    }
+
+    SkeletonMesh SkeletonMesh::loadOffFile2(string fileName) {
+        cout << "in load off file 2 " << endl;
+        ifstream inFile(fileName.c_str());
+        string strTemp;
+        int nVertices, nEdges, nFaces;
+
+        inFile >> strTemp;
+        //printf("[%s]\n", strTemp);
+        inFile >> nVertices >> nFaces >> nEdges;
+        //printf("[%d] [%d] [%d]\n", nVertices, nFaces, nEdges);
+
+        SkeletonMesh mesh;
+        for(int i=0, lVertices=0; i < nVertices; i++, lVertices++) {
+            float xPos, yPos, zPos;
+            inFile >> xPos >> yPos >> zPos;
+            //printf("[%f] [%f] [%f]\n", xPos, yPos, zPos);
+            mesh.addVertex(Vec3F(xPos, yPos, zPos));
+            //inFile >> strTemp;
+        }
+        //cout << "loaded vertices " << endl;
+        int nNodes;
+        while(!inFile.eof()) {
+            inFile >> nNodes;
+            //cout << "nNodes " << nNodes << endl;
+            if(nNodes == 3) {
+                int faceIndex1, faceIndex2, faceIndex3;
+                inFile >> faceIndex1 >> faceIndex2 >> faceIndex3;
+                mesh.addFace(Vec3U(faceIndex1, faceIndex2, faceIndex3));
+                //cout << "fIndex " << faceIndex1 << " " << faceIndex2 << " " << faceIndex3 << endl;
+            }
+            if(nNodes == 4) {
+                int edge1, edge2, edge3, edge4;
+                inFile >> edge1 >> edge2 >> edge3 >> edge4;
+                mesh.addEdge(edge1, edge3);
+                //cout << edge1 << " " << edge2 << " " << edge3 << " " << edge4 << endl;
+            }
+            else {
+                float xPos, yPos, zPos;
+                inFile >> xPos >> yPos >> zPos;
+                mesh.addVertex(Vec3F(xPos, yPos, zPos));
+                //cout << "new vertex " << xPos << " " << yPos << " " << zPos << endl;
+            }
+            //inFile >> strTemp;
+        }
+        inFile.close();
+        //cout << "done loading mesh" << endl;
+        return mesh;
+
     }
 
     ostream& operator<<(ostream& out, const SkeletonMesh& obj) {

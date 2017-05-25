@@ -210,6 +210,7 @@ namespace Visualization {
         for(unsigned int i = 0; i < helices.size(); i++) {
             setMinMax(helices[i]->getCenter());
         }
+        //cout << "helices size " << helices.size() << endl;
 
     }
 

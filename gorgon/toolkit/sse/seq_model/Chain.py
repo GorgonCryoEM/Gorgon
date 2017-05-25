@@ -79,6 +79,7 @@ class Chain(baseClass):
         self.residueList = {}
         self.secelList = {}
         self.selectedResidues = []
+        self.bonds = []
         self.atoms = {}
 
         self.helices = {}
@@ -160,8 +161,7 @@ class Chain(baseClass):
 
         residue = None
         firstChain = None
-        for line in open(filename,
-                         'U'):  # calls the iterator for the file object each time the loop is run - don't have to load entire file into memory
+        for line in open(filename,'U'):  # calls the iterator for the file object each time the loop is run - don't have to load entire file into memory
             if line[0:4] == 'ATOM':
                 chainID = line[21:22]
                 if chainID == ' ':
@@ -172,6 +172,7 @@ class Chain(baseClass):
                     firstChain = chainID
                     ####if the chain key already exists, point to that chain object
                     ####perhaps this should be modified
+
                     if not (pdbID, firstChain) in cls.getChainKeys():
                         result.setIDs(pdbID, firstChain)
                     else:
@@ -181,11 +182,13 @@ class Chain(baseClass):
                     break
 
                 residueIndex = int(line[22:26])
+                
                 if residueIndex not in result.residueRange():
                     residue = Residue(line[17:20].strip(), result)
                     result[residueIndex] = residue
                 else:
                     residue = result[residueIndex]
+                
 
                 serialNo = int(line[6:11].strip())
                 atomName = line[12:16].strip()
@@ -202,20 +205,25 @@ class Chain(baseClass):
                     x = float(line[30:38])
                     y = float(line[38:46])
                     z = float(line[46:54])
-
+                    #atom = result[residueIndex].addAtom(atomName, x, y, z, element, serialNo, occupancy, tempFactor)
                     atom = residue.addAtom(atomName, x, y, z, element, serialNo, occupancy, tempFactor)
-                    # residue.atoms[atomName]=atom
+                    #residue.__atoms[atomName]=atom
                     result.atoms[serialNo] = atom
-                    # Chain.chainsDict[result.key] = result
                 except ValueError:
                     print 'Chain.__loadFromPDB--no coordinates',
-
                 result.differenceIndex = residueIndex - serialNo
             
             elif line[0:6].strip() == 'HELIX':
                 Helix.parsePDB(line, result)
             elif line[0:6].strip() == 'SHEET':
                 Sheet.parsePDB(line, result)
+
+        for sheetIndex, sheet in result.sheets.items():
+            validBonds = []
+            for bond in sheet.bonds:
+                if bond[0] in result.residueRange() and bond[1] in result.residueRange():
+                    validBonds.append(bond)
+            sheet.bonds = validBonds
 
         # Setting up coils
         startList = []
@@ -239,8 +247,6 @@ class Chain(baseClass):
                 result.addCoil(coilIx, Coil(result, coilIx, 'L' + str(coilIx), startPt, max(result.residueRange())))
 
             Chain.chainsDict[result.key] = result
-            # Chain.setSelectedChainKey(result.getIDs())
-
         return result
 
     @classmethod
@@ -359,6 +365,7 @@ class Chain(baseClass):
         Chain.residueAtomMapping = resAtomMapping
         return (result, Chain.residueAtomMapping)
 
+
     @classmethod
     def __loadFromSeq(cls, filename, qparent=None):
         '''
@@ -452,6 +459,7 @@ class Chain(baseClass):
                     stopIndex = None
                     currentElement = character
                     i += 1
+
         return newChain
 
     @classmethod
@@ -843,6 +851,7 @@ class Chain(baseClass):
                     bond.setAtom1Ix(atom1.getHashKey())
                     newBonds.append(bond)
         return newBonds
+                    
 
     def addSecel(self, secel):
         '''
@@ -1147,12 +1156,15 @@ class Chain(baseClass):
                     name = str(atom_name).center(4)
                     x = "%8.3f" % atom.getPosition().x()
                     if len(x) > 8:
+                        #print x
                         raise ValueError
                     y = "%8.3f" % atom.getPosition().y()
                     if len(y) > 8:
+                        #print y
                         raise ValueError
                     z = "%8.3f" % atom.getPosition().z()
                     if len(z) > 8:
+                        #print z
                         raise ValueError
                     element = atom.getElement().rjust(2)
                     charge = '  '

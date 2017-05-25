@@ -23,11 +23,11 @@
 //#include <list>
 #include <MathTools/VectorMath.h>
 
-//using namespace std;
+using namespace std;
 //using namespace Protein_Morph;
-//using namespace GraphMatch;
-//using namespace SkeletonMaker;
-
+using namespace GraphMatch;
+using namespace SkeletonMaker;
+//namespace wustl_mm {
 namespace Visualization {
 
     typedef map<unsigned long long, PDBAtom> AtomMapType;
@@ -190,5 +190,6 @@ namespace Visualization {
     };
 
 } /* namespace Visualization */
+//}
 
 #endif /* SRC_TOOLKIT_VISUALIZATION_CALPHARENDERER_H_ */

@@ -16,6 +16,7 @@ setup(
             'gorgon-sse-hunter=@cli_install_dir@.gorgon_sse_hunter:main',
             'gorgon-sse-correspondence=@cli_install_dir@.gorgon_sse_correspondence:main',
             'gorgon-calpha-prep-tool=@cli_install_dir@.gorgon_calpha_prep_tool:main',
+            'gorgon-flexible-fitting=@cli_install_dir@.gorgon_flexible_fitting:main',
             'gorgon-gui=@cli_install_dir@.gorgon_gui:main',
         ],
     },

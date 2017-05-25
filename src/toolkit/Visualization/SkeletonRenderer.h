@@ -29,6 +29,7 @@ namespace Visualization {
         public:
             SkeletonMesh getMesh();
             void load(string fileName);
+            void load2(string fileName);
             void save(string fileName);
             int intersectMeshAndSphere(Vec3F center, float radius);
             Vec3F getIntersectionPoint(int ix);
@@ -37,6 +38,7 @@ namespace Visualization {
             void draw(int subSceneIndex, bool selectEnabled);
 
             void loadVolume(const Volume & src);
+
         private:
             vector<Vec3F> intersectionPoints;
             int lineThickness;

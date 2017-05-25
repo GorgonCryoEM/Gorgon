@@ -10,6 +10,7 @@ class Sheet:
 
     def __init__(self, initialStrand=None):
         self.strandList = {}
+        self.bonds = []
         if initialStrand is not None:
             self.strandList[initialStrand.strandNo] = initialStrand
 
