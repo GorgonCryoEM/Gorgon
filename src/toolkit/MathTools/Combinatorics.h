@@ -6,6 +6,7 @@
 #include <algorithm>
 
 using namespace std;
+using namespace Toolkit;
 
 namespace MathTools {
     static unsigned long long Combinations(int n, int r);

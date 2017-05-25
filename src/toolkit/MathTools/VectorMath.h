@@ -430,6 +430,111 @@ namespace GraphMatch {
         return os;
     }
 
+    class Point3 {
+        public:
+            Point3() : x(0), y(0), z(0) {}
+            Point3(const Point3& p) : x(p[0]), y(p[1]), z(p[2]) {}
+            Point3(double _x, double _y, double _z) : x(_x), y(_y), z(_z) {}
+          
+            Point3& operator=(const Point3& a) {
+                x = a[0]; y = a[1]; z = a[2];
+                return *this;
+            }
+          
+            const double &operator[](int n) const { return (&x)[n]; }
+                  double &operator[](int n)       { return (&x)[n]; }
+
+            Point3& operator+=(const Vec3F& v) {
+                x += v[0]; y += v[1]; z += v[2];
+                return *this;
+            }
+
+            Point3& operator-=(const Vec3F& v) {
+                x -= v[0]; y -= v[1]; z -= v[2];
+                return *this;
+            }
+
+            Point3& operator*=(double s) {
+                x *= s; y *= s; z *= s;
+                return *this;
+            }
+
+            Vec3F operator-(const Point3 & p) const {
+                return Vec3F(x - p.x, y - p.y, z - p.z);
+            }
+
+            Point3 operator+(const Vec3F & v) const {
+                return Point3(x + v[0], y + v[1], z + v[2]);
+            }
+
+            Point3 operator-(const Vec3F & v) const {
+                return Point3(x - v[0], y - v[1], z - v[2]);
+            }
+
+            double distanceTo(const Point3& p) const {
+                return (double) sqrt((p[0] - x) * (p[0] - x) +
+                                     (p[1] - y) * (p[1] - y) +
+                                     (p[2] - z) * (p[2] - z));
+            }
+
+            double distanceTo(const Vec3F& v) const {
+                return (double) sqrt((v[0] - x) * (v[0] - x) +
+                                     (v[1] - y) * (v[1] - y) +
+                                     (v[2] - z) * (v[2] - z));
+            }
+
+            double distanceToSquared(const Point3& p) const {
+                return ((p[0] - x) * (p[0] - x) +
+                        (p[1] - y) * (p[1] - y) +
+                        (p[2] - z) * (p[2] - z));
+            }
+
+            double distanceFromOrigin() const {
+                return (double) sqrt(x * x + y * y + z * z);
+            }
+
+            double distanceFromOriginSquared() const {
+                return x * x + y * y + z * z;
+            }
+
+            bool operator==( const Point3 &p ) const {
+                return x == p.x && y == p.y && z == p.z;
+            }
+
+            bool operator!=( const Point3 &p ) const {
+                return x != p.x || y != p.y || z != p.z;
+            }
+
+            bool approxEqual( const Point3 &p, double eps = 1e-12 ) const {
+                return isZero( x - p.x, eps ) && isZero( y - p.y, eps ) && isZero( z - p.z, eps );
+            }
+
+            void print() const {
+                std::cout << x << " " << y << " " << z << "\n";
+            }
+          
+        private:
+            double x, y, z;
+        };
+
+        inline Point3 lerp( const Point3 &p0, const Point3 &p1, double dT ) 
+        {
+            const double dTMinus = 1.0 - dT;
+            return Point3( dTMinus * p0[0] + dT * p1[0], dTMinus * p0[1] + dT * p1[1], dTMinus * p0[2] + dT * p1[2] ); 
+        }
+
+        // post-multiply row point by a 3x3 matrix
+        inline Point3 operator*(const Point3& p, const Matrix3& m) {
+            return Point3(m(0,0) * p[0] + m(1,0) * p[1] + m(2,0) * p[2],
+                          m(0,1) * p[0] + m(1,1) * p[1] + m(2,1) * p[2],
+                          m(0,2) * p[0] + m(1,2) * p[1] + m(2,2) * p[2]);
+        }
+
+        inline std::ostream& operator<<(std::ostream& os, const Point3& p) {
+            os << "(" << p[0] << ", " << p[1] << ", " << p[2] << ")";
+            return os;
+        }
+
     class Matrix4 {
     public:
         Matrix4() {
@@ -530,6 +635,15 @@ namespace GraphMatch {
             return Vec3D( pt[0] / w, pt[1] / w, pt[2] / w );
         }
 
+        Point3 operator*(const Point3& p) const {
+                const Point3 pt((*this)(0,0) * p[0] + (*this)(0,1) * p[1] + (*this)(0,2) * p[2] + (*this)(0,3),
+                                (*this)(1,0) * p[0] + (*this)(1,1) * p[1] + (*this)(1,2) * p[2] + (*this)(1,3),
+                                (*this)(2,0) * p[0] + (*this)(2,1) * p[1] + (*this)(2,2) * p[2] + (*this)(2,3));
+                const double w = (*this)(3,0) * p[0] + (*this)(3,1) * p[1] + (*this)(3,2) * p[2] + (*this)(3,3);
+                assert( isZero( w ) == false );
+                return Point3( pt[0] / w, pt[1] / w, pt[2] / w );
+            }
+
         Vector4 operator*(const Vector4& v) const {
             return Vector4((*this)(0,0) * v[0] + (*this)(0,1) * v[1] + (*this)(0,2) * v[2] + (*this)(0,3) * v[3],
                            (*this)(1,0) * v[0] + (*this)(1,1) * v[1] + (*this)(1,2) * v[2] + (*this)(1,3) * v[3],
@@ -628,10 +742,10 @@ namespace GraphMatch {
             //double c = cos(angle);
             //double s = sin(angle);
             //return Matrix4(
-            //	Vector4((u2 + (v2+w2)*c)/b,			(u*v*(1-c) - w*sq*s)/b,		(u*v*(1-c) + v*sq*s)/b,		0),
-            //	Vector4((u*v*(1-c) + w*sq*s)/b,		(v2+(u2+w2)*c)/b,			(v*w*(1-c) - u*sq*s)/b,		0),
-            //	Vector4((u*w*(1-c) - v*sq*s)/b,		(v*w*(1-c) + u*sq*s)/b,		(w2 + (u2+v2)*c)/b,			0),
-            //	Vector4(0,							0,							0,							1));
+            //  Vector4((u2 + (v2+w2)*c)/b,         (u*v*(1-c) - w*sq*s)/b,     (u*v*(1-c) + v*sq*s)/b,     0),
+            //  Vector4((u*v*(1-c) + w*sq*s)/b,     (v2+(u2+w2)*c)/b,           (v*w*(1-c) - u*sq*s)/b,     0),
+            //  Vector4((u*w*(1-c) - v*sq*s)/b,     (v*w*(1-c) + u*sq*s)/b,     (w2 + (u2+v2)*c)/b,         0),
+            //  Vector4(0,                          0,                          0,                          1));
 
         }
 
@@ -746,6 +860,8 @@ namespace GraphMatch {
         }
         return b;
     }
+
+    
 
     // Class used to store stack points..
     class Point3Pair {

@@ -6,7 +6,7 @@
  */
 
 #include "Matlab.h"
-
+using namespace GraphMatch;
 namespace MathTools {
 
     Matlab::Matlab() {

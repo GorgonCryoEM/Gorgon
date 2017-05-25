@@ -17,7 +17,6 @@
 using namespace std;
 
 using namespace MathTools;
-
 namespace GraphMatch {
 
     template <class T>
